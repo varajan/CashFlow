@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using CashFlowBot.DataBase;
+using CashFlowBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -40,8 +42,13 @@ namespace CashFlowBot
 
                 switch (message.Text.Split(' ').First())
                 {
-                    //case "/start":
-                    //    break;
+                    case "/clear":
+
+                        Persons.Delete(message.Chat.Id);
+                        Expenses.Delete(message.Chat.Id);
+
+                        Bot.SendMessage(message.Chat.Id, "Done");
+                        break;
                 }
             }
             catch (Exception e)
