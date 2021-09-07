@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using CashFlowBot.Data;
+using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -60,13 +62,14 @@ namespace CashFlowBot
             try
             {
                 var callbackQuery = callbackQueryEventArgs.CallbackQuery;
+                var user = new User(callbackQuery.Message.Chat.Id);
 
                 await Bot.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
-                switch (callbackQuery.Data)
+                if (user.Stage == Stages.GetProfession)
                 {
-                    //case "disableReports":
-                    //    break;
+                    Actions.SetProfession(Bot, user.Id, callbackQuery.Data.Trim().ToLower());
+                    return;
                 }
             }
             catch (Exception e)

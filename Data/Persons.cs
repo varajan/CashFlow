@@ -1,18 +1,47 @@
-﻿using CashFlowBot.Models;
-
-namespace CashFlowBot.Data
+﻿namespace CashFlowBot.Data
 {
     public static class Persons
     {
-        public static Person[] Items =
+        public class DefaultPerson
         {
-            new()
+            public string Profession { get; set; }
+            public int Salary { get; set; }
+            public int Assets { get; set; }
+
+            public DefaultExpenses Expenses { get; set; }
+            public DefaultLiabilities Liabilities { get; set; }
+        }
+
+        public class DefaultExpenses
+        {
+            public int Taxes { get; set; }
+            public int Mortgage { get; set; }
+            public int SchoolLoan { get; set; }
+            public int CarLoan { get; set; }
+            public int CreditCard { get; set; }
+            public int BankLoan { get; set; }
+            public int Others { get; set; }
+            public int PerChild { get; set; }
+        }
+
+
+        public class DefaultLiabilities
+        {
+            public int Mortgage { get; set; }
+            public int SchoolLoan { get; set; }
+            public int CarLoan { get; set; }
+            public int CreditCard { get; set; }
+        }
+
+        public static DefaultPerson[] Items =
+        {
+            new ()
             {
                 Profession = "Lawyer",
                 Salary = 7_500,
                 Assets = 2_000,
 
-                Expenses = new Expenses
+                Expenses = new DefaultExpenses
                 {
                     Taxes = 1_800,
                     Mortgage = 1_100,
@@ -23,7 +52,7 @@ namespace CashFlowBot.Data
                     PerChild = 400
                 },
 
-                Liabilities = new Liabilities
+                Liabilities = new DefaultLiabilities
                 {
                     Mortgage = 115_000,
                     SchoolLoan = 78_000,
@@ -32,13 +61,13 @@ namespace CashFlowBot.Data
                 }
             },
 
-            new()
+            new ()
             {
                 Profession = "Business manager",
                 Salary = 4_600,
                 Assets = 400,
 
-                Expenses = new Expenses
+                Expenses = new DefaultExpenses
                 {
                     Taxes = 900,
                     Mortgage = 700,
@@ -49,7 +78,7 @@ namespace CashFlowBot.Data
                     PerChild = 240
                 },
 
-                Liabilities = new Liabilities
+                Liabilities = new DefaultLiabilities
                 {
                     Mortgage = 75_000,
                     SchoolLoan = 12_000,
@@ -58,13 +87,13 @@ namespace CashFlowBot.Data
                 }
             },
 
-            new()
+            new ()
             {
                 Profession = "Engineer",
                 Salary = 4_900,
                 Assets = 400,
 
-                Expenses = new Expenses
+                Expenses = new DefaultExpenses
                 {
                     Taxes = 1_000,
                     Mortgage = 700,
@@ -75,7 +104,7 @@ namespace CashFlowBot.Data
                     PerChild = 200
                 },
 
-                Liabilities = new Liabilities
+                Liabilities = new DefaultLiabilities
                 {
                     Mortgage = 75_000,
                     SchoolLoan = 12_000,
@@ -83,8 +112,6 @@ namespace CashFlowBot.Data
                     CreditCard = 3_000
                 }
             },
-
-
         };
     }
 }

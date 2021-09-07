@@ -19,9 +19,9 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({ColumnNames.Users}); ");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({ColumnNames.Persons}); ");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({ColumnNames.Expenses});");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
     }
 
     public static void Execute(string sql)
@@ -131,7 +131,25 @@ namespace CashFlowBot.DataBase
             public static string Expenses = "Expenses";
         }
 
+        public static class DefaultValues
+        {
+            private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("DEFAULT", query.Count(x => x == ',')));
+
+            public static string Users = GetDefaults(CreateColumns.Users);
+            public static string Persons = GetDefaults(CreateColumns.Persons);
+            public static string Expenses = GetDefaults(CreateColumns.Expenses);
+        }
+
         public static class ColumnNames
+        {
+            private static string GetColumns(string query) => string.Join(" ,", query.Split(',').Select(x => x.Split(' ').First()));
+
+            public static string Users = GetColumns(CreateColumns.Users);
+            public static string Persons = GetColumns(CreateColumns.Persons);
+            public static string Expenses = GetColumns(CreateColumns.Expenses);
+        }
+
+        public static class CreateColumns
         {
             private static readonly string[] _users = { "ID", "Stage" };
             public static readonly string Users = string.Join(", ", _users.Select(x => $"{x} Number"));
