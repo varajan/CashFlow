@@ -4,6 +4,7 @@
     {
         Nothing,
         GetProfession,
-        //HasProfession,
+        GetCredit,
+        PayCredit,
     }
 }

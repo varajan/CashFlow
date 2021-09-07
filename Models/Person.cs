@@ -17,7 +17,8 @@ namespace CashFlowBot.Models
         public Liabilities Liabilities => new(Id);
 
         public string Description => $"*Profession:* {Profession}{Environment.NewLine}" +
-                                     $"*Salary:* ${Salary}{Environment.NewLine}";
+                                     $"*Salary:* ${Salary}{Environment.NewLine}" +
+                                     $"*Cash:* ${Cash}{Environment.NewLine}";
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");

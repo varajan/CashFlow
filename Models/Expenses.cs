@@ -32,7 +32,8 @@ namespace CashFlowBot.Models
                 if (SchoolLoan > 0) expenses += $"*School Loan Pay:* ${SchoolLoan}{Environment.NewLine}";
                 if (CarLoan > 0) expenses += $"*Car Payment:* ${CarLoan}{Environment.NewLine}";
                 if (CarLoan > 0) expenses += $"*Credit Card Payment:* ${CreditCard}{Environment.NewLine}";
-                expenses += $"*Credit Other Payment:* ${Others}{Environment.NewLine}";
+                if (BankLoan > 0) expenses += $"*Bank Loan Payment:* ${BankLoan}{Environment.NewLine}";
+                expenses += $"*Other Payment:* ${Others}{Environment.NewLine}";
                 if (ChildrenExpenses > 0) expenses += $"*Children:* ${Children}{Environment.NewLine}";
                 if (ChildrenExpenses > 0) expenses += $"*Children Expenses:* ${ChildrenExpenses}{Environment.NewLine}";
                 expenses += $"*Total Expenses:* ${Total}{Environment.NewLine}";

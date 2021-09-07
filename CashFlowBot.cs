@@ -46,6 +46,18 @@ namespace CashFlowBot
                     return;
                 }
 
+                if (user.Stage == Stages.GetCredit)
+                {
+                    Actions.GetCredit(Bot, user.Id, message.Text.Trim());
+                    return;
+                }
+
+                if (user.Stage == Stages.PayCredit)
+                {
+                    Actions.PayCredit(Bot, user.Id, message.Text.Trim());
+                    return;
+                }
+
                 switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
@@ -56,6 +68,11 @@ namespace CashFlowBot
                         Actions.Clear(Bot, message.Chat.Id);
                         break;
 
+                    case "/cancel":
+                        Actions.Cancel(Bot, message.Chat.Id);
+                        break;
+
+                    // Actions
                     case "get money":
                         Actions.GetMoney(Bot, message.Chat.Id);
                         break;
@@ -63,6 +80,15 @@ namespace CashFlowBot
                     case "show my data":
                         Actions.ShowData(Bot, message.Chat.Id);
                         break;
+
+                    case "get credit":
+                        Actions.GetCredit(Bot, message.Chat.Id);
+                        break;
+
+                    case "pay credit":
+                        Actions.PayCredit(Bot, message.Chat.Id);
+                        break;
+                    // Actions
                 }
             }
             catch (Exception e)

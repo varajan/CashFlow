@@ -24,6 +24,80 @@ namespace CashFlowBot
             bot.SendMessage(user.Id, user.Description);
         }
 
+        public static void GetCredit(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+
+            user.Stage = Stages.GetCredit;
+            bot.SendMessage(user.Id, "How much?");
+        }
+
+        public static void GetCredit(TelegramBotClient bot, long userId, string value)
+        {
+            var user = new User(userId);
+            var amount = value.ToInt();
+
+            if (amount % 1000 > 0 || amount < 1000)
+            {
+                bot.SendMessage(user.Id, "Invalid amount. The amount must be a multiple of 1000");
+                return;
+            }
+
+            user.Person.Cash += amount;
+            user.Person.Expenses.BankLoan += amount / 10;
+            user.Person.Liabilities.BankLoan += amount;
+            user.Stage = Stages.Nothing;
+            bot.SendMessage(user.Id, $"Ok, you've got ${amount}");
+        }
+
+        public static void PayCredit(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+
+            if (user.Person.Expenses.BankLoan == 0)
+            {
+                bot.SendMessage(user.Id, "You have no credit.");
+                return;
+            }
+
+            user.Stage = Stages.PayCredit;
+            bot.SendMessage(user.Id, "How much?");
+        }
+
+        public static void PayCredit(TelegramBotClient bot, long userId, string value)
+        {
+            var user = new User(userId);
+            var amount = value.ToInt();
+
+            if (amount % 1000 > 0 || amount < 1000)
+            {
+                bot.SendMessage(user.Id, "Invalid amount. The amount must be a multiple of 1000");
+                return;
+            }
+
+            amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
+
+            if (amount > user.Person.Cash)
+            {
+                bot.SendMessage(user.Id, $"Cannot pay ${amount}, you have ${user.Person.Cash} only.");
+                return;
+            }
+
+            user.Person.Cash -= amount;
+            user.Person.Expenses.BankLoan -= amount / 10;
+            user.Person.Liabilities.BankLoan -= amount;
+            user.Stage = Stages.Nothing;
+            bot.SendMessage(user.Id, $"Ok, you've payed ${amount}");
+        }
+
+        public static void Cancel(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+
+            user.Stage = Stages.Nothing;
+            bot.SendMessage(user.Id, "Ok");
+        }
+
         public static void Clear(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
