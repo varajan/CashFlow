@@ -5,14 +5,14 @@ namespace CashFlowBot.Models
 {
     public class Person : DataModel
     {
-        public Person(long userId) => (Id, Table) = (userId, DB.Tables.Persons);
+        public Person(long userId) : base(userId, DB.Tables.Persons) { }
 
         public string Profession { get => Get("Profession"); set => Set("Profession", value); }
         public int Assets { get => GetInt("Assets"); set => Set("Assets", value); }
         public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
 
         public Expenses Expenses => new(Id);
-        public Liabilities Liabilities { get; set; } = new();
+        public Liabilities Liabilities => new(Id);
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
         public void Delete() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
@@ -29,15 +29,9 @@ namespace CashFlowBot.Models
 
             Expenses.Clear();
             Expenses.Create(data.Expenses);
-        }
-    }
 
-    public class Liabilities
-    {
-        public int Mortgage { get; set; }
-        public int SchoolLoan { get; set; }
-        public int CarLoan { get; set; }
-        public int CreditCard { get; set; }
-        public int BankLoan { get; set; }
+            Liabilities.Clear();
+            Liabilities.Create(data.Liabilities);
+        }
     }
 }

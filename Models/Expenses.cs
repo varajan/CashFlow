@@ -5,7 +5,7 @@ namespace CashFlowBot.Models
 {
     public class Expenses : DataModel
     {
-        public Expenses(long id) => (Id, Table)  = (id, DB.Tables.Expenses);
+        public Expenses(long id) : base(id, DB.Tables.Expenses) { }
 
         public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + BankLoan + ChildrenExpenses;
 

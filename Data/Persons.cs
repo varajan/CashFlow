@@ -31,6 +31,7 @@
             public int SchoolLoan { get; set; }
             public int CarLoan { get; set; }
             public int CreditCard { get; set; }
+            public int BankLoan { get; set; }
         }
 
         public static DefaultPerson[] Items =

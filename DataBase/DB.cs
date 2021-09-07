@@ -22,6 +22,7 @@ namespace CashFlowBot.DataBase
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Liabilities} ({CreateColumns.Liabilities});");
     }
 
     public static void Execute(string sql)
@@ -129,6 +130,7 @@ namespace CashFlowBot.DataBase
             public static string Users = "Users";
             public static string Persons = "Persons";
             public static string Expenses = "Expenses";
+            public static string Liabilities = "Liabilities";
         }
 
         public static class DefaultValues
@@ -138,6 +140,7 @@ namespace CashFlowBot.DataBase
             public static string Users = GetDefaults(CreateColumns.Users);
             public static string Persons = GetDefaults(CreateColumns.Persons);
             public static string Expenses = GetDefaults(CreateColumns.Expenses);
+            public static string Liabilities = GetDefaults(CreateColumns.Liabilities);
         }
 
         public static class ColumnNames
@@ -147,6 +150,7 @@ namespace CashFlowBot.DataBase
             public static string Users = GetColumns(CreateColumns.Users);
             public static string Persons = GetColumns(CreateColumns.Persons);
             public static string Expenses = GetColumns(CreateColumns.Expenses);
+            public static string Liabilities = GetColumns(CreateColumns.Liabilities);
         }
 
         public static class CreateColumns
@@ -158,6 +162,9 @@ namespace CashFlowBot.DataBase
 
             private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan", "Others", "Children", "PerChild" };
             public static string Expenses = string.Join(", ", _expenses.Select(x => $"{x} Number"));
+
+            private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan" };
+            public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
         }
     }
 }
