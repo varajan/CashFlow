@@ -13,7 +13,7 @@ namespace CashFlowBot
         {
             var user = new User(userId);
             user.Person.Delete();
-            user.DeleteExpenses();
+            user.Person.Expenses.Clear();
             user.Stage = Stages.Nothing;
 
             bot.SendMessage(userId, "Done");

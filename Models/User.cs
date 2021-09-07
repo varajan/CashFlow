@@ -1,26 +1,21 @@
 ﻿using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
-using CashFlowBot.Extensions;
 
 namespace CashFlowBot.Models
 {
-    public class User
+    public class User : DataModel
     {
-        public User(long id) => Id = id;
-
-        public long Id { get; init; }
+        public User(long id) => (Id, Table) = (id, DB.Tables.Users);
 
         public Person Person => new (Id);
 
-        public bool Exists => DB.GetColumn($"SELECT ID FROM {DB.Tables.Users} WHERE ID = {Id}").Any();
+        public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
 
-        public Stages Stage
-        {
-            get => (Stages) DB.GetValue($"SELECT Stage FROM {DB.Tables.Users} WHERE ID = {Id}").ToInt();
-            set => DB.Execute($"UPDATE {DB.Tables.Users} SET Stage = {(int)value} WHERE ID = {Id}");
-        }
-
-        public void DeleteExpenses() => DB.Execute($"DELETE FROM {DB.Tables.Expenses} WHERE ID = {Id}");
+        public Stages Stage { get => (Stages) GetInt("Stage"); set => Set("Stage", (int)value); }
+        //{
+        //    get => (Stages) DB.GetValue($"SELECT Stage FROM {DB.Tables.Users} WHERE ID = {Id}").ToInt();
+        //    set => DB.Execute($"UPDATE {DB.Tables.Users} SET Stage = {(int)value} WHERE ID = {Id}");
+        //}
     }
 }
