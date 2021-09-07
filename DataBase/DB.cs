@@ -23,6 +23,7 @@ namespace CashFlowBot.DataBase
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Liabilities} ({CreateColumns.Liabilities});");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Assets} ({CreateColumns.Assets});");
     }
 
     public static void Execute(string sql)
@@ -132,6 +133,7 @@ namespace CashFlowBot.DataBase
             public static string Persons = "Persons";
             public static string Expenses = "Expenses";
             public static string Liabilities = "Liabilities";
+            public static string Assets = "Assets";
         }
 
         public static class DefaultValues
@@ -142,6 +144,7 @@ namespace CashFlowBot.DataBase
             public static string Persons = GetDefaults(CreateColumns.Persons);
             public static string Expenses = GetDefaults(CreateColumns.Expenses);
             public static string Liabilities = GetDefaults(CreateColumns.Liabilities);
+            public static string Assets = GetDefaults(CreateColumns.Assets);
         }
 
         public static class ColumnNames
@@ -152,6 +155,7 @@ namespace CashFlowBot.DataBase
             public static string Persons = GetColumns(CreateColumns.Persons);
             public static string Expenses = GetColumns(CreateColumns.Expenses);
             public static string Liabilities = GetColumns(CreateColumns.Liabilities);
+            public static string Assets = GetColumns(CreateColumns.Assets);
         }
 
         public static class CreateColumns
@@ -166,6 +170,8 @@ namespace CashFlowBot.DataBase
 
             private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan" };
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
+
+            public static string Assets = "ID Number, UserId Number, Title Text, Price Number, Qtty Number";
         }
     }
 }

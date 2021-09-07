@@ -40,55 +40,78 @@ namespace CashFlowBot
 
                 if (message.Type != MessageType.Text) return;
 
-                if (user.Stage == Stages.GetProfession)
-                {
-                    Actions.SetProfession(Bot, user.Id, message.Text.Trim().ToLower());
-                    return;
-                }
-
-                if (user.Stage == Stages.GetCredit)
-                {
-                    Actions.GetCredit(Bot, user.Id, message.Text.Trim());
-                    return;
-                }
-
-                if (user.Stage == Stages.PayCredit)
-                {
-                    Actions.PayCredit(Bot, user.Id, message.Text.Trim());
-                    return;
-                }
-
                 switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
                         Actions.Start(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     case "/clear":
                         Actions.Clear(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     case "/cancel":
                         Actions.Cancel(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     // Actions
                     case "get money":
                         Actions.GetMoney(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     case "show my data":
                         Actions.ShowData(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     case "get credit":
                         Actions.GetCredit(Bot, message.Chat.Id);
-                        break;
+                        return;
 
                     case "pay credit":
                         Actions.PayCredit(Bot, message.Chat.Id);
-                        break;
-                    // Actions
+                        return;
+
+
+                    // Buy actions
+                    case "buy":
+                        Actions.Buy(Bot, message.Chat.Id);
+                        return;
+
+                    case "stocks":
+                        if (user.Stage == Stages.Buy)
+                        {
+                            Actions.BuyStocks(Bot, message.Chat.Id);
+                        }
+
+                        if (user.Stage == Stages.Sell)
+                        {
+                            //Actions.SellStocks(Bot, message.Chat.Id);
+                        }
+                        return;
+                        // Buy actions
+
+                        // Actions
+                }
+
+                switch (user.Stage)
+                {
+                    case Stages.GetProfession:
+                        Actions.SetProfession(Bot, user.Id, message.Text.Trim().ToLower());
+                        return;
+
+                    case Stages.GetCredit:
+                        Actions.GetCredit(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stages.PayCredit:
+                        Actions.PayCredit(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stages.BuyStocksQtty:
+                    case Stages.BuyStocksTitle:
+                    case Stages.BuyStocksPrice:
+                        Actions.BuyStocks(Bot, user.Id, message.Text.Trim());
+                        return;
                 }
             }
             catch (Exception e)

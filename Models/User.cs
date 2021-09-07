@@ -15,7 +15,9 @@ namespace CashFlowBot.Models
 
         public Stages Stage { get => (Stages) GetInt("Stage"); set => Set("Stage", (int)value); }
 
-        public string Description => Person.Description + Environment.NewLine + Person.Expenses.Description;
+        public string Description => $"{Person.Description}{Environment.NewLine}" +
+                                     $"{Person.Assets.Description}{Environment.NewLine}" +
+                                     $"{Person.Expenses.Description}";
 
         public void Create()
         {

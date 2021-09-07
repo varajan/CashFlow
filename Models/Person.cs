@@ -15,6 +15,7 @@ namespace CashFlowBot.Models
 
         public Expenses Expenses => new(Id);
         public Liabilities Liabilities => new(Id);
+        public Assets Assets => new (Id);
 
         public string Description => $"*Profession:* {Profession}{Environment.NewLine}" +
                                      $"*Salary:* ${Salary}{Environment.NewLine}" +
@@ -29,6 +30,8 @@ namespace CashFlowBot.Models
 
             Clear();
             DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Persons}) VALUES ({Id}, {DB.DefaultValues.Persons})");
+
+            Assets.Items.ForEach(x => x.Delete());
 
             Profession = data.Profession;
             Cash = data.Cash;

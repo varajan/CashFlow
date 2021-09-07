@@ -6,5 +6,10 @@
         GetProfession,
         GetCredit,
         PayCredit,
+        Buy,
+        BuyStocksTitle,
+        BuyStocksQtty,
+        BuyStocksPrice,
+        Sell,
     }
 }
