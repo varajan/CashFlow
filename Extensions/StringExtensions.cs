@@ -29,6 +29,18 @@ namespace CashFlowBot.Extensions
 
         public static T ParseEnum<T>(this string value) => (T) Enum.Parse(typeof(T), value, true);
 
+        public static long ToLong(this string number)
+        {
+            try
+            {
+                return long.Parse(number);
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
         public static int ToInt(this string number)
         {
             try

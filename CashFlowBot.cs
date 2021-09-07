@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using CashFlowBot.DataBase;
-using CashFlowBot.Extensions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -11,7 +9,7 @@ namespace CashFlowBot
 {
     public class CashFlowBot
     {
-        private static readonly TelegramBotClient Bot = new TelegramBotClient("1991657067:AAGyDAK1xfqrfIEAFIKNsRjWOvy9owiKU40");
+        private static readonly TelegramBotClient Bot = new("1991657067:AAGyDAK1xfqrfIEAFIKNsRjWOvy9owiKU40");
 
         public static void Main()
         {
@@ -42,12 +40,12 @@ namespace CashFlowBot
 
                 switch (message.Text.Split(' ').First())
                 {
+                    case "/start":
+                        Actions.Start(Bot, message.Chat.Id);
+                        break;
+
                     case "/clear":
-
-                        Persons.Delete(message.Chat.Id);
-                        Expenses.Delete(message.Chat.Id);
-
-                        Bot.SendMessage(message.Chat.Id, "Done");
+                        Actions.Clear(Bot, message.Chat.Id);
                         break;
                 }
             }

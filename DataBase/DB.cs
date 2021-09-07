@@ -18,9 +18,13 @@ namespace CashFlowBot.DataBase
             {
                 SQLiteConnection.CreateFile(DBFileName);
             }
-        }
 
-        public static void Execute(string sql)
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({ColumnNames.Users}); ");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({ColumnNames.Persons}); ");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({ColumnNames.Expenses});");
+    }
+
+    public static void Execute(string sql)
         {
             try
             {
@@ -30,7 +34,7 @@ namespace CashFlowBot.DataBase
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
             }
-            catch (Exception e) { throw e; }
+            catch (Exception e) { e.Log(); }
         }
 
         public static string GetValue(string sql)
@@ -45,7 +49,7 @@ namespace CashFlowBot.DataBase
                 cmd.Connection.Open();
                 result = (cmd.ExecuteScalar() ?? string.Empty).ToString();
             }
-            catch (Exception e) { throw e; }
+            catch (Exception e) { e.Log(); }
 
             return result;
         }
@@ -66,7 +70,7 @@ namespace CashFlowBot.DataBase
                     result.Add(reader[Columns(sql).First()].ToString());
                 }
             }
-            catch (Exception e) { throw e; }
+            catch (Exception e) { e.Log(); }
 
             return result;
         }
@@ -89,7 +93,7 @@ namespace CashFlowBot.DataBase
                     result.Add(toLoverCase ? values.Select(x => x.ToLower()).ToList() : values);
                 }
             }
-            catch (Exception e) { throw e; }
+            catch (Exception e) { e.Log(); }
 
             return result;
         }
@@ -110,13 +114,32 @@ namespace CashFlowBot.DataBase
                     result = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
                 }
             }
-            catch (Exception e) { throw e; }
+            catch (Exception e) { e.Log(); }
 
             return result;
         }
 
         private static IEnumerable<string> Columns(string sql) =>
             sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",");
-    }
 
+        private static void Log(this Exception ex) => Console.WriteLine($"{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+
+        public static class Tables
+        {
+            public static string Users = "Users";
+            public static string Persons = "Persons";
+            public static string Expenses = "Expenses";
+        }
+
+        public static class ColumnNames
+        {
+            private static readonly string[] _users = { "ID", "Stage" };
+            public static readonly string Users = string.Join(", ", _users.Select(x => $"{x} Number"));
+
+            public static string Persons = "ID Number, Profession Text, Salary Number, Assets Number";
+
+            private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan", "Others", "Children", "PerChild" };
+            public static string Expenses = string.Join(", ", _expenses.Select(x => $"{x} Number"));
+        }
+    }
 }
