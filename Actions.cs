@@ -9,10 +9,25 @@ namespace CashFlowBot
 {
     public static class Actions
     {
+        public static void GetMoney(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+
+            user.Person.Cash += user.Person.CashFlow;
+            bot.SendMessage(user.Id, $"{user.Person.Profession}, you have ${user.Person.Cash}");
+        }
+
+        public static void ShowData(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+
+            bot.SendMessage(user.Id, user.Description);
+        }
+
         public static void Clear(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Person.Delete();
+            user.Person.Clear();
             user.Person.Expenses.Clear();
             user.Stage = Stages.Nothing;
 
@@ -23,6 +38,8 @@ namespace CashFlowBot
         {
             var user = new User(userId);
             var professions = string.Join(Environment.NewLine, Persons.Items.Select(x => x.Profession));
+
+            if (!user.Exists) { user.Create(); }
 
             if (user.Person.Exists)
             {
@@ -45,7 +62,10 @@ namespace CashFlowBot
                 return;
             }
 
+            user.Stage = Stages.Nothing;
             user.Person.Create(profession);
+
+            bot.SetButtons(user.Id, $"Welcome, {user.Person.Profession}!","Show my Data", "Buy", "Sell", "Get money");
         }
     }
 }

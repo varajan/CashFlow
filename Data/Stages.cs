@@ -3,6 +3,7 @@
     public enum Stages
     {
         Nothing,
-        GetProfession
+        GetProfession,
+        //HasProfession,
     }
 }

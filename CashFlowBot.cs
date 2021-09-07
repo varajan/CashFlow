@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using CashFlowBot.Data;
 using CashFlowBot.Models;
@@ -35,12 +34,19 @@ namespace CashFlowBot
             try
             {
                 var message = messageEventArgs.Message;
+                var user = new User(message.Chat.Id);
 
                 await Bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
                 if (message.Type != MessageType.Text) return;
 
-                switch (message.Text.Split(' ').First())
+                if (user.Stage == Stages.GetProfession)
+                {
+                    Actions.SetProfession(Bot, user.Id, message.Text.Trim().ToLower());
+                    return;
+                }
+
+                switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
                         Actions.Start(Bot, message.Chat.Id);
@@ -48,6 +54,14 @@ namespace CashFlowBot
 
                     case "/clear":
                         Actions.Clear(Bot, message.Chat.Id);
+                        break;
+
+                    case "get money":
+                        Actions.GetMoney(Bot, message.Chat.Id);
+                        break;
+
+                    case "show my data":
+                        Actions.ShowData(Bot, message.Chat.Id);
                         break;
                 }
             }
@@ -62,15 +76,15 @@ namespace CashFlowBot
             try
             {
                 var callbackQuery = callbackQueryEventArgs.CallbackQuery;
-                var user = new User(callbackQuery.Message.Chat.Id);
+                //var user = new User(callbackQuery.Message.Chat.Id);
 
-                await Bot.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
+                //await Bot.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
-                if (user.Stage == Stages.GetProfession)
-                {
-                    Actions.SetProfession(Bot, user.Id, callbackQuery.Data.Trim().ToLower());
-                    return;
-                }
+                //if (user.Stage == Stages.GetProfession)
+                //{
+                //    Actions.SetProfession(Bot, user.Id, callbackQuery.Data.Trim().ToLower());
+                //    return;
+                //}
             }
             catch (Exception e)
             {

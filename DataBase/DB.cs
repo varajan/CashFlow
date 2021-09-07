@@ -35,7 +35,7 @@ namespace CashFlowBot.DataBase
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
             }
-            catch (Exception e) { e.Log(); }
+            catch (Exception e) { e.Log(sql); }
         }
 
         public static string GetValue(string sql)
@@ -50,7 +50,7 @@ namespace CashFlowBot.DataBase
                 cmd.Connection.Open();
                 result = (cmd.ExecuteScalar() ?? string.Empty).ToString();
             }
-            catch (Exception e) { e.Log(); }
+            catch (Exception e) { e.Log(sql); }
 
             return result;
         }
@@ -71,7 +71,7 @@ namespace CashFlowBot.DataBase
                     result.Add(reader[Columns(sql).First()].ToString());
                 }
             }
-            catch (Exception e) { e.Log(); }
+            catch (Exception e) { e.Log(sql); }
 
             return result;
         }
@@ -94,7 +94,7 @@ namespace CashFlowBot.DataBase
                     result.Add(toLoverCase ? values.Select(x => x.ToLower()).ToList() : values);
                 }
             }
-            catch (Exception e) { e.Log(); }
+            catch (Exception e) { e.Log(sql); }
 
             return result;
         }
@@ -115,7 +115,7 @@ namespace CashFlowBot.DataBase
                     result = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
                 }
             }
-            catch (Exception e) { e.Log(); }
+            catch (Exception e) { e.Log(sql); }
 
             return result;
         }
@@ -123,7 +123,8 @@ namespace CashFlowBot.DataBase
         private static IEnumerable<string> Columns(string sql) =>
             sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",");
 
-        private static void Log(this Exception ex) => Console.WriteLine($"{ex.Message}{Environment.NewLine}{ex.StackTrace}");
+        private static void Log(this Exception ex, string sql) =>
+            Console.WriteLine($"{ex.Message}{Environment.NewLine}{sql}{Environment.NewLine}{ex.StackTrace}");
 
         public static class Tables
         {
@@ -135,7 +136,7 @@ namespace CashFlowBot.DataBase
 
         public static class DefaultValues
         {
-            private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("DEFAULT", query.Count(x => x == ',')));
+            private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("''", query.Count(x => x == ',')));
 
             public static string Users = GetDefaults(CreateColumns.Users);
             public static string Persons = GetDefaults(CreateColumns.Persons);
@@ -145,7 +146,7 @@ namespace CashFlowBot.DataBase
 
         public static class ColumnNames
         {
-            private static string GetColumns(string query) => string.Join(" ,", query.Split(',').Select(x => x.Split(' ').First()));
+            private static string GetColumns(string query) => string.Join(", ", query.Split(',').Select(x => x.Trim().Split(' ').First()));
 
             public static string Users = GetColumns(CreateColumns.Users);
             public static string Persons = GetColumns(CreateColumns.Persons);
@@ -158,7 +159,7 @@ namespace CashFlowBot.DataBase
             private static readonly string[] _users = { "ID", "Stage" };
             public static readonly string Users = string.Join(", ", _users.Select(x => $"{x} Number"));
 
-            public static string Persons = "ID Number, Profession Text, Salary Number, Assets Number";
+            public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number";
 
             private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan", "Others", "Children", "PerChild" };
             public static string Expenses = string.Join(", ", _expenses.Select(x => $"{x} Number"));

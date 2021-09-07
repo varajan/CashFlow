@@ -1,4 +1,5 @@
-﻿using CashFlowBot.Data;
+﻿using System;
+using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 
 namespace CashFlowBot.Models
@@ -21,12 +22,31 @@ namespace CashFlowBot.Models
         public int PerChild { get => GetInt("PerChild"); set => Set("PerChild", value); }
         public int ChildrenExpenses => Children * PerChild;
 
+        public string Description
+        {
+            get
+            {
+                var expenses = $"*Expenses:*{Environment.NewLine}";
+                expenses += $"*Taxes:* ${Taxes}{Environment.NewLine}";
+                if (Mortgage > 0) expenses += $"*Mortgage/Rent Pay:* ${Mortgage}{Environment.NewLine}";
+                if (SchoolLoan > 0) expenses += $"*School Loan Pay:* ${SchoolLoan}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*Car Payment:* ${CarLoan}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*Credit Card Payment:* ${CreditCard}{Environment.NewLine}";
+                expenses += $"*Credit Other Payment:* ${Others}{Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*Children:* ${Children}{Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*Children Expenses:* ${ChildrenExpenses}{Environment.NewLine}";
+                expenses += $"*Total Expenses:* ${Total}{Environment.NewLine}";
+
+                return expenses;
+            }
+        }
+
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
 
         public void Create(Persons.DefaultExpenses expenses)
         {
             Clear();
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Expenses}) VALUES ({DB.DefaultValues.Expenses})");
+            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Expenses}) VALUES ({Id}, {DB.DefaultValues.Expenses})");
 
             Taxes = expenses.Taxes;
             Mortgage = expenses.Mortgage;

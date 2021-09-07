@@ -18,7 +18,7 @@ namespace CashFlowBot.Models
         public void Create(Persons.DefaultLiabilities liabilities)
         {
             Clear();
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Liabilities}) VALUES ({DB.DefaultValues.Liabilities})");
+            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Liabilities}) VALUES ({Id}, {DB.DefaultValues.Liabilities})");
 
             Mortgage = liabilities.Mortgage;
             SchoolLoan = liabilities.SchoolLoan;

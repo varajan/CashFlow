@@ -6,7 +6,7 @@
         {
             public string Profession { get; set; }
             public int Salary { get; set; }
-            public int Assets { get; set; }
+            public int Cash { get; set; }
 
             public DefaultExpenses Expenses { get; set; }
             public DefaultLiabilities Liabilities { get; set; }
@@ -40,7 +40,7 @@
             {
                 Profession = "Lawyer",
                 Salary = 7_500,
-                Assets = 2_000,
+                Cash = 2_000,
 
                 Expenses = new DefaultExpenses
                 {
@@ -66,7 +66,7 @@
             {
                 Profession = "Business manager",
                 Salary = 4_600,
-                Assets = 400,
+                Cash = 400,
 
                 Expenses = new DefaultExpenses
                 {
@@ -92,7 +92,7 @@
             {
                 Profession = "Engineer",
                 Salary = 4_900,
-                Assets = 400,
+                Cash = 400,
 
                 Expenses = new DefaultExpenses
                 {
