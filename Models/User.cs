@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 
@@ -15,9 +14,9 @@ namespace CashFlowBot.Models
 
         public Stage Stage { get => (Stage) GetInt("Stage"); set => Set("Stage", (int)value); }
 
-        public string Description => $"{Person.Description}{Environment.NewLine}" +
-                                     $"{Person.Assets.Description}{Environment.NewLine}" +
-                                     $"{Person.Expenses.Description}";
+        public string Description => Person.Description +
+                                     Person.Assets.Description +
+                                     Person.Expenses.Description;
 
         public void Create()
         {

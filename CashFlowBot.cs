@@ -50,6 +50,7 @@ namespace CashFlowBot
                         Actions.Clear(Bot, message.Chat.Id);
                         return;
 
+                    case "cancel":
                     case "/cancel":
                         Actions.Cancel(Bot, message.Chat.Id);
                         return;
@@ -71,10 +72,12 @@ namespace CashFlowBot
                         Actions.PayCredit(Bot, message.Chat.Id);
                         return;
 
-
-                    // Buy actions
                     case "buy":
                         Actions.Buy(Bot, message.Chat.Id);
+                        return;
+
+                    case "sell":
+                        Actions.Sell(Bot, message.Chat.Id);
                         return;
 
                     case "stocks":
@@ -85,10 +88,9 @@ namespace CashFlowBot
 
                         if (user.Stage == Stage.Sell)
                         {
-                            //Actions.SellStocks(Bot, message.Chat.Id);
+                            Actions.SellStocks(Bot, message.Chat.Id);
                         }
                         return;
-                        // Buy actions
 
                         // Actions
                 }
@@ -107,10 +109,15 @@ namespace CashFlowBot
                         Actions.PayCredit(Bot, user.Id, message.Text.Trim());
                         return;
 
-                    case Stage.BuyStocksQtty:
                     case Stage.BuyStocksTitle:
                     case Stage.BuyStocksPrice:
+                    case Stage.BuyStocksQtty:
                         Actions.BuyStocks(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stage.SellStocksTitle:
+                    case Stage.SellStocksPrice:
+                        Actions.SellStocks(Bot, user.Id, message.Text.Trim());
                         return;
                 }
             }

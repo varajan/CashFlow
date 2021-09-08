@@ -11,5 +11,7 @@
         BuyStocksQtty,
         BuyStocksPrice,
         Sell,
+        SellStocksTitle,
+        SellStocksPrice,
     }
 }

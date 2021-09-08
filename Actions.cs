@@ -17,6 +17,14 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "What to buy?", "Stocks", "Business", "Apartment", "Other");
         }
 
+        public static void Sell(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+            user.Stage = Stage.Sell;
+
+            bot.SetButtons(user.Id, "What to sell?", "Stocks", "Business", "Apartment", "Other");
+        }
+
         public static void BuyStocks(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
@@ -75,6 +83,70 @@ namespace CashFlowBot
                     asset.Qtty = number;
                     user.Person.Cash -= totalPrice;
                     user.Stage = Stage.Nothing;
+                    SetDefaultButtons(bot, user, "Done.");
+                    return;
+            }
+        }
+
+        public static void SellStocks(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+            var stocks = user.Person.Assets.Items
+                .Where(x => x.Type == AssetType.Stock)
+                .Select(x => x.Title)
+                .ToList();
+
+            stocks.Add("Cancel");
+
+            if (stocks.Count > 1)
+            {
+                user.Stage = Stage.SellStocksTitle;
+                bot.SetButtons(user.Id, "What stocks do you want to sell?", stocks.ToArray());
+            }
+            else
+            {
+                user.Stage = Stage.Nothing;
+                SetDefaultButtons(bot, user, "You have no stocks.");
+            }
+        }
+
+        public static void SellStocks(TelegramBotClient bot, long userId, string value)
+        {
+            var user = new User(userId);
+            var title = value.Trim().ToUpper();
+            var number = value.ToInt();
+            var stocks = user.Person.Assets.Items.Where(x => x.Type == AssetType.Stock).ToList();
+
+            switch (user.Stage)
+            {
+                case Stage.SellStocksTitle:
+                    var stock = stocks.FirstOrDefault(x => x.Title == title);
+
+                    if (stock == null)
+                    {
+                        user.Stage = Stage.Nothing;
+                        SetDefaultButtons(bot, user, "Invalid stocks name.");
+                        return;
+                    }
+
+                    user.Stage = Stage.SellStocksPrice;
+                    stock.Title += "*";
+                    bot.SetButtons(user.Id, "Price:", "1", "5", "10", "20", "30", "40", "50");
+                    return;
+
+                case Stage.SellStocksPrice:
+                    var asset = stocks.First(x => x.Title.EndsWith("*"));
+
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, "Invalid price value. Try again.", "1", "5", "10", "20", "30", "40", "50");
+                        return;
+                    }
+
+                    user.Person.Cash += asset.Qtty * number;
+                    user.Stage = Stage.Nothing;
+                    asset.Delete();
+
                     SetDefaultButtons(bot, user, "Done.");
                     return;
             }
@@ -166,7 +238,7 @@ namespace CashFlowBot
             var user = new User(userId);
             user.Stage = Stage.Nothing;
 
-            SetDefaultButtons(bot, user, "Canceled");
+            SetDefaultButtons(bot, user, user.Person.Description);
         }
 
         public static void Clear(TelegramBotClient bot, long userId)
@@ -215,6 +287,8 @@ namespace CashFlowBot
 
         private static void SetDefaultButtons(TelegramBotClient bot, User user, string message)
         {
+            // TODO: reset asset titles, remove empty, etc.
+
             bot.SetButtons(user.Id, message, "Show my Data", "Buy", "Sell", "Get money", "Pay Credit", "Get Credit");
         }
     }

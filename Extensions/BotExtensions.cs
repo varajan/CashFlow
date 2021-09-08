@@ -14,7 +14,7 @@ namespace CashFlowBot.Extensions
                 Keyboard = buttons.Select(button => new KeyboardButton[] {button})
             };
 
-            await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm);
+            await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
         public static async void SendMessage(this TelegramBotClient bot, long userId, string message)

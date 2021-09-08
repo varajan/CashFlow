@@ -1,5 +1,4 @@
-﻿using System;
-using CashFlowBot.Data;
+﻿using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 
@@ -18,7 +17,7 @@ namespace CashFlowBot.Models
 
         public Asset(long userId, int id) => (UserId, Id, Table) = (userId, id, DB.Tables.Assets);
 
-        public string Description => $"*{Title}* - {Qtty} @ ${Price}{Environment.NewLine}";
+        public string Description => $"*{Title}* - {Qtty} @ ${Price}";
 
         public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value);}
         public string Title { get => Get("Title"); set => Set("Title", value); }

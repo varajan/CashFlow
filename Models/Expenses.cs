@@ -26,7 +26,7 @@ namespace CashFlowBot.Models
         {
             get
             {
-                var expenses = $"*Expenses:*{Environment.NewLine}";
+                var expenses = $"{Environment.NewLine}*Expenses:*{Environment.NewLine}";
                 expenses += $"*Taxes:* ${Taxes}{Environment.NewLine}";
                 if (Mortgage > 0) expenses += $"*Mortgage/Rent Pay:* ${Mortgage}{Environment.NewLine}";
                 if (SchoolLoan > 0) expenses += $"*School Loan Pay:* ${SchoolLoan}{Environment.NewLine}";
