@@ -24,6 +24,7 @@ namespace CashFlowBot.DataBase
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Liabilities} ({CreateColumns.Liabilities});");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Assets} ({CreateColumns.Assets});");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.AvailableAssets} ({CreateColumns.AvailableAssets});");
     }
 
     public static void Execute(string sql)
@@ -134,6 +135,7 @@ namespace CashFlowBot.DataBase
             public static string Expenses = "Expenses";
             public static string Liabilities = "Liabilities";
             public static string Assets = "Assets";
+            public static string AvailableAssets = "AvailableAssets";
         }
 
         public static class DefaultValues
@@ -145,6 +147,7 @@ namespace CashFlowBot.DataBase
             public static string Expenses = GetDefaults(CreateColumns.Expenses);
             public static string Liabilities = GetDefaults(CreateColumns.Liabilities);
             public static string Assets = GetDefaults(CreateColumns.Assets);
+            public static string AvailableAssets = GetDefaults(CreateColumns.AvailableAssets);
         }
 
         public static class ColumnNames
@@ -156,6 +159,7 @@ namespace CashFlowBot.DataBase
             public static string Expenses = GetColumns(CreateColumns.Expenses);
             public static string Liabilities = GetColumns(CreateColumns.Liabilities);
             public static string Assets = GetColumns(CreateColumns.Assets);
+            public static string AvailableAssets = GetColumns(CreateColumns.AvailableAssets);
         }
 
         public static class CreateColumns
@@ -172,6 +176,8 @@ namespace CashFlowBot.DataBase
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
 
             public static string Assets = "AssetID Number, UserID Number, Type Number, Title Text, Price Number, Qtty Number";
+
+            public static string AvailableAssets = "Type Number, Value Text";
         }
     }
 }

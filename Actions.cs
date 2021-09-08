@@ -28,9 +28,11 @@ namespace CashFlowBot
         public static void BuyStocks(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Stage = Stage.BuyStocksTitle;
+            var stocks = AvailableAssets.Get(AssetType.Stock);
 
-            bot.SendMessage(user.Id, "Title:");
+            stocks.Add("Cancel");
+            user.Stage = Stage.BuyStocksTitle;
+            bot.SetButtons(user.Id, "Title:", stocks);
         }
 
         public static void BuyStocks(TelegramBotClient bot, long userId, string value)
@@ -38,32 +40,36 @@ namespace CashFlowBot
             var user = new User(userId);
             var title = value.Trim().ToUpper();
             var number = value.ToInt();
+            var prices = AvailableAssets.Get(AssetType.StockPrice).ToList();
+            prices.Add("Cancel");
 
             switch (user.Stage)
             {
                 case Stage.BuyStocksTitle:
+
                     user.Stage = Stage.BuyStocksPrice;
                     user.Person.Assets.Add(title, AssetType.Stock);
-                    bot.SendMessage(user.Id, "Price:");
+                    bot.SetButtons(user.Id, "Price?", prices);
                     return;
 
                 case Stage.BuyStocksPrice:
                     if (number <= 0)
                     {
-                        bot.SendMessage(user.Id, "Invalid value. Try again.");
+                        bot.SetButtons(user.Id, "Invalid price value. Try again.", prices);
                         return;
                     }
 
                     user.Person.Assets.Items.First(a => a.Price == 0).Price = number;
-
                     user.Stage = Stage.BuyStocksQtty;
-                    bot.SendMessage(user.Id, "Quantity:");
+
+                    int upToQtty = user.Person.Cash / number;
+                    bot.SetButtons(user.Id, $"You can buy up to {upToQtty} stocks. How much stocks would you like to buy?", upToQtty.ToString(), "Cancel");
                     return;
 
                 case Stage.BuyStocksQtty:
                     if (number <= 0)
                     {
-                        bot.SendMessage(user.Id, "Invalid value. Try again.");
+                        bot.SendMessage(user.Id, "Invalid quantity value. Try again.");
                         return;
                     }
 
@@ -71,7 +77,7 @@ namespace CashFlowBot
 
                     var totalPrice = asset.Price * number;
                     var availableCash = user.Person.Cash;
-                    int availableQtty = user.Person.Cash / asset.Price;
+                    int availableQtty = availableCash / asset.Price;
 
                     if (totalPrice > availableCash)
                     {
@@ -83,6 +89,10 @@ namespace CashFlowBot
                     asset.Qtty = number;
                     user.Person.Cash -= totalPrice;
                     user.Stage = Stage.Nothing;
+
+                    AvailableAssets.Add(asset.Title, AssetType.Stock);
+                    AvailableAssets.Add(asset.Price, AssetType.StockPrice);
+
                     SetDefaultButtons(bot, user, "Done.");
                     return;
             }
@@ -94,6 +104,7 @@ namespace CashFlowBot
             var stocks = user.Person.Assets.Items
                 .Where(x => x.Type == AssetType.Stock)
                 .Select(x => x.Title)
+                .Distinct()
                 .ToList();
 
             stocks.Add("Cancel");
@@ -101,7 +112,7 @@ namespace CashFlowBot
             if (stocks.Count > 1)
             {
                 user.Stage = Stage.SellStocksTitle;
-                bot.SetButtons(user.Id, "What stocks do you want to sell?", stocks.ToArray());
+                bot.SetButtons(user.Id, "What stocks do you want to sell?", stocks);
             }
             else
             {
@@ -116,13 +127,15 @@ namespace CashFlowBot
             var title = value.Trim().ToUpper();
             var number = value.ToInt();
             var stocks = user.Person.Assets.Items.Where(x => x.Type == AssetType.Stock).ToList();
+            var prices = AvailableAssets.Get(AssetType.StockPrice).ToList();
+            prices.Add("Cancel");
 
             switch (user.Stage)
             {
                 case Stage.SellStocksTitle:
-                    var stock = stocks.FirstOrDefault(x => x.Title == title);
+                    var assets = stocks.Where(x => x.Title == title).ToList();
 
-                    if (stock == null)
+                    if (!assets.Any())
                     {
                         user.Stage = Stage.Nothing;
                         SetDefaultButtons(bot, user, "Invalid stocks name.");
@@ -130,22 +143,25 @@ namespace CashFlowBot
                     }
 
                     user.Stage = Stage.SellStocksPrice;
-                    stock.Title += "*";
-                    bot.SetButtons(user.Id, "Price:", "1", "5", "10", "20", "30", "40", "50");
+                    assets.ForEach(x => x.Title += "*");
+                    bot.SetButtons(user.Id, "Price:", prices);
                     return;
 
                 case Stage.SellStocksPrice:
-                    var asset = stocks.First(x => x.Title.EndsWith("*"));
+                    var stocksToSell = stocks.Where(x => x.Title.EndsWith("*")).ToList();
+                    var qtty = stocksToSell.Sum(x => x.Qtty);
 
                     if (number <= 0)
                     {
-                        bot.SetButtons(user.Id, "Invalid price value. Try again.", "1", "5", "10", "20", "30", "40", "50");
+                        bot.SetButtons(user.Id, "Invalid price value. Try again.", prices);
                         return;
                     }
 
-                    user.Person.Cash += asset.Qtty * number;
+                    user.Person.Cash += qtty * number;
                     user.Stage = Stage.Nothing;
-                    asset.Delete();
+                    stocksToSell.ForEach(x => x.Delete());
+
+                    AvailableAssets.Add(number, AssetType.StockPrice);
 
                     SetDefaultButtons(bot, user, "Done.");
                     return;
@@ -248,24 +264,24 @@ namespace CashFlowBot
             user.Person.Expenses.Clear();
             user.Stage = Stage.Nothing;
 
-            bot.SendMessage(userId, "Done");
+            Start(bot, user.Id);
         }
 
         public static void Start(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            var professions = string.Join(Environment.NewLine, Persons.Items.Select(x => x.Profession));
+            var professions = Persons.Items.Select(x => x.Profession).ToArray();
 
             if (!user.Exists) { user.Create(); }
 
             if (user.Person.Exists)
             {
-                bot.SendMessage(user.Id, "Please stop current game before starting a new one.");
+                bot.SetButtons(user.Id, "Please stop current game before starting a new one.", "Stop game", "Cancel");
                 return;
             }
 
             user.Stage = Stage.GetProfession;
-            bot.SendMessage(user.Id, $"Choose your *profession*:{Environment.NewLine}{professions}");
+            bot.SetButtons(user.Id, "Choose your *profession*", professions);
         }
 
         public static void SetProfession(TelegramBotClient bot, long userId, string profession)

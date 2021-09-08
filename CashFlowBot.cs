@@ -46,6 +46,7 @@ namespace CashFlowBot
                         Actions.Start(Bot, message.Chat.Id);
                         return;
 
+                    case "stop game":
                     case "/clear":
                         Actions.Clear(Bot, message.Chat.Id);
                         return;

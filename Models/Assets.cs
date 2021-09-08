@@ -18,7 +18,7 @@ namespace CashFlowBot.Models
                 .ToList();
 
         public string Description => Items.Any()
-            ? $"{Environment.NewLine}*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.Select(x => x.Description))}"
+            ? $"{Environment.NewLine}{Environment.NewLine}*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.Select(x => x.Description))}"
             : string.Empty;
 
         public void Add(string title, AssetType type)

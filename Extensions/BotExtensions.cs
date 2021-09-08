@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -7,6 +8,9 @@ namespace CashFlowBot.Extensions
 {
     public static class BotExtensions
     {
+        public static void SetButtons(this TelegramBotClient bot, long userId, string message, List<string> buttons) =>
+            bot.SetButtons(userId, message, buttons.ToArray());
+
         public static async void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons)
         {
             var rkm = new ReplyKeyboardMarkup
