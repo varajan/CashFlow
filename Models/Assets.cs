@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 
@@ -12,7 +13,7 @@ namespace CashFlowBot.Models
         public Assets(long id) => Id = id;
 
         public List<Asset> Items =>
-            DB.GetColumn($"SELECT ID FROM {DB.Tables.Assets} WHERE UserId = {Id}")
+            DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
                 .ToList();
 
@@ -20,10 +21,10 @@ namespace CashFlowBot.Models
             ? $"*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.Select(x => x.Description))}"
             : string.Empty;
 
-        public void Add(string title)
+        public void Add(string title, AssetType type)
         {
-            int newId = DB.GetValue($"SELECT MAX(ID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, '{title}', 0, 0)");
+            int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
+            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, '{title}', 0, 0)");
         }
     }
 }

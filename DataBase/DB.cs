@@ -171,7 +171,7 @@ namespace CashFlowBot.DataBase
             private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan" };
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
 
-            public static string Assets = "ID Number, UserId Number, Title Text, Price Number, Qtty Number";
+            public static string Assets = "AssetID Number, UserID Number, Type Number, Title Text, Price Number, Qtty Number";
         }
     }
 }

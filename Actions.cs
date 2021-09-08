@@ -12,7 +12,7 @@ namespace CashFlowBot
         public static void Buy(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Stage = Stages.Buy;
+            user.Stage = Stage.Buy;
 
             bot.SetButtons(user.Id, "What to buy?", "Stocks", "Business", "Apartment", "Other");
         }
@@ -20,7 +20,7 @@ namespace CashFlowBot
         public static void BuyStocks(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Stage = Stages.BuyStocksTitle;
+            user.Stage = Stage.BuyStocksTitle;
 
             bot.SendMessage(user.Id, "Title:");
         }
@@ -28,18 +28,18 @@ namespace CashFlowBot
         public static void BuyStocks(TelegramBotClient bot, long userId, string value)
         {
             var user = new User(userId);
-
+            var title = value.Trim().ToUpper();
             var number = value.ToInt();
 
             switch (user.Stage)
             {
-                case Stages.BuyStocksTitle:
-                    user.Stage = Stages.BuyStocksPrice;
-                    user.Person.Assets.Add(value.Trim().ToUpper());
+                case Stage.BuyStocksTitle:
+                    user.Stage = Stage.BuyStocksPrice;
+                    user.Person.Assets.Add(title, AssetType.Stock);
                     bot.SendMessage(user.Id, "Price:");
                     return;
 
-                case Stages.BuyStocksPrice:
+                case Stage.BuyStocksPrice:
                     if (number <= 0)
                     {
                         bot.SendMessage(user.Id, "Invalid value. Try again.");
@@ -48,11 +48,11 @@ namespace CashFlowBot
 
                     user.Person.Assets.Items.First(a => a.Price == 0).Price = number;
 
-                    user.Stage = Stages.BuyStocksQtty;
+                    user.Stage = Stage.BuyStocksQtty;
                     bot.SendMessage(user.Id, "Quantity:");
                     return;
 
-                case Stages.BuyStocksQtty:
+                case Stage.BuyStocksQtty:
                     if (number <= 0)
                     {
                         bot.SendMessage(user.Id, "Invalid value. Try again.");
@@ -74,7 +74,7 @@ namespace CashFlowBot
 
                     asset.Qtty = number;
                     user.Person.Cash -= totalPrice;
-                    user.Stage = Stages.Nothing;
+                    user.Stage = Stage.Nothing;
                     SetDefaultButtons(bot, user, "Done.");
                     return;
             }
@@ -99,7 +99,7 @@ namespace CashFlowBot
         {
             var user = new User(userId);
 
-            user.Stage = Stages.GetCredit;
+            user.Stage = Stage.GetCredit;
             bot.SendMessage(user.Id, "How much?");
         }
 
@@ -117,7 +117,7 @@ namespace CashFlowBot
             user.Person.Cash += amount;
             user.Person.Expenses.BankLoan += amount / 10;
             user.Person.Liabilities.BankLoan += amount;
-            user.Stage = Stages.Nothing;
+            user.Stage = Stage.Nothing;
             bot.SendMessage(user.Id, $"Ok, you've got ${amount}");
         }
 
@@ -131,7 +131,7 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Stage = Stages.PayCredit;
+            user.Stage = Stage.PayCredit;
             bot.SendMessage(user.Id, "How much?");
         }
 
@@ -157,14 +157,14 @@ namespace CashFlowBot
             user.Person.Cash -= amount;
             user.Person.Expenses.BankLoan -= amount / 10;
             user.Person.Liabilities.BankLoan -= amount;
-            user.Stage = Stages.Nothing;
+            user.Stage = Stage.Nothing;
             bot.SendMessage(user.Id, $"Ok, you've payed ${amount}");
         }
 
         public static void Cancel(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Stage = Stages.Nothing;
+            user.Stage = Stage.Nothing;
 
             SetDefaultButtons(bot, user, "Canceled");
         }
@@ -174,7 +174,7 @@ namespace CashFlowBot
             var user = new User(userId);
             user.Person.Clear();
             user.Person.Expenses.Clear();
-            user.Stage = Stages.Nothing;
+            user.Stage = Stage.Nothing;
 
             bot.SendMessage(userId, "Done");
         }
@@ -192,7 +192,7 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Stage = Stages.GetProfession;
+            user.Stage = Stage.GetProfession;
             bot.SendMessage(user.Id, $"Choose your *profession*:{Environment.NewLine}{professions}");
         }
 
@@ -207,7 +207,7 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Stage = Stages.Nothing;
+            user.Stage = Stage.Nothing;
             user.Person.Create(profession);
 
             SetDefaultButtons(bot, user, $"Welcome, {user.Person.Profession}!");

@@ -78,12 +78,12 @@ namespace CashFlowBot
                         return;
 
                     case "stocks":
-                        if (user.Stage == Stages.Buy)
+                        if (user.Stage == Stage.Buy)
                         {
                             Actions.BuyStocks(Bot, message.Chat.Id);
                         }
 
-                        if (user.Stage == Stages.Sell)
+                        if (user.Stage == Stage.Sell)
                         {
                             //Actions.SellStocks(Bot, message.Chat.Id);
                         }
@@ -95,21 +95,21 @@ namespace CashFlowBot
 
                 switch (user.Stage)
                 {
-                    case Stages.GetProfession:
+                    case Stage.GetProfession:
                         Actions.SetProfession(Bot, user.Id, message.Text.Trim().ToLower());
                         return;
 
-                    case Stages.GetCredit:
+                    case Stage.GetCredit:
                         Actions.GetCredit(Bot, user.Id, message.Text.Trim());
                         return;
 
-                    case Stages.PayCredit:
+                    case Stage.PayCredit:
                         Actions.PayCredit(Bot, user.Id, message.Text.Trim());
                         return;
 
-                    case Stages.BuyStocksQtty:
-                    case Stages.BuyStocksTitle:
-                    case Stages.BuyStocksPrice:
+                    case Stage.BuyStocksQtty:
+                    case Stage.BuyStocksTitle:
+                    case Stage.BuyStocksPrice:
                         Actions.BuyStocks(Bot, user.Id, message.Text.Trim());
                         return;
                 }
@@ -129,7 +129,7 @@ namespace CashFlowBot
 
                 //await Bot.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
 
-                //if (user.Stage == Stages.GetProfession)
+                //if (user.Stage == Stage.GetProfession)
                 //{
                 //    Actions.SetProfession(Bot, user.Id, callbackQuery.Data.Trim().ToLower());
                 //    return;

@@ -1,6 +1,6 @@
 ﻿namespace CashFlowBot.Data
 {
-    public enum Stages
+    public enum Stage
     {
         Nothing,
         GetProfession,
