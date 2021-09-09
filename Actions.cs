@@ -160,6 +160,52 @@ namespace CashFlowBot
             }
         }
 
+        public static void ReduceLiabilities(TelegramBotClient bot, long userId, Stage stage)
+        {
+            var user = new User(userId);
+
+            if (user.Person.Cash < 1000)
+            {
+                Cancel(bot, user.Id);
+                return;
+            }
+
+            user.Stage = stage;
+            int cost = 0;
+
+            switch (stage)
+            {
+                case Stage.ReduceMortgage:
+                    cost = user.Person.Liabilities.Mortgage;
+                    break;
+
+                case Stage.ReduceSchoolLoan:
+                    cost = user.Person.Liabilities.SchoolLoan;
+                    break;
+
+                case Stage.ReduceCarLoan:
+                    cost = user.Person.Liabilities.CarLoan;
+                    break;
+
+                case Stage.ReduceCreditCard:
+                    cost = user.Person.Liabilities.CreditCard;
+                    break;
+
+                case Stage.ReduceBankLoan:
+                    cost = user.Person.Liabilities.BankLoan;
+                    break;
+            }
+
+            var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash/1000*1000 }
+                .Where(x => x <= user.Person.Cash && x <= cost)
+                .OrderBy(x => x)
+                .Select(x => x.ToString())
+                .ToList();
+            buttons.Add("Cancel");
+
+            bot.SetButtons(user.Id, "How much would you pay?", buttons);
+        }
+
         public static void ReduceLiabilities(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
@@ -196,6 +242,13 @@ namespace CashFlowBot
             {
                 buttons.Add("Bank Loan");
                 liabilities += $"*Bank Loan:* ${l.BankLoan} - ${x.BankLoan} monthly{Environment.NewLine}";
+            }
+
+            if (user.Person.Cash < 1000)
+            {
+                bot.SendMessage(user.Id, liabilities);
+                SetDefaultButtons(bot, user, $"You don't have money to reduce liabilities, your balance is ${user.Person.Cash}");
+                return;
             }
 
             if (buttons.Any())
@@ -241,24 +294,11 @@ namespace CashFlowBot
             SetDefaultButtons(bot, user, $"Ok, you've got ${amount}");
         }
 
-        public static void PayCredit(TelegramBotClient bot, long userId)
-        {
-            var user = new User(userId);
-
-            if (user.Person.Expenses.BankLoan == 0)
-            {
-                bot.SendMessage(user.Id, "You have no credit.");
-                return;
-            }
-
-            user.Stage = Stage.PayCredit;
-            bot.SendMessage(user.Id, "How much?");
-        }
-
-        public static void PayCredit(TelegramBotClient bot, long userId, string value)
+        public static void PayCredit(TelegramBotClient bot, long userId, string value, Stage stage)
         {
             var user = new User(userId);
             var amount = value.ToInt();
+            int expenses;
 
             if (amount % 1000 > 0 || amount < 1000)
             {
@@ -266,19 +306,61 @@ namespace CashFlowBot
                 return;
             }
 
-            amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
-
             if (amount > user.Person.Cash)
             {
                 bot.SendMessage(user.Id, $"Cannot pay ${amount}, you have ${user.Person.Cash} only.");
                 return;
             }
 
-            user.Person.Cash -= amount;
-            user.Person.Expenses.BankLoan -= amount / 10;
-            user.Person.Liabilities.BankLoan -= amount;
-            user.Stage = Stage.Nothing;
-            bot.SendMessage(user.Id, $"Ok, you've payed ${amount}");
+            switch (stage)
+            {
+                case Stage.ReduceMortgage:
+                    amount = Math.Min(amount, user.Person.Liabilities.Mortgage);
+                    expenses = user.Person.Expenses.Mortgage * amount / user.Person.Liabilities.Mortgage;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.Mortgage -= expenses;
+                    user.Person.Liabilities.Mortgage -= amount;
+                    break;
+
+                case Stage.ReduceSchoolLoan:
+                    amount = Math.Min(amount, user.Person.Liabilities.SchoolLoan);
+                    expenses = user.Person.Expenses.SchoolLoan * amount / user.Person.Liabilities.SchoolLoan;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.SchoolLoan -= expenses;
+                    user.Person.Liabilities.SchoolLoan -= amount;
+                    break;
+
+                case Stage.ReduceCarLoan:
+                    amount = Math.Min(amount, user.Person.Liabilities.CarLoan);
+                    expenses = user.Person.Expenses.CarLoan * amount / user.Person.Liabilities.CarLoan;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.CarLoan -= expenses;
+                    user.Person.Liabilities.CarLoan -= amount;
+                    break;
+
+                case Stage.ReduceCreditCard:
+                    amount = Math.Min(amount, user.Person.Liabilities.CreditCard);
+                    expenses = user.Person.Expenses.CreditCard * amount / user.Person.Liabilities.CreditCard;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.CreditCard -= expenses;
+                    user.Person.Liabilities.CreditCard -= amount;
+                    break;
+
+                case Stage.ReduceBankLoan:
+                    amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
+                    expenses = amount / 10;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.BankLoan -= expenses;
+                    user.Person.Liabilities.BankLoan -= amount;
+                    break;
+            }
+
+            Cancel(bot, user.Id);
         }
 
         public static void Cancel(TelegramBotClient bot, long userId)
@@ -364,8 +446,7 @@ namespace CashFlowBot
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
                     new List<KeyboardButton>{"Show my Data"},
-                    new List<KeyboardButton>{"Get money", "Give money"},
-                    new List<KeyboardButton>{"Get credit", "Pay credit"},
+                    new List<KeyboardButton>{"Get money", "Give money", "Get credit"},
                     new List<KeyboardButton>{"Buy stocks", "Sell stocks"},
                     new List<KeyboardButton>{"Add child", "Reduce Liabilities"},
                     new List<KeyboardButton>{"Stop game"}

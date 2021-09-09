@@ -74,16 +74,32 @@ namespace CashFlowBot
                         Actions.ReduceLiabilities(Bot, user.Id);
                         return;
 
+                    case "mortgage":
+                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceMortgage);
+                        return;
+
+                    case "school loan":
+                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceSchoolLoan);
+                        return;
+
+                    case "car loan":
+                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceCarLoan);
+                        return;
+
+                    case "credit card":
+                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceCreditCard);
+                        return;
+
+                    case "bank loan":
+                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceBankLoan);
+                        return;
+
                     case "show my data":
                         Actions.ShowData(Bot, user.Id);
                         return;
 
                     case "get credit":
                         Actions.GetCredit(Bot, user.Id);
-                        return;
-
-                    case "pay credit":
-                        Actions.PayCredit(Bot, user.Id);
                         return;
 
                     case "buy stocks":
@@ -105,8 +121,12 @@ namespace CashFlowBot
                         Actions.GetCredit(Bot, user.Id, message.Text.Trim());
                         return;
 
-                    case Stage.PayCredit:
-                        Actions.PayCredit(Bot, user.Id, message.Text.Trim());
+                    case Stage.ReduceMortgage:
+                    case Stage.ReduceSchoolLoan:
+                    case Stage.ReduceCarLoan:
+                    case Stage.ReduceCreditCard:
+                    case Stage.ReduceBankLoan:
+                        Actions.PayCredit(Bot, user.Id, message.Text.Trim(), user.Stage);
                         return;
 
                     case Stage.BuyStocksTitle:
