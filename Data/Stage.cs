@@ -25,5 +25,7 @@
         Sell,
         SellStocksTitle,
         SellStocksPrice,
+        SellPropertyTitle,
+        SellPropertyPrice,
     }
 }

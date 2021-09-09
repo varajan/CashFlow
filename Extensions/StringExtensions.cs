@@ -7,6 +7,7 @@ namespace CashFlowBot.Extensions
 {
     public static class StringExtensions
     {
+        public static int AsCurrency(this string value) => value.Replace("$", "").Replace(" ", "").ToInt();
         public static string AsCurrency(this int value) => $"${value:n0}";
         public static string SubStringTo(this string line, string to) => line.Contains(to) ? line.Split(to).First() : line;
 

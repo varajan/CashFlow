@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using CashFlowBot.Data;
+using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -18,7 +19,6 @@ namespace CashFlowBot
 
             Bot.OnMessage       += BotOnMessageReceived;
             Bot.OnMessageEdited += BotOnMessageReceived;
-            Bot.OnCallbackQuery += BotOnCallbackQueryReceived;
             Bot.OnReceiveError  += BotOnReceiveError;
 
             Bot.StartReceiving(Array.Empty<UpdateType>());
@@ -48,7 +48,7 @@ namespace CashFlowBot
 
                     case "get money":
                         Actions.Ask(Bot, user.Id, Stage.GetMoney,
-                            $"Your Cash Flow is ${user.Person.CashFlow}. How much should you get?", "1000", "2000", "5000", user.Person.CashFlow.ToString());
+                            $"Your Cash Flow is ${user.Person.CashFlow}. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
                     case "add child":
@@ -115,8 +115,7 @@ namespace CashFlowBot
                         return;
 
                     case "sell property":
-                        throw new NotImplementedException("sell property");
-                        //Actions.SellProperty(Bot, user.Id);
+                        Actions.SellProperty(Bot, user.Id);
                         return;
                 }
 
@@ -159,33 +158,16 @@ namespace CashFlowBot
                     case Stage.BuyPropertyCashFlow:
                         Actions.BuyProperty(Bot, user.Id, message.Text.Trim());
                         return;
+
+                    case Stage.SellPropertyTitle:
+                    case Stage.SellPropertyPrice:
+                        Actions.SellProperty(Bot, user.Id, message.Text.Trim());
+                        return;
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
-            }
-        }
-
-        private static async void BotOnCallbackQueryReceived(object sender, CallbackQueryEventArgs callbackQueryEventArgs)
-        {
-            try
-            {
-                var callbackQuery = callbackQueryEventArgs.CallbackQuery;
-                //var user = new User(callbackQuery.Message.Chat.Id);
-
-                //await Bot.SendChatActionAsync(callbackQuery.Message.Chat.Id, ChatAction.Typing);
-
-                //if (user.Stage == Stage.GetProfession)
-                //{
-                //    Actions.SetProfession(Bot, user.Id, callbackQuery.Data.Trim().ToLower());
-                //    return;
-                //}
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
             }
         }
 

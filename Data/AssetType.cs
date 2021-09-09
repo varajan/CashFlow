@@ -6,7 +6,8 @@
         StockPrice,
         Property,
         PropertyType,
-        PropertyPrice,
+        PropertyBuyPrice,
+        PropertySellPrice,
         PropertyFirstPayment,
         PropertyCashFlow,
     }

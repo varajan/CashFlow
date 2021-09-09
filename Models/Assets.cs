@@ -15,14 +15,10 @@ namespace CashFlowBot.Models
 
         public void CleanUp()
         {
-            Items
-                .Where(x => x.Type == AssetType.Stock)
-                .ForEach(x => x.Title.SubStringTo("*"));
+            Properties.ForEach(x => x.Title = x.Title.SubStringTo("*"));
 
-            Items
-                .Where(x => x.Type == AssetType.Stock)
-                .Where(x => x.Price ==0 || x.Qtty == 0)
-                .ForEach(x => x.Delete());
+            Stocks.ForEach(x => x.Title = x.Title.SubStringTo("*"));
+            Stocks.Where(x => x.Price ==0 || x.Qtty == 0).ForEach(x => x.Delete());
         }
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();

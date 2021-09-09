@@ -31,8 +31,8 @@ namespace CashFlowBot
         {
             var user = new User(userId);
             var title = value.Trim().ToUpper();
-            var number = value.ToInt();
-            var prices = AvailableAssets.Get(AssetType.PropertyPrice).Append("Cancel");
+            var number = value.AsCurrency();
+            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).Append("Cancel");
             var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).Append("Cancel");
             var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).Append("Cancel");
 
@@ -77,11 +77,73 @@ namespace CashFlowBot
                     user.Stage = Stage.BuyPropertyCashFlow;
 
                     AvailableAssets.Add(property.Title, AssetType.PropertyType);
-                    AvailableAssets.Add(property.Cost, AssetType.PropertyPrice);
+                    AvailableAssets.Add(property.Cost, AssetType.PropertyBuyPrice);
                     AvailableAssets.Add(property.Cost-property.Mortgage, AssetType.PropertyFirstPayment);
                     AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
 
                     SetDefaultButtons(bot, user, "Done");
+                    return;
+            }
+        }
+
+        public static void SellProperty(TelegramBotClient bot, long userId)
+        {
+            var user = new User(userId);
+            var properties = user.Person.Assets.Properties;
+
+            if (properties.Any())
+            {
+                var propertyIds = new List<string>();
+                var propertyList = string.Empty;
+
+                for (int i = 0; i < properties.Count; i++)
+                {
+                    propertyIds.Add($"#{i+1}");
+                    propertyList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
+                }
+
+                propertyIds.Add("Cancel");
+                user.Stage = Stage.SellPropertyTitle;
+
+                bot.SetButtons(user.Id, $"What property do you want to sell?{Environment.NewLine}{propertyList}", propertyIds);
+                return;
+            }
+
+            SetDefaultButtons(bot, user, "You have no properties.");
+        }
+
+        public static void SellProperty(TelegramBotClient bot, long userId, string value)
+        {
+            var user = new User(userId);
+            var properties = user.Person.Assets.Properties;
+            var prices = AvailableAssets.Get(AssetType.PropertySellPrice).AsCurrency().Append("Cancel");
+
+            switch (user.Stage)
+            {
+                case Stage.SellPropertyTitle:
+                    var index = value.Replace("#", "").ToInt();
+
+                    if (index < 1 || index > properties.Count)
+                    {
+                        bot.SendMessage(user.Id, "Invalid property number.");
+                        return;
+                    }
+
+                    properties[index - 1].Title += "*";
+                    user.Stage = Stage.SellPropertyPrice;
+                    bot.SetButtons(user.Id, "What is the price?", prices);
+                    return;
+
+                case Stage.SellPropertyPrice:
+                    var price = value.AsCurrency();
+                    var property = properties.First(x => x.Title.EndsWith("*"));
+
+                    user.Person.Cash += price - property.Mortgage;
+                    property.Delete();
+
+                    AvailableAssets.Add(price, AssetType.PropertySellPrice);
+
+                    SetDefaultButtons(bot, user, "Done.");
                     return;
             }
         }
@@ -106,8 +168,8 @@ namespace CashFlowBot
         {
             var user = new User(userId);
             var title = value.Trim().ToUpper();
-            var number = value.ToInt();
-            var prices = AvailableAssets.Get(AssetType.StockPrice).ToList();
+            var number = value.AsCurrency();
+            var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
             prices.Add("Cancel");
 
             switch (user.Stage)
@@ -173,9 +235,8 @@ namespace CashFlowBot
             var stocks = user.Person.Assets.Stocks
                 .Select(x => x.Title)
                 .Distinct()
+                .Append("Cancel")
                 .ToList();
-
-            stocks.Add("Cancel");
 
             if (stocks.Count > 1)
             {
@@ -192,9 +253,9 @@ namespace CashFlowBot
         {
             var user = new User(userId);
             var title = value.Trim().ToUpper();
-            var number = value.ToInt();
+            var number = value.AsCurrency();
             var stocks = user.Person.Assets.Stocks;
-            var prices = AvailableAssets.Get(AssetType.StockPrice).ToList();
+            var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
             prices.Add("Cancel");
 
             switch (user.Stage)
@@ -352,7 +413,7 @@ namespace CashFlowBot
 
         public static void GetMoney(TelegramBotClient bot, long userId, string value)
         {
-            var amount = value.Replace(" ", "").ToInt();
+            var amount = value.AsCurrency();
             var user = new User(userId);
             user.Person.Cash += amount;
 
@@ -362,7 +423,7 @@ namespace CashFlowBot
         public static void GetCredit(TelegramBotClient bot, long userId, string value)
         {
             var user = new User(userId);
-            var amount = value.Replace(" ", "").ToInt();
+            var amount = value.AsCurrency();
 
             if (amount % 1000 > 0 || amount < 1000)
             {

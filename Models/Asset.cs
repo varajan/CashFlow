@@ -27,7 +27,7 @@ namespace CashFlowBot.Models
                     return $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
 
                     case AssetType.Property:
-                    return $"*{Title}* - Mortgage: {Mortgage.AsCurrency()}, cash flow: {CashFlow.AsCurrency()}";
+                    return $"*{Title}* - Price: {Price.AsCurrency()}, Mortgage: {Mortgage.AsCurrency()}, cash flow: {CashFlow.AsCurrency()}";
 
                     default:
                         return string.Empty;
