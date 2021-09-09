@@ -48,7 +48,7 @@ namespace CashFlowBot
 
                     case "get money":
                         Actions.Ask(Bot, user.Id, Stage.GetMoney,
-                            $"Hey {user.Person.Profession}, your cash flow is ${user.Person.CashFlow}. Get money?", "Yes");
+                            $"Your Cash Flow is ${user.Person.CashFlow}. How much should you get?", "1000", "2000", "5000", user.Person.CashFlow.ToString());
                         return;
 
                     case "add child":
@@ -109,6 +109,14 @@ namespace CashFlowBot
                     case "sell stocks":
                         Actions.SellStocks(Bot, user.Id);
                         return;
+
+                    case "buy property":
+                        Actions.BuyProperty(Bot, user.Id);
+                        return;
+
+                    case "sell property":
+                        Actions.SellProperty(Bot, user.Id);
+                        return;
                 }
 
                 switch (user.Stage)
@@ -119,6 +127,10 @@ namespace CashFlowBot
 
                     case Stage.GetCredit:
                         Actions.GetCredit(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stage.GetMoney:
+                        Actions.GetMoney(Bot, user.Id, message.Text.Trim());
                         return;
 
                     case Stage.ReduceMortgage:

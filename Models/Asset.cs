@@ -24,6 +24,10 @@ namespace CashFlowBot.Models
         public int Price { get => GetInt("Price"); set => Set("Price", value); }
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
 
+        public int Cost { get => GetInt("Cost"); set => Set("Cost", value); }
+        public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
+        public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
+
         public void Delete() => DB.Execute($"DELETE FROM {Table} WHERE AssetID = {Id} AND UserID = {UserId}");
     }
 }

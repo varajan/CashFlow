@@ -8,7 +8,7 @@ namespace CashFlowBot.Extensions
 {
     public static class BotExtensions
     {
-        public static void SetButtons(this TelegramBotClient bot, long userId, string message, List<string> buttons) =>
+        public static void SetButtons(this TelegramBotClient bot, long userId, string message, IEnumerable<string> buttons) =>
             bot.SetButtons(userId, message, buttons.ToArray());
 
         public static async void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons)

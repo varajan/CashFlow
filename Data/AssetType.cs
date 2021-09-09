@@ -4,5 +4,10 @@
     {
         Stock,
         StockPrice,
+        Property,
+        PropertyType,
+        PropertyPrice,
+        PropertyFirstPayment,
+        PropertyCashFlow,
     }
 }
