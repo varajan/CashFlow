@@ -33,14 +33,16 @@ namespace CashFlowBot.Models
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
                 .ToList();
 
+        public int Income => Properties.Sum(x => x.CashFlow);
+
         public string Description => Items.Any()
-            ? $"{Environment.NewLine}{Environment.NewLine}*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.Select(x => x.Description))}"
+            ? $"{Environment.NewLine}{Environment.NewLine}*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
             : string.Empty;
 
         public void Add(string title, AssetType type)
         {
             int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, '{title}', 0, 0)");
+            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, '{title}', 0, 0, 0, 0, 0)");
         }
     }
 }

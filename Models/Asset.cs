@@ -17,7 +17,23 @@ namespace CashFlowBot.Models
 
         public Asset(long userId, int id) => (UserId, Id, Table) = (userId, id, DB.Tables.Assets);
 
-        public string Description => $"*{Title}* - {Qtty} @ ${Price}";
+        public string Description
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case AssetType.Stock:
+                    return $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
+
+                    case AssetType.Property:
+                    return $"*{Title}* - Mortgage: {Mortgage.AsCurrency()}, cash flow: {CashFlow.AsCurrency()}";
+
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
 
         public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value);}
         public string Title { get => Get("Title"); set => Set("Title", value); }

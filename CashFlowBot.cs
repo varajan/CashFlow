@@ -115,7 +115,8 @@ namespace CashFlowBot
                         return;
 
                     case "sell property":
-                        Actions.SellProperty(Bot, user.Id);
+                        throw new NotImplementedException("sell property");
+                        //Actions.SellProperty(Bot, user.Id);
                         return;
                 }
 
@@ -150,6 +151,13 @@ namespace CashFlowBot
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
                         Actions.SellStocks(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stage.BuyPropertyTitle:
+                    case Stage.BuyPropertyPrice:
+                    case Stage.BuyPropertyFirstPayment:
+                    case Stage.BuyPropertyCashFlow:
+                        Actions.BuyProperty(Bot, user.Id, message.Text.Trim());
                         return;
                 }
             }

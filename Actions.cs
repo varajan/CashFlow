@@ -27,7 +27,6 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "Title:", properties.Append("Cancel"));
         }
 
-
         public static void BuyProperty(TelegramBotClient bot, long userId, string value)
         {
             var user = new User(userId);
@@ -77,6 +76,7 @@ namespace CashFlowBot
                     property.CashFlow = number;
                     user.Stage = Stage.BuyPropertyCashFlow;
 
+                    AvailableAssets.Add(property.Title, AssetType.PropertyType);
                     AvailableAssets.Add(property.Cost, AssetType.PropertyPrice);
                     AvailableAssets.Add(property.Cost-property.Mortgage, AssetType.PropertyFirstPayment);
                     AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
@@ -151,7 +151,7 @@ namespace CashFlowBot
                     if (totalPrice > availableCash)
                     {
                         bot.SendMessage(user.Id,
-                        $"{number} x ${asset.Price} = {totalPrice}. You have only ${availableCash}." +
+                        $"{number} x {asset.Price.AsCurrency()} = {totalPrice}. You have only {availableCash.AsCurrency()}." +
                         $"You can buy {availableQtty} stocks. So, what quantity of stocks do you want to buy?");
                         return;
                     }
@@ -290,37 +290,37 @@ namespace CashFlowBot
             if (l.Mortgage > 0)
             {
                 buttons.Add("Mortgage");
-                liabilities += $"*Mortgage:* ${l.Mortgage} - ${x.Mortgage} monthly{Environment.NewLine}";
+                liabilities += $"*Mortgage:* {l.Mortgage.AsCurrency()} - {x.Mortgage.AsCurrency()} monthly{Environment.NewLine}";
             }
 
             if (l.SchoolLoan > 0)
             {
                 buttons.Add("School Loan");
-                liabilities += $"*School Loan:* ${l.SchoolLoan} - ${x.SchoolLoan} monthly{Environment.NewLine}";
+                liabilities += $"*School Loan:* {l.SchoolLoan.AsCurrency()} - {x.SchoolLoan.AsCurrency()} monthly{Environment.NewLine}";
             }
 
             if (l.CarLoan > 0)
             {
                 buttons.Add("Car Loan");
-                liabilities += $"*Car Loan:* ${l.CarLoan} - ${x.CarLoan} monthly{Environment.NewLine}";
+                liabilities += $"*Car Loan:* {l.CarLoan.AsCurrency()} - {x.CarLoan.AsCurrency()} monthly{Environment.NewLine}";
             }
 
             if (l.CreditCard > 0)
             {
                 buttons.Add("Credit Card");
-                liabilities += $"*Credit Card:* ${l.CreditCard} - ${x.CreditCard} monthly{Environment.NewLine}";
+                liabilities += $"*Credit Card:* {l.CreditCard.AsCurrency()} - {x.CreditCard.AsCurrency()} monthly{Environment.NewLine}";
             }
 
             if (l.BankLoan > 0)
             {
                 buttons.Add("Bank Loan");
-                liabilities += $"*Bank Loan:* ${l.BankLoan} - ${x.BankLoan} monthly{Environment.NewLine}";
+                liabilities += $"*Bank Loan:* {l.BankLoan.AsCurrency()} - {x.BankLoan.AsCurrency()} monthly{Environment.NewLine}";
             }
 
             if (user.Person.Cash < 1000)
             {
                 bot.SendMessage(user.Id, liabilities);
-                SetDefaultButtons(bot, user, $"You don't have money to reduce liabilities, your balance is ${user.Person.Cash}");
+                SetDefaultButtons(bot, user, $"You don't have money to reduce liabilities, your balance is {user.Person.Cash.AsCurrency()}");
                 return;
             }
 
@@ -356,7 +356,7 @@ namespace CashFlowBot
             var user = new User(userId);
             user.Person.Cash += amount;
 
-            SetDefaultButtons(bot, user, $"Ok, you've got ${amount}");
+            SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
         }
 
         public static void GetCredit(TelegramBotClient bot, long userId, string value)
@@ -374,7 +374,7 @@ namespace CashFlowBot
             user.Person.Expenses.BankLoan += amount / 10;
             user.Person.Liabilities.BankLoan += amount;
 
-            SetDefaultButtons(bot, user, $"Ok, you've got ${amount}");
+            SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
         }
 
         public static void PayCredit(TelegramBotClient bot, long userId, string value, Stage stage)
@@ -391,7 +391,7 @@ namespace CashFlowBot
 
             if (amount > user.Person.Cash)
             {
-                bot.SendMessage(user.Id, $"Cannot pay ${amount}, you have ${user.Person.Cash} only.");
+                bot.SendMessage(user.Id, $"Cannot pay {amount.AsCurrency()}, you have {user.Person.Cash.AsCurrency()} only.");
                 return;
             }
 
@@ -450,7 +450,7 @@ namespace CashFlowBot
         {
             var user = new User(userId);
 
-            SetDefaultButtons(bot, user, user.ShortDescription);
+            SetDefaultButtons(bot, user, user.Person.Description);
         }
 
         public static void Confirm(TelegramBotClient bot, long userId)
@@ -461,7 +461,7 @@ namespace CashFlowBot
             {
                 case Stage.GetChild:
                     user.Person.Expenses.Children++;
-                    SetDefaultButtons(bot, user, $"{user.Person.Profession}, you have ${user.Person.Expenses.ChildrenExpenses} children expenses.");
+                    SetDefaultButtons(bot, user, $"{user.Person.Profession}, you have {user.Person.Expenses.ChildrenExpenses.AsCurrency()} children expenses.");
                     return;
 
                 case Stage.StopGame:

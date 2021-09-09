@@ -1,6 +1,7 @@
 ﻿using System;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
+using CashFlowBot.Extensions;
 
 namespace CashFlowBot.Models
 {
@@ -27,16 +28,15 @@ namespace CashFlowBot.Models
             get
             {
                 var expenses = $"{Environment.NewLine}{Environment.NewLine}*Expenses:*{Environment.NewLine}";
-                expenses += $"*Taxes:* ${Taxes}{Environment.NewLine}";
-                if (Mortgage > 0) expenses += $"*Mortgage/Rent Pay:* ${Mortgage}{Environment.NewLine}";
-                if (SchoolLoan > 0) expenses += $"*School Loan Pay:* ${SchoolLoan}{Environment.NewLine}";
-                if (CarLoan > 0) expenses += $"*Car Payment:* ${CarLoan}{Environment.NewLine}";
-                if (CarLoan > 0) expenses += $"*Credit Card Payment:* ${CreditCard}{Environment.NewLine}";
-                if (BankLoan > 0) expenses += $"*Bank Loan Payment:* ${BankLoan}{Environment.NewLine}";
-                expenses += $"*Other Payment:* ${Others}{Environment.NewLine}";
-                if (ChildrenExpenses > 0) expenses += $"*Children:* ${Children}{Environment.NewLine}";
-                if (ChildrenExpenses > 0) expenses += $"*Children Expenses:* ${ChildrenExpenses}{Environment.NewLine}";
-                expenses += $"*Total Expenses:* ${Total}{Environment.NewLine}";
+                expenses += $"*Taxes:* {Taxes.AsCurrency()}{Environment.NewLine}";
+                if (Mortgage > 0) expenses += $"*Mortgage/Rent Pay:* {Mortgage.AsCurrency()}{Environment.NewLine}";
+                if (SchoolLoan > 0) expenses += $"*School Loan Pay:* {SchoolLoan.AsCurrency()}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*Car Payment:* {CarLoan.AsCurrency()}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*Credit Card Payment:* {CreditCard.AsCurrency()}{Environment.NewLine}";
+                if (BankLoan > 0) expenses += $"*Bank Loan Payment:* {BankLoan.AsCurrency()}{Environment.NewLine}";
+                expenses += $"*Other Payment:* {Others.AsCurrency()}{Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*Children:* {Children} ({PerChild.AsCurrency()} per child){Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*Children Expenses:* {ChildrenExpenses.AsCurrency()}{Environment.NewLine}";
 
                 return expenses;
             }
