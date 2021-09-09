@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CashFlowBot.Extensions
 {
     public static class StringExtensions
     {
+        public static string SubStringTo(this string line, string to) => line.Contains(to) ? line.Split(to).First() : line;
+
         public static string SubString(this string line, string from, string to)
         {
             var start = line.IndexOf(from, StringComparison.OrdinalIgnoreCase) + from.Length;

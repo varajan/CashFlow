@@ -43,57 +43,56 @@ namespace CashFlowBot
                 switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
-                        Actions.Start(Bot, message.Chat.Id);
+                        Actions.Start(Bot, user.Id);
+                        return;
+
+                    case "get money":
+                        Actions.Ask(Bot, user.Id, Stage.GetMoney,
+                            $"Hey {user.Person.Profession}, your cash flow is ${user.Person.CashFlow}. Get money?", "Yes");
+                        return;
+
+                    case "add child":
+                        Actions.Ask(Bot, user.Id, Stage.GetChild,
+                            $"Hey {user.Person.Profession}, your have {user.Person.Expenses.Children} children. Get one more?", "Yes");
                         return;
 
                     case "stop game":
                     case "/clear":
-                        Actions.Clear(Bot, message.Chat.Id);
+                        Actions.Ask(Bot, user.Id, Stage.StopGame, "Are you sure want to stop current game?", "Yes");
+                        return;
+
+                    case "yes":
+                        Actions.Confirm(Bot, user.Id);
                         return;
 
                     case "cancel":
                     case "/cancel":
-                        Actions.Cancel(Bot, message.Chat.Id);
+                        Actions.Cancel(Bot, user.Id);
                         return;
 
-                    // Actions
-                    case "get money":
-                        Actions.GetMoney(Bot, message.Chat.Id);
+                    case "reduce liabilities":
+                        Actions.ReduceLiabilities(Bot, user.Id);
                         return;
 
                     case "show my data":
-                        Actions.ShowData(Bot, message.Chat.Id);
+                        Actions.ShowData(Bot, user.Id);
                         return;
 
                     case "get credit":
-                        Actions.GetCredit(Bot, message.Chat.Id);
+                        Actions.GetCredit(Bot, user.Id);
                         return;
 
                     case "pay credit":
-                        Actions.PayCredit(Bot, message.Chat.Id);
+                        Actions.PayCredit(Bot, user.Id);
                         return;
 
-                    case "buy":
-                        Actions.Buy(Bot, message.Chat.Id);
+                    case "buy stocks":
+                        Actions.BuyStocks(Bot, user.Id);
                         return;
 
-                    case "sell":
-                        Actions.Sell(Bot, message.Chat.Id);
+                    case "sell stocks":
+                        Actions.SellStocks(Bot, user.Id);
                         return;
-
-                    case "stocks":
-                        if (user.Stage == Stage.Buy)
-                        {
-                            Actions.BuyStocks(Bot, message.Chat.Id);
-                        }
-
-                        if (user.Stage == Stage.Sell)
-                        {
-                            Actions.SellStocks(Bot, message.Chat.Id);
-                        }
-                        return;
-
-                        // Actions
                 }
 
                 switch (user.Stage)

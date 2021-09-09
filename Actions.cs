@@ -1,34 +1,27 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CashFlowBot
 {
     public static class Actions
     {
-        public static void Buy(TelegramBotClient bot, long userId)
-        {
-            var user = new User(userId);
-            user.Stage = Stage.Buy;
-
-            bot.SetButtons(user.Id, "What to buy?", "Stocks", "Business", "Apartment", "Other");
-        }
-
-        public static void Sell(TelegramBotClient bot, long userId)
-        {
-            var user = new User(userId);
-            user.Stage = Stage.Sell;
-
-            bot.SetButtons(user.Id, "What to sell?", "Stocks", "Business", "Apartment", "Other");
-        }
-
         public static void BuyStocks(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
             var stocks = AvailableAssets.Get(AssetType.Stock);
+
+            if (user.Person.Cash == 0)
+            {
+                SetDefaultButtons(bot, user, "You have no money to buy stocks.");
+                return;
+            }
 
             stocks.Add("Cancel");
             user.Stage = Stage.BuyStocksTitle;
@@ -63,7 +56,9 @@ namespace CashFlowBot
                     user.Stage = Stage.BuyStocksQtty;
 
                     int upToQtty = user.Person.Cash / number;
-                    bot.SetButtons(user.Id, $"You can buy up to {upToQtty} stocks. How much stocks would you like to buy?", upToQtty.ToString(), "Cancel");
+                    bot.SetButtons(user.Id,
+                    $"You can buy up to {upToQtty} stocks. How much stocks would you like to buy?", upToQtty.ToString(),
+                    "Cancel");
                     return;
 
                 case Stage.BuyStocksQtty:
@@ -81,14 +76,14 @@ namespace CashFlowBot
 
                     if (totalPrice > availableCash)
                     {
-                        bot.SendMessage(user.Id, $"{number} x ${asset.Price} = {totalPrice}. You have only ${availableCash}." +
-                                                 $"You can buy {availableQtty} stocks. So, what quantity of stocks do you want to buy?");
+                        bot.SendMessage(user.Id,
+                        $"{number} x ${asset.Price} = {totalPrice}. You have only ${availableCash}." +
+                        $"You can buy {availableQtty} stocks. So, what quantity of stocks do you want to buy?");
                         return;
                     }
 
                     asset.Qtty = number;
                     user.Person.Cash -= totalPrice;
-                    user.Stage = Stage.Nothing;
 
                     AvailableAssets.Add(asset.Title, AssetType.Stock);
                     AvailableAssets.Add(asset.Price, AssetType.StockPrice);
@@ -116,7 +111,6 @@ namespace CashFlowBot
             }
             else
             {
-                user.Stage = Stage.Nothing;
                 SetDefaultButtons(bot, user, "You have no stocks.");
             }
         }
@@ -137,7 +131,6 @@ namespace CashFlowBot
 
                     if (!assets.Any())
                     {
-                        user.Stage = Stage.Nothing;
                         SetDefaultButtons(bot, user, "Invalid stocks name.");
                         return;
                     }
@@ -158,7 +151,6 @@ namespace CashFlowBot
                     }
 
                     user.Person.Cash += qtty * number;
-                    user.Stage = Stage.Nothing;
                     stocksToSell.ForEach(x => x.Delete());
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
@@ -168,19 +160,59 @@ namespace CashFlowBot
             }
         }
 
-        public static void GetMoney(TelegramBotClient bot, long userId)
+        public static void ReduceLiabilities(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
+            var l = user.Person.Liabilities;
+            var x = user.Person.Expenses;
+            var buttons = new List<string>();
+            var liabilities = string.Empty;
 
-            user.Person.Cash += user.Person.CashFlow;
-            bot.SendMessage(user.Id, $"{user.Person.Profession}, you have ${user.Person.Cash}");
+            if (l.Mortgage > 0)
+            {
+                buttons.Add("Mortgage");
+                liabilities += $"*Mortgage:* ${l.Mortgage} - ${x.Mortgage} monthly{Environment.NewLine}";
+            }
+
+            if (l.SchoolLoan > 0)
+            {
+                buttons.Add("School Loan");
+                liabilities += $"*School Loan:* ${l.SchoolLoan} - ${x.SchoolLoan} monthly{Environment.NewLine}";
+            }
+
+            if (l.CarLoan > 0)
+            {
+                buttons.Add("Car Loan");
+                liabilities += $"*Car Loan:* ${l.CarLoan} - ${x.CarLoan} monthly{Environment.NewLine}";
+            }
+
+            if (l.CreditCard > 0)
+            {
+                buttons.Add("Credit Card");
+                liabilities += $"*Credit Card:* ${l.CreditCard} - ${x.CreditCard} monthly{Environment.NewLine}";
+            }
+
+            if (l.BankLoan > 0)
+            {
+                buttons.Add("Bank Loan");
+                liabilities += $"*Bank Loan:* ${l.BankLoan} - ${x.BankLoan} monthly{Environment.NewLine}";
+            }
+
+            if (buttons.Any())
+            {
+                buttons.Add("Cancel");
+                bot.SetButtons(user.Id, liabilities, buttons);
+                return;
+            }
+
+            Cancel(bot, user.Id);
         }
 
         public static void ShowData(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
 
-            bot.SendMessage(user.Id, user.Description);
+            SetDefaultButtons(bot, user, user.Description);
         }
 
         public static void GetCredit(TelegramBotClient bot, long userId)
@@ -188,13 +220,13 @@ namespace CashFlowBot
             var user = new User(userId);
 
             user.Stage = Stage.GetCredit;
-            bot.SendMessage(user.Id, "How much?");
+            bot.SetButtons(user.Id, "How much?", "1000", "2000", "5000", "10 000", "20 000", "Cancel");
         }
 
         public static void GetCredit(TelegramBotClient bot, long userId, string value)
         {
             var user = new User(userId);
-            var amount = value.ToInt();
+            var amount = value.Replace(" ", "").ToInt();
 
             if (amount % 1000 > 0 || amount < 1000)
             {
@@ -205,8 +237,8 @@ namespace CashFlowBot
             user.Person.Cash += amount;
             user.Person.Expenses.BankLoan += amount / 10;
             user.Person.Liabilities.BankLoan += amount;
-            user.Stage = Stage.Nothing;
-            bot.SendMessage(user.Id, $"Ok, you've got ${amount}");
+
+            SetDefaultButtons(bot, user, $"Ok, you've got ${amount}");
         }
 
         public static void PayCredit(TelegramBotClient bot, long userId)
@@ -252,19 +284,44 @@ namespace CashFlowBot
         public static void Cancel(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Stage = Stage.Nothing;
 
-            SetDefaultButtons(bot, user, user.Person.Description);
+            SetDefaultButtons(bot, user, user.ShortDescription);
         }
 
-        public static void Clear(TelegramBotClient bot, long userId)
+        public static void Confirm(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            user.Person.Clear();
-            user.Person.Expenses.Clear();
-            user.Stage = Stage.Nothing;
 
-            Start(bot, user.Id);
+            switch (user.Stage)
+            {
+                case Stage.GetChild:
+                    user.Person.Expenses.Children++;
+                    SetDefaultButtons(bot, user, $"{user.Person.Profession}, you have ${user.Person.Expenses.ChildrenExpenses} children expenses.");
+                    return;
+
+                case Stage.GetMoney:
+                    user.Person.Cash += user.Person.CashFlow;
+                    SetDefaultButtons(bot, user, $"{user.Person.Profession}, you have ${user.Person.Cash}");
+                    return;
+
+                case Stage.StopGame:
+                    user.Person.Clear();
+                    user.Person.Expenses.Clear();
+                    user.Stage = Stage.Nothing;
+
+                    Start(bot, user.Id);
+                    return;
+            }
+
+            Cancel(bot, user.Id);
+        }
+
+        public static void Ask(TelegramBotClient bot, long userId, Stage stage, string question, string button)
+        {
+            var user = new User(userId);
+            user.Stage = stage;
+
+            bot.SetButtons(user.Id, question, button, "Cancel");
         }
 
         public static void Start(TelegramBotClient bot, long userId)
@@ -295,17 +352,30 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Stage = Stage.Nothing;
             user.Person.Create(profession);
 
             SetDefaultButtons(bot, user, $"Welcome, {user.Person.Profession}!");
         }
 
-        private static void SetDefaultButtons(TelegramBotClient bot, User user, string message)
+        private static async void SetDefaultButtons(TelegramBotClient bot, User user, string message)
         {
-            // TODO: reset asset titles, remove empty, etc.
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{"Show my Data"},
+                    new List<KeyboardButton>{"Get money", "Give money"},
+                    new List<KeyboardButton>{"Get credit", "Pay credit"},
+                    new List<KeyboardButton>{"Buy stocks", "Sell stocks"},
+                    new List<KeyboardButton>{"Add child", "Reduce Liabilities"},
+                    new List<KeyboardButton>{"Stop game"}
+                }
+            };
 
-            bot.SetButtons(user.Id, message, "Show my Data", "Buy", "Sell", "Get money", "Pay Credit", "Get Credit");
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
     }
 }

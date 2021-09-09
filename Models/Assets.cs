@@ -4,6 +4,7 @@ using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
+using MoreLinq;
 
 namespace CashFlowBot.Models
 {
@@ -11,6 +12,18 @@ namespace CashFlowBot.Models
     {
         private long Id { get; }
         public Assets(long id) => Id = id;
+
+        public void CleanUp()
+        {
+            Items
+                .Where(x => x.Type == AssetType.Stock)
+                .ForEach(x => x.Title.SubStringTo("*"));
+
+            Items
+                .Where(x => x.Type == AssetType.Stock)
+                .Where(x => x.Price ==0 || x.Qtty == 0)
+                .ForEach(x => x.Delete());
+        }
 
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")

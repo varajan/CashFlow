@@ -3,7 +3,10 @@
     public enum Stage
     {
         Nothing,
+        StopGame,
         GetProfession,
+        GetChild,
+        GetMoney,
         GetCredit,
         PayCredit,
         Buy,
