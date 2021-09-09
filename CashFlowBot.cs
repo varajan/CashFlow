@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using CashFlowBot.Data;
 using CashFlowBot.Extensions;
@@ -49,6 +50,12 @@ namespace CashFlowBot
                     case "get money":
                         Actions.Ask(Bot, user.Id, Stage.GetMoney,
                             $"Your Cash Flow is ${user.Person.CashFlow}. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
+                        return;
+
+                    case "give money":
+                        var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
+
+                        Actions.Ask(Bot, user.Id, Stage.GiveMoney, "How much would you give?", giveMoney);
                         return;
 
                     case "add child":
@@ -131,6 +138,10 @@ namespace CashFlowBot
 
                     case Stage.GetMoney:
                         Actions.GetMoney(Bot, user.Id, message.Text.Trim());
+                        return;
+
+                    case Stage.GiveMoney:
+                        Actions.GiveMoney(Bot, user.Id, message.Text.Trim());
                         return;
 
                     case Stage.ReduceMortgage:

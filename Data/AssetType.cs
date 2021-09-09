@@ -4,6 +4,7 @@
     {
         Stock,
         StockPrice,
+        GiveMoney,
         Property,
         PropertyType,
         PropertyBuyPrice,

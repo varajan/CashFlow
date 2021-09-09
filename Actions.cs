@@ -51,21 +51,21 @@ namespace CashFlowBot
                         return;
                     }
 
-                    user.Person.Assets.Properties.First(a => a.Cost == 0).Cost = number;
+                    user.Person.Assets.Properties.First(a => a.Price == 0).Price = number;
                     user.Stage = Stage.BuyPropertyFirstPayment;
 
                     bot.SetButtons(user.Id, "What is the first payment?", firstPayments);
                     return;
 
                 case Stage.BuyPropertyFirstPayment:
-                    if (number <= 0 || !value.EndsWith("000"))
+                    if (number <= 0)
                     {
-                        bot.SendMessage(user.Id, "Invalid first payment amount. The amount must be a multiple of 1000");
+                        bot.SendMessage(user.Id, "Invalid first payment amount.");
                         return;
                     }
 
                     var asset = user.Person.Assets.Properties.First(a => a.Mortgage == 0);
-                    asset.Mortgage = asset.Cost - number;
+                    asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyPropertyCashFlow;
 
                     bot.SetButtons(user.Id, "What is the cash flow?", cashFlows);
@@ -77,8 +77,8 @@ namespace CashFlowBot
                     user.Stage = Stage.BuyPropertyCashFlow;
 
                     AvailableAssets.Add(property.Title, AssetType.PropertyType);
-                    AvailableAssets.Add(property.Cost, AssetType.PropertyBuyPrice);
-                    AvailableAssets.Add(property.Cost-property.Mortgage, AssetType.PropertyFirstPayment);
+                    AvailableAssets.Add(property.Price, AssetType.PropertyBuyPrice);
+                    AvailableAssets.Add(property.Price-property.Mortgage, AssetType.PropertyFirstPayment);
                     AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
 
                     SetDefaultButtons(bot, user, "Done");
@@ -418,6 +418,23 @@ namespace CashFlowBot
             user.Person.Cash += amount;
 
             SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
+        }
+
+        public static void GiveMoney(TelegramBotClient bot, long userId, string value)
+        {
+            var amount = value.AsCurrency();
+            var user = new User(userId);
+
+            if (user.Person.Cash < amount)
+            {
+                SetDefaultButtons(bot, user, $"You don't have {amount.AsCurrency()}, but only {user.Person.Cash.AsCurrency()}");
+                return;
+            }
+
+            user.Person.Cash -= amount;
+
+            AvailableAssets.Add(amount, AssetType.GiveMoney);
+            SetDefaultButtons(bot, user, user.Description);
         }
 
         public static void GetCredit(TelegramBotClient bot, long userId, string value)

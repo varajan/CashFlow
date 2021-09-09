@@ -39,8 +39,6 @@ namespace CashFlowBot.Models
         public string Title { get => Get("Title"); set => Set("Title", value); }
         public int Price { get => GetInt("Price"); set => Set("Price", value); }
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
-
-        public int Cost { get => GetInt("Cost"); set => Set("Cost", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
         public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
 

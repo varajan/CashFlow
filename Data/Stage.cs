@@ -7,6 +7,7 @@
         GetProfession,
         GetChild,
         GetMoney,
+        GiveMoney,
         GetCredit,
         PayCredit,
         ReduceMortgage,
