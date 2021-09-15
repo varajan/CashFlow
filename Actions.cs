@@ -151,7 +151,7 @@ namespace CashFlowBot
         public static void BuyStocks(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
-            var stocks = AvailableAssets.Get(AssetType.Stock);
+            var stocks = AvailableAssets.Get(AssetType.Stock).Append("Cancel");
 
             if (user.Person.Cash == 0)
             {
@@ -159,7 +159,6 @@ namespace CashFlowBot
                 return;
             }
 
-            stocks.Add("Cancel");
             user.Stage = Stage.BuyStocksTitle;
             bot.SetButtons(user.Id, "Title:", stocks);
         }
