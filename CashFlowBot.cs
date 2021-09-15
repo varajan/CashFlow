@@ -53,7 +53,7 @@ namespace CashFlowBot
 
                     case "get money":
                         Actions.Ask(Bot, user.Id, Stage.GetMoney,
-                            $"Your Cash Flow is ${user.Person.CashFlow}. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
+                            $"Your Cash Flow is *{user.Person.CashFlow.AsCurrency()}*. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
                     case "give money":

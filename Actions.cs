@@ -32,9 +32,9 @@ namespace CashFlowBot
             var user = new User(userId);
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).Append("Cancel");
-            var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).Append("Cancel");
-            var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).Append("Cancel");
+            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).AsCurrency().Append("Cancel");
+            var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).AsCurrency().Append("Cancel");
+            var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).AsCurrency().Append("Cancel");
 
             switch (user.Stage)
             {
@@ -332,7 +332,8 @@ namespace CashFlowBot
             var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash/1000*1000 }
                 .Where(x => x <= user.Person.Cash && x <= cost)
                 .OrderBy(x => x)
-                .Select(x => x.ToString())
+                .Distinct()
+                .Select(x => x.AsCurrency())
                 .ToList();
             buttons.Add("Cancel");
 
@@ -457,7 +458,7 @@ namespace CashFlowBot
         public static void PayCredit(TelegramBotClient bot, long userId, string value, Stage stage)
         {
             var user = new User(userId);
-            var amount = value.ToInt();
+            var amount = value.AsCurrency();
             int expenses;
 
             if (amount % 1000 > 0 || amount < 1000)
