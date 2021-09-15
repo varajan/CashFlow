@@ -1,49 +1,50 @@
-INSERT INTO Terms (ID, Language, Term) VALUES (0, 'EN', 'Your Cash Flow is *{0}*. How much should you get?')
-INSERT INTO Terms (ID, Language, Term) VALUES (1, 'EN', 'How much would you give?')
-INSERT INTO Terms (ID, Language, Term) VALUES (2, 'EN', 'Hey {0}, your have {1} children. Get one more?')
-INSERT INTO Terms (ID, Language, Term) VALUES (3, 'EN', 'Are you sure want to stop current game?')
-INSERT INTO Terms (ID, Language, Term) VALUES (4, 'EN', 'Yes')
-INSERT INTO Terms (ID, Language, Term) VALUES (5, 'EN', 'You don''t have enough money.')
-INSERT INTO Terms (ID, Language, Term) VALUES (6, 'EN', 'Cancel')
-INSERT INTO Terms (ID, Language, Term) VALUES (7, 'EN', 'Title:')
-INSERT INTO Terms (ID, Language, Term) VALUES (8, 'EN', 'What is the price?')
-INSERT INTO Terms (ID, Language, Term) VALUES (9, 'EN', 'Invalid price value. Try again.')
-INSERT INTO Terms (ID, Language, Term) VALUES (10, 'EN', 'What is the first payment?')
-INSERT INTO Terms (ID, Language, Term) VALUES (11, 'EN', 'Invalid first payment amount.')
-INSERT INTO Terms (ID, Language, Term) VALUES (12, 'EN', 'What is the cash flow?')
-INSERT INTO Terms (ID, Language, Term) VALUES (13, 'EN', 'Done.')
-INSERT INTO Terms (ID, Language, Term) VALUES (14, 'EN', 'What property do you want to sell?{0}{1}')
-INSERT INTO Terms (ID, Language, Term) VALUES (15, 'EN', 'You have no properties.')
-INSERT INTO Terms (ID, Language, Term) VALUES (16, 'EN', 'Invalid property number.')
-INSERT INTO Terms (ID, Language, Term) VALUES (17, 'EN', 'You can buy up to {0} stocks. How much stocks would you like to buy?')
-INSERT INTO Terms (ID, Language, Term) VALUES (18, 'EN', 'Invalid quantity value. Try again.')
-INSERT INTO Terms (ID, Language, Term) VALUES (19, 'EN', '{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?')
-INSERT INTO Terms (ID, Language, Term) VALUES (20, 'EN', 'How much would you pay?')
-INSERT INTO Terms (ID, Language, Term) VALUES (21, 'EN', 'How much?')
-INSERT INTO Terms (ID, Language, Term) VALUES (22, 'EN', 'Ok, you''ve got {0}')
-INSERT INTO Terms (ID, Language, Term) VALUES (23, 'EN', 'You don''t have {0}, but only {1}')
-INSERT INTO Terms (ID, Language, Term) VALUES (24, 'EN', 'Invalid amount. The amount must be a multiple of 1000')
-INSERT INTO Terms (ID, Language, Term) VALUES (25, 'EN', '{0}, you have {1} children expenses.')
-INSERT INTO Terms (ID, Language, Term) VALUES (26, 'EN', 'Please stop current game before starting a new one.')
-INSERT INTO Terms (ID, Language, Term) VALUES (27, 'EN', 'Stop game')
-INSERT INTO Terms (ID, Language, Term) VALUES (28, 'EN', 'Choose your *profession*')
-INSERT INTO Terms (ID, Language, Term) VALUES (29, 'EN', 'Profession not found. Try again.')
-INSERT INTO Terms (ID, Language, Term) VALUES (30, 'EN', 'Welcome, {0}!')
-INSERT INTO Terms (ID, Language, Term) VALUES (31, 'EN', 'Show my Data')
-INSERT INTO Terms (ID, Language, Term) VALUES (32, 'EN', 'Get Money')
-INSERT INTO Terms (ID, Language, Term) VALUES (33, 'EN', 'Give Money')
-INSERT INTO Terms (ID, Language, Term) VALUES (34, 'EN', 'Get Credit')
-INSERT INTO Terms (ID, Language, Term) VALUES (35, 'EN', 'Buy Stocks')
-INSERT INTO Terms (ID, Language, Term) VALUES (36, 'EN', 'Sell Stocks')
-INSERT INTO Terms (ID, Language, Term) VALUES (37, 'EN', 'Buy Property')
-INSERT INTO Terms (ID, Language, Term) VALUES (38, 'EN', 'Sell Property')
-INSERT INTO Terms (ID, Language, Term) VALUES (39, 'EN', 'Add Child')
-INSERT INTO Terms (ID, Language, Term) VALUES (40, 'EN', 'Reduce Liabilities')
-INSERT INTO Terms (ID, Language, Term) VALUES (41, 'EN', 'Stop Game')
-INSERT INTO Terms (ID, Language, Term) VALUES (42, 'EN', 'monthly')
-INSERT INTO Terms (ID, Language, Term) VALUES (43, 'EN', 'Mortgage')
-INSERT INTO Terms (ID, Language, Term) VALUES (44, 'EN', 'School Loan')
-INSERT INTO Terms (ID, Language, Term) VALUES (45, 'EN', 'Car Loan')
-INSERT INTO Terms (ID, Language, Term) VALUES (46, 'EN', 'Credit Card')
-INSERT INTO Terms (ID, Language, Term) VALUES (47, 'EN', 'Bank Loan')
-INSERT INTO Terms (ID, Language, Term) VALUES (48, 'EN', 'You don''t have money to reduce liabilities, your balance is {0}')
+INSERT INTO Terms (ID, Language, Term) VALUES
+(0, 'EN', 'Your Cash Flow is *{0}*. How much should you get?'),
+(1, 'EN', 'How much would you give?'),
+(2, 'EN', 'Hey {0}, your have {1} children. Get one more?'),
+(3, 'EN', 'Are you sure want to stop current game?'),
+(4, 'EN', 'Yes'),
+(5, 'EN', 'You don''t have enough money.'),
+(6, 'EN', 'Cancel'),
+(7, 'EN', 'Title:'),
+(8, 'EN', 'What is the price?'),
+(9, 'EN', 'Invalid price value. Try again.'),
+(10, 'EN', 'What is the first payment?'),
+(11, 'EN', 'Invalid first payment amount.'),
+(12, 'EN', 'What is the cash flow?'),
+(13, 'EN', 'Done.'),
+(14, 'EN', 'What property do you want to sell?{0}{1}'),
+(15, 'EN', 'You have no properties.'),
+(16, 'EN', 'Invalid property number.'),
+(17, 'EN', 'You can buy up to {0} stocks. How much stocks would you like to buy?'),
+(18, 'EN', 'Invalid quantity value. Try again.'),
+(19, 'EN', '{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?'),
+(20, 'EN', 'How much would you pay?'),
+(21, 'EN', 'How much?'),
+(22, 'EN', 'Ok, you''ve got {0}'),
+(23, 'EN', 'You don''t have {0}, but only {1}'),
+(24, 'EN', 'Invalid amount. The amount must be a multiple of 1000'),
+(25, 'EN', '{0}, you have {1} children expenses.'),
+(26, 'EN', 'Please stop current game before starting a new one.'),
+(27, 'EN', ''),
+(28, 'EN', 'Choose your *profession*'),
+(29, 'EN', 'Profession not found. Try again.'),
+(30, 'EN', 'Welcome, {0}!'),
+(31, 'EN', 'Show my Data'),
+(32, 'EN', 'Get Money'),
+(33, 'EN', 'Give Money'),
+(34, 'EN', 'Get Credit'),
+(35, 'EN', 'Buy Stocks'),
+(36, 'EN', 'Sell Stocks'),
+(37, 'EN', 'Buy Property'),
+(38, 'EN', 'Sell Property'),
+(39, 'EN', 'Add Child'),
+(40, 'EN', 'Reduce Liabilities'),
+(41, 'EN', 'Stop Game'),
+(42, 'EN', 'monthly'),
+(43, 'EN', 'Mortgage'),
+(44, 'EN', 'School Loan'),
+(45, 'EN', 'Car Loan'),
+(46, 'EN', 'Credit Card'),
+(47, 'EN', 'Bank Loan'),
+(48, 'EN', 'You don''t have money to reduce liabilities, your balance is {0}')

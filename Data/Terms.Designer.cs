@@ -61,8 +61,19 @@ namespace CashFlowBot.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to INSERT INTO Terms (ID, Language, Term) VALUES (0, &apos;EN&apos;, &apos;&apos;)
-        ///.
+        ///   Looks up a localized string similar to INSERT INTO Terms (ID, Language, Term) VALUES
+        ///(0, &apos;EN&apos;, &apos;Your Cash Flow is *{0}*. How much should you get?&apos;),
+        ///(1, &apos;EN&apos;, &apos;How much would you give?&apos;),
+        ///(2, &apos;EN&apos;, &apos;Hey {0}, your have {1} children. Get one more?&apos;),
+        ///(3, &apos;EN&apos;, &apos;Are you sure want to stop current game?&apos;),
+        ///(4, &apos;EN&apos;, &apos;Yes&apos;),
+        ///(5, &apos;EN&apos;, &apos;You don&apos;&apos;t have enough money.&apos;),
+        ///(6, &apos;EN&apos;, &apos;Cancel&apos;),
+        ///(7, &apos;EN&apos;, &apos;Title:&apos;),
+        ///(8, &apos;EN&apos;, &apos;What is the price?&apos;),
+        ///(9, &apos;EN&apos;, &apos;Invalid price value. Try again.&apos;),
+        ///(10, &apos;EN&apos;, &apos;What is the first payment?&apos;),
+        ///(11, &apos;EN&apos;,  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string terms_en {
             get {
@@ -71,7 +82,19 @@ namespace CashFlowBot.Data {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to INSERT INTO Terms (ID, Language, Term) VALUES
+        ///(0, &apos;UA&apos;, &apos;Ваш грошовий потік *{0}*. Скільки грошей отримати?&apos;),
+        ///(1, &apos;UA&apos;, &apos;Скільки грошей дати?&apos;),
+        ///(2, &apos;UA&apos;, &apos;{0}, у вас {1} дітей. Хочете ще?&apos;),
+        ///(3, &apos;UA&apos;, &apos;Точно бажаєте закінчити поточну гру?&apos;),
+        ///(4, &apos;UA&apos;, &apos;Так&apos;),
+        ///(5, &apos;UA&apos;, &apos;У вас не вистачає грошей.&apos;),
+        ///(6, &apos;UA&apos;, &apos;Скасувати&apos;),
+        ///(7, &apos;UA&apos;, &apos;Назва:&apos;),
+        ///(8, &apos;UA&apos;, &apos;Яка ціна?&apos;),
+        ///(9, &apos;UA&apos;, &apos;Некоректне значення ціни. Спробуй ще раз.&apos;),
+        ///(10, &apos;UA&apos;, &apos;Який перший платіж?&apos;),
+        ///(11, &apos;UA&apos;, &apos;Некоректне зачення першого [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string terms_ua {
             get {

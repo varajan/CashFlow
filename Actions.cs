@@ -589,7 +589,7 @@ namespace CashFlowBot
             {
                 bot.SetButtons(user.Id,
                 Terms.Get(26, user, "Please stop current game before starting a new one."),
-                Terms.Get(6, user, "Stop game"),
+                Terms.Get(41, user, "Stop Game"),
                 Terms.Get(6, user, "Cancel"));
                 return;
             }

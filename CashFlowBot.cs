@@ -73,6 +73,7 @@ namespace CashFlowBot
 
                     // Term 32: Get Money
                     case "get money":
+                    case "отримати гроші":
                         Actions.Ask(Bot, user, Stage.GetMoney,
                         Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
                         "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
@@ -80,6 +81,7 @@ namespace CashFlowBot
 
                     // Term 33: Give Money
                     case "give money":
+                    case "заплатити гроші":
                         var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
 
                         Actions.Ask(Bot, user, Stage.GiveMoney,
@@ -88,6 +90,7 @@ namespace CashFlowBot
 
                     // Term 39: Add Child
                     case "add child":
+                    case "завести дитину":
                         Actions.Ask(Bot, user, Stage.GetChild,
                             Terms.Get(2, user, "Hey {0}, your have {1} children. Get one more?", user.Person.Profession, user.Person.Expenses.Children),
                         Terms.Get(4, user, "Yes"));
@@ -95,6 +98,7 @@ namespace CashFlowBot
 
                     // Term 41: Stop Game
                     case "stop game":
+                    case "закінчити гру":
                     case "/clear":
                         Actions.Ask(Bot, user, Stage.StopGame,
                         Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
@@ -115,61 +119,73 @@ namespace CashFlowBot
 
                     // Term 40: Reduce Liabilities
                     case "reduce liabilities":
+                    case "зменшити пасиви":
                         Actions.ReduceLiabilities(Bot, user);
                         return;
 
                     // Term 43: Mortgage
                     case "mortgage":
+                    case "іпотека":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
                         return;
 
                     // Term 44: School Loan
                     case "school loan":
+                    case "кредит на освіту":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
                         return;
 
                     // Term 45: Car Loan
                     case "car loan":
+                    case "кредит на авто":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
                         return;
 
                     // Term 46: Credit Card
                     case "credit card":
+                    case "кредитна картка":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
                     // Term 47: Bank Loan
                     case "bank loan":
+                    case "банківська позика":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
 
                     // Term 31: Show my Data
                     case "show my data":
+                    case "мої дані":
                         Actions.ShowData(Bot, user);
                         return;
 
                     // Term 34: Get Credit
                     case "get credit":
+                    case "взяти кредит":
                         Actions.GetCredit(Bot, user);
                         return;
 
                     // Term 35: Buy Stocks
                     case "buy stocks":
+                    case "купити акції":
                         Actions.BuyStocks(Bot, user);
                         return;
 
                     // Term 36: Sell Stocks
                     case "sell stocks":
+                    case "продати акції":
                         Actions.SellStocks(Bot, user);
                         return;
 
                     // Term 37: Buy Property
                     case "buy property":
+                    case "купити власність":
                         Actions.BuyProperty(Bot, user);
                         return;
 
                     // Term 38: Sell Property
                     case "sell property":
+                    case "продати власність":
                         Actions.SellProperty(Bot, user);
                         return;
 

@@ -9,7 +9,7 @@ namespace CashFlowBot.DataBase
 
         static Terms()
         {
-            DB.Execute($"TRUNCATE TABLE {Table}");
+            DB.Execute($"DELETE FROM {Table}");
             DB.Execute(Data.Terms.terms_en);
             DB.Execute(Data.Terms.terms_ua);
         }
