@@ -7,6 +7,13 @@ namespace CashFlowBot.Extensions
 {
     public static class StringExtensions
     {
+        public static string NullIfEmpty(this string line)
+        {
+            if (string.IsNullOrWhiteSpace(line)) return null;
+
+            return line;
+        }
+
         public static string ReplaceWhitespaces(this string line) => new Regex(@"\s+").Replace(line, String.Empty);
 
         public static int AsCurrency(this string value) => value.Replace("$", "").ReplaceWhitespaces().ToInt();

@@ -72,7 +72,8 @@ namespace CashFlowBot
 
                     case "get money":
                         Actions.Ask(Bot, user, Stage.GetMoney,
-                            $"Your Cash Flow is *{user.Person.CashFlow.AsCurrency()}*. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
+                        DataBase.Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
+                        "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
                     case "give money":

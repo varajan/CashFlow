@@ -19,6 +19,7 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
@@ -134,6 +135,7 @@ namespace CashFlowBot.DataBase
 
         public static class Tables
         {
+            public static string Terms = "Terms";
             public static string Users = "Users";
             public static string Persons = "Persons";
             public static string Expenses = "Expenses";
@@ -146,6 +148,7 @@ namespace CashFlowBot.DataBase
         {
             private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("''", query.Count(x => x == ',')));
 
+            public static string Terms = GetDefaults(CreateColumns.Terms);
             public static string Users = GetDefaults(CreateColumns.Users);
             public static string Persons = GetDefaults(CreateColumns.Persons);
             public static string Expenses = GetDefaults(CreateColumns.Expenses);
@@ -158,6 +161,7 @@ namespace CashFlowBot.DataBase
         {
             private static string GetColumns(string query) => string.Join(", ", query.Split(',').Select(x => x.Trim().Split(' ').First()));
 
+            public static string Terms = GetColumns(CreateColumns.Terms);
             public static string Users = GetColumns(CreateColumns.Users);
             public static string Persons = GetColumns(CreateColumns.Persons);
             public static string Expenses = GetColumns(CreateColumns.Expenses);
@@ -168,6 +172,8 @@ namespace CashFlowBot.DataBase
 
         public static class CreateColumns
         {
+            public static string Terms = "ID Number, Language Text, Term Text";
+
             public static string Users = "ID Number, Stage Number, Admin Number, Name Text";
             public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number";
 
