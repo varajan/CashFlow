@@ -2,6 +2,8 @@
 {
     public enum Stage
     {
+        BringDown,
+        Logs,
         Nothing,
         StopGame,
         GetProfession,

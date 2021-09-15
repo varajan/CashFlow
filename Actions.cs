@@ -549,6 +549,10 @@ namespace CashFlowBot
 
                     Start(bot, user.Id);
                     return;
+
+                case Stage.BringDown:
+                    Environment.Exit(0);
+                    return;
             }
 
             Cancel(bot, user.Id);

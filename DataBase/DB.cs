@@ -125,8 +125,12 @@ namespace CashFlowBot.DataBase
         private static IEnumerable<string> Columns(string sql) =>
             sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",");
 
-        private static void Log(this Exception ex, string sql) =>
+        private static void Log(this Exception ex, string sql)
+        {
             Console.WriteLine($"{ex.Message}{Environment.NewLine}{sql}{Environment.NewLine}{ex.StackTrace}");
+            Logger.Log(sql);
+            Logger.Log(ex);
+        }
 
         public static class Tables
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
@@ -21,9 +22,17 @@ namespace CashFlowBot.Extensions
             await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
-        public static async void SendMessage(this TelegramBotClient bot, long userId, string message)
+        public static async void SendMessage(this TelegramBotClient bot, long userId, string message, ParseMode parseMode = ParseMode.Markdown)
         {
-            await bot.SendTextMessageAsync(userId, message, ParseMode.Markdown);
+            try
+            {
+                await bot.SendTextMessageAsync(userId, message, parseMode);
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(exception);
+                Logger.Log(exception);
+            }
         }
     }
 }

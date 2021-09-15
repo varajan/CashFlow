@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using CashFlowBot.Data;
@@ -7,6 +8,7 @@ using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 
 namespace CashFlowBot
 {
@@ -36,6 +38,8 @@ namespace CashFlowBot
             {
                 var message = messageEventArgs.Message;
                 var user = new User(message.Chat.Id);
+
+                Logger.Log($"{message.Chat.Id} - {message.Chat.Username} - {message.Text}");
 
                 await Bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
@@ -124,6 +128,38 @@ namespace CashFlowBot
                     case "sell property":
                         Actions.SellProperty(Bot, user.Id);
                         return;
+
+                    case "bring down":
+                        // TODO: check user permissions
+                        Actions.Ask(Bot, user.Id, Stage.BringDown, "Are you sure want to BRING BOT Down?", "Yes");
+                        return;
+
+                    case "logs":
+                        // TODO: check user permissions
+                        Actions.Ask(Bot, user.Id, Stage.Logs, "Which log would you like to get?", "Full", "Top");
+                        return;
+
+                    case "full":
+                        // TODO: check user permissions
+                        if (user.Stage == Stage.Logs)
+                        {
+                            await using var stream = File.Open(Logger.LogFile, FileMode.Open);
+                            var fts = new InputOnlineFile(stream, "logs.txt");
+                            await Bot.SendDocumentAsync(user.Id, fts);
+                        }
+
+                        Actions.Cancel(Bot, user.Id);
+                        return;
+
+                    case "top":
+                        // TODO: check user permissions
+                        if (user.Stage == Stage.Logs)
+                        {
+                            Bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
+                        }
+
+                        Actions.Cancel(Bot, user.Id);
+                        return;
                 }
 
                 switch (user.Stage)
@@ -179,6 +215,7 @@ namespace CashFlowBot
             catch (Exception e)
             {
                 Console.WriteLine(e);
+                Logger.Log(e);
             }
         }
 
