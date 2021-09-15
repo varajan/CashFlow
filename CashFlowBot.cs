@@ -118,27 +118,27 @@ namespace CashFlowBot
                         Actions.ReduceLiabilities(Bot, user);
                         return;
 
-                    // todo - term
+                    // Term 43: Mortgage
                     case "mortgage":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
                         return;
 
-                    // todo - term
+                    // Term 44: School Loan
                     case "school loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
                         return;
 
-                    // todo - term
+                    // Term 45: Car Loan
                     case "car loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
                         return;
 
-                    // todo - term
+                    // Term 46: Credit Card
                     case "credit card":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
-                    // todo - term
+                    // Term 47: Bank Loan
                     case "bank loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;

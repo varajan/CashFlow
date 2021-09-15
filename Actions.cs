@@ -368,43 +368,47 @@ namespace CashFlowBot
             var x = user.Person.Expenses;
             var buttons = new List<string>();
             var liabilities = string.Empty;
-
-            // TODO: add terms
+            var monthly = Terms.Get(42, user, "monthly");
+            var mortgage = Terms.Get(43, user, "Mortgage");
+            var schoolLoan = Terms.Get(44, user, "School Loan");
+            var carLoan = Terms.Get(45, user, "Car Loan");
+            var creditCard = Terms.Get(46, user, "Credit Card");
+            var bankLoan = Terms.Get(47, user, "Bank Loan");
 
             if (l.Mortgage > 0)
             {
-                buttons.Add("Mortgage");
-                liabilities += $"*Mortgage:* {l.Mortgage.AsCurrency()} - {x.Mortgage.AsCurrency()} monthly{Environment.NewLine}";
+                buttons.Add(mortgage);
+                liabilities += $"*{mortgage}:* {l.Mortgage.AsCurrency()} - {x.Mortgage.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (l.SchoolLoan > 0)
             {
-                buttons.Add("School Loan");
-                liabilities += $"*School Loan:* {l.SchoolLoan.AsCurrency()} - {x.SchoolLoan.AsCurrency()} monthly{Environment.NewLine}";
+                buttons.Add(schoolLoan);
+                liabilities += $"*{schoolLoan}:* {l.SchoolLoan.AsCurrency()} - {x.SchoolLoan.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (l.CarLoan > 0)
             {
-                buttons.Add("Car Loan");
-                liabilities += $"*Car Loan:* {l.CarLoan.AsCurrency()} - {x.CarLoan.AsCurrency()} monthly{Environment.NewLine}";
+                buttons.Add(carLoan);
+                liabilities += $"*{carLoan}:* {l.CarLoan.AsCurrency()} - {x.CarLoan.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (l.CreditCard > 0)
             {
-                buttons.Add("Credit Card");
-                liabilities += $"*Credit Card:* {l.CreditCard.AsCurrency()} - {x.CreditCard.AsCurrency()} monthly{Environment.NewLine}";
+                buttons.Add(creditCard);
+                liabilities += $"*{creditCard}:* {l.CreditCard.AsCurrency()} - {x.CreditCard.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (l.BankLoan > 0)
             {
-                buttons.Add("Bank Loan");
-                liabilities += $"*Bank Loan:* {l.BankLoan.AsCurrency()} - {x.BankLoan.AsCurrency()} monthly{Environment.NewLine}";
+                buttons.Add(bankLoan);
+                liabilities += $"*{bankLoan}:* {l.BankLoan.AsCurrency()} - {x.BankLoan.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (user.Person.Cash < 1000)
             {
                 bot.SendMessage(user.Id, liabilities);
-                SetDefaultButtons(bot, user, $"You don't have money to reduce liabilities, your balance is {user.Person.Cash.AsCurrency()}");
+                SetDefaultButtons(bot, user, Terms.Get(48, user, "You don't have money to reduce liabilities, your balance is {0}", user.Person.Cash.AsCurrency()));
                 return;
             }
 
