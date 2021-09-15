@@ -18,6 +18,8 @@ namespace CashFlowBot.Models
 
         public bool IsAdmin { get => GetInt("Admin") == 1; set => Set("Admin", value ? 1 : 0); }
 
+        public Language Language { get => (Language) GetInt("Language"); set => Set("Language", value.ToString()); }
+
         public string Description => Person.Description +
                                      Person.Assets.Description +
                                      Person.Expenses.Description;

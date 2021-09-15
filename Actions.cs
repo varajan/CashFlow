@@ -8,6 +8,7 @@ using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot
 {
@@ -16,14 +17,14 @@ namespace CashFlowBot
         public static void AdminMenu(TelegramBotClient bot, User user)
         {
             user.Stage = Stage.Admin;
-            bot.SetButtons(user.Id, "Hi, Admin.", "Logs", "Bring Down", "Users", "Cancel");
+            bot.SetButtons(user.Id, "Hi, Admin.", "Logs", "Bring Down", "Users", Terms.Get(6, user, "Cancel"));
         }
 
         public static void NotifyAdmins(TelegramBotClient bot, User user)
         {
             var rkm = new ReplyKeyboardMarkup
             {
-                Keyboard = new[] { $"Make {user.Id} admin", "Cancel" }.Select(button => new KeyboardButton[] { button })
+                Keyboard = new[] { $"Make {user.Id} admin", Terms.Get(6, user, "Cancel") }.Select(button => new KeyboardButton[] { button })
             };
 
             foreach (var usr in Users.AllUsers)
@@ -47,47 +48,47 @@ namespace CashFlowBot
 
             if (user.Person.Cash == 0)
             {
-                SetDefaultButtons(bot, user, "You have no money to buy property.");
+                SetDefaultButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
                 return;
             }
 
             user.Stage = Stage.BuyPropertyTitle;
-            bot.SetButtons(user.Id, "Title:", properties.Append("Cancel"));
+            bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), properties.Append(Terms.Get(6, user, "Cancel")));
         }
 
         public static void BuyProperty(TelegramBotClient bot, User user, string value)
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).AsCurrency().Append("Cancel");
-            var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).AsCurrency().Append("Cancel");
-            var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).AsCurrency().Append("Cancel");
+            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
                 case Stage.BuyPropertyTitle:
                     user.Stage = Stage.BuyPropertyPrice;
                     user.Person.Assets.Add(title, AssetType.Property);
-                    bot.SetButtons(user.Id, "Price?", prices);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
                 case Stage.BuyPropertyPrice:
                     if (number <= 0)
                     {
-                        bot.SetButtons(user.Id, "Invalid price value. Try again.", prices);
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
                         return;
                     }
 
                     user.Person.Assets.Properties.First(a => a.Price == 0).Price = number;
                     user.Stage = Stage.BuyPropertyFirstPayment;
 
-                    bot.SetButtons(user.Id, "What is the first payment?", firstPayments);
+                    bot.SetButtons(user.Id, Terms.Get(10, user, "What is the first payment?"), firstPayments);
                     return;
 
                 case Stage.BuyPropertyFirstPayment:
                     if (number <= 0)
                     {
-                        bot.SendMessage(user.Id, "Invalid first payment amount.");
+                        bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
                         return;
                     }
 
@@ -95,7 +96,7 @@ namespace CashFlowBot
                     asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyPropertyCashFlow;
 
-                    bot.SetButtons(user.Id, "What is the cash flow?", cashFlows);
+                    bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
 
                 case Stage.BuyPropertyCashFlow:
@@ -108,7 +109,7 @@ namespace CashFlowBot
                     AvailableAssets.Add(property.Price-property.Mortgage, AssetType.PropertyFirstPayment);
                     AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
 
-                    SetDefaultButtons(bot, user, "Done");
+                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -128,20 +129,20 @@ namespace CashFlowBot
                     propertyList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
                 }
 
-                propertyIds.Add("Cancel");
+                propertyIds.Add(Terms.Get(6, user, "Cancel"));
                 user.Stage = Stage.SellPropertyTitle;
 
-                bot.SetButtons(user.Id, $"What property do you want to sell?{Environment.NewLine}{propertyList}", propertyIds);
+                bot.SetButtons(user.Id, Terms.Get(14, user, "What property do you want to sell?{0}{1}", Environment.NewLine, propertyList), propertyIds);
                 return;
             }
 
-            SetDefaultButtons(bot, user, "You have no properties.");
+            SetDefaultButtons(bot, user, Terms.Get(15, user, "You have no properties."));
         }
 
         public static void SellProperty(TelegramBotClient bot, User user, string value)
         {
             var properties = user.Person.Assets.Properties;
-            var prices = AvailableAssets.Get(AssetType.PropertySellPrice).AsCurrency().Append("Cancel");
+            var prices = AvailableAssets.Get(AssetType.PropertySellPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -150,13 +151,13 @@ namespace CashFlowBot
 
                     if (index < 1 || index > properties.Count)
                     {
-                        bot.SendMessage(user.Id, "Invalid property number.");
+                        bot.SendMessage(user.Id, Terms.Get(16, user, "Invalid property number."));
                         return;
                     }
 
                     properties[index - 1].Title += "*";
                     user.Stage = Stage.SellPropertyPrice;
-                    bot.SetButtons(user.Id, "What is the price?", prices);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
                 case Stage.SellPropertyPrice:
@@ -175,16 +176,16 @@ namespace CashFlowBot
 
         public static void BuyStocks(TelegramBotClient bot, User user)
         {
-            var stocks = AvailableAssets.Get(AssetType.Stock).Append("Cancel");
+            var stocks = AvailableAssets.Get(AssetType.Stock).Append(Terms.Get(6, user, "Cancel"));
 
             if (user.Person.Cash == 0)
             {
-                SetDefaultButtons(bot, user, "You have no money to buy stocks.");
+                SetDefaultButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
                 return;
             }
 
             user.Stage = Stage.BuyStocksTitle;
-            bot.SetButtons(user.Id, "Title:", stocks);
+            bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), stocks);
         }
 
         public static void BuyStocks(TelegramBotClient bot, User user, string value)
@@ -192,7 +193,7 @@ namespace CashFlowBot
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
-            prices.Add("Cancel");
+            prices.Add(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -200,13 +201,13 @@ namespace CashFlowBot
 
                     user.Stage = Stage.BuyStocksPrice;
                     user.Person.Assets.Add(title, AssetType.Stock);
-                    bot.SetButtons(user.Id, "Price?", prices);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
                 case Stage.BuyStocksPrice:
                     if (number <= 0)
                     {
-                        bot.SetButtons(user.Id, "Invalid price value. Try again.", prices);
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
                         return;
                     }
 
@@ -215,14 +216,15 @@ namespace CashFlowBot
 
                     int upToQtty = user.Person.Cash / number;
                     bot.SetButtons(user.Id,
-                    $"You can buy up to {upToQtty} stocks. How much stocks would you like to buy?", upToQtty.ToString(),
-                    "Cancel");
+                    Terms.Get(17, user,"You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty),
+                    upToQtty.ToString(),
+                    Terms.Get(6, user, "Cancel"));
                     return;
 
                 case Stage.BuyStocksQtty:
                     if (number <= 0)
                     {
-                        bot.SendMessage(user.Id, "Invalid quantity value. Try again.");
+                        bot.SendMessage(user.Id, Terms.Get(18, user, "Invalid quantity value. Try again."));
                         return;
                     }
 
@@ -232,11 +234,12 @@ namespace CashFlowBot
                     var availableCash = user.Person.Cash;
                     int availableQtty = availableCash / asset.Price;
 
+                    var defaultMsg = "{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?";
+                    var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice, availableCash.AsCurrency(), availableQtty);
+
                     if (totalPrice > availableCash)
                     {
-                        bot.SendMessage(user.Id,
-                        $"{number} x {asset.Price.AsCurrency()} = {totalPrice}. You have only {availableCash.AsCurrency()}." +
-                        $"You can buy {availableQtty} stocks. So, what quantity of stocks do you want to buy?");
+                        bot.SendMessage(user.Id, message);
                         return;
                     }
 
@@ -256,7 +259,7 @@ namespace CashFlowBot
             var stocks = user.Person.Assets.Stocks
                 .Select(x => x.Title)
                 .Distinct()
-                .Append("Cancel")
+                .Append(Terms.Get(6, user, "Cancel"))
                 .ToList();
 
             if (stocks.Count > 1)
@@ -276,7 +279,7 @@ namespace CashFlowBot
             var number = value.AsCurrency();
             var stocks = user.Person.Assets.Stocks;
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
-            prices.Add("Cancel");
+            prices.Add(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -300,7 +303,7 @@ namespace CashFlowBot
 
                     if (number <= 0)
                     {
-                        bot.SetButtons(user.Id, "Invalid price value. Try again.", prices);
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
                         return;
                     }
 
@@ -309,7 +312,7 @@ namespace CashFlowBot
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
 
-                    SetDefaultButtons(bot, user, "Done.");
+                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done"));
                     return;
             }
         }
@@ -354,9 +357,9 @@ namespace CashFlowBot
                 .Distinct()
                 .Select(x => x.AsCurrency())
                 .ToList();
-            buttons.Add("Cancel");
+            buttons.Add(Terms.Get(6, user, "Cancel"));
 
-            bot.SetButtons(user.Id, "How much would you pay?", buttons);
+            bot.SetButtons(user.Id, Terms.Get(20, user, "How much would you pay?"), buttons);
         }
 
         public static void ReduceLiabilities(TelegramBotClient bot, User user)
@@ -365,6 +368,8 @@ namespace CashFlowBot
             var x = user.Person.Expenses;
             var buttons = new List<string>();
             var liabilities = string.Empty;
+
+            // TODO: add terms
 
             if (l.Mortgage > 0)
             {
@@ -405,7 +410,7 @@ namespace CashFlowBot
 
             if (buttons.Any())
             {
-                buttons.Add("Cancel");
+                buttons.Add(Terms.Get(6, user, "Cancel"));
                 bot.SetButtons(user.Id, liabilities, buttons);
                 return;
             }
@@ -418,7 +423,7 @@ namespace CashFlowBot
         public static void GetCredit(TelegramBotClient bot, User user)
         {
             user.Stage = Stage.GetCredit;
-            bot.SetButtons(user.Id, "How much?", "1000", "2000", "5000", "10 000", "20 000", "Cancel");
+            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", Terms.Get(6, user, "Cancel"));
         }
 
         public static void GetMoney(TelegramBotClient bot, User user, string value)
@@ -426,7 +431,7 @@ namespace CashFlowBot
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
 
-            SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
+            SetDefaultButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
 
         public static void GiveMoney(TelegramBotClient bot, User user, string value)
@@ -435,7 +440,7 @@ namespace CashFlowBot
 
             if (user.Person.Cash < amount)
             {
-                SetDefaultButtons(bot, user, $"You don't have {amount.AsCurrency()}, but only {user.Person.Cash.AsCurrency()}");
+                SetDefaultButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
                 return;
             }
 
@@ -451,7 +456,7 @@ namespace CashFlowBot
 
             if (amount % 1000 > 0 || amount < 1000)
             {
-                bot.SendMessage(user.Id, "Invalid amount. The amount must be a multiple of 1000");
+                bot.SendMessage(user.Id, Terms.Get(24, user, "Invalid amount. The amount must be a multiple of 1000"));
                 return;
             }
 
@@ -459,7 +464,7 @@ namespace CashFlowBot
             user.Person.Expenses.BankLoan += amount / 10;
             user.Person.Liabilities.BankLoan += amount;
 
-            SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
+            SetDefaultButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
 
         public static void PayCredit(TelegramBotClient bot, User user, string value, Stage stage)
@@ -469,13 +474,13 @@ namespace CashFlowBot
 
             if (amount % 1000 > 0 || amount < 1000)
             {
-                bot.SendMessage(user.Id, "Invalid amount. The amount must be a multiple of 1000");
+                bot.SendMessage(user.Id, Terms.Get(24, user, "Invalid amount. The amount must be a multiple of 1000"));
                 return;
             }
 
             if (amount > user.Person.Cash)
             {
-                bot.SendMessage(user.Id, $"Cannot pay {amount.AsCurrency()}, you have {user.Person.Cash.AsCurrency()} only.");
+                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
                 return;
             }
 
@@ -538,7 +543,8 @@ namespace CashFlowBot
             {
                 case Stage.GetChild:
                     user.Person.Expenses.Children++;
-                    SetDefaultButtons(bot, user, $"{user.Person.Profession}, you have {user.Person.Expenses.ChildrenExpenses.AsCurrency()} children expenses.");
+                    SetDefaultButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
+                    user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
                     return;
 
                 case Stage.StopGame:
@@ -561,7 +567,7 @@ namespace CashFlowBot
         {
             user.Stage = stage;
 
-            bot.SetButtons(user.Id, question, buttons.Append("Cancel"));
+            bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
         }
 
         public static void Start(TelegramBotClient bot, User user, string name = null)
@@ -577,12 +583,15 @@ namespace CashFlowBot
 
             if (user.Person.Exists)
             {
-                bot.SetButtons(user.Id, "Please stop current game before starting a new one.", "Stop game", "Cancel");
+                bot.SetButtons(user.Id,
+                Terms.Get(26, user, "Please stop current game before starting a new one."),
+                Terms.Get(6, user, "Stop game"),
+                Terms.Get(6, user, "Cancel"));
                 return;
             }
 
             user.Stage = Stage.GetProfession;
-            bot.SetButtons(user.Id, "Choose your *profession*", professions);
+            bot.SetButtons(user.Id, Terms.Get(28, user, "Choose your *profession*"), professions);
         }
 
         public static void SetProfession(TelegramBotClient bot, User user, string profession)
@@ -591,13 +600,13 @@ namespace CashFlowBot
 
             if (!professions.Contains(profession))
             {
-                bot.SendMessage(user.Id, "Profession not found. Try again.");
+                bot.SendMessage(user.Id, Terms.Get(29, user, "Profession not found. Try again."));
                 return;
             }
 
             user.Person.Create(profession);
 
-            SetDefaultButtons(bot, user, $"Welcome, {user.Person.Profession}!");
+            SetDefaultButtons(bot, user, Terms.Get(30, user, "Welcome, {0}!", user.Person.Profession));
         }
 
         private static async void SetDefaultButtons(TelegramBotClient bot, User user, string message)
@@ -606,12 +615,12 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{"Show my Data"},
-                    new List<KeyboardButton>{"Get Money", "Give Money", "Get Credit"},
-                    new List<KeyboardButton>{"Buy Stocks", "Sell Stocks"},
-                    new List<KeyboardButton>{"Buy Property", "Sell Property"},
-                    new List<KeyboardButton>{"Add Child", "Reduce Liabilities"},
-                    new List<KeyboardButton>{"Stop Game"}
+                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
+                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
+                    new List<KeyboardButton>{Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
+                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Property"), Terms.Get(38, user, "Sell Property")},
+                    new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
+                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
                 }
             };
 

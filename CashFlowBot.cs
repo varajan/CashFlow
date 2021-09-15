@@ -10,6 +10,7 @@ using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.InputFiles;
+using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot
 {
@@ -72,31 +73,38 @@ namespace CashFlowBot
 
                     case "get money":
                         Actions.Ask(Bot, user, Stage.GetMoney,
-                        DataBase.Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
+                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
                         "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
                     case "give money":
                         var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
 
-                        Actions.Ask(Bot, user, Stage.GiveMoney, "How much would you give?", giveMoney);
+                        Actions.Ask(Bot, user, Stage.GiveMoney,
+                        Terms.Get(1, user, "How much would you give?"), giveMoney);
                         return;
 
                     case "add child":
                         Actions.Ask(Bot, user, Stage.GetChild,
-                            $"Hey {user.Person.Profession}, your have {user.Person.Expenses.Children} children. Get one more?", "Yes");
+                            Terms.Get(2, user, "Hey {0}, your have {1} children. Get one more?", user.Person.Profession, user.Person.Expenses.Children),
+                        Terms.Get(4, user, "Yes"));
                         return;
 
                     case "stop game":
                     case "/clear":
-                        Actions.Ask(Bot, user, Stage.StopGame, "Are you sure want to stop current game?", "Yes");
+                        Actions.Ask(Bot, user, Stage.StopGame,
+                        Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
                         return;
 
+                    // Term 4 - YES
                     case "yes":
+                    case "так":
                         Actions.Confirm(Bot, user);
                         return;
 
+                    // Term 6 - CANCEL
                     case "cancel":
+                    case "скасувати":
                     case "/cancel":
                         Actions.Cancel(Bot, user);
                         return;
@@ -163,7 +171,7 @@ namespace CashFlowBot
                     case "bring down":
                         if (user.IsAdmin)
                         {
-                            Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes");
+                            Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", Terms.Get(4, user, "Yes"));
                         }
                         return;
 
