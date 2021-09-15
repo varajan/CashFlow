@@ -71,12 +71,14 @@ namespace CashFlowBot
                         Actions.Start(Bot, user, message.Chat.Username);
                         return;
 
+                    // Term 32: Get Money
                     case "get money":
                         Actions.Ask(Bot, user, Stage.GetMoney,
                         Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
                         "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
+                    // Term 33: Give Money
                     case "give money":
                         var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
 
@@ -84,12 +86,14 @@ namespace CashFlowBot
                         Terms.Get(1, user, "How much would you give?"), giveMoney);
                         return;
 
+                    // Term 39: Add Child
                     case "add child":
                         Actions.Ask(Bot, user, Stage.GetChild,
                             Terms.Get(2, user, "Hey {0}, your have {1} children. Get one more?", user.Person.Profession, user.Person.Expenses.Children),
                         Terms.Get(4, user, "Yes"));
                         return;
 
+                    // Term 41: Stop Game
                     case "stop game":
                     case "/clear":
                         Actions.Ask(Bot, user, Stage.StopGame,
@@ -109,50 +113,62 @@ namespace CashFlowBot
                         Actions.Cancel(Bot, user);
                         return;
 
+                    // Term 40: Reduce Liabilities
                     case "reduce liabilities":
                         Actions.ReduceLiabilities(Bot, user);
                         return;
 
+                    // todo - term
                     case "mortgage":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
                         return;
 
+                    // todo - term
                     case "school loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
                         return;
 
+                    // todo - term
                     case "car loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
                         return;
 
+                    // todo - term
                     case "credit card":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
+                    // todo - term
                     case "bank loan":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
 
+                    // Term 31: Show my Data
                     case "show my data":
                         Actions.ShowData(Bot, user);
                         return;
 
+                    // Term 34: Get Credit
                     case "get credit":
                         Actions.GetCredit(Bot, user);
                         return;
 
+                    // Term 35: Buy Stocks
                     case "buy stocks":
                         Actions.BuyStocks(Bot, user);
                         return;
 
+                    // Term 36: Sell Stocks
                     case "sell stocks":
                         Actions.SellStocks(Bot, user);
                         return;
 
+                    // Term 37: Buy Property
                     case "buy property":
                         Actions.BuyProperty(Bot, user);
                         return;
 
+                    // Term 38: Sell Property
                     case "sell property":
                         Actions.SellProperty(Bot, user);
                         return;
