@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CashFlowBot.Data;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
@@ -12,6 +13,34 @@ namespace CashFlowBot
 {
     public static class Actions
     {
+        public static void AdminMenu(TelegramBotClient bot, User user)
+        {
+            user.Stage = Stage.Admin;
+            bot.SetButtons(user.Id, "Hi, Admin.", "Logs", "Bring Down", "Users", "Cancel");
+        }
+
+        public static void NotifyAdmins(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new[] { $"Make {user.Id} admin", "Cancel" }.Select(button => new KeyboardButton[] { button })
+            };
+
+            foreach (var usr in Users.AllUsers)
+            {
+                if (!usr.IsAdmin) continue;
+
+                bot.SendTextMessageAsync(usr.Id, $"{user.Name} wants to become Admin.", replyMarkup: rkm, parseMode: ParseMode.Default);
+            }
+        }
+
+        public static void ShowUsers(TelegramBotClient bot, User user)
+        {
+            var users = Users.AllUsers.Select(x => $"{(x.IsAdmin ? "A" : "")}[{x.Id}] {x.Name}").ToList();
+            bot.SendMessage(user.Id, $"There are {users.Count} users:");
+            bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
+        }
+
         public static void BuyProperty(TelegramBotClient bot, long userId)
         {
             var user = new User(userId);
@@ -550,7 +579,7 @@ namespace CashFlowBot
                     Start(bot, user.Id);
                     return;
 
-                case Stage.BringDown:
+                case Stage.AdminBringDown:
                     Environment.Exit(0);
                     return;
             }
@@ -566,12 +595,17 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, question, buttons.Append("Cancel"));
         }
 
-        public static void Start(TelegramBotClient bot, long userId)
+        public static void Start(TelegramBotClient bot, long userId, string name = null)
         {
             var user = new User(userId);
             var professions = Persons.Items.Select(x => x.Profession).ToArray();
 
-            if (!user.Exists) { user.Create(); }
+            if (!user.Exists)
+            {
+                user.Create();
+                user.Name = name ?? "N/A";
+                user.IsAdmin = !Users.AllUsers.Any();
+            }
 
             if (user.Person.Exists)
             {

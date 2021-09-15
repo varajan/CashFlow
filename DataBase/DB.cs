@@ -168,9 +168,7 @@ namespace CashFlowBot.DataBase
 
         public static class CreateColumns
         {
-            private static readonly string[] _users = { "ID", "Stage" };
-            public static readonly string Users = string.Join(", ", _users.Select(x => $"{x} Number"));
-
+            public static string Users = "ID Number, Stage Number, Admin Number, Name Text";
             public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number";
 
             private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "BankLoan", "Others", "Children", "PerChild" };
@@ -180,7 +178,6 @@ namespace CashFlowBot.DataBase
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
 
             public static string Assets = "AssetID Number, UserID Number, Type Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number";
-
             public static string AvailableAssets = "Type Number, Value Text";
         }
     }

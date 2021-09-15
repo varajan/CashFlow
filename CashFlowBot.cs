@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using CashFlowBot.Data;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
@@ -45,10 +46,28 @@ namespace CashFlowBot
 
                 if (message.Type != MessageType.Text) return;
 
+                // Make user admin
+                var makeAdmin = Regex.Match(message.Text, @"Make (\d+) admin");
+                if (makeAdmin.Success)
+                {
+                    var userId = makeAdmin.Groups[1].Value.ToInt();
+                    var usr = new User(userId);
+
+                    if (!usr.Exists) return;
+                    if (usr.IsAdmin) return;
+                    if (!user.IsAdmin) return;
+
+                    usr.IsAdmin = true;
+
+                    Actions.Cancel(Bot, user.Id);
+                    return;
+                }
+                // Make user admin
+
                 switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
-                        Actions.Start(Bot, user.Id);
+                        Actions.Start(Bot, user.Id, message.Chat.Username);
                         return;
 
                     case "get money":
@@ -129,36 +148,56 @@ namespace CashFlowBot
                         Actions.SellProperty(Bot, user.Id);
                         return;
 
+                    case "admin":
+                        if (user.IsAdmin)
+                        {
+                            Actions.AdminMenu(Bot, user);
+                        }
+                        else
+                        {
+                            Actions.NotifyAdmins(Bot, user);
+                        }
+                        return;
+
                     case "bring down":
-                        // TODO: check user permissions
-                        Actions.Ask(Bot, user.Id, Stage.BringDown, "Are you sure want to BRING BOT Down?", "Yes");
+                        if (user.IsAdmin)
+                        {
+                            Actions.Ask(Bot, user.Id, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes");
+                        }
                         return;
 
                     case "logs":
-                        // TODO: check user permissions
-                        Actions.Ask(Bot, user.Id, Stage.Logs, "Which log would you like to get?", "Full", "Top");
+                        if (!user.IsAdmin) return;
+
+                        Actions.Ask(Bot, user.Id, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
                         return;
 
                     case "full":
-                        // TODO: check user permissions
-                        if (user.Stage == Stage.Logs)
+                        if (!user.IsAdmin) return;
+
+                        if (user.Stage == Stage.AdminLogs)
                         {
                             await using var stream = File.Open(Logger.LogFile, FileMode.Open);
                             var fts = new InputOnlineFile(stream, "logs.txt");
                             await Bot.SendDocumentAsync(user.Id, fts);
+                            Actions.AdminMenu(Bot, user);
                         }
-
-                        Actions.Cancel(Bot, user.Id);
                         return;
 
                     case "top":
-                        // TODO: check user permissions
-                        if (user.Stage == Stage.Logs)
+                        if (!user.IsAdmin) return;
+
+                        if (user.Stage == Stage.AdminLogs)
                         {
                             Bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
                         }
+                        Actions.AdminMenu(Bot, user);
+                        return;
 
-                        Actions.Cancel(Bot, user.Id);
+                    case "users":
+                        if (!user.IsAdmin) return;
+
+                        Actions.ShowUsers(Bot, user);
                         return;
                 }
 

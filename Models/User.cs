@@ -14,6 +14,10 @@ namespace CashFlowBot.Models
 
         public Stage Stage { get => (Stage) GetInt("Stage"); set => Set("Stage", (int)value); }
 
+        public string Name { get => Get("Name"); set => Set("Name", value); }
+
+        public bool IsAdmin { get => GetInt("Admin") == 1; set => Set("Admin", value ? 1 : 0); }
+
         public string Description => Person.Description +
                                      Person.Assets.Description +
                                      Person.Expenses.Description;
