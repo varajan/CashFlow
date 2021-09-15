@@ -41,9 +41,8 @@ namespace CashFlowBot
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
 
-        public static void BuyProperty(TelegramBotClient bot, long userId)
+        public static void BuyProperty(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
             var properties = AvailableAssets.Get(AssetType.PropertyType).ToArray();
 
             if (user.Person.Cash == 0)
@@ -56,9 +55,8 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "Title:", properties.Append("Cancel"));
         }
 
-        public static void BuyProperty(TelegramBotClient bot, long userId, string value)
+        public static void BuyProperty(TelegramBotClient bot, User user, string value)
         {
-            var user = new User(userId);
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).AsCurrency().Append("Cancel");
@@ -115,9 +113,8 @@ namespace CashFlowBot
             }
         }
 
-        public static void SellProperty(TelegramBotClient bot, long userId)
+        public static void SellProperty(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
             var properties = user.Person.Assets.Properties;
 
             if (properties.Any())
@@ -141,9 +138,8 @@ namespace CashFlowBot
             SetDefaultButtons(bot, user, "You have no properties.");
         }
 
-        public static void SellProperty(TelegramBotClient bot, long userId, string value)
+        public static void SellProperty(TelegramBotClient bot, User user, string value)
         {
-            var user = new User(userId);
             var properties = user.Person.Assets.Properties;
             var prices = AvailableAssets.Get(AssetType.PropertySellPrice).AsCurrency().Append("Cancel");
 
@@ -177,9 +173,8 @@ namespace CashFlowBot
             }
         }
 
-        public static void BuyStocks(TelegramBotClient bot, long userId)
+        public static void BuyStocks(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
             var stocks = AvailableAssets.Get(AssetType.Stock).Append("Cancel");
 
             if (user.Person.Cash == 0)
@@ -192,9 +187,8 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "Title:", stocks);
         }
 
-        public static void BuyStocks(TelegramBotClient bot, long userId, string value)
+        public static void BuyStocks(TelegramBotClient bot, User user, string value)
         {
-            var user = new User(userId);
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
@@ -257,9 +251,8 @@ namespace CashFlowBot
             }
         }
 
-        public static void SellStocks(TelegramBotClient bot, long userId)
+        public static void SellStocks(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
             var stocks = user.Person.Assets.Stocks
                 .Select(x => x.Title)
                 .Distinct()
@@ -277,9 +270,8 @@ namespace CashFlowBot
             }
         }
 
-        public static void SellStocks(TelegramBotClient bot, long userId, string value)
+        public static void SellStocks(TelegramBotClient bot, User user, string value)
         {
-            var user = new User(userId);
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var stocks = user.Person.Assets.Stocks;
@@ -322,13 +314,11 @@ namespace CashFlowBot
             }
         }
 
-        public static void ReduceLiabilities(TelegramBotClient bot, long userId, Stage stage)
+        public static void ReduceLiabilities(TelegramBotClient bot, User user, Stage stage)
         {
-            var user = new User(userId);
-
             if (user.Person.Cash < 1000)
             {
-                Cancel(bot, user.Id);
+                Cancel(bot, user);
                 return;
             }
 
@@ -369,9 +359,8 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "How much would you pay?", buttons);
         }
 
-        public static void ReduceLiabilities(TelegramBotClient bot, long userId)
+        public static void ReduceLiabilities(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
             var l = user.Person.Liabilities;
             var x = user.Person.Expenses;
             var buttons = new List<string>();
@@ -421,38 +410,28 @@ namespace CashFlowBot
                 return;
             }
 
-            Cancel(bot, user.Id);
+            Cancel(bot, user);
         }
 
-        public static void ShowData(TelegramBotClient bot, long userId)
+        public static void ShowData(TelegramBotClient bot, User user) => SetDefaultButtons(bot, user, user.Description);
+
+        public static void GetCredit(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
-
-            SetDefaultButtons(bot, user, user.Description);
-        }
-
-        public static void GetCredit(TelegramBotClient bot, long userId)
-        {
-            var user = new User(userId);
-
             user.Stage = Stage.GetCredit;
             bot.SetButtons(user.Id, "How much?", "1000", "2000", "5000", "10 000", "20 000", "Cancel");
         }
 
-
-        public static void GetMoney(TelegramBotClient bot, long userId, string value)
+        public static void GetMoney(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
-            var user = new User(userId);
             user.Person.Cash += amount;
 
             SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
         }
 
-        public static void GiveMoney(TelegramBotClient bot, long userId, string value)
+        public static void GiveMoney(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
-            var user = new User(userId);
 
             if (user.Person.Cash < amount)
             {
@@ -466,9 +445,8 @@ namespace CashFlowBot
             SetDefaultButtons(bot, user, user.Description);
         }
 
-        public static void GetCredit(TelegramBotClient bot, long userId, string value)
+        public static void GetCredit(TelegramBotClient bot, User user, string value)
         {
-            var user = new User(userId);
             var amount = value.AsCurrency();
 
             if (amount % 1000 > 0 || amount < 1000)
@@ -484,9 +462,8 @@ namespace CashFlowBot
             SetDefaultButtons(bot, user, $"Ok, you've got {amount.AsCurrency()}");
         }
 
-        public static void PayCredit(TelegramBotClient bot, long userId, string value, Stage stage)
+        public static void PayCredit(TelegramBotClient bot, User user, string value, Stage stage)
         {
-            var user = new User(userId);
             var amount = value.AsCurrency();
             int expenses;
 
@@ -550,20 +527,13 @@ namespace CashFlowBot
                     break;
             }
 
-            Cancel(bot, user.Id);
+            Cancel(bot, user);
         }
 
-        public static void Cancel(TelegramBotClient bot, long userId)
+        public static void Cancel(TelegramBotClient bot, User user) => SetDefaultButtons(bot, user, user.Person.Description);
+
+        public static void Confirm(TelegramBotClient bot, User user)
         {
-            var user = new User(userId);
-
-            SetDefaultButtons(bot, user, user.Person.Description);
-        }
-
-        public static void Confirm(TelegramBotClient bot, long userId)
-        {
-            var user = new User(userId);
-
             switch (user.Stage)
             {
                 case Stage.GetChild:
@@ -576,7 +546,7 @@ namespace CashFlowBot
                     user.Person.Expenses.Clear();
                     user.Stage = Stage.Nothing;
 
-                    Start(bot, user.Id);
+                    Start(bot, user);
                     return;
 
                 case Stage.AdminBringDown:
@@ -584,20 +554,18 @@ namespace CashFlowBot
                     return;
             }
 
-            Cancel(bot, user.Id);
+            Cancel(bot, user);
         }
 
-        public static void Ask(TelegramBotClient bot, long userId, Stage stage, string question, params string[] buttons)
+        public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
-            var user = new User(userId);
             user.Stage = stage;
 
             bot.SetButtons(user.Id, question, buttons.Append("Cancel"));
         }
 
-        public static void Start(TelegramBotClient bot, long userId, string name = null)
+        public static void Start(TelegramBotClient bot, User user, string name = null)
         {
-            var user = new User(userId);
             var professions = Persons.Items.Select(x => x.Profession).ToArray();
 
             if (!user.Exists)
@@ -617,10 +585,9 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, "Choose your *profession*", professions);
         }
 
-        public static void SetProfession(TelegramBotClient bot, long userId, string profession)
+        public static void SetProfession(TelegramBotClient bot, User user, string profession)
         {
             var professions = Persons.Items.Select(x => x.Profession.ToLower());
-            var user = new User(userId);
 
             if (!professions.Contains(profession))
             {

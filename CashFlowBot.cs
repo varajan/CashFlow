@@ -59,7 +59,7 @@ namespace CashFlowBot
 
                     usr.IsAdmin = true;
 
-                    Actions.Cancel(Bot, user.Id);
+                    Actions.Cancel(Bot, user);
                     return;
                 }
                 // Make user admin
@@ -67,85 +67,85 @@ namespace CashFlowBot
                 switch (message.Text.ToLower().Trim())
                 {
                     case "/start":
-                        Actions.Start(Bot, user.Id, message.Chat.Username);
+                        Actions.Start(Bot, user, message.Chat.Username);
                         return;
 
                     case "get money":
-                        Actions.Ask(Bot, user.Id, Stage.GetMoney,
+                        Actions.Ask(Bot, user, Stage.GetMoney,
                             $"Your Cash Flow is *{user.Person.CashFlow.AsCurrency()}*. How much should you get?", "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
                         return;
 
                     case "give money":
                         var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
 
-                        Actions.Ask(Bot, user.Id, Stage.GiveMoney, "How much would you give?", giveMoney);
+                        Actions.Ask(Bot, user, Stage.GiveMoney, "How much would you give?", giveMoney);
                         return;
 
                     case "add child":
-                        Actions.Ask(Bot, user.Id, Stage.GetChild,
+                        Actions.Ask(Bot, user, Stage.GetChild,
                             $"Hey {user.Person.Profession}, your have {user.Person.Expenses.Children} children. Get one more?", "Yes");
                         return;
 
                     case "stop game":
                     case "/clear":
-                        Actions.Ask(Bot, user.Id, Stage.StopGame, "Are you sure want to stop current game?", "Yes");
+                        Actions.Ask(Bot, user, Stage.StopGame, "Are you sure want to stop current game?", "Yes");
                         return;
 
                     case "yes":
-                        Actions.Confirm(Bot, user.Id);
+                        Actions.Confirm(Bot, user);
                         return;
 
                     case "cancel":
                     case "/cancel":
-                        Actions.Cancel(Bot, user.Id);
+                        Actions.Cancel(Bot, user);
                         return;
 
                     case "reduce liabilities":
-                        Actions.ReduceLiabilities(Bot, user.Id);
+                        Actions.ReduceLiabilities(Bot, user);
                         return;
 
                     case "mortgage":
-                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceMortgage);
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
                         return;
 
                     case "school loan":
-                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceSchoolLoan);
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
                         return;
 
                     case "car loan":
-                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceCarLoan);
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
                         return;
 
                     case "credit card":
-                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceCreditCard);
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
                     case "bank loan":
-                        Actions.ReduceLiabilities(Bot, user.Id, Stage.ReduceBankLoan);
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
 
                     case "show my data":
-                        Actions.ShowData(Bot, user.Id);
+                        Actions.ShowData(Bot, user);
                         return;
 
                     case "get credit":
-                        Actions.GetCredit(Bot, user.Id);
+                        Actions.GetCredit(Bot, user);
                         return;
 
                     case "buy stocks":
-                        Actions.BuyStocks(Bot, user.Id);
+                        Actions.BuyStocks(Bot, user);
                         return;
 
                     case "sell stocks":
-                        Actions.SellStocks(Bot, user.Id);
+                        Actions.SellStocks(Bot, user);
                         return;
 
                     case "buy property":
-                        Actions.BuyProperty(Bot, user.Id);
+                        Actions.BuyProperty(Bot, user);
                         return;
 
                     case "sell property":
-                        Actions.SellProperty(Bot, user.Id);
+                        Actions.SellProperty(Bot, user);
                         return;
 
                     case "admin":
@@ -162,14 +162,14 @@ namespace CashFlowBot
                     case "bring down":
                         if (user.IsAdmin)
                         {
-                            Actions.Ask(Bot, user.Id, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes");
+                            Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes");
                         }
                         return;
 
                     case "logs":
                         if (!user.IsAdmin) return;
 
-                        Actions.Ask(Bot, user.Id, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
+                        Actions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
                         return;
 
                     case "full":
@@ -204,19 +204,19 @@ namespace CashFlowBot
                 switch (user.Stage)
                 {
                     case Stage.GetProfession:
-                        Actions.SetProfession(Bot, user.Id, message.Text.Trim().ToLower());
+                        Actions.SetProfession(Bot, user, message.Text.Trim().ToLower());
                         return;
 
                     case Stage.GetCredit:
-                        Actions.GetCredit(Bot, user.Id, message.Text.Trim());
+                        Actions.GetCredit(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.GetMoney:
-                        Actions.GetMoney(Bot, user.Id, message.Text.Trim());
+                        Actions.GetMoney(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.GiveMoney:
-                        Actions.GiveMoney(Bot, user.Id, message.Text.Trim());
+                        Actions.GiveMoney(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.ReduceMortgage:
@@ -224,30 +224,30 @@ namespace CashFlowBot
                     case Stage.ReduceCarLoan:
                     case Stage.ReduceCreditCard:
                     case Stage.ReduceBankLoan:
-                        Actions.PayCredit(Bot, user.Id, message.Text.Trim(), user.Stage);
+                        Actions.PayCredit(Bot, user, message.Text.Trim(), user.Stage);
                         return;
 
                     case Stage.BuyStocksTitle:
                     case Stage.BuyStocksPrice:
                     case Stage.BuyStocksQtty:
-                        Actions.BuyStocks(Bot, user.Id, message.Text.Trim());
+                        Actions.BuyStocks(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
-                        Actions.SellStocks(Bot, user.Id, message.Text.Trim());
+                        Actions.SellStocks(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyPropertyTitle:
                     case Stage.BuyPropertyPrice:
                     case Stage.BuyPropertyFirstPayment:
                     case Stage.BuyPropertyCashFlow:
-                        Actions.BuyProperty(Bot, user.Id, message.Text.Trim());
+                        Actions.BuyProperty(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellPropertyTitle:
                     case Stage.SellPropertyPrice:
-                        Actions.SellProperty(Bot, user.Id, message.Text.Trim());
+                        Actions.SellProperty(Bot, user, message.Text.Trim());
                         return;
                 }
             }
