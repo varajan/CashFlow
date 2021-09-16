@@ -62,6 +62,155 @@ namespace CashFlowBot
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
 
+        public static void BuyBusiness(TelegramBotClient bot, User user)
+        {
+            var businesses = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType).ToArray();
+
+            if (user.Person.Cash == 0)
+            {
+                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                return;
+            }
+
+            user.Stage = Stage.BuyBusinessTitle;
+            bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), businesses.Append(Terms.Get(6, user, "Cancel")));
+        }
+
+        public static void BuyBusiness(TelegramBotClient bot, User user, string value)
+        {
+            var title = value.Trim().ToUpper();
+            var number = value.AsCurrency();
+            var prices = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var firstPayments = AvailableAssets.Get(AssetType.SmallBusinessFirstPayment)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var cashFlows = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessCashFlow : AssetType.SmallBusinessCashFlow)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.BuyBusinessTitle:
+                    user.Stage = Stage.BuyBusinessPrice;
+                    user.Person.Assets.Add(title, AssetType.Business, user.Person.BigCircle);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.BuyBusinessPrice:
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
+                        return;
+                    }
+
+                    if (user.Person.Cash < number)
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        return;
+                    }
+
+                    user.Person.Assets.Businesses.First(a => a.Price == 0).Price = number;
+
+                    if (user.Person.BigCircle)
+                    {
+                        user.Stage = Stage.BuyBusinessCashFlow;
+                        bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                        return;
+                    }
+
+                    user.Stage = Stage.BuyBusinessFirstPayment;
+                    bot.SetButtons(user.Id, Terms.Get(10, user, "What is the first payment?"), firstPayments);
+                    return;
+
+                case Stage.BuyBusinessFirstPayment:
+                    if (number <= 0)
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
+                        return;
+                    }
+
+                    var asset = user.Person.Assets.Businesses.First(a => a.Mortgage == 0);
+                    asset.Mortgage = asset.Price - number;
+                    user.Stage = Stage.BuyBusinessCashFlow;
+
+                    bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                    return;
+
+                case Stage.BuyBusinessCashFlow:
+                    var business = user.Person.Assets.Businesses.First(a => a.CashFlow == 0);
+                    business.CashFlow = number;
+
+                    AvailableAssets.Add(business.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
+                    AvailableAssets.Add(business.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
+                    AvailableAssets.Add(business.Price-business.Mortgage, AssetType.SmallBusinessFirstPayment);
+                    AvailableAssets.Add(business.CashFlow, user.Person.BigCircle ? AssetType.BigBusinessCashFlow : AssetType.SmallBusinessCashFlow);
+
+                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+                    Cancel(bot, user);
+                    return;
+            }
+        }
+
+        public static void SellBusiness(TelegramBotClient bot, User user)
+        {
+            var businesses = user.Person.Assets.Businesses;
+
+            if (businesses.Any())
+            {
+                var businessesIds = new List<string>();
+                var businessesList = string.Empty;
+
+                for (int i = 0; i < businesses.Count; i++)
+                {
+                    businessesIds.Add($"#{i+1}");
+                    businessesList += $"{Environment.NewLine}*#{i+1}* - {businesses[i].Description}";
+                }
+
+                businessesIds.Add(Terms.Get(6, user, "Cancel"));
+                user.Stage = Stage.SellBusinessTitle;
+
+                bot.SetButtons(user.Id, Terms.Get(78, user, "What Business do you want to sell?{0}{1}", Environment.NewLine, businessesList), businessesIds);
+                return;
+            }
+
+            SmallCircleButtons(bot, user, Terms.Get(77, user, "You have no Business."));
+        }
+
+        public static void SellBusiness(TelegramBotClient bot, User user, string value)
+        {
+            var businesses = user.Person.Assets.Businesses;
+            var prices = AvailableAssets.Get(AssetType.SmallBusinessBuyPrice)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.SellBusinessTitle:
+                    var index = value.Replace("#", "").ToInt();
+
+                    if (index < 1 || index > businesses.Count)
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(76, user, "Invalid business number."));
+                        return;
+                    }
+
+                    businesses[index - 1].Title += "*";
+                    user.Stage = Stage.SellBusinessPrice;
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.SellBusinessPrice:
+                    var price = value.AsCurrency();
+                    var business = businesses.First(x => x.Title.EndsWith("*"));
+
+                    user.Person.Cash += price - business.Mortgage;
+                    business.Delete();
+
+                    AvailableAssets.Add(price, AssetType.BigBusinessSellPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+            }
+        }
+
         public static void BuyRealEstate(TelegramBotClient bot, User user)
         {
             var properties = AvailableAssets.Get(AssetType.RealEstateType).ToArray();
@@ -99,7 +248,7 @@ namespace CashFlowBot
                         return;
                     }
 
-                    user.Person.Assets.Properties.First(a => a.Price == 0).Price = number;
+                    user.Person.Assets.RealEstates.First(a => a.Price == 0).Price = number;
                     user.Stage = Stage.BuyRealEstateFirstPayment;
 
                     bot.SetButtons(user.Id, Terms.Get(10, user, "What is the first payment?"), firstPayments);
@@ -112,7 +261,13 @@ namespace CashFlowBot
                         return;
                     }
 
-                    var asset = user.Person.Assets.Properties.First(a => a.Mortgage == 0);
+                    if (user.Person.Cash < number)
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        return;
+                    }
+
+                    var asset = user.Person.Assets.RealEstates.First(a => a.Mortgage == 0);
                     asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyRealEstateCashFlow;
 
@@ -120,14 +275,14 @@ namespace CashFlowBot
                     return;
 
                 case Stage.BuyRealEstateCashFlow:
-                    var RealEstate = user.Person.Assets.Properties.First(a => a.CashFlow == 0);
-                    RealEstate.CashFlow = number;
+                    var realEstate = user.Person.Assets.RealEstates.First(a => a.CashFlow == 0);
+                    realEstate.CashFlow = number;
                     user.Stage = Stage.BuyRealEstateCashFlow;
 
-                    AvailableAssets.Add(RealEstate.Title, AssetType.RealEstateType);
-                    AvailableAssets.Add(RealEstate.Price, AssetType.RealEstateBuyPrice);
-                    AvailableAssets.Add(RealEstate.Price-RealEstate.Mortgage, AssetType.RealEstateFirstPayment);
-                    AvailableAssets.Add(RealEstate.CashFlow, AssetType.RealEstateCashFlow);
+                    AvailableAssets.Add(realEstate.Title, AssetType.RealEstateType);
+                    AvailableAssets.Add(realEstate.Price, AssetType.RealEstateBuyPrice);
+                    AvailableAssets.Add(realEstate.Price-realEstate.Mortgage, AssetType.RealEstateFirstPayment);
+                    AvailableAssets.Add(realEstate.CashFlow, AssetType.RealEstateCashFlow);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -136,23 +291,23 @@ namespace CashFlowBot
 
         public static void SellRealEstate(TelegramBotClient bot, User user)
         {
-            var properties = user.Person.Assets.Properties;
+            var properties = user.Person.Assets.RealEstates;
 
             if (properties.Any())
             {
-                var RealEstateIds = new List<string>();
-                var RealEstateList = string.Empty;
+                var realEstateIds = new List<string>();
+                var realEstateList = string.Empty;
 
                 for (int i = 0; i < properties.Count; i++)
                 {
-                    RealEstateIds.Add($"#{i+1}");
-                    RealEstateList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
+                    realEstateIds.Add($"#{i+1}");
+                    realEstateList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
                 }
 
-                RealEstateIds.Add(Terms.Get(6, user, "Cancel"));
+                realEstateIds.Add(Terms.Get(6, user, "Cancel"));
                 user.Stage = Stage.SellRealEstateTitle;
 
-                bot.SetButtons(user.Id, Terms.Get(14, user, "What RealEstate do you want to sell?{0}{1}", Environment.NewLine, RealEstateList), RealEstateIds);
+                bot.SetButtons(user.Id, Terms.Get(14, user, "What RealEstate do you want to sell?{0}{1}", Environment.NewLine, realEstateList), realEstateIds);
                 return;
             }
 
@@ -161,7 +316,7 @@ namespace CashFlowBot
 
         public static void SellRealEstate(TelegramBotClient bot, User user, string value)
         {
-            var properties = user.Person.Assets.Properties;
+            var properties = user.Person.Assets.RealEstates;
             var prices = AvailableAssets.Get(AssetType.RealEstateSellPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
@@ -182,10 +337,10 @@ namespace CashFlowBot
 
                 case Stage.SellRealEstatePrice:
                     var price = value.AsCurrency();
-                    var RealEstate = properties.First(x => x.Title.EndsWith("*"));
+                    var realEstate = properties.First(x => x.Title.EndsWith("*"));
 
-                    user.Person.Cash += price - RealEstate.Mortgage;
-                    RealEstate.Delete();
+                    user.Person.Cash += price - realEstate.Mortgage;
+                    realEstate.Delete();
 
                     AvailableAssets.Add(price, AssetType.RealEstateSellPrice);
 
@@ -692,6 +847,7 @@ namespace CashFlowBot
                     new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
                     new List<KeyboardButton>{Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
                     new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(38, user, "Sell Real Estate") },
+                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business"), Terms.Get(75, user, "Sell Business")},
                     new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
                     new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
                 }

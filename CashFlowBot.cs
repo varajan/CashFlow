@@ -104,11 +104,12 @@ namespace CashFlowBot
                     case "get money":
                     case "отримати гроші":
                         var buttons = user.Person.BigCircle
-                            ? new[] { "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency() }
-                            : new[] { "$50 000", "$100 000", "$200 000", user.Person.CashFlow.AsCurrency() };
+                            ? new[] { "$50 000", "$100 000", "$200 000", user.Person.CurrentCashFlow.AsCurrency() }
+                            : new[] {"$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency()};
 
                         Actions.Ask(Bot, user, Stage.GetMoney,
-                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()), buttons);
+                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
+                        user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons);
                         return;
 
                     // Term 33: Give Money
@@ -227,6 +228,18 @@ namespace CashFlowBot
                         Actions.SellRealEstate(Bot, user);
                         return;
 
+                    // Term 74: Buy Business
+                    case "buy business":
+                    case "купити бізнес":
+                        Actions.BuyBusiness(Bot, user);
+                        return;
+
+                    // Term 75: Sell Business
+                    case "sell business":
+                    case "продати бізнес":
+                        Actions.SellBusiness(Bot, user);
+                        return;
+
                     case "admin":
                         if (user.IsAdmin)
                         {
@@ -327,6 +340,18 @@ namespace CashFlowBot
                     case Stage.SellRealEstateTitle:
                     case Stage.SellRealEstatePrice:
                         Actions.SellRealEstate(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.BuyBusinessTitle:
+                    case Stage.BuyBusinessPrice:
+                    case Stage.BuyBusinessFirstPayment:
+                    case Stage.BuyBusinessCashFlow:
+                        Actions.BuyBusiness(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.SellBusinessTitle:
+                    case Stage.SellBusinessPrice:
+                        Actions.SellBusiness(Bot, user, message.Text.Trim());
                         return;
                 }
             }

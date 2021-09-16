@@ -34,6 +34,11 @@ namespace CashFlowBot.Models
                     case AssetType.RealEstate:
                     return $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
+                    case AssetType.Business:
+                        return Mortgage > 0
+                            ? $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}"
+                            : $"*{Title}* - {price}: {Price.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
+
                     default:
                         return string.Empty;
                 }

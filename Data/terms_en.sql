@@ -74,6 +74,10 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (72, 'EN', 'You''ve lost {0}.'),
 (73, 'EN', 'You are the winner!'),
 (74, 'EN', 'Buy Business'),
+(75, 'EN', 'Sell Business'),
+(76, 'EN', 'Invalid Business number.'),
+(77, 'EN', 'You have no Business.'),
+(78, 'EN', 'What Business do you want to sell?{0}{1}.'),
 
 
 (1001, 'EN', 'Lawyer'),

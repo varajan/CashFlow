@@ -25,10 +25,16 @@
         BuyRealEstatePrice,
         BuyRealEstateFirstPayment,
         BuyRealEstateCashFlow,
+        BuyBusinessTitle,
+        BuyBusinessPrice,
+        BuyBusinessFirstPayment,
+        BuyBusinessCashFlow,
         Sell,
         SellStocksTitle,
         SellStocksPrice,
         SellRealEstateTitle,
         SellRealEstatePrice,
+        SellBusinessTitle,
+        SellBusinessPrice,
     }
 }

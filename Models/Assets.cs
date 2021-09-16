@@ -16,14 +16,19 @@ namespace CashFlowBot.Models
 
         public void CleanUp()
         {
-            Properties.ForEach(x => x.Title = x.Title.SubStringTo("*"));
+            RealEstates.ForEach(x => x.Title = x.Title.SubStringTo("*"));
+            RealEstates.Where(x => x.Price == 0).ForEach(x => x.Delete());
+
+            Businesses.ForEach(x => x.Title = x.Title.SubStringTo("*"));
+            Businesses.Where(x => x.Price == 0).ForEach(x => x.Delete());
 
             Stocks.ForEach(x => x.Title = x.Title.SubStringTo("*"));
             Stocks.Where(x => x.Price ==0 || x.Qtty == 0).ForEach(x => x.Delete());
         }
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
-        public List<Asset> Properties => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
+        public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
+        public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business).ToList();
 
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
@@ -33,7 +38,7 @@ namespace CashFlowBot.Models
 
         private User ThisUser => new (Id);
 
-        public int Income => Properties.Sum(x => x.CashFlow);
+        public int Income => RealEstates.Sum(x => x.CashFlow) + Businesses.Sum(x => x.CashFlow);
 
         public string Description => Items.Any()
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
