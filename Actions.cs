@@ -574,6 +574,9 @@ namespace CashFlowBot
             bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
         }
 
+        public static void ChangeLanguage(TelegramBotClient bot, User user) =>
+            Ask(bot, user, Stage.Nothing, "Language/Мова", "EN", "UA");
+
         public static void Start(TelegramBotClient bot, User user, string name = null)
         {
             var professions = Persons.Get(user.Id).Select(x => x.Profession).ToArray();
@@ -583,6 +586,8 @@ namespace CashFlowBot
                 user.Create();
                 user.Name = name ?? "N/A";
                 user.IsAdmin = !Users.AllUsers.Any();
+                ChangeLanguage(bot, user);
+                return;
             }
 
             if (user.Person.Exists)

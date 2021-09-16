@@ -67,6 +67,20 @@ namespace CashFlowBot
 
                 switch (message.Text.ToLower().Trim())
                 {
+                    case "en":
+                    case "ua":
+                        user.Language = message.Text.ToUpper().Trim().ParseEnum<Language>();
+
+                        if (user.Person.Exists)
+                        {
+                            Actions.Cancel(Bot, user);
+                        }
+                        else
+                        {
+                            Actions.Start(Bot, user);
+                        }
+                        return;
+
                     case "/start":
                         Actions.Start(Bot, user, message.Chat.Username);
                         return;
