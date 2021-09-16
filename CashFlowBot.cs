@@ -215,16 +215,16 @@ namespace CashFlowBot
                         Actions.SellStocks(Bot, user);
                         return;
 
-                    // Term 37: Buy Property
-                    case "buy property":
+                    // Term 37: Buy Real Estate
+                    case "buy real estate":
                     case "купити нерухомість":
-                        Actions.BuyProperty(Bot, user);
+                        Actions.BuyRealEstate(Bot, user);
                         return;
 
-                    // Term 38: Sell Property
-                    case "sell property":
+                    // Term 38: Sell Real Estate
+                    case "sell real estate":
                     case "продати нерухомість":
-                        Actions.SellProperty(Bot, user);
+                        Actions.SellRealEstate(Bot, user);
                         return;
 
                     case "admin":
@@ -317,16 +317,16 @@ namespace CashFlowBot
                         Actions.SellStocks(Bot, user, message.Text.Trim());
                         return;
 
-                    case Stage.BuyPropertyTitle:
-                    case Stage.BuyPropertyPrice:
-                    case Stage.BuyPropertyFirstPayment:
-                    case Stage.BuyPropertyCashFlow:
-                        Actions.BuyProperty(Bot, user, message.Text.Trim());
+                    case Stage.BuyRealEstateTitle:
+                    case Stage.BuyRealEstatePrice:
+                    case Stage.BuyRealEstateFirstPayment:
+                    case Stage.BuyRealEstateCashFlow:
+                        Actions.BuyRealEstate(Bot, user, message.Text.Trim());
                         return;
 
-                    case Stage.SellPropertyTitle:
-                    case Stage.SellPropertyPrice:
-                        Actions.SellProperty(Bot, user, message.Text.Trim());
+                    case Stage.SellRealEstateTitle:
+                    case Stage.SellRealEstatePrice:
+                        Actions.SellRealEstate(Bot, user, message.Text.Trim());
                         return;
                 }
             }

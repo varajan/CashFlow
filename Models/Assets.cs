@@ -23,7 +23,7 @@ namespace CashFlowBot.Models
         }
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
-        public List<Asset> Properties => Items.Where(x => x.Type == AssetType.Property).ToList();
+        public List<Asset> Properties => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
 
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")

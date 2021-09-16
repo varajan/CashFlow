@@ -31,7 +31,7 @@ namespace CashFlowBot.Models
                     case AssetType.Stock:
                     return $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
 
-                    case AssetType.Property:
+                    case AssetType.RealEstate:
                     return $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
                     default:

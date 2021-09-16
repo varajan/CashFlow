@@ -62,9 +62,9 @@ namespace CashFlowBot
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
 
-        public static void BuyProperty(TelegramBotClient bot, User user)
+        public static void BuyRealEstate(TelegramBotClient bot, User user)
         {
-            var properties = AvailableAssets.Get(AssetType.PropertyType).ToArray();
+            var properties = AvailableAssets.Get(AssetType.RealEstateType).ToArray();
 
             if (user.Person.Cash == 0)
             {
@@ -72,27 +72,27 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Stage = Stage.BuyPropertyTitle;
+            user.Stage = Stage.BuyRealEstateTitle;
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), properties.Append(Terms.Get(6, user, "Cancel")));
         }
 
-        public static void BuyProperty(TelegramBotClient bot, User user, string value)
+        public static void BuyRealEstate(TelegramBotClient bot, User user, string value)
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var prices = AvailableAssets.Get(AssetType.PropertyBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
-            var firstPayments = AvailableAssets.Get(AssetType.PropertyFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
-            var cashFlows = AvailableAssets.Get(AssetType.PropertyCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var prices = AvailableAssets.Get(AssetType.RealEstateBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var firstPayments = AvailableAssets.Get(AssetType.RealEstateFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var cashFlows = AvailableAssets.Get(AssetType.RealEstateCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
-                case Stage.BuyPropertyTitle:
-                    user.Stage = Stage.BuyPropertyPrice;
-                    user.Person.Assets.Add(title, AssetType.Property);
+                case Stage.BuyRealEstateTitle:
+                    user.Stage = Stage.BuyRealEstatePrice;
+                    user.Person.Assets.Add(title, AssetType.RealEstate);
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
-                case Stage.BuyPropertyPrice:
+                case Stage.BuyRealEstatePrice:
                     if (number <= 0)
                     {
                         bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
@@ -100,12 +100,12 @@ namespace CashFlowBot
                     }
 
                     user.Person.Assets.Properties.First(a => a.Price == 0).Price = number;
-                    user.Stage = Stage.BuyPropertyFirstPayment;
+                    user.Stage = Stage.BuyRealEstateFirstPayment;
 
                     bot.SetButtons(user.Id, Terms.Get(10, user, "What is the first payment?"), firstPayments);
                     return;
 
-                case Stage.BuyPropertyFirstPayment:
+                case Stage.BuyRealEstateFirstPayment:
                     if (number <= 0)
                     {
                         bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
@@ -114,80 +114,80 @@ namespace CashFlowBot
 
                     var asset = user.Person.Assets.Properties.First(a => a.Mortgage == 0);
                     asset.Mortgage = asset.Price - number;
-                    user.Stage = Stage.BuyPropertyCashFlow;
+                    user.Stage = Stage.BuyRealEstateCashFlow;
 
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
 
-                case Stage.BuyPropertyCashFlow:
-                    var property = user.Person.Assets.Properties.First(a => a.CashFlow == 0);
-                    property.CashFlow = number;
-                    user.Stage = Stage.BuyPropertyCashFlow;
+                case Stage.BuyRealEstateCashFlow:
+                    var RealEstate = user.Person.Assets.Properties.First(a => a.CashFlow == 0);
+                    RealEstate.CashFlow = number;
+                    user.Stage = Stage.BuyRealEstateCashFlow;
 
-                    AvailableAssets.Add(property.Title, AssetType.PropertyType);
-                    AvailableAssets.Add(property.Price, AssetType.PropertyBuyPrice);
-                    AvailableAssets.Add(property.Price-property.Mortgage, AssetType.PropertyFirstPayment);
-                    AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
+                    AvailableAssets.Add(RealEstate.Title, AssetType.RealEstateType);
+                    AvailableAssets.Add(RealEstate.Price, AssetType.RealEstateBuyPrice);
+                    AvailableAssets.Add(RealEstate.Price-RealEstate.Mortgage, AssetType.RealEstateFirstPayment);
+                    AvailableAssets.Add(RealEstate.CashFlow, AssetType.RealEstateCashFlow);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
 
-        public static void SellProperty(TelegramBotClient bot, User user)
+        public static void SellRealEstate(TelegramBotClient bot, User user)
         {
             var properties = user.Person.Assets.Properties;
 
             if (properties.Any())
             {
-                var propertyIds = new List<string>();
-                var propertyList = string.Empty;
+                var RealEstateIds = new List<string>();
+                var RealEstateList = string.Empty;
 
                 for (int i = 0; i < properties.Count; i++)
                 {
-                    propertyIds.Add($"#{i+1}");
-                    propertyList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
+                    RealEstateIds.Add($"#{i+1}");
+                    RealEstateList += $"{Environment.NewLine}*#{i+1}* - {properties[i].Description}";
                 }
 
-                propertyIds.Add(Terms.Get(6, user, "Cancel"));
-                user.Stage = Stage.SellPropertyTitle;
+                RealEstateIds.Add(Terms.Get(6, user, "Cancel"));
+                user.Stage = Stage.SellRealEstateTitle;
 
-                bot.SetButtons(user.Id, Terms.Get(14, user, "What property do you want to sell?{0}{1}", Environment.NewLine, propertyList), propertyIds);
+                bot.SetButtons(user.Id, Terms.Get(14, user, "What RealEstate do you want to sell?{0}{1}", Environment.NewLine, RealEstateList), RealEstateIds);
                 return;
             }
 
             SmallCircleButtons(bot, user, Terms.Get(15, user, "You have no properties."));
         }
 
-        public static void SellProperty(TelegramBotClient bot, User user, string value)
+        public static void SellRealEstate(TelegramBotClient bot, User user, string value)
         {
             var properties = user.Person.Assets.Properties;
-            var prices = AvailableAssets.Get(AssetType.PropertySellPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var prices = AvailableAssets.Get(AssetType.RealEstateSellPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
-                case Stage.SellPropertyTitle:
+                case Stage.SellRealEstateTitle:
                     var index = value.Replace("#", "").ToInt();
 
                     if (index < 1 || index > properties.Count)
                     {
-                        bot.SendMessage(user.Id, Terms.Get(16, user, "Invalid property number."));
+                        bot.SendMessage(user.Id, Terms.Get(16, user, "Invalid RealEstate number."));
                         return;
                     }
 
                     properties[index - 1].Title += "*";
-                    user.Stage = Stage.SellPropertyPrice;
+                    user.Stage = Stage.SellRealEstatePrice;
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
-                case Stage.SellPropertyPrice:
+                case Stage.SellRealEstatePrice:
                     var price = value.AsCurrency();
-                    var property = properties.First(x => x.Title.EndsWith("*"));
+                    var RealEstate = properties.First(x => x.Title.EndsWith("*"));
 
-                    user.Person.Cash += price - property.Mortgage;
-                    property.Delete();
+                    user.Person.Cash += price - RealEstate.Mortgage;
+                    RealEstate.Delete();
 
-                    AvailableAssets.Add(price, AssetType.PropertySellPrice);
+                    AvailableAssets.Add(price, AssetType.RealEstateSellPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -691,7 +691,7 @@ namespace CashFlowBot
                     new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
                     new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
                     new List<KeyboardButton>{Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
-                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Property"), Terms.Get(38, user, "Sell Property")},
+                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(38, user, "Sell Real Estate") },
                     new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
                     new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
                 }

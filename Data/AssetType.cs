@@ -6,11 +6,11 @@
         StockPrice,
         SmallGiveMoney,
         BigGiveMoney,
-        Property,
-        PropertyType,
-        PropertyBuyPrice,
-        PropertySellPrice,
-        PropertyFirstPayment,
-        PropertyCashFlow,
+        RealEstate,
+        RealEstateType,
+        RealEstateBuyPrice,
+        RealEstateSellPrice,
+        RealEstateFirstPayment,
+        RealEstateCashFlow,
     }
 }
