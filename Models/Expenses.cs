@@ -2,6 +2,7 @@
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
+using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot.Models
 {
@@ -27,16 +28,28 @@ namespace CashFlowBot.Models
         {
             get
             {
-                var expenses = $"{Environment.NewLine}{Environment.NewLine}*Expenses:*{Environment.NewLine}";
-                expenses += $"*Taxes:* {Taxes.AsCurrency()}{Environment.NewLine}";
-                if (Mortgage > 0) expenses += $"*Mortgage/Rent Pay:* {Mortgage.AsCurrency()}{Environment.NewLine}";
-                if (SchoolLoan > 0) expenses += $"*School Loan Pay:* {SchoolLoan.AsCurrency()}{Environment.NewLine}";
-                if (CarLoan > 0) expenses += $"*Car Payment:* {CarLoan.AsCurrency()}{Environment.NewLine}";
-                if (CarLoan > 0) expenses += $"*Credit Card Payment:* {CreditCard.AsCurrency()}{Environment.NewLine}";
-                if (BankLoan > 0) expenses += $"*Bank Loan Payment:* {BankLoan.AsCurrency()}{Environment.NewLine}";
-                expenses += $"*Other Payment:* {Others.AsCurrency()}{Environment.NewLine}";
-                if (ChildrenExpenses > 0) expenses += $"*Children:* {Children} ({PerChild.AsCurrency()} per child){Environment.NewLine}";
-                if (ChildrenExpenses > 0) expenses += $"*Children Expenses:* {ChildrenExpenses.AsCurrency()}{Environment.NewLine}";
+                var expensesTerm = Terms.Get(54, Id, "Expenses");
+                var taxesTerm = Terms.Get(58, Id, "Taxes");
+                var mortgageTerm = Terms.Get(59, Id, "Mortgage/Rent Pay");
+                var schoolLoanTerm = Terms.Get(44, Id, "School Loan");
+                var carLoanTerm = Terms.Get(45, Id, "Car Loan");
+                var creditCardTerm = Terms.Get(46, Id, "Credit Card");
+                var bankLoanTerm = Terms.Get(47, Id, "Bank Loan");
+                var otherPaymentTerm = Terms.Get(60, Id, "Other Payment");
+                var childrenTerm = Terms.Get(61, Id, "Children");
+                var childrenExpensesTerm = Terms.Get(62, Id, "Children Expenses");
+                var perChildTerm = Terms.Get(63, Id, "per child");
+
+                var expenses = $"{Environment.NewLine}{Environment.NewLine}*{expensesTerm}:*{Environment.NewLine}";
+                expenses += $"*{taxesTerm}:* {Taxes.AsCurrency()}{Environment.NewLine}";
+                if (Mortgage > 0) expenses += $"*{mortgageTerm}:* {Mortgage.AsCurrency()}{Environment.NewLine}";
+                if (SchoolLoan > 0) expenses += $"*{schoolLoanTerm}:* {SchoolLoan.AsCurrency()}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*{carLoanTerm}:* {CarLoan.AsCurrency()}{Environment.NewLine}";
+                if (CarLoan > 0) expenses += $"*{creditCardTerm}:* {CreditCard.AsCurrency()}{Environment.NewLine}";
+                if (BankLoan > 0) expenses += $"*{bankLoanTerm}:* {BankLoan.AsCurrency()}{Environment.NewLine}";
+                expenses += $"*{otherPaymentTerm}:* {Others.AsCurrency()}{Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*{childrenTerm}:* {Children} ({PerChild.AsCurrency()} {perChildTerm}){Environment.NewLine}";
+                if (ChildrenExpenses > 0) expenses += $"*{childrenExpensesTerm}:* {ChildrenExpenses.AsCurrency()}{Environment.NewLine}";
 
                 return expenses;
             }

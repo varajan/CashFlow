@@ -18,19 +18,26 @@ namespace CashFlowBot.Models
         public Liabilities Liabilities => new(Id);
         public Assets Assets => new (Id);
 
-        public string Description => $"*Profession:* {Profession}{Environment.NewLine}" +
-                     $"*Cash:* {Cash.AsCurrency()}{Environment.NewLine}" +
-                     $"*Salary:* {Salary.AsCurrency()}{Environment.NewLine}" +
-                     $"*Income:* {Assets.Income.AsCurrency()}{Environment.NewLine}" +
-                     $"*Expenses:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
-                     $"*Cash Flow*: {CashFlow.AsCurrency()}";
+        private string ProfessionTerm => Terms.Get(50, Id, "Profession");
+        private string CashTerm => Terms.Get(51, Id, "Cash");
+        private string SalaryTerm => Terms.Get(52, Id, "Salary");
+        private string IncomeTerm => Terms.Get(53, Id, "Income");
+        private string ExpensesTerm => Terms.Get(54, Id, "Expenses");
+        private string CashFlowTerm => Terms.Get(55, Id, "Cash Flow");
+
+        public string Description => $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
+                     $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
+                     $"*{SalaryTerm}:* {Salary.AsCurrency()}{Environment.NewLine}" +
+                     $"*{IncomeTerm}:* {Assets.Income.AsCurrency()}{Environment.NewLine}" +
+                     $"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
+                     $"*{CashFlowTerm}*: {CashFlow.AsCurrency()}";
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
 
         public void Create(string profession)
         {
-            var data = Data.Persons.Items.First(x => x.Profession.ToLower() == profession);
+            var data = Data.Persons.Get(Id).First(x => x.Profession.ToLower() == profession);
 
             Clear();
             DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Persons}) VALUES ({Id}, {DB.DefaultValues.Persons})");

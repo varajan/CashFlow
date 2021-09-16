@@ -22,7 +22,7 @@ namespace CashFlowBot.Data {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Terms {
+    public class Terms {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace CashFlowBot.Data {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CashFlowBot.Data.Terms", typeof(Terms).Assembly);
@@ -51,7 +51,7 @@ namespace CashFlowBot.Data {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -75,7 +75,7 @@ namespace CashFlowBot.Data {
         ///(10, &apos;EN&apos;, &apos;What is the first payment?&apos;),
         ///(11, &apos;EN&apos;,  [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string terms_en {
+        public static string terms_en {
             get {
                 return ResourceManager.GetString("terms_en", resourceCulture);
             }
@@ -96,7 +96,7 @@ namespace CashFlowBot.Data {
         ///(10, &apos;UA&apos;, &apos;Який перший платіж?&apos;),
         ///(11, &apos;UA&apos;, &apos;Некоректне зачення першого [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string terms_ua {
+        public static string terms_ua {
             get {
                 return ResourceManager.GetString("terms_ua", resourceCulture);
             }

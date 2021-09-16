@@ -5,6 +5,7 @@ using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using MoreLinq;
+using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot.Models
 {
@@ -32,7 +33,7 @@ namespace CashFlowBot.Models
         public int Income => Properties.Sum(x => x.CashFlow);
 
         public string Description => Items.Any()
-            ? $"{Environment.NewLine}{Environment.NewLine}*Assets:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
+            ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
             : string.Empty;
 
         public void Add(string title, AssetType type)

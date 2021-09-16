@@ -1,6 +1,7 @@
 ﻿using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
+using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot.Models
 {
@@ -21,13 +22,17 @@ namespace CashFlowBot.Models
         {
             get
             {
+                var mortgage = Terms.Get(43, UserId, "Mortgage");
+                var price = Terms.Get(64, UserId, "Price");
+                var cashFlow = Terms.Get(55, UserId, "Cash Flow");
+
                 switch (Type)
                 {
                     case AssetType.Stock:
                     return $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
 
                     case AssetType.Property:
-                    return $"*{Title}* - Price: {Price.AsCurrency()}, Mortgage: {Mortgage.AsCurrency()}, cash flow: {CashFlow.AsCurrency()}";
+                    return $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
                     default:
                         return string.Empty;

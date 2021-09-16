@@ -38,7 +38,7 @@ namespace CashFlowBot
         public static void ShowUsers(TelegramBotClient bot, User user)
         {
             var users = Users.AllUsers.Select(x => $"{(x.IsAdmin ? "A" : "")}[{x.Id}] {x.Name}").ToList();
-            bot.SendMessage(user.Id, $"There are {users.Count} users:");
+            bot.SendMessage(user.Id, $"There are {users.Count} users.");
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
 
@@ -169,7 +169,7 @@ namespace CashFlowBot
 
                     AvailableAssets.Add(price, AssetType.PropertySellPrice);
 
-                    SetDefaultButtons(bot, user, "Done.");
+                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -235,7 +235,7 @@ namespace CashFlowBot
                     int availableQtty = availableCash / asset.Price;
 
                     var defaultMsg = "{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?";
-                    var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice, availableCash.AsCurrency(), availableQtty);
+                    var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice.AsCurrency(), availableCash.AsCurrency(), availableQtty);
 
                     if (totalPrice > availableCash)
                     {
@@ -249,7 +249,7 @@ namespace CashFlowBot
                     AvailableAssets.Add(asset.Title, AssetType.Stock);
                     AvailableAssets.Add(asset.Price, AssetType.StockPrice);
 
-                    SetDefaultButtons(bot, user, "Done.");
+                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -265,11 +265,11 @@ namespace CashFlowBot
             if (stocks.Count > 1)
             {
                 user.Stage = Stage.SellStocksTitle;
-                bot.SetButtons(user.Id, "What stocks do you want to sell?", stocks);
+                bot.SetButtons(user.Id, Terms.Get(27, user, "What stocks do you want to sell?"), stocks);
             }
             else
             {
-                SetDefaultButtons(bot, user, "You have no stocks.");
+                SetDefaultButtons(bot, user, Terms.Get(49, user, "You have no stocks."));
             }
         }
 
@@ -294,7 +294,7 @@ namespace CashFlowBot
 
                     user.Stage = Stage.SellStocksPrice;
                     assets.ForEach(x => x.Title += "*");
-                    bot.SetButtons(user.Id, "Price:", prices);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
                 case Stage.SellStocksPrice:
@@ -312,7 +312,7 @@ namespace CashFlowBot
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
 
-                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done"));
+                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -576,7 +576,7 @@ namespace CashFlowBot
 
         public static void Start(TelegramBotClient bot, User user, string name = null)
         {
-            var professions = Persons.Items.Select(x => x.Profession).ToArray();
+            var professions = Persons.Get(user.Id).Select(x => x.Profession).ToArray();
 
             if (!user.Exists)
             {
@@ -600,7 +600,7 @@ namespace CashFlowBot
 
         public static void SetProfession(TelegramBotClient bot, User user, string profession)
         {
-            var professions = Persons.Items.Select(x => x.Profession.ToLower());
+            var professions = Persons.Get(user.Id).Select(x => x.Profession.ToLower());
 
             if (!professions.Contains(profession))
             {

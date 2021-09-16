@@ -24,7 +24,6 @@
             public int PerChild { get; set; }
         }
 
-
         public class DefaultLiabilities
         {
             public int Mortgage { get; set; }
@@ -34,85 +33,86 @@
             public int BankLoan { get; set; }
         }
 
-        public static DefaultPerson[] Items =
+        public static DefaultPerson[] Get(long userId)
         {
-            new ()
+            return new DefaultPerson[]
             {
-                Profession = "Lawyer",
-                Salary = 7_500,
-                Cash = 2_000,
-
-                Expenses = new DefaultExpenses
+                new()
                 {
-                    Taxes = 1_800,
-                    Mortgage = 1_100,
-                    SchoolLoan = 300,
-                    CarLoan = 200,
-                    CreditCard = 200,
-                    Others = 1_500,
-                    PerChild = 400
+                    Profession = DataBase.Terms.Get(1001, userId, "Lawyer"),
+                    Salary = 7_500,
+                    Cash = 2_000,
+
+                    Expenses = new DefaultExpenses
+                    {
+                        Taxes = 1_800,
+                        Mortgage = 1_100,
+                        SchoolLoan = 300,
+                        CarLoan = 200,
+                        CreditCard = 200,
+                        Others = 1_500,
+                        PerChild = 400
+                    },
+                    Liabilities = new DefaultLiabilities
+                    {
+                        Mortgage = 115_000,
+                        SchoolLoan = 78_000,
+                        CarLoan = 11_000,
+                        CreditCard = 7_000
+                    }
                 },
 
-                Liabilities = new DefaultLiabilities
+                new()
                 {
-                    Mortgage = 115_000,
-                    SchoolLoan = 78_000,
-                    CarLoan = 11_000,
-                    CreditCard = 7_000
-                }
-            },
+                    Profession = DataBase.Terms.Get(1002, userId, "Business manager"),
+                    Salary = 4_600,
+                    Cash = 400,
 
-            new ()
-            {
-                Profession = "Business manager",
-                Salary = 4_600,
-                Cash = 400,
-
-                Expenses = new DefaultExpenses
-                {
-                    Taxes = 900,
-                    Mortgage = 700,
-                    SchoolLoan = 60,
-                    CarLoan = 120,
-                    CreditCard = 90,
-                    Others = 1_000,
-                    PerChild = 240
+                    Expenses = new DefaultExpenses
+                    {
+                        Taxes = 900,
+                        Mortgage = 700,
+                        SchoolLoan = 60,
+                        CarLoan = 120,
+                        CreditCard = 90,
+                        Others = 1_000,
+                        PerChild = 240
+                    },
+                    Liabilities = new DefaultLiabilities
+                    {
+                        Mortgage = 75_000,
+                        SchoolLoan = 12_000,
+                        CarLoan = 6_000,
+                        CreditCard = 3_000
+                    }
                 },
 
-                Liabilities = new DefaultLiabilities
+                new()
                 {
-                    Mortgage = 75_000,
-                    SchoolLoan = 12_000,
-                    CarLoan = 6_000,
-                    CreditCard = 3_000
-                }
-            },
+                    Profession = DataBase.Terms.Get(1003, userId, "Engineer"),
+                    Salary = 4_900,
+                    Cash = 400,
 
-            new ()
-            {
-                Profession = "Engineer",
-                Salary = 4_900,
-                Cash = 400,
+                    Expenses = new DefaultExpenses
+                    {
+                        Taxes = 1_000,
+                        Mortgage = 700,
+                        SchoolLoan = 100,
+                        CarLoan = 200,
+                        CreditCard = 200,
+                        Others = 1_000,
+                        PerChild = 200
+                    },
 
-                Expenses = new DefaultExpenses
-                {
-                    Taxes = 1_000,
-                    Mortgage = 700,
-                    SchoolLoan = 100,
-                    CarLoan = 200,
-                    CreditCard = 200,
-                    Others = 1_000,
-                    PerChild = 200
+                    Liabilities = new DefaultLiabilities
+                    {
+                        Mortgage = 75_000,
+                        SchoolLoan = 12_000,
+                        CarLoan = 6_000,
+                        CreditCard = 3_000
+                    }
                 },
-
-                Liabilities = new DefaultLiabilities
-                {
-                    Mortgage = 75_000,
-                    SchoolLoan = 12_000,
-                    CarLoan = 6_000,
-                    CreditCard = 3_000
-                }
-            },
-        };
+            };
+        }
     }
 }
