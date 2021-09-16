@@ -56,7 +56,7 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (54, 'EN', 'Expenses'),
 (55, 'EN', 'Cash Flow'),
 (56, 'EN', 'Assets'),
-(57, 'EN', ''),
+(57, 'EN', 'You''re lucky parent of three children. You don''t need one more.'),
 (58, 'EN', 'Taxes'),
 (59, 'EN', 'Mortgage/Rent Pay'),
 (60, 'EN', 'Other Payment'),
@@ -64,6 +64,11 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (62, 'EN', 'Children Expenses'),
 (63, 'EN', 'per child'),
 (64, 'EN', 'Price'),
+(65, 'EN', 'Initial'),
+(66, 'EN', 'Current'),
+(67, 'EN', 'Target'),
+(68, 'EN', 'Your income is greater, then expenses. You are ready for Big Circle.'),
+
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

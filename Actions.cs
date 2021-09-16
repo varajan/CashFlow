@@ -48,7 +48,7 @@ namespace CashFlowBot
 
             if (user.Person.Cash == 0)
             {
-                SetDefaultButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
                 return;
             }
 
@@ -109,7 +109,7 @@ namespace CashFlowBot
                     AvailableAssets.Add(property.Price-property.Mortgage, AssetType.PropertyFirstPayment);
                     AvailableAssets.Add(property.CashFlow, AssetType.PropertyCashFlow);
 
-                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -136,7 +136,7 @@ namespace CashFlowBot
                 return;
             }
 
-            SetDefaultButtons(bot, user, Terms.Get(15, user, "You have no properties."));
+            SmallCircleButtons(bot, user, Terms.Get(15, user, "You have no properties."));
         }
 
         public static void SellProperty(TelegramBotClient bot, User user, string value)
@@ -169,7 +169,7 @@ namespace CashFlowBot
 
                     AvailableAssets.Add(price, AssetType.PropertySellPrice);
 
-                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -180,7 +180,7 @@ namespace CashFlowBot
 
             if (user.Person.Cash == 0)
             {
-                SetDefaultButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
                 return;
             }
 
@@ -249,7 +249,7 @@ namespace CashFlowBot
                     AvailableAssets.Add(asset.Title, AssetType.Stock);
                     AvailableAssets.Add(asset.Price, AssetType.StockPrice);
 
-                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -269,7 +269,7 @@ namespace CashFlowBot
             }
             else
             {
-                SetDefaultButtons(bot, user, Terms.Get(49, user, "You have no stocks."));
+                SmallCircleButtons(bot, user, Terms.Get(49, user, "You have no stocks."));
             }
         }
 
@@ -288,7 +288,7 @@ namespace CashFlowBot
 
                     if (!assets.Any())
                     {
-                        SetDefaultButtons(bot, user, "Invalid stocks name.");
+                        SmallCircleButtons(bot, user, "Invalid stocks name.");
                         return;
                     }
 
@@ -312,7 +312,7 @@ namespace CashFlowBot
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
 
-                    SetDefaultButtons(bot, user, Terms.Get(13, user, "Done."));
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
         }
@@ -408,7 +408,7 @@ namespace CashFlowBot
             if (user.Person.Cash < 1000)
             {
                 bot.SendMessage(user.Id, liabilities);
-                SetDefaultButtons(bot, user, Terms.Get(48, user, "You don't have money to reduce liabilities, your balance is {0}", user.Person.Cash.AsCurrency()));
+                SmallCircleButtons(bot, user, Terms.Get(48, user, "You don't have money to reduce liabilities, your balance is {0}", user.Person.Cash.AsCurrency()));
                 return;
             }
 
@@ -422,7 +422,7 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
-        public static void ShowData(TelegramBotClient bot, User user) => SetDefaultButtons(bot, user, user.Description);
+        public static void ShowData(TelegramBotClient bot, User user) => SmallCircleButtons(bot, user, user.Description);
 
         public static void GetCredit(TelegramBotClient bot, User user)
         {
@@ -435,7 +435,7 @@ namespace CashFlowBot
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
 
-            SetDefaultButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
+            SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
 
         public static void GiveMoney(TelegramBotClient bot, User user, string value)
@@ -444,14 +444,14 @@ namespace CashFlowBot
 
             if (user.Person.Cash < amount)
             {
-                SetDefaultButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
+                SmallCircleButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
                 return;
             }
 
             user.Person.Cash -= amount;
 
             AvailableAssets.Add(amount, AssetType.GiveMoney);
-            SetDefaultButtons(bot, user, user.Description);
+            SmallCircleButtons(bot, user, user.Description);
         }
 
         public static void GetCredit(TelegramBotClient bot, User user, string value)
@@ -468,7 +468,7 @@ namespace CashFlowBot
             user.Person.Expenses.BankLoan += amount / 10;
             user.Person.Liabilities.BankLoan += amount;
 
-            SetDefaultButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
+            SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
 
         public static void PayCredit(TelegramBotClient bot, User user, string value, Stage stage)
@@ -539,7 +539,16 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
-        public static void Cancel(TelegramBotClient bot, User user) => SetDefaultButtons(bot, user, user.Person.Description);
+        public static void Cancel(TelegramBotClient bot, User user)
+        {
+            if (user.Person.BigCircle)
+            {
+                BigCircleButtons(bot, user);
+                return;
+            }
+
+            SmallCircleButtons(bot, user, user.Person.Description);
+        }
 
         public static void Confirm(TelegramBotClient bot, User user)
         {
@@ -547,7 +556,7 @@ namespace CashFlowBot
             {
                 case Stage.GetChild:
                     user.Person.Expenses.Children++;
-                    SetDefaultButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
+                    SmallCircleButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
                     user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
                     return;
 
@@ -615,11 +624,41 @@ namespace CashFlowBot
 
             user.Person.Create(profession);
 
-            SetDefaultButtons(bot, user, Terms.Get(30, user, "Welcome, {0}!", user.Person.Profession));
+            SmallCircleButtons(bot, user, Terms.Get(30, user, "Welcome, {0}!", user.Person.Profession));
         }
 
-        private static async void SetDefaultButtons(TelegramBotClient bot, User user, string message)
+        private static async void BigCircleButtons(TelegramBotClient bot, User user)
         {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money")},
+                    new List<KeyboardButton>{Terms.Get(33, user, "Give Money")},
+                    new List<KeyboardButton>{Terms.Get(-1, user, "Divorce")}, // todo. Term. all cash
+                    new List<KeyboardButton>{Terms.Get(-1, user, "Tax Audit")}, // todo. Term. half cash
+                    new List<KeyboardButton>{Terms.Get(-1, user, "Lawsuit")}, // todo. Term. half cash
+                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
+                }
+            };
+
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        private static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
+        {
+            if (user.Person.Assets.Income > user.Person.Expenses.Total)
+            {
+                bot.SendMessage(user.Id, Terms.Get(68, user, "Your income is greater, then expenses. You are ready for Big Circle."));
+                user.Person.InitialCashFlow = user.Person.Assets.Income / 10 * 1000;
+                user.Person.Cash += user.Person.InitialCashFlow;
+                user.Person.BigCircle = true;
+                Cancel(bot, user);
+                return;
+            }
+
             var rkm = new ReplyKeyboardMarkup
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>

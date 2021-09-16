@@ -46,6 +46,7 @@ namespace CashFlowBot.Models
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
         public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
+        public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
 
         public void Delete() => DB.Execute($"DELETE FROM {Table} WHERE AssetID = {Id} AND UserID = {UserId}");
     }

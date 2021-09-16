@@ -105,6 +105,12 @@ namespace CashFlowBot
                     // Term 39: Add Child
                     case "add child":
                     case "завести дитину":
+                        if (user.Person.Expenses.Children == 3)
+                        {
+                            Bot.SendMessage(user.Id,Terms.Get(57, user, "You're lucky parent of three children. You don't need one more."));
+                            return;
+                        }
+
                         Actions.Ask(Bot, user, Stage.GetChild,
                             Terms.Get(2, user, "Hey {0}, your have {1} children. Get one more?", user.Person.Profession, user.Person.Expenses.Children),
                         Terms.Get(4, user, "Yes"));
@@ -193,13 +199,13 @@ namespace CashFlowBot
 
                     // Term 37: Buy Property
                     case "buy property":
-                    case "купити власність":
+                    case "купити нерухомість":
                         Actions.BuyProperty(Bot, user);
                         return;
 
                     // Term 38: Sell Property
                     case "sell property":
-                    case "продати власність":
+                    case "продати нерухомість":
                         Actions.SellProperty(Bot, user);
                         return;
 

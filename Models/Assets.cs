@@ -28,7 +28,10 @@ namespace CashFlowBot.Models
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
+                .Where(x => x.BigCircle == ThisUser.Person.BigCircle)
                 .ToList();
+
+        private User ThisUser => new (Id);
 
         public int Income => Properties.Sum(x => x.CashFlow);
 
@@ -36,10 +39,10 @@ namespace CashFlowBot.Models
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
             : string.Empty;
 
-        public void Add(string title, AssetType type)
+        public void Add(string title, AssetType type, bool bigCircle = false)
         {
             int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, '{title}', 0, 0, 0, 0)");
+            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0)");
         }
     }
 }
