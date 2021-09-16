@@ -14,6 +14,20 @@ namespace CashFlowBot
 {
     public static class Actions
     {
+        public static void Divorce(TelegramBotClient bot, User user)
+        {
+            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash));
+            user.Person.Cash = 0;
+            Cancel(bot, user);
+        }
+
+        public static void TaxAudit(TelegramBotClient bot, User user)
+        {
+            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash/2));
+            user.Person.Cash /= 2;
+            Cancel(bot, user);
+        }
+
         public static void AdminMenu(TelegramBotClient bot, User user)
         {
             user.Stage = Stage.Admin;
@@ -22,6 +36,12 @@ namespace CashFlowBot
 
         public static void NotifyAdmins(TelegramBotClient bot, User user)
         {
+            if (Users.AllUsers.All(x => !x.IsAdmin))
+            {
+                user.IsAdmin = true;
+                return;
+            }
+
             var rkm = new ReplyKeyboardMarkup
             {
                 Keyboard = new[] { $"Make {user.Id} admin", Terms.Get(6, user, "Cancel") }.Select(button => new KeyboardButton[] { button })
@@ -435,7 +455,8 @@ namespace CashFlowBot
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
 
-            SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
+            bot.SendMessage(user.Id, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
+            Cancel(bot, user);
         }
 
         public static void GiveMoney(TelegramBotClient bot, User user, string value)
@@ -450,8 +471,8 @@ namespace CashFlowBot
 
             user.Person.Cash -= amount;
 
-            AvailableAssets.Add(amount, AssetType.GiveMoney);
-            SmallCircleButtons(bot, user, user.Description);
+            AvailableAssets.Add(amount, user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
+            Cancel(bot, user);
         }
 
         public static void GetCredit(TelegramBotClient bot, User user, string value)
@@ -594,7 +615,6 @@ namespace CashFlowBot
             {
                 user.Create();
                 user.Name = name ?? "N/A";
-                user.IsAdmin = !Users.AllUsers.Any();
                 ChangeLanguage(bot, user);
                 return;
             }
@@ -629,15 +649,20 @@ namespace CashFlowBot
 
         private static async void BigCircleButtons(TelegramBotClient bot, User user)
         {
+            if (user.Person.CurrentCashFlow >= user.Person.TargetCashFlow)
+            {
+                bot.SendMessage(user.Id, Terms.Get(73, user, "You are the winner!"));
+                bot.SendMessage(user.Id, user.Person.Description);
+                return;
+            }
+
             var rkm = new ReplyKeyboardMarkup
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money")},
-                    new List<KeyboardButton>{Terms.Get(33, user, "Give Money")},
-                    new List<KeyboardButton>{Terms.Get(-1, user, "Divorce")}, // todo. Term. all cash
-                    new List<KeyboardButton>{Terms.Get(-1, user, "Tax Audit")}, // todo. Term. half cash
-                    new List<KeyboardButton>{Terms.Get(-1, user, "Lawsuit")}, // todo. Term. half cash
+                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money")},
+                    new List<KeyboardButton>{Terms.Get(69, user, "Divorce"), Terms.Get(70, user, "Tax Audit"), Terms.Get(71, user, "Lawsuit")},
+                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business")},
                     new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
                 }
             };

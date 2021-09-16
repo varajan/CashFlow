@@ -30,8 +30,8 @@ namespace CashFlowBot.Models
         private string TargetTerm => Terms.Get(67, Id, "Target");
 
         public int InitialCashFlow { get => GetInt("InitialCashFlow"); set => Set("InitialCashFlow", value); }
-        private int TargetCashFlow => InitialCashFlow + 50_000;
-        private int CurrentCashFlow => InitialCashFlow + Assets.Income;
+        public int TargetCashFlow => InitialCashFlow + 50_000;
+        public int CurrentCashFlow => InitialCashFlow + Assets.Income;
 
         private string SmallCircleDescription => $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
                      $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +

@@ -85,18 +85,36 @@ namespace CashFlowBot
                         Actions.Start(Bot, user, message.Chat.Username);
                         return;
 
+                    // Term 69: Divorce
+                    case "divorce":
+                    case "розлучення":
+                        Actions.Divorce(Bot, user);
+                        return;
+
+                    // Term 70: Tax Audit
+                    // Term 71: Lawsuit
+                    case "tax audit":
+                    case "lawsuit":
+                    case "податкова перевірка":
+                    case "судовий процес":
+                        Actions.TaxAudit(Bot, user);
+                        return;
+
                     // Term 32: Get Money
                     case "get money":
                     case "отримати гроші":
+                        var buttons = user.Person.BigCircle
+                            ? new[] { "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency() }
+                            : new[] { "$50 000", "$100 000", "$200 000", user.Person.CashFlow.AsCurrency() };
+
                         Actions.Ask(Bot, user, Stage.GetMoney,
-                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()),
-                        "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency());
+                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?", user.Person.CashFlow.AsCurrency()), buttons);
                         return;
 
                     // Term 33: Give Money
                     case "give money":
                     case "заплатити гроші":
-                        var giveMoney = AvailableAssets.Get(AssetType.GiveMoney).AsCurrency().ToArray();
+                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
 
                         Actions.Ask(Bot, user, Stage.GiveMoney,
                         Terms.Get(1, user, "How much would you give?"), giveMoney);

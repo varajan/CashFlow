@@ -68,6 +68,12 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (66, 'EN', 'Current'),
 (67, 'EN', 'Target'),
 (68, 'EN', 'Your income is greater, then expenses. You are ready for Big Circle.'),
+(69, 'EN', 'Divorce'),
+(70, 'EN', 'Tax Audit'),
+(71, 'EN', 'Lawsuit'),
+(72, 'EN', 'You''ve lost {0}.'),
+(73, 'EN', 'You are the winner!'),
+(74, 'EN', 'Buy Business'),
 
 
 (1001, 'EN', 'Lawyer'),

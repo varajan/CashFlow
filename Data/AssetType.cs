@@ -4,7 +4,8 @@
     {
         Stock,
         StockPrice,
-        GiveMoney,
+        SmallGiveMoney,
+        BigGiveMoney,
         Property,
         PropertyType,
         PropertyBuyPrice,
