@@ -57,8 +57,7 @@ namespace CashFlowBot.Models
             Clear();
             DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Persons}) VALUES ({Id}, {DB.DefaultValues.Persons})");
 
-            Assets.Items.ForEach(x => x.Delete());
-
+            Assets.Clear();
             Profession = data.Profession;
             Cash = data.Cash;
             Salary = data.Salary;

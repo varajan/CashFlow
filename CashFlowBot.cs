@@ -230,13 +230,13 @@ namespace CashFlowBot
 
                     // Term 74: Buy Business
                     case "buy business":
-                    case "купити бізнес":
+                    case "купити підприємство":
                         Actions.BuyBusiness(Bot, user);
                         return;
 
                     // Term 75: Sell Business
                     case "sell business":
-                    case "продати бізнес":
+                    case "продати підприємство":
                         Actions.SellBusiness(Bot, user);
                         return;
 

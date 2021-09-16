@@ -28,13 +28,14 @@ namespace CashFlowBot.Models
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
         public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
-        public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business).ToList();
+        public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == ThisUser.Person.BigCircle).ToList();
 
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
-                .Where(x => x.BigCircle == ThisUser.Person.BigCircle)
                 .ToList();
+
+        public void Clear() => Items.ForEach(x => x.Delete());
 
         private User ThisUser => new (Id);
 

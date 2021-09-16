@@ -835,6 +835,8 @@ namespace CashFlowBot
                 user.Person.InitialCashFlow = user.Person.Assets.Income / 10 * 1000;
                 user.Person.Cash += user.Person.InitialCashFlow;
                 user.Person.BigCircle = true;
+                user.Person.Assets.Clear();
+
                 Cancel(bot, user);
                 return;
             }

@@ -79,7 +79,6 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (77, 'EN', 'You have no Business.'),
 (78, 'EN', 'What Business do you want to sell?{0}{1}.'),
 
-
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
 (1003, 'EN', 'Engineer')
