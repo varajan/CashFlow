@@ -10,13 +10,15 @@ namespace CashFlowBot.Models
     {
         public Expenses(long id) : base(id, DB.Tables.Expenses) { }
 
-        public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + BankLoan + ChildrenExpenses;
+        public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses;
 
         public int Taxes { get => GetInt("Taxes"); set => Set("Taxes", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
         public int SchoolLoan { get => GetInt("SchoolLoan"); set => Set("SchoolLoan", value); }
         public int CarLoan { get => GetInt("CarLoan"); set => Set("CarLoan", value); }
         public int CreditCard { get => GetInt("CreditCard"); set => Set("CreditCard", value); }
+        public int SmallCredits { get => GetInt("SmallCredits"); set => Set("SmallCredits", value); }
+
         public int BankLoan { get => GetInt("BankLoan"); set => Set("BankLoan", value); }
         public int Others { get => GetInt("Others"); set => Set("Others", value); }
 
@@ -34,6 +36,7 @@ namespace CashFlowBot.Models
                 var schoolLoanTerm = Terms.Get(44, Id, "School Loan");
                 var carLoanTerm = Terms.Get(45, Id, "Car Loan");
                 var creditCardTerm = Terms.Get(46, Id, "Credit Card");
+                var smallCreditsTerm = Terms.Get(-1, Id, "Small Credit");
                 var bankLoanTerm = Terms.Get(47, Id, "Bank Loan");
                 var otherPaymentTerm = Terms.Get(60, Id, "Other Payment");
                 var childrenTerm = Terms.Get(61, Id, "Children");
@@ -45,7 +48,8 @@ namespace CashFlowBot.Models
                 if (Mortgage > 0) expenses += $"*{mortgageTerm}:* {Mortgage.AsCurrency()}{Environment.NewLine}";
                 if (SchoolLoan > 0) expenses += $"*{schoolLoanTerm}:* {SchoolLoan.AsCurrency()}{Environment.NewLine}";
                 if (CarLoan > 0) expenses += $"*{carLoanTerm}:* {CarLoan.AsCurrency()}{Environment.NewLine}";
-                if (CarLoan > 0) expenses += $"*{creditCardTerm}:* {CreditCard.AsCurrency()}{Environment.NewLine}";
+                if (CreditCard > 0) expenses += $"*{creditCardTerm}:* {CreditCard.AsCurrency()}{Environment.NewLine}";
+                if (SmallCredits > 0) expenses += $"*{smallCreditsTerm}:* {SmallCredits.AsCurrency()}{Environment.NewLine}";
                 if (BankLoan > 0) expenses += $"*{bankLoanTerm}:* {BankLoan.AsCurrency()}{Environment.NewLine}";
                 expenses += $"*{otherPaymentTerm}:* {Others.AsCurrency()}{Environment.NewLine}";
                 if (ChildrenExpenses > 0) expenses += $"*{childrenTerm}:* {Children} ({PerChild.AsCurrency()} {perChildTerm}){Environment.NewLine}";
@@ -67,6 +71,7 @@ namespace CashFlowBot.Models
             SchoolLoan = expenses.SchoolLoan;
             CarLoan = expenses.CarLoan;
             CreditCard = expenses.CreditCard;
+            SmallCredits = expenses.SmallCredits;
             BankLoan = expenses.BankLoan;
             Others = expenses.Others;
             PerChild = expenses.PerChild;
