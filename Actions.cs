@@ -189,6 +189,8 @@ namespace CashFlowBot
                     if (user.Person.BigCircle)
                     {
                         user.Stage = Stage.BuyBusinessCashFlow;
+                        user.Person.Cash -= number;
+
                         bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                         return;
                     }
@@ -213,6 +215,7 @@ namespace CashFlowBot
                     var asset = user.Person.Assets.Businesses.First(a => a.Mortgage == 0);
                     asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyBusinessCashFlow;
+                    user.Person.Cash -= number;
 
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
@@ -413,6 +416,7 @@ namespace CashFlowBot
                     var asset = user.Person.Assets.RealEstates.First(a => a.Mortgage == 0);
                     asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyRealEstateCashFlow;
+                    user.Person.Cash -= number;
 
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
@@ -420,7 +424,6 @@ namespace CashFlowBot
                 case Stage.BuyRealEstateCashFlow:
                     var realEstate = user.Person.Assets.RealEstates.First(a => a.CashFlow == 0);
                     realEstate.CashFlow = number;
-                    user.Stage = Stage.BuyRealEstateCashFlow;
 
                     AvailableAssets.Add(realEstate.Title, AssetType.RealEstateType);
                     AvailableAssets.Add(realEstate.Price, AssetType.RealEstateBuyPrice);
@@ -922,7 +925,7 @@ namespace CashFlowBot
 
         public static void Charity(TelegramBotClient bot, User user)
         {
-            var amount = user.Person.Assets.Income + user.Person.CashFlow;
+            var amount = (user.Person.Assets.Income + user.Person.Salary) / 10;
 
             if (user.Person.Cash <= amount)
             {
