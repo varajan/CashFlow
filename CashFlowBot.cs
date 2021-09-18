@@ -153,7 +153,7 @@ namespace CashFlowBot
                     #region Reduce Liabilities
                     // Term 40: Reduce Liabilities
                     case "reduce liabilities":
-                    case "зменшити пасиви":
+                    case "зменшити борги":
                         Actions.ReduceLiabilities(Bot, user);
                         return;
 
