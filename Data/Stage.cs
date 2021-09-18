@@ -5,6 +5,8 @@
         Admin,
         AdminBringDown,
         AdminLogs,
+        AdminAvailableAssets,
+        AdminAvailableAssetsClear,
         Nothing,
         StopGame,
         GetProfession,

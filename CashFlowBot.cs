@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -359,20 +360,19 @@ namespace CashFlowBot
                         return;
 
                     case "bring down":
-                        if (user.IsAdmin)
-                        {
-                            Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", Terms.Get(4, user, "Yes"));
-                        }
+                        if (!user.IsAdmin) break;
+
+                        Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes", "Back");
                         return;
 
                     case "logs":
-                        if (!user.IsAdmin) return;
+                        if (!user.IsAdmin) break;
 
-                        Actions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
+                        Actions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top", "Back");
                         return;
 
                     case "full":
-                        if (!user.IsAdmin) return;
+                        if (!user.IsAdmin) break;
 
                         if (user.Stage == Stage.AdminLogs)
                         {
@@ -384,7 +384,7 @@ namespace CashFlowBot
                         return;
 
                     case "top":
-                        if (!user.IsAdmin) return;
+                        if (!user.IsAdmin) break;
 
                         if (user.Stage == Stage.AdminLogs)
                         {
@@ -394,9 +394,32 @@ namespace CashFlowBot
                         return;
 
                     case "users":
-                        if (!user.IsAdmin) return;
+                        if (!user.IsAdmin) break;
 
                         Actions.ShowUsers(Bot, user);
+                        return;
+
+                    case "back":
+                        if (!user.IsAdmin) break;
+
+                        Actions.AdminMenu(Bot, user);
+                        return;
+
+                    case "available assets":
+                        if (!user.IsAdmin) break;
+
+                        var assets = new List<string>();
+
+                        foreach (var type in Enum.GetValues(typeof(AssetType)))
+                        {
+                            var assetType = type.ToString().ParseEnum<AssetType>();
+                            var count = AvailableAssets.Get(assetType).Count;
+
+                            if (count > 0) assets.Add($"{type} - {count}");
+                        }
+
+                        Actions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
+                        assets.Append("All").Append("Back").ToArray());
                         return;
                     #endregion
                 }
@@ -481,6 +504,18 @@ namespace CashFlowBot
                     case Stage.SellBusinessTitle:
                     case Stage.SellBusinessPrice:
                         Actions.SellBusiness(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.AdminAvailableAssets:
+                        if (!user.IsAdmin) return;
+
+                        Actions.ShowAvailableAssets(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.AdminAvailableAssetsClear:
+                        if (!user.IsAdmin) return;
+
+                        Actions.ClearAvailableAssets(Bot, user, message.Text.Trim());
                         return;
                 }
             }

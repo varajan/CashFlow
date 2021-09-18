@@ -53,7 +53,46 @@ namespace CashFlowBot
         public static void AdminMenu(TelegramBotClient bot, User user)
         {
             user.Stage = Stage.Admin;
-            bot.SetButtons(user.Id, "Hi, Admin.", "Logs", "Bring Down", "Users", Terms.Get(6, user, "Cancel"));
+            bot.SetButtons(user.Id, "Hi, Admin.",
+            "Logs", "Bring Down", "Users", "Available Assets", "Cancel");
+        }
+
+        public static void ShowAvailableAssets(TelegramBotClient bot, User user, string value)
+        {
+            if (value == "All")
+            {
+                var assets = new List<string>();
+
+                foreach (var type in Enum.GetValues(typeof(AssetType)))
+                {
+                    var assetType = type.ToString().ParseEnum<AssetType>();
+                    var count = AvailableAssets.Get(assetType).Count;
+
+                    if (count > 0)
+                    {
+                        assets.AddRange(AvailableAssets.Get(assetType).Select(x => $"*{assetType}*: '{x}' - '{x.ToInt().AsCurrency()}'"));
+                    }
+                }
+
+                bot.SendMessage(user.Id, string.Join(Environment.NewLine, assets));
+                user.Stage = Stage.Admin;
+                AdminMenu(bot, user);
+            }
+            else
+            {
+                var assetType = value.SubStringTo("-").Trim().ParseEnum<AssetType>();
+                var assets = AvailableAssets.Get(assetType).Select(x => $"'{x}' - '{x.ToInt().AsCurrency()}'");
+
+                user.Stage = Stage.AdminAvailableAssetsClear;
+                bot.SetButtons(user.Id, string.Join(Environment.NewLine, assets), $"Clear {assetType}", "Back");
+            }
+        }
+
+        public static void ClearAvailableAssets(TelegramBotClient bot, User user, string value)
+        {
+            var assetType = value.Split(" ").Last().ParseEnum<AssetType>();
+            AvailableAssets.Clear(assetType);
+            AdminMenu(bot, user);
         }
 
         public static void NotifyAdmins(TelegramBotClient bot, User user)
@@ -1103,7 +1142,9 @@ namespace CashFlowBot
         {
             user.Stage = stage;
 
-            bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
+            if (!user.IsAdmin) buttons = buttons.Append(Terms.Get(6, user, "Cancel")).ToArray();
+
+            bot.SetButtons(user.Id, question, buttons);
         }
 
         public static void ChangeLanguage(TelegramBotClient bot, User user) =>

@@ -8,6 +8,9 @@ namespace CashFlowBot.Data
         public static List<string> Get(AssetType type) =>
             DB.GetColumn($"SELECT Value FROM {DB.Tables.AvailableAssets} WHERE Type = {(int) type} ORDER BY CAST(Value as Number)");
 
+        public static void Clear(AssetType type) =>
+            DB.Execute($"DELETE FROM {DB.Tables.AvailableAssets} WHERE Type = {(int) type}");
+
         public static void Add(int value, AssetType type) => Add(value.ToString(), type);
         public static void Add(string value, AssetType type)
         {
