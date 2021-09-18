@@ -14,6 +14,27 @@ namespace CashFlowBot
 {
     public static class Actions
     {
+        public static void Downsize(TelegramBotClient bot, User user)
+        {
+            bot.SendMessage(user.Id,
+            Terms.Get(87, user, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.",
+            user.Person.Expenses.Total));
+
+            if (user.Person.Cash < user.Person.Expenses.Total)
+            {
+                var delta = user.Person.Expenses.Total - user.Person.Cash;
+                var credit = delta / 1_000 * 1_000;
+
+                if (delta % 1_000 > 0) credit += 1_000;
+
+                user.GetCredit(credit);
+                bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
+            }
+
+            user.Person.Cash -= user.Person.Expenses.Total;
+            Cancel(bot, user);
+        }
+
         public static void Divorce(TelegramBotClient bot, User user)
         {
             bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash));
@@ -597,6 +618,62 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
+        public static async void SmallOpportunity(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton> {Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
+                    new List<KeyboardButton> {Terms.Get(82, user, "Stocks 2 to 1"), Terms.Get(83, user, "Stocks 1 to 2")},
+                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate")},
+                    new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
+                }
+            };
+
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, "", replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static void MultiplyStocks(TelegramBotClient bot, User user)
+        {
+            var stocks = user.Person.Assets.Stocks
+                .Select(x => x.Title)
+                .Distinct()
+                .Append(Terms.Get(6, user, "Cancel"))
+                .ToList();
+
+            if (stocks.Count > 1)
+            {
+                bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), stocks);
+            }
+            else
+            {
+                SmallCircleButtons(bot, user, Terms.Get(49, user, "You have no stocks."));
+            }
+
+        }
+
+        public static void MultiplyStocks(TelegramBotClient bot, User user, string title)
+        {
+            title = title.Trim().ToUpper();
+
+            var k = user.Stage == Stage.Stocks1to2 ? 2 : 0.5;
+            var stocks = user.Person.Assets.Stocks;
+            var assets = stocks.Where(x => x.Title == title).ToList();
+
+            if (!assets.Any())
+            {
+                SmallCircleButtons(bot, user, "Invalid stocks name.");
+                return;
+            }
+
+            assets.Where(x => x.Title == title).ToList().ForEach(x => x.Qtty = (int)(x.Qtty * k));
+            Cancel(bot, user);
+        }
+
         public static void ShowData(TelegramBotClient bot, User user) => SmallCircleButtons(bot, user, user.Description);
 
         public static void GetCredit(TelegramBotClient bot, User user)
@@ -640,9 +717,7 @@ namespace CashFlowBot
                 return;
             }
 
-            user.Person.Cash += amount;
-            user.Person.Expenses.BankLoan += amount / 10;
-            user.Person.Liabilities.BankLoan += amount;
+            user.GetCredit(amount);
 
             SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
@@ -730,11 +805,11 @@ namespace CashFlowBot
         {
             switch (user.Stage)
             {
-                case Stage.GetChild:
-                    user.Person.Expenses.Children++;
-                    SmallCircleButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
-                    user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
-                    return;
+                //case Stage.GetChild:
+                //    user.Person.Expenses.Children++;
+                //    SmallCircleButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
+                //    user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
+                //    return;
 
                 case Stage.StopGame:
                     user.Person.Clear();
@@ -827,7 +902,7 @@ namespace CashFlowBot
             await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
-        private static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
+        public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
         {
             if (user.Person.Assets.Income > user.Person.Expenses.Total)
             {
@@ -846,18 +921,10 @@ namespace CashFlowBot
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
                     new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
-                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
-                    new List<KeyboardButton>
-                    {
-                        Terms.Get(35, user, "Buy Stocks"),
-                        Terms.Get(36, user, "Sell Stocks"),
-                        Terms.Get(-1, user, "Stocks 2 to 1"), // todo /2
-                        Terms.Get(-1, user, "Stocks 1 to 2")  // todo *2
-                    },
-                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(38, user, "Sell Real Estate") },
-                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business"), Terms.Get(75, user, "Sell Business")},
-                    new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
-                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
+                    new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
+                    new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
+                    new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")}, // todo 39
+                    new List<KeyboardButton>{Terms.Get(79, user, "Pay Check")}
                 }
             };
 
@@ -868,3 +935,25 @@ namespace CashFlowBot
         }
     }
 }
+
+
+//var rkm = new ReplyKeyboardMarkup
+//{
+//    Keyboard = new List<IEnumerable<KeyboardButton>>
+//                {
+//                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
+//                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
+//                    new List<KeyboardButton>
+//                    {
+//                        Terms.Get(35, user, "Buy Stocks"),
+//                        Terms.Get(36, user, "Sell Stocks"),
+//                        Terms.Get(-1, user, "Stocks 2 to 1"), // todo /2
+//                        Terms.Get(-1, user, "Stocks 1 to 2")  // todo *2
+//                    },
+//                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(38, user, "Sell Real Estate") },
+//                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business"), Terms.Get(75, user, "Sell Business")},
+//                    new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
+//                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
+//                }
+//};
+

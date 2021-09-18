@@ -18,6 +18,8 @@
         ReduceCarLoan,
         ReduceCreditCard,
         ReduceBankLoan,
+        Stocks2to1,
+        Stocks1to2,
         BuyStocksTitle,
         BuyStocksQtty,
         BuyStocksPrice,

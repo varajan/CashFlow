@@ -24,6 +24,13 @@ namespace CashFlowBot.Models
                                      Person.Assets.Description +
                                      Person.Expenses.Description;
 
+        public void GetCredit(int amount)
+        {
+            Person.Cash += amount;
+            Person.Expenses.BankLoan += amount / 10;
+            Person.Liabilities.BankLoan += amount;
+        }
+
         public void Create()
         {
             DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Users}) VALUES ({Id}, {DB.DefaultValues.Users})");
