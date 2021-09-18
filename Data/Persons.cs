@@ -95,7 +95,7 @@
 
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Track driver"),
+                    Profession = DataBase.Terms.Get(1004, userId, "Track driver"),
                     Salary = 2_500,
                     Cash = 750,
 
@@ -121,10 +121,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Двірник"),
+                    Profession = DataBase.Terms.Get(1005, userId, "Janitor"),
                     Salary = 1_600,
                     Cash = 560,
 
@@ -150,10 +149,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "медсестра"),
+                    Profession = DataBase.Terms.Get(1006, userId, "Nurse"),
                     Salary = 3_100,
                     Cash = 480,
 
@@ -179,10 +177,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "поліціянт"),
+                    Profession = DataBase.Terms.Get(1007, userId, "Police officer"),
                     Salary = 3_000,
                     Cash = 520,
 
@@ -208,10 +205,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Лікар"),
+                    Profession = DataBase.Terms.Get(1008, userId, "Doctor"),
                     Salary = 13_200,
                     Cash = 400,
 
@@ -237,10 +233,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Учитель"),
+                    Profession = DataBase.Terms.Get(1009, userId, "Teacher"),
                     Salary = 3_300,
                     Cash = 400,
 
@@ -266,10 +261,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Автомеханік"),
+                    Profession = DataBase.Terms.Get(1010, userId, "Car mechanic"),
                     Salary = 2_000,
                     Cash = 670,
 
@@ -295,10 +289,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Секретар"),
+                    Profession = DataBase.Terms.Get(1011, userId, "Secretary"),
                     Salary = 2_500,
                     Cash = 710,
 
@@ -324,10 +317,9 @@
                     }
                 },
 
-
                 new()
                 {
-                    Profession = DataBase.Terms.Get(-1, userId, "Пілот"),
+                    Profession = DataBase.Terms.Get(1012, userId, "Pilot"),
                     Salary = 9_500,
                     Cash = 400,
 

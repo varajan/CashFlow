@@ -1108,7 +1108,7 @@ namespace CashFlowBot
 
         public static void Start(TelegramBotClient bot, User user, string name = null)
         {
-            var professions = Persons.Get(user.Id).Select(x => x.Profession).ToArray();
+            var professions = Persons.Get(user.Id).Select(x => x.Profession).OrderBy(x => x);
 
             if (!user.Exists)
             {
@@ -1150,8 +1150,8 @@ namespace CashFlowBot
         {
             if (user.Person.CurrentCashFlow >= user.Person.TargetCashFlow)
             {
-                bot.SendMessage(user.Id, Terms.Get(73, user, "You are the winner!"));
                 bot.SendMessage(user.Id, user.Person.Description);
+                bot.SetButtons(user.Id, Terms.Get(73, user, "You are the winner!"), Terms.Get(41, user, "Stop Game"));
                 return;
             }
 
@@ -1204,25 +1204,3 @@ namespace CashFlowBot
         }
     }
 }
-
-
-//var rkm = new ReplyKeyboardMarkup
-//{
-//    Keyboard = new List<IEnumerable<KeyboardButton>>
-//                {
-//                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
-//                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money"), Terms.Get(34, user, "Get Credit")},
-//                    new List<KeyboardButton>
-//                    {
-//                        Terms.Get(35, user, "Buy Stocks"),
-//                        Terms.Get(36, user, "Sell Stocks"),
-//                        Terms.Get(-1, user, "Stocks 2 to 1"), // todo /2
-//                        Terms.Get(-1, user, "Stocks 1 to 2")  // todo *2
-//                    },
-//                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(38, user, "Sell Real Estate") },
-//                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business"), Terms.Get(75, user, "Sell Business")},
-//                    new List<KeyboardButton>{Terms.Get(39, user, "Add Child"), Terms.Get(40, user, "Reduce Liabilities")},
-//                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")}
-//                }
-//};
-

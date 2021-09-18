@@ -318,20 +318,20 @@ namespace CashFlowBot
 
                     #endregion
 
-                    //// Term 69: Divorce
-                    //case "divorce":
-                    //case "розлучення":
-                    //    Actions.Divorce(Bot, user);
-                    //    return;
+                    // Term 69: Divorce
+                    case "divorce":
+                    case "розлучення":
+                        Actions.Divorce(Bot, user);
+                        return;
 
-                    //// Term 70: Tax Audit
-                    //// Term 71: Lawsuit
-                    //case "tax audit":
-                    //case "lawsuit":
-                    //case "податкова перевірка":
-                    //case "судовий процес":
-                    //    Actions.TaxAudit(Bot, user);
-                    //    return;
+                    // Term 70: Tax Audit
+                    // Term 71: Lawsuit
+                    case "tax audit":
+                    case "lawsuit":
+                    case "податкова перевірка":
+                    case "судовий процес":
+                        Actions.TaxAudit(Bot, user);
+                        return;
 
                     // Term 4 - YES
                     case "yes":

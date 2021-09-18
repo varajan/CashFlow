@@ -104,4 +104,13 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
-(1003, 'EN', 'Engineer')
+(1003, 'EN', 'Engineer'),
+(1004, 'EN', 'Track driver'),
+(1005, 'EN', 'Janitor'),
+(1006, 'EN', 'Nurse'),
+(1007, 'EN', 'Police officer'),
+(1008, 'EN', 'Doctor'),
+(1009, 'EN', 'Teacher'),
+(1010, 'EN', 'Car mechanic'),
+(1011, 'EN', 'Secretary'),
+(1012, 'EN', 'Pilot')
