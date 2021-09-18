@@ -11,6 +11,9 @@
         LandType,
         LandPrice,
 
+        MicroCreditAmount,
+        MicroCreditMonthly,
+
         Business,
 
         SmallBusinessType,

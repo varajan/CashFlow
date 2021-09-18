@@ -728,6 +728,62 @@ namespace CashFlowBot
             await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
+        public static async void Doodads(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{Terms.Get(95, user, "Pay with Cash")},
+                    new List<KeyboardButton>{Terms.Get(96, user, "Pay with Credit Card")},
+                    new List<KeyboardButton>{Terms.Get(34, user, "Get Credit") },
+                    new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
+                }
+            };
+
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static void PayWithCreditCard(TelegramBotClient bot, User user)
+        {
+            user.Stage = Stage.MicroCreditAmount;
+            var monthly = AvailableAssets.Get(AssetType.MicroCreditAmount).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), monthly);
+        }
+
+        public static void PayWithCreditCard(TelegramBotClient bot, User user, string value)
+        {
+            var amount = value.AsCurrency();
+
+            switch (user.Stage)
+            {
+                case Stage.MicroCreditAmount:
+                    var monthly = AvailableAssets.Get(AssetType.MicroCreditMonthly).AsCurrency();
+                    AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
+
+                    user.Person.Liabilities.SmallCredits += amount;
+                    user.Stage = Stage.MicroCreditMonthly;
+                    bot.SetButtons(user.Id, Terms.Get(97, user, "What is the monthly payment?"), monthly);
+                    return;
+
+                case Stage.MicroCreditMonthly:
+                    AvailableAssets.Add(amount, AssetType.MicroCreditMonthly);
+
+                    user.Person.Expenses.SmallCredits += amount;
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+
+            }
+
+            user.Stage = Stage.MicroCreditAmount;
+            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", Terms.Get(6, user, "Cancel"));
+
+        }
+
         public static void MultiplyStocks(TelegramBotClient bot, User user)
         {
             var stocks = user.Person.Assets.Stocks

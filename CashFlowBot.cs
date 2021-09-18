@@ -141,6 +141,9 @@ namespace CashFlowBot
                     // Term 33: Give Money
                     case "give money":
                     case "заплатити гроші":
+                    // Term 95: Pay with Cash
+                    case "pay with cash":
+                    case "оплатити готівкою":
                         var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
 
                         Actions.Ask(Bot, user, Stage.GiveMoney,
@@ -272,6 +275,21 @@ namespace CashFlowBot
 
                     #endregion
 
+                    #region Doodads
+                    // Term 86: Doodads
+                    case "doodads":
+                    case "дрібнички":
+                        Actions.Doodads(Bot, user);
+                        return;
+
+                    // Term 96: Pay with Credit Card
+                    case "Pay with Credit Card":
+                    case "оплатити кредиткою":
+                        Actions.PayWithCreditCard(Bot, user);
+                        return;
+
+                    #endregion
+
                     //// Term 69: Divorce
                     //case "divorce":
                     //case "розлучення":
@@ -386,9 +404,14 @@ namespace CashFlowBot
                         Actions.GetMoney(Bot, user, message.Text.Trim());
                         return;
 
-                    //case Stage.GiveMoney:
-                    //    Actions.GiveMoney(Bot, user, message.Text.Trim());
-                    //    return;
+                    case Stage.GiveMoney:
+                        Actions.GiveMoney(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.MicroCreditAmount:
+                    case Stage.MicroCreditMonthly:
+                        Actions.PayWithCreditCard(Bot, user, message.Text.Trim());
+                        return;
 
                     case Stage.ReduceMortgage:
                     case Stage.ReduceSchoolLoan:

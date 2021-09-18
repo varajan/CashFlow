@@ -12,6 +12,8 @@
         GetMoney,
         GiveMoney,
         GetCredit,
+        MicroCreditAmount,
+        MicroCreditMonthly,
         PayCredit,
         ReduceMortgage,
         ReduceSchoolLoan,
