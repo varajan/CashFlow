@@ -43,5 +43,7 @@
         SellRealEstatePrice,
         SellBusinessTitle,
         SellBusinessPrice,
+        SellLandTitle,
+        SellLandPrice,
     }
 }

@@ -232,6 +232,67 @@ namespace CashFlowBot
             }
         }
 
+        public static void SellLand(TelegramBotClient bot, User user)
+        {
+            var lands = user.Person.Assets.Lands;
+
+            if (lands.Any())
+            {
+                var landsIds = new List<string>();
+                var landsList = string.Empty;
+
+                for (int i = 0; i < lands.Count; i++)
+                {
+                    landsIds.Add($"#{i+1}");
+                    landsList += $"{Environment.NewLine}*#{i+1}* - {lands[i].Description}";
+                }
+
+                landsIds.Add(Terms.Get(6, user, "Cancel"));
+                user.Stage = Stage.SellLandTitle;
+
+                bot.SetButtons(user.Id, Terms.Get(99, user, "What Land do you want to sell?{0}{1}", Environment.NewLine, landsList), landsIds);
+                return;
+            }
+
+            SmallCircleButtons(bot, user, Terms.Get(100, user, "You have no Land."));
+        }
+
+        public static void SellLand(TelegramBotClient bot, User user, string value)
+        {
+            var lands = user.Person.Assets.Lands;
+            var prices = AvailableAssets.Get(AssetType.LandPrice)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.SellLandTitle:
+                    var index = value.Replace("#", "").ToInt();
+
+                    if (index < 1 || index > lands.Count)
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(101, user, "Invalid land number."));
+                        return;
+                    }
+
+                    lands[index - 1].Title += "*";
+                    user.Stage = Stage.SellLandPrice;
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.SellLandPrice:
+                    var price = value.AsCurrency();
+                    var land = lands.First(x => x.Title.EndsWith("*"));
+
+                    user.Person.Cash += price;
+                    land.Delete();
+
+                    AvailableAssets.Add(price, AssetType.LandPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+            }
+        }
+
         public static void SellBusiness(TelegramBotClient bot, User user)
         {
             var businesses = user.Person.Assets.Businesses;
@@ -737,6 +798,25 @@ namespace CashFlowBot
                     new List<KeyboardButton>{Terms.Get(95, user, "Pay with Cash")},
                     new List<KeyboardButton>{Terms.Get(96, user, "Pay with Credit Card")},
                     new List<KeyboardButton>{Terms.Get(34, user, "Get Credit") },
+                    new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
+                }
+            };
+
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static async void Market(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{Terms.Get(38, user, "Sell Real Estate")},
+                    new List<KeyboardButton>{Terms.Get(75, user, "Sell Business")},
+                    new List<KeyboardButton>{Terms.Get(98, user, "Sell Land") },
                     new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
                 }
             };

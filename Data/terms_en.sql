@@ -97,6 +97,10 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (95, 'EN', 'Pay with Cash'),
 (96, 'EN', 'Pay with Credit Card'),
 (97, 'EN', 'What is the monthly payment?'),
+(98, 'EN', 'Sell Land'),
+(99, 'EN', 'What Land do you want to sell?{0}{1}'),
+(100, 'EN', 'You have no Land.'),
+(101, 'EN', 'Invalid land number.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

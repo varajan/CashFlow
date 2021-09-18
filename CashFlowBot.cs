@@ -290,6 +290,34 @@ namespace CashFlowBot
 
                     #endregion
 
+                    #region Market
+
+                    // Term 85: Market
+                    case "market":
+                    case "ринок":
+                        Actions.Market(Bot, user);
+                        return;
+
+                    // Term 38: Sell Real Estate
+                    case "sell real estate":
+                    case "продати нерухомість":
+                        Actions.SellRealEstate(Bot, user);
+                        return;
+
+                    // Term 75: Sell Business
+                    case "sell business":
+                    case "продати підприємство":
+                        Actions.SellBusiness(Bot, user);
+                        return;
+
+                    // Term : Sell Land
+                    case "sell land":
+                    case "продати землю":
+                        Actions.SellLand(Bot, user);
+                        return;
+
+                    #endregion
+
                     //// Term 69: Divorce
                     //case "divorce":
                     //case "розлучення":
@@ -317,18 +345,6 @@ namespace CashFlowBot
                     case "/cancel":
                         Actions.Cancel(Bot, user);
                         return;
-
-                    //// Term 38: Sell Real Estate
-                    //case "sell real estate":
-                    //case "продати нерухомість":
-                    //    Actions.SellRealEstate(Bot, user);
-                    //    return;
-
-                    //// Term 75: Sell Business
-                    //case "sell business":
-                    //case "продати підприємство":
-                    //    Actions.SellBusiness(Bot, user);
-                    //    return;
 
                     #region Admin
                     case "admin":
@@ -445,10 +461,15 @@ namespace CashFlowBot
                         Actions.BuyRealEstate(Bot, user, message.Text.Trim());
                         return;
 
-                    //case Stage.SellRealEstateTitle:
-                    //case Stage.SellRealEstatePrice:
-                    //    Actions.SellRealEstate(Bot, user, message.Text.Trim());
-                    //    return;
+                    case Stage.SellRealEstateTitle:
+                    case Stage.SellRealEstatePrice:
+                        Actions.SellRealEstate(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.SellLandTitle:
+                    case Stage.SellLandPrice:
+                        Actions.SellLand(Bot, user, message.Text.Trim());
+                        return;
 
                     case Stage.BuyBusinessTitle:
                     case Stage.BuyBusinessPrice:
@@ -457,10 +478,10 @@ namespace CashFlowBot
                         Actions.BuyBusiness(Bot, user, message.Text.Trim());
                         return;
 
-                        //case Stage.SellBusinessTitle:
-                        //case Stage.SellBusinessPrice:
-                        //    Actions.SellBusiness(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.SellBusinessTitle:
+                    case Stage.SellBusinessPrice:
+                        Actions.SellBusiness(Bot, user, message.Text.Trim());
+                        return;
                 }
             }
             catch (Exception e)
