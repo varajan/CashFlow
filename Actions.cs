@@ -16,13 +16,14 @@ namespace CashFlowBot
     {
         public static void Downsize(TelegramBotClient bot, User user)
         {
-            bot.SendMessage(user.Id,
-            Terms.Get(87, user, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.",
-            user.Person.Expenses.Total));
+            var expenses = user.Person.Expenses.Total;
 
-            if (user.Person.Cash < user.Person.Expenses.Total)
+            bot.SendMessage(user.Id,
+            Terms.Get(87, user, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency()));
+
+            if (user.Person.Cash < expenses)
             {
-                var delta = user.Person.Expenses.Total - user.Person.Cash;
+                var delta = expenses - user.Person.Cash;
                 var credit = delta / 1_000 * 1_000;
 
                 if (delta % 1_000 > 0) credit += 1_000;
@@ -31,7 +32,7 @@ namespace CashFlowBot
                 bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
             }
 
-            user.Person.Cash -= user.Person.Expenses.Total;
+            user.Person.Cash -= expenses;
             Cancel(bot, user);
         }
 
@@ -634,7 +635,7 @@ namespace CashFlowBot
             user.Person.Assets.CleanUp();
             user.Stage = Stage.Nothing;
 
-            await bot.SendTextMessageAsync(user.Id, "", replyMarkup: rkm, parseMode: ParseMode.Markdown);
+            await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
         public static void MultiplyStocks(TelegramBotClient bot, User user)
@@ -674,7 +675,40 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
-        public static void ShowData(TelegramBotClient bot, User user) => SmallCircleButtons(bot, user, user.Description);
+        public static async void MyData(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit")},
+                    new List<KeyboardButton>{Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities")},
+                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")},
+                    new List<KeyboardButton>{Terms.Get(6, user, "Cancel")}
+                }
+            };
+
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, user.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static void Charity(TelegramBotClient bot, User user)
+        {
+            var amount = user.Person.Assets.Income + user.Person.CashFlow;
+
+            if (user.Person.Cash <= amount)
+            {
+                SmallCircleButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}",
+                amount.AsCurrency(), user.Person.Cash.AsCurrency()));
+                return;
+            }
+
+            user.Person.Cash -= amount;
+            SmallCircleButtons(bot, user, Terms.Get(91, user, "You've payed {0}, now you can use two dice in next 3 turns.",
+            amount.AsCurrency()));
+        }
 
         public static void GetCredit(TelegramBotClient bot, User user)
         {
@@ -687,7 +721,7 @@ namespace CashFlowBot
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
 
-            bot.SendMessage(user.Id, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
+            bot.SendMessage(user.Id, Terms.Get(22, user, "Ok, you've got *{0}*", amount.AsCurrency()));
             Cancel(bot, user);
         }
 

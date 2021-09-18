@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using CashFlowBot.Data;
@@ -98,8 +99,9 @@ namespace CashFlowBot
                         }
 
                         user.Person.Expenses.Children++;
-                        Actions.SmallCircleButtons(Bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
-                        user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
+                        Actions.SmallCircleButtons(Bot, user,
+                        Terms.Get(25, user, "{0}, you have {1} children expenses and {2} children.",
+                        user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
                         return;
 
                     // Term 80: Downsize
@@ -150,6 +152,95 @@ namespace CashFlowBot
 
                     #endregion
 
+                    #region My Data
+
+                    // Term 31: Show my Data
+                    case "show my data":
+                    case "мої дані":
+                        Actions.MyData(Bot, user);
+                        return;
+
+                    // Term 34: Get Credit
+                    case "get credit":
+                    case "взяти кредит":
+                        Actions.GetCredit(Bot, user);
+                        return;
+
+                    // Term 32: Get Money
+                    case "get money":
+                    case "отримати гроші":
+                        var buttons = user.Person.BigCircle
+                            ? new[] { "$50 000", "$100 000", "$200 000", user.Person.CurrentCashFlow.AsCurrency() }
+                            : new[] { "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency() };
+
+                        Actions.Ask(Bot, user, Stage.GetMoney,
+                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
+                        user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons);
+                        return;
+
+                    // Term 33: Give Money
+                    case "give money":
+                    case "заплатити гроші":
+                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
+
+                        Actions.Ask(Bot, user, Stage.GiveMoney,
+                        Terms.Get(1, user, "How much would you give?"), giveMoney);
+                        return;
+
+                    #region Reduce Liabilities
+                    // Term 40: Reduce Liabilities
+                    case "reduce liabilities":
+                    case "зменшити пасиви":
+                        Actions.ReduceLiabilities(Bot, user);
+                        return;
+
+                    // Term 43: Mortgage
+                    case "mortgage":
+                    case "іпотека":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
+                        return;
+
+                    // Term 44: School Loan
+                    case "school loan":
+                    case "кредит на освіту":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
+                        return;
+
+                    // Term 45: Car Loan
+                    case "car loan":
+                    case "кредит на авто":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
+                        return;
+
+                    // Term 46: Credit Card
+                    case "credit card":
+                    case "кредитна картка":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
+                        return;
+
+                    // Term 47: Bank Loan
+                    case "bank loan":
+                    case "банківська позика":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
+                        return;
+                    #endregion
+
+                    // Term 90: Charity - Pay 10%
+                    case "charity - pay 10%":
+                    case "благодійність - віддати 10%":
+                        Actions.Charity(Bot, user);
+                        return;
+
+                    // Term 41: Stop Game
+                    case "stop game":
+                    case "закінчити гру":
+                    case "/clear":
+                        Actions.Ask(Bot, user, Stage.StopGame,
+                        Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
+                        return;
+
+                    #endregion
+
                     //// Term 69: Divorce
                     //case "divorce":
                     //case "розлучення":
@@ -165,40 +256,11 @@ namespace CashFlowBot
                     //    Actions.TaxAudit(Bot, user);
                     //    return;
 
-                    //// Term 32: Get Money
-                    //case "get money":
-                    //case "отримати гроші":
-                    //    var buttons = user.Person.BigCircle
-                    //        ? new[] { "$50 000", "$100 000", "$200 000", user.Person.CurrentCashFlow.AsCurrency() }
-                    //        : new[] {"$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency()};
-
-                    //    Actions.Ask(Bot, user, Stage.GetMoney,
-                    //    Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
-                    //    user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons);
-                    //    return;
-
-                    //// Term 33: Give Money
-                    //case "give money":
-                    //case "заплатити гроші":
-                    //    var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
-
-                    //    Actions.Ask(Bot, user, Stage.GiveMoney,
-                    //    Terms.Get(1, user, "How much would you give?"), giveMoney);
-                    //    return;
-
-                    //// Term 41: Stop Game
-                    //case "stop game":
-                    //case "закінчити гру":
-                    //case "/clear":
-                    //    Actions.Ask(Bot, user, Stage.StopGame,
-                    //    Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
-                    //    return;
-
-                    //// Term 4 - YES
-                    //case "yes":
-                    //case "так":
-                    //    Actions.Confirm(Bot, user);
-                    //    return;
+                    // Term 4 - YES
+                    case "yes":
+                    case "так":
+                        Actions.Confirm(Bot, user);
+                        return;
 
                     // Term 6: Cancel
                     case "cancel":
@@ -206,54 +268,6 @@ namespace CashFlowBot
                     case "/cancel":
                         Actions.Cancel(Bot, user);
                         return;
-
-                    //// Term 40: Reduce Liabilities
-                    //case "reduce liabilities":
-                    //case "зменшити пасиви":
-                    //    Actions.ReduceLiabilities(Bot, user);
-                    //    return;
-
-                    //// Term 43: Mortgage
-                    //case "mortgage":
-                    //case "іпотека":
-                    //    Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
-                    //    return;
-
-                    //// Term 44: School Loan
-                    //case "school loan":
-                    //case "кредит на освіту":
-                    //    Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
-                    //    return;
-
-                    //// Term 45: Car Loan
-                    //case "car loan":
-                    //case "кредит на авто":
-                    //    Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
-                    //    return;
-
-                    //// Term 46: Credit Card
-                    //case "credit card":
-                    //case "кредитна картка":
-                    //    Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
-                    //    return;
-
-                    //// Term 47: Bank Loan
-                    //case "bank loan":
-                    //case "банківська позика":
-                    //    Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
-                    //    return;
-
-                    // Term 31: Show my Data
-                    case "show my data":
-                    case "мої дані":
-                        Actions.ShowData(Bot, user);
-                        return;
-
-                    //// Term 34: Get Credit
-                    //case "get credit":
-                    //case "взяти кредит":
-                    //    Actions.GetCredit(Bot, user);
-                    //    return;
 
                         //// Term 38: Sell Real Estate
                         //case "sell real estate":
@@ -337,43 +351,43 @@ namespace CashFlowBot
                         Actions.SetProfession(Bot, user, message.Text.Trim().ToLower());
                         return;
 
-                        //case Stage.GetCredit:
-                        //    Actions.GetCredit(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.GetCredit:
+                        Actions.GetCredit(Bot, user, message.Text.Trim());
+                        return;
 
-                        //case Stage.GetMoney:
-                        //    Actions.GetMoney(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.GetMoney:
+                        Actions.GetMoney(Bot, user, message.Text.Trim());
+                        return;
 
-                        //case Stage.GiveMoney:
-                        //    Actions.GiveMoney(Bot, user, message.Text.Trim());
-                        //    return;
+                    //case Stage.GiveMoney:
+                    //    Actions.GiveMoney(Bot, user, message.Text.Trim());
+                    //    return;
 
-                        //case Stage.ReduceMortgage:
-                        //case Stage.ReduceSchoolLoan:
-                        //case Stage.ReduceCarLoan:
-                        //case Stage.ReduceCreditCard:
-                        //case Stage.ReduceBankLoan:
-                        //    Actions.PayCredit(Bot, user, message.Text.Trim(), user.Stage);
-                        //    return;
+                    case Stage.ReduceMortgage:
+                    case Stage.ReduceSchoolLoan:
+                    case Stage.ReduceCarLoan:
+                    case Stage.ReduceCreditCard:
+                    case Stage.ReduceBankLoan:
+                        Actions.PayCredit(Bot, user, message.Text.Trim(), user.Stage);
+                        return;
 
-                        //case Stage.BuyStocksTitle:
-                        //case Stage.BuyStocksPrice:
-                        //case Stage.BuyStocksQtty:
-                        //    Actions.BuyStocks(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.BuyStocksTitle:
+                    case Stage.BuyStocksPrice:
+                    case Stage.BuyStocksQtty:
+                        Actions.BuyStocks(Bot, user, message.Text.Trim());
+                        return;
 
-                        //case Stage.SellStocksTitle:
-                        //case Stage.SellStocksPrice:
-                        //    Actions.SellStocks(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.SellStocksTitle:
+                    case Stage.SellStocksPrice:
+                        Actions.SellStocks(Bot, user, message.Text.Trim());
+                        return;
 
-                        //case Stage.BuyRealEstateTitle:
-                        //case Stage.BuyRealEstatePrice:
-                        //case Stage.BuyRealEstateFirstPayment:
-                        //case Stage.BuyRealEstateCashFlow:
-                        //    Actions.BuyRealEstate(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.BuyRealEstateTitle:
+                    case Stage.BuyRealEstatePrice:
+                    case Stage.BuyRealEstateFirstPayment:
+                    case Stage.BuyRealEstateCashFlow:
+                        Actions.BuyRealEstate(Bot, user, message.Text.Trim());
+                        return;
 
                         //case Stage.SellRealEstateTitle:
                         //case Stage.SellRealEstatePrice:
