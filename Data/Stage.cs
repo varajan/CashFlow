@@ -32,6 +32,8 @@
         BuyBusinessPrice,
         BuyBusinessFirstPayment,
         BuyBusinessCashFlow,
+        BuyLandTitle,
+        BuyLandPrice,
         Sell,
         SellStocksTitle,
         SellStocksPrice,

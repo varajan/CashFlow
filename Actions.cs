@@ -84,6 +84,60 @@ namespace CashFlowBot
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
 
+        public static void BuyLand(TelegramBotClient bot, User user)
+        {
+            var landTypes = AvailableAssets.Get(AssetType.LandType).ToArray();
+
+            if (user.Person.Cash == 0)
+            {
+                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                return;
+            }
+
+            user.Stage = Stage.BuyLandTitle;
+            bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), landTypes.Append(Terms.Get(6, user, "Cancel")));
+        }
+
+        public static void BuyLand(TelegramBotClient bot, User user, string value)
+        {
+            var title = value.Trim().ToUpper();
+            var number = value.AsCurrency();
+            var prices = AvailableAssets.Get(AssetType.LandPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.BuyLandTitle:
+                    user.Stage = Stage.BuyLandPrice;
+                    user.Person.Assets.Add(title, AssetType.Land);
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.BuyLandPrice:
+                    var land = user.Person.Assets.Lands.First(a => a.Price == 0);
+
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
+                        return;
+                    }
+
+                    if (user.Person.Cash < number)
+                    {
+                        SmallCircleButtons(bot, user, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        return;
+                    }
+
+                    land.Price = number;
+                    user.Person.Cash -= number;
+
+                    AvailableAssets.Add(land.Title, AssetType.LandType);
+                    AvailableAssets.Add(land.Price, AssetType.LandPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+            }
+        }
+
         public static void BuyBusiness(TelegramBotClient bot, User user)
         {
             var businesses = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType).ToArray();
@@ -124,7 +178,7 @@ namespace CashFlowBot
                         return;
                     }
 
-                    if (user.Person.Cash < number)
+                    if (user.Person.BigCircle && user.Person.Cash < number)
                     {
                         bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
                         return;
@@ -147,6 +201,12 @@ namespace CashFlowBot
                     if (number <= 0)
                     {
                         bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
+                        return;
+                    }
+
+                    if (user.Person.Cash < number)
+                    {
+                        SmallCircleButtons(bot, user, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
                         return;
                     }
 
@@ -639,6 +699,25 @@ namespace CashFlowBot
                     new List<KeyboardButton> {Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
                     new List<KeyboardButton> {Terms.Get(82, user, "Stocks 2 to 1"), Terms.Get(83, user, "Stocks 1 to 2")},
                     new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate")},
+                    new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
+                }
+            };
+
+            user.Person.Assets.CleanUp();
+            user.Stage = Stage.Nothing;
+
+            await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static async void BigOpportunity(TelegramBotClient bot, User user)
+        {
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
+                {
+                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate")},
+                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business")},
+                    new List<KeyboardButton>{Terms.Get(94, user, "Buy Land")},
                     new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
                 }
             };

@@ -7,6 +7,10 @@
         SmallGiveMoney,
         BigGiveMoney,
 
+        Land,
+        LandType,
+        LandPrice,
+
         Business,
 
         SmallBusinessType,

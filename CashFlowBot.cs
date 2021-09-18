@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -8,6 +9,7 @@ using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.InputFiles;
 using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot
@@ -110,48 +112,6 @@ namespace CashFlowBot
                         Actions.Downsize(Bot, user);
                         return;
 
-                    #region Small opportunities
-
-                    // Term 81: Small Opportunity
-                    case "small opportunity":
-                    case "мала можливість":
-                        Actions.SmallOpportunity(Bot, user);
-                        return;
-
-                    // Term 35: Buy Stocks
-                    case "buy stocks":
-                    case "купити акції":
-                        Actions.BuyStocks(Bot, user);
-                        return;
-
-                    // Term 36: Sell Stocks
-                    case "sell stocks":
-                    case "продати акції":
-                        Actions.SellStocks(Bot, user);
-                        return;
-
-                    // Term 37: Buy Real Estate
-                    case "buy real estate":
-                    case "купити нерухомість":
-                        Actions.BuyRealEstate(Bot, user);
-                        return;
-
-                    // Term 82: Stocks 2 to 1
-                    case "stocks 2 to 1":
-                    case "акції 2 до 1":
-                        user.Stage = Stage.Stocks2to1;
-                        Actions.MultiplyStocks(Bot, user);
-                        return;
-
-                    // Term 83: Stocks 1 to 2
-                    case "stocks 1 to 2":
-                    case "акції 1 до 2":
-                        user.Stage = Stage.Stocks1to2;
-                        Actions.MultiplyStocks(Bot, user);
-                        return;
-
-                    #endregion
-
                     #region My Data
 
                     // Term 31: Show my Data
@@ -247,6 +207,71 @@ namespace CashFlowBot
 
                     #endregion
 
+                    #region Small opportunities
+
+                    // Term 81: Small Opportunity
+                    case "small opportunity":
+                    case "мала можливість":
+                        Actions.SmallOpportunity(Bot, user);
+                        return;
+
+                    // Term 35: Buy Stocks
+                    case "buy stocks":
+                    case "купити акції":
+                        Actions.BuyStocks(Bot, user);
+                        return;
+
+                    // Term 36: Sell Stocks
+                    case "sell stocks":
+                    case "продати акції":
+                        Actions.SellStocks(Bot, user);
+                        return;
+
+                    // Term 37: Buy Real Estate
+                    case "buy real estate":
+                    case "купити нерухомість":
+                        Actions.BuyRealEstate(Bot, user);
+                        return;
+
+                    // Term 82: Stocks 2 to 1
+                    case "stocks 2 to 1":
+                    case "акції 2 до 1":
+                        user.Stage = Stage.Stocks2to1;
+                        Actions.MultiplyStocks(Bot, user);
+                        return;
+
+                    // Term 83: Stocks 1 to 2
+                    case "stocks 1 to 2":
+                    case "акції 1 до 2":
+                        user.Stage = Stage.Stocks1to2;
+                        Actions.MultiplyStocks(Bot, user);
+                        return;
+
+                    #endregion
+
+                    #region Big opportunities
+
+                    // Term 84: Big Opportunity
+                    case "big opportunity":
+                    case "велика можливість":
+                        Actions.BigOpportunity(Bot, user);
+                        return;
+
+                    // Term 74: Buy Business
+                    case "buy business":
+                    case "купити підприємство":
+                        Actions.BuyBusiness(Bot, user);
+                        return;
+
+                    // Term 94: Buy Land
+                    case "buy land":
+                    case "купити землю":
+                        Actions.BuyLand(Bot, user);
+                        return;
+
+
+                    #endregion
+
                     //// Term 69: Divorce
                     //case "divorce":
                     //case "розлучення":
@@ -275,75 +300,71 @@ namespace CashFlowBot
                         Actions.Cancel(Bot, user);
                         return;
 
-                        //// Term 38: Sell Real Estate
-                        //case "sell real estate":
-                        //case "продати нерухомість":
-                        //    Actions.SellRealEstate(Bot, user);
-                        //    return;
+                    //// Term 38: Sell Real Estate
+                    //case "sell real estate":
+                    //case "продати нерухомість":
+                    //    Actions.SellRealEstate(Bot, user);
+                    //    return;
 
-                        //// Term 74: Buy Business
-                        //case "buy business":
-                        //case "купити підприємство":
-                        //    Actions.BuyBusiness(Bot, user);
-                        //    return;
+                    //// Term 75: Sell Business
+                    //case "sell business":
+                    //case "продати підприємство":
+                    //    Actions.SellBusiness(Bot, user);
+                    //    return;
 
-                        //// Term 75: Sell Business
-                        //case "sell business":
-                        //case "продати підприємство":
-                        //    Actions.SellBusiness(Bot, user);
-                        //    return;
+                    #region Admin
+                    case "admin":
+                        if (user.IsAdmin)
+                        {
+                            Actions.AdminMenu(Bot, user);
+                        }
+                        else
+                        {
+                            Actions.NotifyAdmins(Bot, user);
+                        }
+                        return;
 
-                        //case "admin":
-                        //    if (user.IsAdmin)
-                        //    {
-                        //        Actions.AdminMenu(Bot, user);
-                        //    }
-                        //    else
-                        //    {
-                        //        Actions.NotifyAdmins(Bot, user);
-                        //    }
-                        //    return;
+                    case "bring down":
+                        if (user.IsAdmin)
+                        {
+                            Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", Terms.Get(4, user, "Yes"));
+                        }
+                        return;
 
-                        //case "bring down":
-                        //    if (user.IsAdmin)
-                        //    {
-                        //        Actions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", Terms.Get(4, user, "Yes"));
-                        //    }
-                        //    return;
+                    case "logs":
+                        if (!user.IsAdmin) return;
 
-                        //case "logs":
-                        //    if (!user.IsAdmin) return;
+                        Actions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
+                        return;
 
-                        //    Actions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top");
-                        //    return;
+                    case "full":
+                        if (!user.IsAdmin) return;
 
-                        //case "full":
-                        //    if (!user.IsAdmin) return;
+                        if (user.Stage == Stage.AdminLogs)
+                        {
+                            await using var stream = File.Open(Logger.LogFile, FileMode.Open);
+                            var fts = new InputOnlineFile(stream, "logs.txt");
+                            await Bot.SendDocumentAsync(user.Id, fts);
+                            Actions.AdminMenu(Bot, user);
+                        }
+                        return;
 
-                        //    if (user.Stage == Stage.AdminLogs)
-                        //    {
-                        //        await using var stream = File.Open(Logger.LogFile, FileMode.Open);
-                        //        var fts = new InputOnlineFile(stream, "logs.txt");
-                        //        await Bot.SendDocumentAsync(user.Id, fts);
-                        //        Actions.AdminMenu(Bot, user);
-                        //    }
-                        //    return;
+                    case "top":
+                        if (!user.IsAdmin) return;
 
-                        //case "top":
-                        //    if (!user.IsAdmin) return;
+                        if (user.Stage == Stage.AdminLogs)
+                        {
+                            Bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
+                        }
+                        Actions.AdminMenu(Bot, user);
+                        return;
 
-                        //    if (user.Stage == Stage.AdminLogs)
-                        //    {
-                        //        Bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
-                        //    }
-                        //    Actions.AdminMenu(Bot, user);
-                        //    return;
+                    case "users":
+                        if (!user.IsAdmin) return;
 
-                        //case "users":
-                        //    if (!user.IsAdmin) return;
-
-                        //    Actions.ShowUsers(Bot, user);
-                        //    return;
+                        Actions.ShowUsers(Bot, user);
+                        return;
+                    #endregion
                 }
 
                 switch (user.Stage)
@@ -384,6 +405,11 @@ namespace CashFlowBot
                         Actions.BuyStocks(Bot, user, message.Text.Trim());
                         return;
 
+                    case Stage.BuyLandPrice:
+                    case Stage.BuyLandTitle:
+                        Actions.BuyLand(Bot, user, message.Text.Trim());
+                        return;
+
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
                         Actions.SellStocks(Bot, user, message.Text.Trim());
@@ -396,17 +422,17 @@ namespace CashFlowBot
                         Actions.BuyRealEstate(Bot, user, message.Text.Trim());
                         return;
 
-                        //case Stage.SellRealEstateTitle:
-                        //case Stage.SellRealEstatePrice:
-                        //    Actions.SellRealEstate(Bot, user, message.Text.Trim());
-                        //    return;
+                    //case Stage.SellRealEstateTitle:
+                    //case Stage.SellRealEstatePrice:
+                    //    Actions.SellRealEstate(Bot, user, message.Text.Trim());
+                    //    return;
 
-                        //case Stage.BuyBusinessTitle:
-                        //case Stage.BuyBusinessPrice:
-                        //case Stage.BuyBusinessFirstPayment:
-                        //case Stage.BuyBusinessCashFlow:
-                        //    Actions.BuyBusiness(Bot, user, message.Text.Trim());
-                        //    return;
+                    case Stage.BuyBusinessTitle:
+                    case Stage.BuyBusinessPrice:
+                    case Stage.BuyBusinessFirstPayment:
+                    case Stage.BuyBusinessCashFlow:
+                        Actions.BuyBusiness(Bot, user, message.Text.Trim());
+                        return;
 
                         //case Stage.SellBusinessTitle:
                         //case Stage.SellBusinessPrice:
