@@ -218,6 +218,12 @@ namespace CashFlowBot
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
+                    // Term 92: Small Credit
+                    case "small credit":
+                    case "мікрокредит":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceSmallCredit);
+                        return;
+
                     // Term 47: Bank Loan
                     case "bank loan":
                     case "банківська позика":
@@ -367,6 +373,7 @@ namespace CashFlowBot
                     case Stage.ReduceSchoolLoan:
                     case Stage.ReduceCarLoan:
                     case Stage.ReduceCreditCard:
+                    case Stage.ReduceSmallCredit:
                     case Stage.ReduceBankLoan:
                         Actions.PayCredit(Bot, user, message.Text.Trim(), user.Stage);
                         return;

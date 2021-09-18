@@ -91,6 +91,8 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (89, 'EN', 'What do you want?'),
 (90, 'EN', 'Charity - Pay 10%'),
 (91, 'EN', 'You''ve payed {0}, now you can use two dice in next 3 turns.'),
+(92, 'EN', 'Small Credit'),
+(93, 'EN', 'You have no liabilities.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

@@ -543,6 +543,10 @@ namespace CashFlowBot
                     cost = user.Person.Liabilities.CreditCard;
                     break;
 
+                case Stage.ReduceSmallCredit:
+                    cost = user.Person.Liabilities.SmallCredits;
+                    break;
+
                 case Stage.ReduceBankLoan:
                     cost = user.Person.Liabilities.BankLoan;
                     break;
@@ -570,6 +574,7 @@ namespace CashFlowBot
             var schoolLoan = Terms.Get(44, user, "School Loan");
             var carLoan = Terms.Get(45, user, "Car Loan");
             var creditCard = Terms.Get(46, user, "Credit Card");
+            var smallCredit = Terms.Get(92, user, "Small Credit");
             var bankLoan = Terms.Get(47, user, "Bank Loan");
 
             if (l.Mortgage > 0)
@@ -596,6 +601,12 @@ namespace CashFlowBot
                 liabilities += $"*{creditCard}:* {l.CreditCard.AsCurrency()} - {x.CreditCard.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
+            if (l.SmallCredits > 0)
+            {
+                buttons.Add(smallCredit);
+                liabilities += $"*{smallCredit}:* {l.SmallCredits.AsCurrency()} - {x.SmallCredits.AsCurrency()} {monthly}{Environment.NewLine}";
+            }
+
             if (l.BankLoan > 0)
             {
                 buttons.Add(bankLoan);
@@ -616,7 +627,7 @@ namespace CashFlowBot
                 return;
             }
 
-            Cancel(bot, user);
+            SmallCircleButtons(bot, user, Terms.Get(93, user, "You have no liabilities."));
         }
 
         public static async void SmallOpportunity(TelegramBotClient bot, User user)
@@ -809,6 +820,15 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CreditCard -= expenses;
                     user.Person.Liabilities.CreditCard -= amount;
+                    break;
+
+                case Stage.ReduceSmallCredit:
+                    amount = Math.Min(amount, user.Person.Liabilities.SmallCredits);
+                    expenses = user.Person.Expenses.SmallCredits * amount / user.Person.Liabilities.SmallCredits;
+
+                    user.Person.Cash -= amount;
+                    user.Person.Expenses.SmallCredits -= expenses;
+                    user.Person.Liabilities.SmallCredits -= amount;
                     break;
 
                 case Stage.ReduceBankLoan:

@@ -17,6 +17,7 @@
         ReduceSchoolLoan,
         ReduceCarLoan,
         ReduceCreditCard,
+        ReduceSmallCredit,
         ReduceBankLoan,
         Stocks2to1,
         Stocks1to2,

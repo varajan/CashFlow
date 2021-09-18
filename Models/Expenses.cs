@@ -36,7 +36,7 @@ namespace CashFlowBot.Models
                 var schoolLoanTerm = Terms.Get(44, Id, "School Loan");
                 var carLoanTerm = Terms.Get(45, Id, "Car Loan");
                 var creditCardTerm = Terms.Get(46, Id, "Credit Card");
-                var smallCreditsTerm = Terms.Get(-1, Id, "Small Credit");
+                var smallCreditsTerm = Terms.Get(92, Id, "Small Credit");
                 var bankLoanTerm = Terms.Get(47, Id, "Bank Loan");
                 var otherPaymentTerm = Terms.Get(60, Id, "Other Payment");
                 var childrenTerm = Terms.Get(61, Id, "Children");
