@@ -1141,10 +1141,7 @@ namespace CashFlowBot
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
             user.Stage = stage;
-
-            if (!user.IsAdmin) buttons = buttons.Append(Terms.Get(6, user, "Cancel")).ToArray();
-
-            bot.SetButtons(user.Id, question, buttons);
+            bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
         }
 
         public static void ChangeLanguage(TelegramBotClient bot, User user) =>
