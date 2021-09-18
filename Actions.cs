@@ -1210,6 +1210,7 @@ namespace CashFlowBot
                 }
             };
 
+            user.Person.Assets.CleanUp();
             user.Stage = Stage.Nothing;
 
             await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
