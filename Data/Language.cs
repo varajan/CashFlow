@@ -3,6 +3,7 @@
     public enum Language
     {
         EN,
-        UA
+        UA,
+        DE
     }
 }

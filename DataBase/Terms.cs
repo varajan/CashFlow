@@ -12,6 +12,7 @@ namespace CashFlowBot.DataBase
             DB.Execute($"DELETE FROM {Table}");
             DB.Execute(Data.Terms.terms_en);
             DB.Execute(Data.Terms.terms_ua);
+            DB.Execute(Data.Terms.terms_de);
         }
 
         public static string Get(int id, long userId, string defaultValue, params object[] args) =>

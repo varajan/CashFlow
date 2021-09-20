@@ -511,7 +511,7 @@ namespace CashFlowBot
 
                     if (index < 1 || index > properties.Count)
                     {
-                        bot.SendMessage(user.Id, Terms.Get(16, user, "Invalid RealEstate number."));
+                        bot.SendMessage(user.Id, Terms.Get(16, user, "Invalid Real Estate number."));
                         return;
                     }
 
@@ -723,7 +723,7 @@ namespace CashFlowBot
                 .ToList();
             buttons.Add(Terms.Get(6, user, "Cancel"));
 
-            bot.SetButtons(user.Id, Terms.Get(20, user, "How much would you pay?"), buttons);
+            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
         }
 
         public static void ReduceLiabilities(TelegramBotClient bot, User user)
@@ -1145,12 +1145,10 @@ namespace CashFlowBot
         }
 
         public static void ChangeLanguage(TelegramBotClient bot, User user) =>
-            Ask(bot, user, Stage.Nothing, "Language/Мова", "EN", "UA");
+            Ask(bot, user, Stage.Nothing, "Language/Мова", "UA", "EN", "DE");
 
-        public static void Start(TelegramBotClient bot, User user, string name = null)
+        public static async void Start(TelegramBotClient bot, User user, string name = null)
         {
-            var professions = Persons.Get(user.Id).Select(x => x.Profession).OrderBy(x => x);
-
             if (!user.Exists)
             {
                 user.Create();
@@ -1168,8 +1166,22 @@ namespace CashFlowBot
                 return;
             }
 
+            var professions = Persons.Get(user.Id).Select(x => x.Profession).OrderBy(x => x).ToList();
+            var rkm = new ReplyKeyboardMarkup {Keyboard = new List<IEnumerable<KeyboardButton>>()};
+
+            while (professions.Any())
+            {
+                var x = professions.Take(3).ToList();
+                professions = professions.Skip(3).ToList();
+
+                if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2] }); continue; }
+                if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1] }); continue; }
+                if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0] }); }
+            }
+
             user.Stage = Stage.GetProfession;
-            bot.SetButtons(user.Id, Terms.Get(28, user, "Choose your *profession*"), professions);
+            await bot.SendTextMessageAsync(user.Id, Terms.Get(28, user, "Choose your *profession*"),
+                replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
         public static void SetProfession(TelegramBotClient bot, User user, string profession)

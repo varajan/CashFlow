@@ -70,6 +70,7 @@ namespace CashFlowBot
                 {
                     case "en":
                     case "ua":
+                    case "de":
                         user.Language = message.Text.ToUpper().Trim().ParseEnum<Language>();
 
                         if (user.Person.Exists)
@@ -103,7 +104,8 @@ namespace CashFlowBot
 
                         user.Person.Expenses.Children++;
                         Actions.SmallCircleButtons(Bot, user,
-                        Terms.Get(25, user, "{0}, you have {1} children expenses and {2} children.",
+                        Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
+                        user, "{0}, you have {1} children expenses and {2} children.",
                         user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
                         return;
 
@@ -148,7 +150,7 @@ namespace CashFlowBot
                         var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
 
                         Actions.Ask(Bot, user, Stage.GiveMoney,
-                        Terms.Get(1, user, "How much would you give?"), giveMoney);
+                        Terms.Get(21, user, "How much?"), giveMoney);
                         return;
 
                     #region Reduce Liabilities
@@ -337,6 +339,7 @@ namespace CashFlowBot
                     // Term 4 - YES
                     case "yes":
                     case "так":
+                    case "ja":
                         Actions.Confirm(Bot, user);
                         return;
 
