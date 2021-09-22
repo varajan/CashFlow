@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
+using CashFlowBot.Extensions;
 
 namespace CashFlowBot.Models
 {
@@ -15,6 +18,18 @@ namespace CashFlowBot.Models
         public Stage Stage { get => (Stage) GetInt("Stage"); set => Set("Stage", (int)value); }
 
         public string Name { get => Get("Name"); set => Set("Name", value); }
+
+        public DateTime FirstLogin
+        {
+            get => Get("FirstLogin").ToDateTime();
+            private set => Set("FirstLogin", value.ToString("yyyy-MM-dd hh:mm", CultureInfo.InvariantCulture));
+        }
+
+        public DateTime LastActive
+        {
+            get => Get("LastActive").ToDateTime();
+            set => Set("LastActive", value.ToString("yyyy-MM-dd hh:mm", CultureInfo.InvariantCulture));
+        }
 
         public bool IsAdmin { get => GetInt("Admin") == 1; set => Set("Admin", value ? 1 : 0); }
 
@@ -34,6 +49,9 @@ namespace CashFlowBot.Models
         public void Create()
         {
             DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Users}) VALUES ({Id}, {DB.DefaultValues.Users})");
+
+            FirstLogin = DateTime.Now;
+            LastActive = DateTime.Now;
         }
     }
 }

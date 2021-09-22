@@ -67,7 +67,7 @@
 (65, 'DE', 'Initial'),
 (66, 'DE', 'Anwesend'),
 (67, 'DE', 'das Ziel'),
-(68, 'EN', 'Your income is greater, then expenses. You are ready for Big Circle.'),
+(68, 'EN', ' Your income is greater, then expenses. You are ready for Big Circle.'),
 (69, 'DE', 'die Ehescheidung'),
 (70, 'DE', 'die Steuerprüfung'),
 (71, 'DE', 'die Klage'),

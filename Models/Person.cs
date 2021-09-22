@@ -45,7 +45,14 @@ namespace CashFlowBot.Models
                                               $"{TargetTerm} {CashFlowTerm}: {TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{Assets.Description}";
 
-        public string Description => BigCircle ? BigCircleDescription : SmallCircleDescription;
+        public string Description
+        {
+            get
+            {
+                new User(Id).LastActive = DateTime.Now;
+                return BigCircle ? BigCircleDescription : SmallCircleDescription;
+            }
+        }
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");

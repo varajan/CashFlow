@@ -78,5 +78,7 @@ namespace CashFlowBot.Extensions
                 return 0;
             }
         }
+
+        public static DateTime ToDateTime(this string date) => DateTime.Parse(date);
     }
 }
