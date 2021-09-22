@@ -38,14 +38,14 @@ namespace CashFlowBot
 
         public static void Divorce(TelegramBotClient bot, User user)
         {
-            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash));
+            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash.AsCurrency()));
             user.Person.Cash = 0;
             Cancel(bot, user);
         }
 
         public static void TaxAudit(TelegramBotClient bot, User user)
         {
-            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash/2));
+            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", (user.Person.Cash/2).AsCurrency()));
             user.Person.Cash /= 2;
             Cancel(bot, user);
         }

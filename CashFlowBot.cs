@@ -90,12 +90,14 @@ namespace CashFlowBot
                     // Term 79: Pay Check
                     case "pay check":
                     case "зарплатня":
+                    case "gehalt":
                         Actions.GetMoney(Bot, user, user.Person.CashFlow.AsCurrency());
                         return;
 
                     // Term 39: Baby
                     case "baby":
                     case "дитина":
+                    case "kind":
                         if (user.Person.Expenses.Children == 3)
                         {
                             Bot.SendMessage(user.Id, Terms.Get(57, user, "You're lucky parent of three children. You don't need one more."));
@@ -112,6 +114,7 @@ namespace CashFlowBot
                     // Term 80: Downsize
                     case "downsize":
                     case "звільнення":
+                    case "entlassung":
                         Actions.Downsize(Bot, user);
                         return;
 
@@ -120,18 +123,21 @@ namespace CashFlowBot
                     // Term 31: Show my Data
                     case "show my data":
                     case "мої дані":
+                    case "meine info":
                         Actions.MyData(Bot, user);
                         return;
 
                     // Term 34: Get Credit
                     case "get credit":
                     case "взяти кредит":
+                    case "kredit bekomen":
                         Actions.GetCredit(Bot, user);
                         return;
 
                     // Term 32: Get Money
                     case "get money":
                     case "отримати гроші":
+                    case "geld bekomen":
                         var buttons = user.Person.BigCircle
                             ? new[] { "$50 000", "$100 000", "$200 000", user.Person.CurrentCashFlow.AsCurrency() }
                             : new[] { "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency() };
@@ -144,9 +150,11 @@ namespace CashFlowBot
                     // Term 33: Give Money
                     case "give money":
                     case "заплатити гроші":
+                    case "geld geben":
                     // Term 95: Pay with Cash
                     case "pay with cash":
                     case "оплатити готівкою":
+                    case "mit bargeld zahlen":
                         var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
 
                         Actions.Ask(Bot, user, Stage.GiveMoney,
@@ -157,42 +165,49 @@ namespace CashFlowBot
                     // Term 40: Reduce Liabilities
                     case "reduce liabilities":
                     case "зменшити борги":
+                    case "verbindlichkeiten reduzieren":
                         Actions.ReduceLiabilities(Bot, user);
                         return;
 
                     // Term 43: Mortgage
                     case "mortgage":
                     case "іпотека":
+                    case "hypothek":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
                         return;
 
                     // Term 44: School Loan
                     case "school loan":
                     case "кредит на освіту":
+                    case "schuldarlehen":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
                         return;
 
                     // Term 45: Car Loan
                     case "car loan":
                     case "кредит на авто":
+                    case "autokredit":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
                         return;
 
                     // Term 46: Credit Card
                     case "credit card":
                     case "кредитна картка":
+                    case "kreditkarte":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
                         return;
 
                     // Term 92: Small Credit
                     case "small credit":
                     case "мікрокредит":
+                    case "klein kredit":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceSmallCredit);
                         return;
 
                     // Term 47: Bank Loan
                     case "bank loan":
                     case "банківська позика":
+                    case "bankkredit":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
                     #endregion
@@ -200,12 +215,14 @@ namespace CashFlowBot
                     // Term 90: Charity - Pay 10%
                     case "charity - pay 10%":
                     case "благодійність - віддати 10%":
+                    case "nächstenliebe - 10% zahlen":
                         Actions.Charity(Bot, user);
                         return;
 
                     // Term 41: Stop Game
                     case "stop game":
                     case "закінчити гру":
+                    case "spiel beenden":
                     case "/clear":
                         Actions.Ask(Bot, user, Stage.StopGame,
                         Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
@@ -218,30 +235,35 @@ namespace CashFlowBot
                     // Term 81: Small Opportunity
                     case "small opportunity":
                     case "мала можливість":
+                    case "kleine chance":
                         Actions.SmallOpportunity(Bot, user);
                         return;
 
                     // Term 35: Buy Stocks
                     case "buy stocks":
                     case "купити акції":
+                    case "aktien kaufen":
                         Actions.BuyStocks(Bot, user);
                         return;
 
                     // Term 36: Sell Stocks
                     case "sell stocks":
                     case "продати акції":
+                    case "aktien verkaufen":
                         Actions.SellStocks(Bot, user);
                         return;
 
                     // Term 37: Buy Real Estate
                     case "buy real estate":
                     case "купити нерухомість":
+                    case "immobilien kaufen":
                         Actions.BuyRealEstate(Bot, user);
                         return;
 
                     // Term 82: Stocks 2 to 1
                     case "stocks 2 to 1":
                     case "акції 2 до 1":
+                    case "aktien 2 -> 1":
                         user.Stage = Stage.Stocks2to1;
                         Actions.MultiplyStocks(Bot, user);
                         return;
@@ -249,6 +271,7 @@ namespace CashFlowBot
                     // Term 83: Stocks 1 to 2
                     case "stocks 1 to 2":
                     case "акції 1 до 2":
+                    case "aktien 1 -> 2":
                         user.Stage = Stage.Stocks1to2;
                         Actions.MultiplyStocks(Bot, user);
                         return;
@@ -260,18 +283,21 @@ namespace CashFlowBot
                     // Term 84: Big Opportunity
                     case "big opportunity":
                     case "велика можливість":
+                    case "große chance":
                         Actions.BigOpportunity(Bot, user);
                         return;
 
                     // Term 74: Buy Business
                     case "buy business":
                     case "купити підприємство":
+                    case "geschäft kaufen":
                         Actions.BuyBusiness(Bot, user);
                         return;
 
                     // Term 94: Buy Land
                     case "buy land":
                     case "купити землю":
+                    case "land kaufen":
                         Actions.BuyLand(Bot, user);
                         return;
 
@@ -288,6 +314,7 @@ namespace CashFlowBot
                     // Term 96: Pay with Credit Card
                     case "Pay with Credit Card":
                     case "оплатити кредиткою":
+                    case "mit kreditkarte zahlen":
                         Actions.PayWithCreditCard(Bot, user);
                         return;
 
@@ -298,24 +325,28 @@ namespace CashFlowBot
                     // Term 85: Market
                     case "market":
                     case "ринок":
+                    case "markt":
                         Actions.Market(Bot, user);
                         return;
 
                     // Term 38: Sell Real Estate
                     case "sell real estate":
                     case "продати нерухомість":
+                    case "immobilien verkaufen":
                         Actions.SellRealEstate(Bot, user);
                         return;
 
                     // Term 75: Sell Business
                     case "sell business":
                     case "продати підприємство":
+                    case "geschäft verkaufen":
                         Actions.SellBusiness(Bot, user);
                         return;
 
-                    // Term : Sell Land
+                    // Term 98 : Sell Land
                     case "sell land":
                     case "продати землю":
+                    case "land verkaufen":
                         Actions.SellLand(Bot, user);
                         return;
 
@@ -324,6 +355,7 @@ namespace CashFlowBot
                     // Term 69: Divorce
                     case "divorce":
                     case "розлучення":
+                    case "die ehescheidung":
                         Actions.Divorce(Bot, user);
                         return;
 
@@ -331,6 +363,8 @@ namespace CashFlowBot
                     // Term 71: Lawsuit
                     case "tax audit":
                     case "lawsuit":
+                    case "die steuerprüfung":
+                    case "die klage":
                     case "податкова перевірка":
                     case "судовий процес":
                         Actions.TaxAudit(Bot, user);
@@ -346,6 +380,7 @@ namespace CashFlowBot
                     // Term 6: Cancel
                     case "cancel":
                     case "скасувати":
+                    case "absagen":
                     case "/cancel":
                         Actions.Cancel(Bot, user);
                         return;
