@@ -440,7 +440,7 @@ namespace CashFlowBot
                     return;
 
                 case Stage.BuyRealEstateFirstPayment:
-                    if (number <= 0)
+                    if (number < 0)
                     {
                         bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
                         return;
@@ -898,12 +898,10 @@ namespace CashFlowBot
                     user.Person.Expenses.SmallCredits += amount;
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
-
             }
 
             user.Stage = Stage.MicroCreditAmount;
             bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", Terms.Get(6, user, "Cancel"));
-
         }
 
         public static void MultiplyStocks(TelegramBotClient bot, User user)
@@ -922,7 +920,6 @@ namespace CashFlowBot
             {
                 SmallCircleButtons(bot, user, Terms.Get(49, user, "You have no stocks."));
             }
-
         }
 
         public static void MultiplyStocks(TelegramBotClient bot, User user, string title)
@@ -1109,6 +1106,7 @@ namespace CashFlowBot
                 return;
             }
 
+            user.Person.Assets.CleanUp();
             SmallCircleButtons(bot, user, user.Person.Description);
         }
 
@@ -1116,12 +1114,6 @@ namespace CashFlowBot
         {
             switch (user.Stage)
             {
-                //case Stage.GetChild:
-                //    user.Person.Expenses.Children++;
-                //    SmallCircleButtons(bot, user, Terms.Get(25, user, "{0}, you have {1} children expenses.",
-                //    user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency()));
-                //    return;
-
                 case Stage.StopGame:
                     user.Person.Clear();
                     user.Person.Expenses.Clear();

@@ -18,6 +18,7 @@ namespace CashFlowBot.Models
         {
             RealEstates.ForEach(x => x.Title = x.Title.SubStringTo("*"));
             RealEstates.Where(x => x.Price == 0).ForEach(x => x.Delete());
+            RealEstates.Where(a => a.Mortgage == 0).ForEach(x => x.Delete());
 
             Businesses.ForEach(x => x.Title = x.Title.SubStringTo("*"));
             Businesses.Where(x => x.Price == 0).ForEach(x => x.Delete());
