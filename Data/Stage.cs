@@ -31,6 +31,7 @@
         BuyRealEstateTitle,
         BuyRealEstatePrice,
         BuyRealEstateFirstPayment,
+        BuyRealEstateCredit,
         BuyRealEstateCashFlow,
         BuyBusinessTitle,
         BuyBusinessPrice,

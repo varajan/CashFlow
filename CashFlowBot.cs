@@ -131,8 +131,17 @@ namespace CashFlowBot
                     case "get credit":
                     case "взяти кредит":
                     case "kredit bekomen":
-                        Actions.GetCredit(Bot, user);
-                        return;
+                        switch (user.Stage)
+                        {
+                            case Stage.BuyRealEstateFirstPayment:
+                                user.Stage = Stage.BuyRealEstateCredit;
+                                Actions.BuyRealEstate(Bot, user, string.Empty);
+                                return;
+
+                            default:
+                                Actions.GetCredit(Bot, user);
+                                return;
+                        }
 
                     // Term 32: Get Money
                     case "get money":

@@ -24,9 +24,7 @@ namespace CashFlowBot
             if (user.Person.Cash < expenses)
             {
                 var delta = expenses - user.Person.Cash;
-                var credit = delta / 1_000 * 1_000;
-
-                if (delta % 1_000 > 0) credit += 1_000;
+                var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 user.GetCredit(credit);
                 bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
@@ -419,6 +417,7 @@ namespace CashFlowBot
             var prices = AvailableAssets.Get(AssetType.RealEstateBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var firstPayments = AvailableAssets.Get(AssetType.RealEstateFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var cashFlows = AvailableAssets.Get(AssetType.RealEstateCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.Draft);
 
             switch (user.Stage)
             {
@@ -435,13 +434,15 @@ namespace CashFlowBot
                         return;
                     }
 
-                    user.Person.Assets.RealEstates.First(a => a.Price == 0).Price = number;
+                    asset.Price = number;
                     user.Stage = Stage.BuyRealEstateFirstPayment;
 
                     bot.SetButtons(user.Id, Terms.Get(10, user, "What is the first payment?"), firstPayments);
                     return;
 
                 case Stage.BuyRealEstateFirstPayment:
+                    asset.Mortgage = asset.Price - number;
+
                     if (number < 0)
                     {
                         bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
@@ -450,27 +451,39 @@ namespace CashFlowBot
 
                     if (user.Person.Cash < number)
                     {
-                        bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
-                    var asset = user.Person.Assets.RealEstates.First(a => a.Mortgage == 0);
-                    asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyRealEstateCashFlow;
                     user.Person.Cash -= number;
 
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
 
-                case Stage.BuyRealEstateCashFlow:
-                    var realEstate = user.Person.Assets.RealEstates.First(a => a.CashFlow == 0);
-                    realEstate.CashFlow = number;
-                    realEstate.Draft = false;
+                case Stage.BuyRealEstateCredit:
+                    number = asset.Price - asset.Mortgage;
+                    var delta = number - user.Person.Cash;
+                    var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
-                    AvailableAssets.Add(realEstate.Title, AssetType.RealEstateType);
-                    AvailableAssets.Add(realEstate.Price, AssetType.RealEstateBuyPrice);
-                    AvailableAssets.Add(realEstate.Price-realEstate.Mortgage, AssetType.RealEstateFirstPayment);
-                    AvailableAssets.Add(realEstate.CashFlow, AssetType.RealEstateCashFlow);
+                    user.GetCredit(credit);
+                    user.Stage = Stage.BuyRealEstateCashFlow;
+                    user.Person.Cash -= number;
+
+                    bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
+                    bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                    return;
+
+                case Stage.BuyRealEstateCashFlow:
+                    asset.CashFlow = number;
+                    asset.Draft = false;
+
+                    AvailableAssets.Add(asset.Title, AssetType.RealEstateType);
+                    AvailableAssets.Add(asset.Price, AssetType.RealEstateBuyPrice);
+                    AvailableAssets.Add(asset.Price - asset.Mortgage, AssetType.RealEstateFirstPayment);
+                    AvailableAssets.Add(asset.CashFlow, AssetType.RealEstateCashFlow);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
