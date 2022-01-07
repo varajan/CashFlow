@@ -139,19 +139,17 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
+            var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.Land);
             var prices = AvailableAssets.Get(AssetType.LandPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
                 case Stage.BuyLandTitle:
                     user.Stage = Stage.BuyLandPrice;
-                    user.Person.Assets.Add(title, AssetType.Land);
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
                 case Stage.BuyLandPrice:
-                    var land = user.Person.Assets.Lands.First(a => a.Price == 0);
-
                     if (number <= 0)
                     {
                         bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
@@ -164,12 +162,12 @@ namespace CashFlowBot
                         return;
                     }
 
-                    land.Price = number;
+                    asset.Price = number;
                     user.Person.Cash -= number;
-                    land.Draft = false;
+                    asset.Draft = false;
 
-                    AvailableAssets.Add(land.Title, AssetType.LandType);
-                    AvailableAssets.Add(land.Price, AssetType.LandPrice);
+                    AvailableAssets.Add(asset.Title, AssetType.LandType);
+                    AvailableAssets.Add(asset.Price, AssetType.LandPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -194,7 +192,8 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.Draft);
+            var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.Draft)
+                        ?? user.Person.Assets.Add(title, AssetType.Business, user.Person.BigCircle);
             var prices = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var firstPayments = AvailableAssets.Get(AssetType.SmallBusinessFirstPayment)
@@ -206,7 +205,6 @@ namespace CashFlowBot
             {
                 case Stage.BuyBusinessTitle:
                     user.Stage = Stage.BuyBusinessPrice;
-                    user.Person.Assets.Add(title, AssetType.Business, user.Person.BigCircle);
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
@@ -429,16 +427,15 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
+            var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.RealEstate);
             var prices = AvailableAssets.Get(AssetType.RealEstateBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var firstPayments = AvailableAssets.Get(AssetType.RealEstateFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var cashFlows = AvailableAssets.Get(AssetType.RealEstateCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
-            var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.Draft);
 
             switch (user.Stage)
             {
                 case Stage.BuyRealEstateTitle:
                     user.Stage = Stage.BuyRealEstatePrice;
-                    user.Person.Assets.Add(title, AssetType.RealEstate);
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
@@ -583,6 +580,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
+            var asset = user.Person.Assets.Stocks.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.Stock);
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
             prices.Add(Terms.Get(6, user, "Cancel"));
 
@@ -591,7 +589,6 @@ namespace CashFlowBot
                 case Stage.BuyStocksTitle:
 
                     user.Stage = Stage.BuyStocksPrice;
-                    user.Person.Assets.Add(title, AssetType.Stock);
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
@@ -602,7 +599,7 @@ namespace CashFlowBot
                         return;
                     }
 
-                    user.Person.Assets.Stocks.First(a => a.Price == 0).Price = number;
+                    asset.Price = number;
                     user.Stage = Stage.BuyStocksQtty;
 
                     int upToQtty = user.Person.Cash / number;
@@ -618,8 +615,6 @@ namespace CashFlowBot
                         bot.SendMessage(user.Id, Terms.Get(18, user, "Invalid quantity value. Try again."));
                         return;
                     }
-
-                    var asset = user.Person.Assets.Stocks.First(a => a.Qtty == 0);
 
                     var totalPrice = asset.Price * number;
                     var availableCash = user.Person.Cash;
@@ -1274,7 +1269,7 @@ namespace CashFlowBot
                     new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
-                    new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")}, // todo 39
+                    new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")},
                     new List<KeyboardButton>{Terms.Get(79, user, "Pay Check")}
                 }
             };

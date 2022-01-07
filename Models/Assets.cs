@@ -40,10 +40,12 @@ namespace CashFlowBot.Models
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
             : string.Empty;
 
-        public void Add(string title, AssetType type, bool bigCircle = false)
+        public Asset Add(string title, AssetType type, bool bigCircle = false)
         {
             int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
             DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0)");
+
+            return Items.First(i => i.Draft);
         }
     }
 }
