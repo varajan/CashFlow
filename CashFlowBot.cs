@@ -359,6 +359,13 @@ namespace CashFlowBot
                         Actions.Divorce(Bot, user);
                         return;
 
+                    // Term 1: Go to Big Circle
+                    case "go to big circle":
+                    case "перейти до великого кола":
+                    case "eintreten den großen kreis":
+                        Actions.GoToBigCircle(Bot, user);
+                        return;
+
                     // Term 70: Tax Audit
                     // Term 71: Lawsuit
                     case "tax audit":

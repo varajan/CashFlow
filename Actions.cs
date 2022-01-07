@@ -1217,18 +1217,22 @@ namespace CashFlowBot
             await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
 
+        public static void GoToBigCircle(TelegramBotClient bot, User user)
+        {
+            user.Person.InitialCashFlow = user.Person.Assets.Income / 10 * 1000;
+            user.Person.Cash += user.Person.InitialCashFlow;
+            user.Person.BigCircle = true;
+            user.Person.Assets.Clear();
+
+            Cancel(bot, user);
+        }
+
         public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
         {
             if (user.Person.Assets.Income > user.Person.Expenses.Total)
             {
                 bot.SendMessage(user.Id, Terms.Get(68, user, "Your income is greater, then expenses. You are ready for Big Circle."));
-                user.Person.InitialCashFlow = user.Person.Assets.Income / 10 * 1000;
-                user.Person.Cash += user.Person.InitialCashFlow;
-                user.Person.BigCircle = true;
-                user.Person.Assets.Clear();
-
-                Cancel(bot, user);
-                return;
+                user.Person.ReadyForBigCircle = true;
             }
 
             var rkm = new ReplyKeyboardMarkup
@@ -1245,6 +1249,11 @@ namespace CashFlowBot
 
             user.Person.Assets.CleanUp();
             user.Stage = Stage.Nothing;
+
+            if (user.Person.ReadyForBigCircle)
+            {
+                rkm.Keyboard = rkm.Keyboard.Append(new List<KeyboardButton> { Terms.Get(1, user, "Go to Big Circle") });
+            }
 
             await bot.SendTextMessageAsync(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }

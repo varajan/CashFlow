@@ -13,6 +13,7 @@ namespace CashFlowBot.Models
         public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
         public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
         public int CashFlow => Salary + Assets.Income - Expenses.Total;
+        public bool ReadyForBigCircle { get => GetInt("ReadyForBigCircle") == 1; set => Set("ReadyForBigCircle", value ? 1 : 0); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
 
         public Expenses Expenses => new(Id);

@@ -1,6 +1,6 @@
 INSERT INTO Terms (ID, Language, Term) VALUES
 (0, 'EN', 'Your Cash Flow is *{0}*. How many should you get?'),
---(1, 'EN', ''),
+(1, 'EN', 'Go to Big Circle'),
 --(2, 'EN', ''),
 (3, 'EN', 'Are you sure want to stop current game?'),
 (4, 'EN', 'Yes'),
