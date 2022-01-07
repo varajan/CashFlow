@@ -116,7 +116,7 @@ namespace CashFlowBot
 
         public static void ShowUsers(TelegramBotClient bot, User user)
         {
-            var users = Users.AllUsers.Select(x => $"{(x.IsAdmin ? "A" : "")}[{x.Id}] {x.Name} - {x.FirstLogin} - {x.LastActive}").ToList();
+            var users = Users.AllUsers.Select(x => $"{(x.IsAdmin ? "A" : "")}[{x.Id}] *{x.Name}* - {x.FirstLogin} - {x.LastActive}").ToList();
             bot.SendMessage(user.Id, $"There are {users.Count} users.");
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }
