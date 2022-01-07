@@ -14,10 +14,21 @@ namespace CashFlowBot.Extensions
 
         public static async void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons)
         {
-            var rkm = new ReplyKeyboardMarkup
+            var rkm = new ReplyKeyboardMarkup { Keyboard = new List<IEnumerable<KeyboardButton>>() };
+            var last = buttons.Last();
+            buttons = buttons.Take(buttons.Length - 1).ToArray();
+
+            while (buttons.Any())
             {
-                Keyboard = buttons.Select(button => new KeyboardButton[] {button})
-            };
+                var x = buttons.Take(3).ToList();
+                buttons = buttons.Skip(3).ToArray();
+
+                if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2] }); continue; }
+                if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1] }); continue; }
+                if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0] }); }
+            }
+
+            rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { last });
 
             await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }
