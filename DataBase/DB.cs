@@ -19,8 +19,6 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
-            Execute($"DROP TABLE IF EXISTS {Tables.Persons}; ");
-
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
@@ -185,7 +183,7 @@ namespace CashFlowBot.DataBase
             private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "SmallCredits", "BankLoan" };
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
 
-            public static string Assets = "AssetID Number, UserID Number, Type Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number";
+            public static string Assets = "AssetID Number, UserID Number, Type Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number";
             public static string AvailableAssets = "Type Number, Value Text";
         }
     }

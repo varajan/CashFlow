@@ -168,6 +168,7 @@ namespace CashFlowBot
 
                     land.Price = number;
                     user.Person.Cash -= number;
+                    land.Draft = false;
 
                     AvailableAssets.Add(land.Title, AssetType.LandType);
                     AvailableAssets.Add(land.Price, AssetType.LandPrice);
@@ -262,6 +263,7 @@ namespace CashFlowBot
                 case Stage.BuyBusinessCashFlow:
                     var business = user.Person.Assets.Businesses.First(a => a.CashFlow == 0);
                     business.CashFlow = number;
+                    business.Draft = false;
 
                     AvailableAssets.Add(business.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
                     AvailableAssets.Add(business.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
@@ -463,6 +465,7 @@ namespace CashFlowBot
                 case Stage.BuyRealEstateCashFlow:
                     var realEstate = user.Person.Assets.RealEstates.First(a => a.CashFlow == 0);
                     realEstate.CashFlow = number;
+                    realEstate.Draft = false;
 
                     AvailableAssets.Add(realEstate.Title, AssetType.RealEstateType);
                     AvailableAssets.Add(realEstate.Price, AssetType.RealEstateBuyPrice);
@@ -604,6 +607,7 @@ namespace CashFlowBot
                     }
 
                     asset.Qtty = number;
+                    asset.Draft = false;
                     user.Person.Cash -= totalPrice;
 
                     AvailableAssets.Add(asset.Title, AssetType.Stock);

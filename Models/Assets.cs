@@ -16,18 +16,8 @@ namespace CashFlowBot.Models
 
         public void CleanUp()
         {
-            RealEstates.ForEach(x => x.Title = x.Title.SubStringTo("*"));
-            RealEstates.Where(x => x.Price == 0).ForEach(x => x.Delete());
-            RealEstates.Where(a => a.Mortgage == 0).ForEach(x => x.Delete());
-
-            Businesses.ForEach(x => x.Title = x.Title.SubStringTo("*"));
-            Businesses.Where(x => x.Price == 0).ForEach(x => x.Delete());
-
-            Lands.ForEach(x => x.Title = x.Title.SubStringTo("*"));
-            Lands.Where(x => x.Price == 0).ForEach(x => x.Delete());
-
-            Stocks.ForEach(x => x.Title = x.Title.SubStringTo("*"));
-            Stocks.Where(x => x.Price ==0 || x.Qtty == 0).ForEach(x => x.Delete());
+            Items.Where(x => x.Draft).ForEach(x => x.Delete());
+            Items.ForEach(x => x.Title = x.Title.SubStringTo("*"));
         }
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
@@ -53,7 +43,7 @@ namespace CashFlowBot.Models
         public void Add(string title, AssetType type, bool bigCircle = false)
         {
             int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0)");
+            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0)");
         }
     }
 }
