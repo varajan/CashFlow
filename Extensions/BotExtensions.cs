@@ -20,9 +20,10 @@ namespace CashFlowBot.Extensions
 
             while (buttons.Any())
             {
-                var x = buttons.Take(3).ToList();
-                buttons = buttons.Skip(3).ToArray();
+                var x = buttons.Take(4).ToList();
+                buttons = buttons.Skip(4).ToArray();
 
+                if (x.Count == 4) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2], x[3] }); continue; }
                 if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2] }); continue; }
                 if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1] }); continue; }
                 if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0] }); }
