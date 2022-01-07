@@ -138,6 +138,11 @@ namespace CashFlowBot
                                 Actions.BuyRealEstate(Bot, user, string.Empty);
                                 return;
 
+                            case Stage.BuyBusinessFirstPayment:
+                                user.Stage = Stage.BuyBusinessCredit;
+                                Actions.BuyBusiness(Bot, user, string.Empty);
+                                return;
+
                             default:
                                 Actions.GetCredit(Bot, user);
                                 return;

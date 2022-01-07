@@ -194,6 +194,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
+            var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.Draft);
             var prices = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var firstPayments = AvailableAssets.Get(AssetType.SmallBusinessFirstPayment)
@@ -222,7 +223,7 @@ namespace CashFlowBot
                         return;
                     }
 
-                    user.Person.Assets.Businesses.First(a => a.Price == 0).Price = number;
+                    asset.Price = number;
 
                     if (user.Person.BigCircle)
                     {
@@ -238,6 +239,8 @@ namespace CashFlowBot
                     return;
 
                 case Stage.BuyBusinessFirstPayment:
+                    asset.Mortgage = asset.Price - number;
+
                     if (number <= 0)
                     {
                         bot.SendMessage(user.Id, Terms.Get(11, user, "Invalid first payment amount."));
@@ -246,27 +249,39 @@ namespace CashFlowBot
 
                     if (user.Person.Cash < number)
                     {
-                        SmallCircleButtons(bot, user, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
-                    var asset = user.Person.Assets.Businesses.First(a => a.Mortgage == 0);
-                    asset.Mortgage = asset.Price - number;
                     user.Stage = Stage.BuyBusinessCashFlow;
                     user.Person.Cash -= number;
 
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
 
-                case Stage.BuyBusinessCashFlow:
-                    var business = user.Person.Assets.Businesses.First(a => a.CashFlow == 0);
-                    business.CashFlow = number;
-                    business.Draft = false;
+                case Stage.BuyBusinessCredit:
+                    number = asset.Price - asset.Mortgage;
+                    var delta = number - user.Person.Cash;
+                    var credit = (int) Math.Ceiling(delta / 1_000d) * 1_000;
 
-                    AvailableAssets.Add(business.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
-                    AvailableAssets.Add(business.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
-                    AvailableAssets.Add(business.Price-business.Mortgage, AssetType.SmallBusinessFirstPayment);
-                    AvailableAssets.Add(business.CashFlow, user.Person.BigCircle ? AssetType.BigBusinessCashFlow : AssetType.SmallBusinessCashFlow);
+                    user.GetCredit(credit);
+                    user.Stage = Stage.BuyBusinessCashFlow;
+                    user.Person.Cash -= number;
+
+                    bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
+                    bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                    return;
+
+                case Stage.BuyBusinessCashFlow:
+                    asset.CashFlow = number;
+                    asset.Draft = false;
+
+                    AvailableAssets.Add(asset.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
+                    AvailableAssets.Add(asset.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
+                    AvailableAssets.Add(asset.Price - asset.Mortgage, AssetType.SmallBusinessFirstPayment);
+                    AvailableAssets.Add(asset.CashFlow, user.Person.BigCircle ? AssetType.BigBusinessCashFlow : AssetType.SmallBusinessCashFlow);
 
                     bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
                     Cancel(bot, user);

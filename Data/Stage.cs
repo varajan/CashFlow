@@ -37,6 +37,7 @@
         BuyBusinessPrice,
         BuyBusinessFirstPayment,
         BuyBusinessCashFlow,
+        BuyBusinessCredit,
         BuyLandTitle,
         BuyLandPrice,
         Sell,
