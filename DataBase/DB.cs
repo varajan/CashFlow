@@ -175,7 +175,7 @@ namespace CashFlowBot.DataBase
             public static string Terms = "ID Number, Language Text, Term Text";
 
             public static string Users = "ID Number, Stage Number, Admin Number, Name Text, Language Text, LastActive Text, FirstLogin Text";
-            public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number, ReadyForBigCircle Number, BigCircle Number, InitialCashFlow Number";
+            public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number, SmallRealEstate Number, ReadyForBigCircle Number, BigCircle Number, InitialCashFlow Number";
 
             private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "SmallCredits", "BankLoan", "Others", "Children", "PerChild" };
             public static string Expenses = string.Join(", ", _expenses.Select(x => $"{x} Number"));

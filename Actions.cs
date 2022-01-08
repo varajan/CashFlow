@@ -411,7 +411,7 @@ namespace CashFlowBot
 
         public static void BuyRealEstate(TelegramBotClient bot, User user)
         {
-            var properties = AvailableAssets.Get(AssetType.RealEstateType)
+            var properties = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType)
                 .OrderBy(x => x.Length)
                 .ThenBy(x => x)
                 .ToArray();
@@ -431,9 +431,12 @@ namespace CashFlowBot
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.RealEstate);
-            var prices = AvailableAssets.Get(AssetType.RealEstateBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
-            var firstPayments = AvailableAssets.Get(AssetType.RealEstateFirstPayment).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
-            var cashFlows = AvailableAssets.Get(AssetType.RealEstateCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var prices = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var firstPayments = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallFirstPayment : AssetType.RealEstateBigFirstPayment)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var cashFlows = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallCashFlow : AssetType.RealEstateBigCashFlow)
+                .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -495,10 +498,10 @@ namespace CashFlowBot
                     asset.CashFlow = number;
                     asset.Draft = false;
 
-                    AvailableAssets.Add(asset.Title, AssetType.RealEstateType);
-                    AvailableAssets.Add(asset.Price, AssetType.RealEstateBuyPrice);
-                    AvailableAssets.Add(asset.Price - asset.Mortgage, AssetType.RealEstateFirstPayment);
-                    AvailableAssets.Add(asset.CashFlow, AssetType.RealEstateCashFlow);
+                    AvailableAssets.Add(asset.Title, user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType);
+                    AvailableAssets.Add(asset.Price, user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice);
+                    AvailableAssets.Add(asset.Price - asset.Mortgage, user.Person.SmallRealEstate ? AssetType.RealEstateSmallFirstPayment : AssetType.RealEstateBigFirstPayment);
+                    AvailableAssets.Add(asset.CashFlow, user.Person.SmallRealEstate ? AssetType.RealEstateSmallCashFlow : AssetType.RealEstateBigCashFlow);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -837,6 +840,7 @@ namespace CashFlowBot
             };
 
             user.Person.Assets.CleanUp();
+            user.Person.SmallRealEstate = true;
             user.Stage = Stage.Nothing;
 
             await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
@@ -856,6 +860,7 @@ namespace CashFlowBot
             };
 
             user.Person.Assets.CleanUp();
+            user.Person.SmallRealEstate = false;
             user.Stage = Stage.Nothing;
 
             await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);

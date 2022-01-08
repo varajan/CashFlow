@@ -29,10 +29,14 @@
         BigBusinessCashFlow,
 
         RealEstate,
-        RealEstateType,
-        RealEstateBuyPrice,
+        RealEstateSmallType,
+        RealEstateSmallBuyPrice,
         RealEstateSellPrice,
-        RealEstateFirstPayment,
-        RealEstateCashFlow,
+        RealEstateSmallFirstPayment,
+        RealEstateSmallCashFlow,
+        RealEstateBigType,
+        RealEstateBigBuyPrice,
+        RealEstateBigFirstPayment,
+        RealEstateBigCashFlow,
     }
 }
