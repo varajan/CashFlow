@@ -411,7 +411,10 @@ namespace CashFlowBot
 
         public static void BuyRealEstate(TelegramBotClient bot, User user)
         {
-            var properties = AvailableAssets.Get(AssetType.RealEstateType).ToArray();
+            var properties = AvailableAssets.Get(AssetType.RealEstateType)
+                .OrderBy(x => x.Length)
+                .ThenBy(x => x)
+                .ToArray();
 
             if (user.Person.Cash == 0)
             {
