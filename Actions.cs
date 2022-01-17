@@ -1017,6 +1017,8 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= amount;
+            user.Person.History.Add(ActionType.Charity, amount);
+
             SmallCircleButtons(bot, user, Terms.Get(91, user, "You've payed {0}, now you can use two dice in next 3 turns.",
             amount.AsCurrency()));
         }
@@ -1069,10 +1071,11 @@ namespace CashFlowBot
             SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
         }
 
-        public static void PayCredit(TelegramBotClient bot, User user, string value, Stage stage)
+        public static void PayCredit(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
             int expenses;
+            decimal percent;
 
             if (amount % 1000 > 0 || amount < 1000)
             {
@@ -1086,60 +1089,72 @@ namespace CashFlowBot
                 return;
             }
 
-            switch (stage)
+            switch (user.Stage)
             {
                 case Stage.ReduceMortgage:
                     amount = Math.Min(amount, user.Person.Liabilities.Mortgage);
-                    expenses = user.Person.Expenses.Mortgage * amount / user.Person.Liabilities.Mortgage;
+                    percent = (decimal) user.Person.Expenses.Mortgage / user.Person.Liabilities.Mortgage;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.Mortgage -= expenses;
                     user.Person.Liabilities.Mortgage -= amount;
+                    user.Person.History.Add(ActionType.Mortgage, amount, percent);
                     break;
 
                 case Stage.ReduceSchoolLoan:
                     amount = Math.Min(amount, user.Person.Liabilities.SchoolLoan);
-                    expenses = user.Person.Expenses.SchoolLoan * amount / user.Person.Liabilities.SchoolLoan;
+                    percent = (decimal) user.Person.Expenses.SchoolLoan / user.Person.Liabilities.SchoolLoan;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SchoolLoan -= expenses;
                     user.Person.Liabilities.SchoolLoan -= amount;
+                    user.Person.History.Add(ActionType.SchoolLoan, amount, percent);
                     break;
 
                 case Stage.ReduceCarLoan:
                     amount = Math.Min(amount, user.Person.Liabilities.CarLoan);
-                    expenses = user.Person.Expenses.CarLoan * amount / user.Person.Liabilities.CarLoan;
+                    percent = (decimal) user.Person.Expenses.CarLoan / user.Person.Liabilities.CarLoan;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CarLoan -= expenses;
                     user.Person.Liabilities.CarLoan -= amount;
+                    user.Person.History.Add(ActionType.CarLoan, amount, percent);
                     break;
 
                 case Stage.ReduceCreditCard:
                     amount = Math.Min(amount, user.Person.Liabilities.CreditCard);
-                    expenses = user.Person.Expenses.CreditCard * amount / user.Person.Liabilities.CreditCard;
+                    percent = (decimal) user.Person.Expenses.CreditCard / user.Person.Liabilities.CreditCard;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CreditCard -= expenses;
                     user.Person.Liabilities.CreditCard -= amount;
+                    user.Person.History.Add(ActionType.CreditCard, amount, percent);
                     break;
 
                 case Stage.ReduceSmallCredit:
                     amount = Math.Min(amount, user.Person.Liabilities.SmallCredits);
-                    expenses = user.Person.Expenses.SmallCredits * amount / user.Person.Liabilities.SmallCredits;
+                    percent = (decimal) user.Person.Expenses.SmallCredits / user.Person.Liabilities.SmallCredits;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SmallCredits -= expenses;
                     user.Person.Liabilities.SmallCredits -= amount;
+                    user.Person.History.Add(ActionType.SmallCredit, amount, percent);
                     break;
 
                 case Stage.ReduceBankLoan:
                     amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
-                    expenses = amount / 10;
+                    percent = (decimal)1 / 10;
+                    expenses = (int) (amount * percent);
 
                     user.Person.Cash -= amount;
                     user.Person.Expenses.BankLoan -= expenses;
                     user.Person.Liabilities.BankLoan -= amount;
+                    user.Person.History.Add(ActionType.BankLoan, amount, percent);
                     break;
             }
 

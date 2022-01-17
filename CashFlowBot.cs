@@ -529,7 +529,7 @@ namespace CashFlowBot
                     case Stage.ReduceCreditCard:
                     case Stage.ReduceSmallCredit:
                     case Stage.ReduceBankLoan:
-                        Actions.PayCredit(Bot, user, message.Text.Trim(), user.Stage);
+                        Actions.PayCredit(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyStocksTitle:

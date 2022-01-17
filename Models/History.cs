@@ -28,7 +28,8 @@ namespace CashFlowBot.Models
                     {
                         UserId = item[0].ToLong(),
                         Action = item[1].ParseEnum<ActionType>(),
-                        Amount = item[2].ToInt()
+                        Amount = item[2].ToInt(),
+                        Percent = item[3].ToDecimal(),
                     };
 
                     result.Add(record);
@@ -42,9 +43,9 @@ namespace CashFlowBot.Models
 
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
 
-        public void Add(ActionType action, int amount)
+        public void Add(ActionType action, int amount, decimal percent = 0)
         {
-            DB.Execute($@"INSERT INTO {Table} VALUES ({_userId}, {(int)action}, {amount})");
+            DB.Execute($@"INSERT INTO {Table} VALUES ({_userId}, {(int)action}, {amount}, '{percent}')");
         }
     }
 
@@ -53,6 +54,7 @@ namespace CashFlowBot.Models
         public long UserId { get; set; }
         public ActionType Action { get; set; }
         public int Amount { get; set; }
+        public decimal Percent { get; set; }
 
         public string Description
         {
@@ -74,6 +76,20 @@ namespace CashFlowBot.Models
 
                     case ActionType.Credit:
                         return Terms.Get(107, UserId, "Get credit: {0}", Amount.AsCurrency());
+
+                    case ActionType.Charity:
+                        return Terms.Get(108, UserId, "Charity: {0}", Amount.AsCurrency());
+
+                    case ActionType.Mortgage:
+                    case ActionType.SchoolLoan:
+                    case ActionType.CarLoan:
+                    case ActionType.CreditCard:
+                    case ActionType.SmallCredit:
+                    case ActionType.BankLoan:
+                        var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
+                        var type = Terms.Get((int)Action, UserId, "Liability");
+                        var amount = Amount.AsCurrency();
+                        return $"{reduceLiabilities}. {type}: {amount}";
 
                     default:
                         return $"<{Action}> - {Amount}";
