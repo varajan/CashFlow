@@ -17,6 +17,7 @@ namespace CashFlowBot.Models
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
         public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
+        public History History => new(Id);
         public Expenses Expenses => new(Id);
         public Liabilities Liabilities => new(Id);
         public Assets Assets => new (Id);

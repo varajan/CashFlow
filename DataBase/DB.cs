@@ -19,6 +19,9 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
+            //TODO: don't delete HISTORY table
+            Execute("DELETE IF EXISTS TABLE History;");
+
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
@@ -26,6 +29,7 @@ namespace CashFlowBot.DataBase
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Liabilities} ({CreateColumns.Liabilities});");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Assets} ({CreateColumns.Assets});");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.AvailableAssets} ({CreateColumns.AvailableAssets});");
+            Execute($"CREATE TABLE IF NOT EXISTS {Tables.History} ({CreateColumns.History});");
     }
 
     public static void Execute(string sql)
@@ -142,6 +146,7 @@ namespace CashFlowBot.DataBase
             public static string Liabilities = "Liabilities";
             public static string Assets = "Assets";
             public static string AvailableAssets = "AvailableAssets";
+            public static string History = "History";
         }
 
         public static class DefaultValues
@@ -168,6 +173,7 @@ namespace CashFlowBot.DataBase
             public static string Liabilities = GetColumns(CreateColumns.Liabilities);
             public static string Assets = GetColumns(CreateColumns.Assets);
             public static string AvailableAssets = GetColumns(CreateColumns.AvailableAssets);
+            public static string History = GetColumns(CreateColumns.History);
         }
 
         public static class CreateColumns
@@ -185,6 +191,7 @@ namespace CashFlowBot.DataBase
 
             public static string Assets = "AssetID Number, UserID Number, Type Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number";
             public static string AvailableAssets = "Type Number, Value Text";
+            public static string History = "UserID Number, ActionType Number, Amount Number";
         }
     }
 }

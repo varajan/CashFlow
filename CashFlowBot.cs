@@ -131,6 +131,12 @@ namespace CashFlowBot
                         Actions.MyData(Bot, user);
                         return;
 
+                    // todo
+                    // Term 2: History
+                    case "history":
+                        Actions.History(Bot, user);
+                        return;
+
                     // Term 34: Get Credit
                     case "get credit":
                     case "взяти кредит":

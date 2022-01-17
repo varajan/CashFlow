@@ -881,7 +881,6 @@ namespace CashFlowBot
                 {
                     new List<KeyboardButton>{Terms.Get(95, user, "Pay with Cash")},
                     new List<KeyboardButton>{Terms.Get(96, user, "Pay with Credit Card")},
-                    new List<KeyboardButton>{Terms.Get(34, user, "Get Credit") },
                     new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
                 }
             };
@@ -982,6 +981,10 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
+        public static void History(TelegramBotClient bot, User user) =>
+            bot.SetButtons(user.Id, user.Person.History.Description,
+            "Rollback last", "Cancel"); // todo terms
+
         public static async void MyData(TelegramBotClient bot, User user)
         {
             var rkm = new ReplyKeyboardMarkup
@@ -991,7 +994,7 @@ namespace CashFlowBot
                     new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit")},
                     new List<KeyboardButton>{Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities")},
                     new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")},
-                    new List<KeyboardButton>{Terms.Get(6, user, "Cancel")}
+                    new List<KeyboardButton>{Terms.Get(102, user, "Main menu") }
                 }
             };
 
@@ -1027,6 +1030,7 @@ namespace CashFlowBot
         {
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
+            user.Person.History.Add(ActionType.GetMoney, amount);
 
             bot.SendMessage(user.Id, Terms.Get(22, user, "Ok, you've got *{0}*", amount.AsCurrency()));
             Cancel(bot, user);
@@ -1043,6 +1047,7 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= amount;
+            user.Person.History.Add(ActionType.PayMoney, amount);
 
             AvailableAssets.Add(amount, user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
             Cancel(bot, user);
@@ -1157,8 +1162,9 @@ namespace CashFlowBot
             switch (user.Stage)
             {
                 case Stage.StopGame:
-                    user.Person.Clear();
                     user.Person.Expenses.Clear();
+                    user.Person.History.Clear();
+                    user.Person.Clear();
                     user.Stage = Stage.Nothing;
 
                     Start(bot, user);
@@ -1281,7 +1287,7 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")},
+                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
                     new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")},

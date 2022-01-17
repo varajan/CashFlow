@@ -1,7 +1,7 @@
 INSERT INTO Terms (ID, Language, Term) VALUES
 (0, 'EN', 'Your Cash Flow is *{0}*. How many should you get?'),
 (1, 'EN', 'Go to Big Circle'),
---(2, 'EN', ''),
+(2, 'EN', 'History'),
 (3, 'EN', 'Are you sure want to stop current game?'),
 (4, 'EN', 'Yes'),
 (5, 'EN', 'You don''t have enough money.'),
@@ -101,6 +101,9 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (99, 'EN', 'What Land do you want to sell?{0}{1}'),
 (100, 'EN', 'You have no Land.'),
 (101, 'EN', 'Invalid land number.'),
+(102, 'EN', 'Main menu.'),
+(103, 'EN', 'Pay {0}'),
+(104, 'EN', 'Get {0}'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
