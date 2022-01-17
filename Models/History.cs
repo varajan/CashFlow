@@ -66,6 +66,15 @@ namespace CashFlowBot.Models
                     case ActionType.GetMoney:
                         return Terms.Get(104, UserId, "Get {0}", Amount.AsCurrency());
 
+                    case ActionType.Child:
+                        return Terms.Get(105, UserId, "Get a child");
+
+                    case ActionType.Downsize:
+                        return Terms.Get(106, UserId, "Downsize and paying {0}", Amount.AsCurrency());
+
+                    case ActionType.Credit:
+                        return Terms.Get(107, UserId, "Get credit: {0}", Amount.AsCurrency());
+
                     default:
                         return $"<{Action}> - {Amount}";
                 }

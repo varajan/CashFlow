@@ -31,6 +31,7 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= expenses;
+            user.Person.History.Add(ActionType.Downsize, expenses);
             Cancel(bot, user);
         }
 

@@ -104,6 +104,9 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (102, 'EN', 'Main menu.'),
 (103, 'EN', 'Pay {0}'),
 (104, 'EN', 'Get {0}'),
+(105, 'EN', 'Get a child'),
+(106, 'EN', 'Downsize and paying {0}'),
+(107, 'EN', 'Get credit: {0}'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

@@ -4,5 +4,8 @@
     {
         PayMoney,
         GetMoney,
+        Child,
+        Downsize,
+        Credit,
     }
 }

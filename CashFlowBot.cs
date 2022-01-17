@@ -109,6 +109,8 @@ namespace CashFlowBot
                         }
 
                         user.Person.Expenses.Children++;
+                        user.Person.History.Add(ActionType.Child, user.Person.Expenses.Children);
+
                         Actions.SmallCircleButtons(Bot, user,
                         Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
                         user, "{0}, you have {1} children expenses and {2} children.",

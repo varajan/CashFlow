@@ -20,7 +20,7 @@ namespace CashFlowBot.DataBase
             }
 
             //TODO: don't delete HISTORY table
-            Execute("DELETE IF EXISTS TABLE History;");
+            Execute("DELETE TABLE History;");
 
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");

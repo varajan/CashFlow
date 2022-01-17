@@ -44,6 +44,7 @@ namespace CashFlowBot.Models
             Person.Cash += amount;
             Person.Expenses.BankLoan += amount / 10;
             Person.Liabilities.BankLoan += amount;
+            Person.History.Add(ActionType.Credit, amount);
         }
 
         public void Create()
