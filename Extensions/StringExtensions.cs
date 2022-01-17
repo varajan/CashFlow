@@ -80,5 +80,6 @@ namespace CashFlowBot.Extensions
         }
 
         public static DateTime ToDateTime(this string date) => DateTime.Parse(date);
+        public static string AsString(this DateTime dateTime, string format = "yyyy.MM.dd hh:mm") => dateTime.ToString(format, CultureInfo.InvariantCulture);
     }
 }

@@ -17,7 +17,11 @@ namespace CashFlowBot
 {
     public class CashFlowBot
     {
+#if DEBUG
+        private static readonly TelegramBotClient Bot = new("1357607824:AAFbYG2hjms9b3mtlphXMiwRHEjIA13nJF8");
+#else
         private static readonly TelegramBotClient Bot = new("1991657067:AAGyDAK1xfqrfIEAFIKNsRjWOvy9owiKU40");
+#endif
 
         public static void Main()
         {
