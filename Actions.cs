@@ -611,10 +611,15 @@ namespace CashFlowBot
                     user.Stage = Stage.BuyStocksQtty;
 
                     int upToQtty = user.Person.Cash / number;
+                    int upTo50 = upToQtty / 50 * 50;
+                    var buttons = new[] { upToQtty, upTo50, upTo50 - 50, upTo50 - 100 }
+                        .Where(x => x > 0)
+                        .Select(x => x.ToString())
+                        .Append(Terms.Get(6, user, "Cancel"));
+
                     bot.SetButtons(user.Id,
                     Terms.Get(17, user,"You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty),
-                    upToQtty.ToString(),
-                    Terms.Get(6, user, "Cancel"));
+                    buttons);
                     return;
 
                 case Stage.BuyStocksQtty:
