@@ -76,6 +76,12 @@ namespace CashFlowBot.Models
             new User(UserId).History.Add(action, Id);
         }
 
+        public void Restore()
+        {
+            IsDeleted = false;
+            Title = Title.SubStringTo("*");
+        }
+
         public void Delete()
         {
             IsDeleted = true;

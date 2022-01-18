@@ -52,6 +52,7 @@ namespace CashFlowBot.Models
         {
             var user = new User(_userId);
             var record = Records.Last();
+            var asset = new Asset(_userId, (int) record.Value);
 
             // restore/delete item
             // add/get money
@@ -93,24 +94,43 @@ namespace CashFlowBot.Models
                 //case ActionType.SmallCredit:
                 //case ActionType.BankLoan:
 
-                //case ActionType.BuyRealEstate:
-                //case ActionType.BuyBusiness:
-                //case ActionType.BuyStocks:
-                //case ActionType.BuyLand:
+                //var person = Persons.Get(user.Id).First(x => x.Profession == user.Person.Profession);
+                //var perZent = (decimal) person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
 
-                //case ActionType.SellRealEstate:
-                //case ActionType.SellBusiness:
-                //case ActionType.SellStocks:
-                //case ActionType.SellLand:
+                case ActionType.BuyRealEstate:
+                case ActionType.BuyBusiness:
+                case ActionType.BuyLand:
+                    user.Person.Cash += asset.Price - asset.Mortgage;
+                    asset.Delete();
+                    break;
 
-                //case ActionType.Stocks1To2:
-                //case ActionType.Stocks2To1:
+                case ActionType.SellRealEstate:
+                case ActionType.SellBusiness:
+                case ActionType.SellLand:
+                    user.Person.Cash -= asset.SellPrice - asset.Mortgage;
+                    asset.Restore();
+                    break;
+
+                case ActionType.BuyStocks:
+                    user.Person.Cash += asset.Qtty * asset.Price;
+                    asset.Delete();
+                    break;
+
+                case ActionType.SellStocks:
+                    user.Person.Cash -= asset.Qtty * asset.SellPrice;
+                    asset.Restore();
+                    break;
+
+                case ActionType.Stocks1To2:
+                    asset.Qtty /= 2;
+                    break;
+
+                case ActionType.Stocks2To1:
+                    asset.Qtty *= 2;
+                    break;
 
                 default:
                     throw new Exception($"<{record.Action}> ???");
-
-                    //var person = Persons.Get(user.Id).First(x => x.Profession == user.Person.Profession);
-                    //var perZent = (decimal) person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
             }
 
             record.Delete();
