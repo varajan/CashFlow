@@ -78,7 +78,7 @@ namespace CashFlowBot
                     case "/en":
                     case "/ua":
                     case "/de":
-                        user.Language = message.Text.ToUpper().Trim().ParseEnum<Language>();
+                        user.Language = message.Text.Replace("/", "").ToUpper().Trim().ParseEnum<Language>();
 
                         if (user.Person.Exists)
                         {
