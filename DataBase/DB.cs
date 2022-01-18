@@ -21,6 +21,7 @@ namespace CashFlowBot.DataBase
 
             //TODO: don't delete HISTORY table
             Execute("DROP TABLE IF EXISTS History;");
+            Execute("DROP TABLE IF EXISTS Assets;");
 
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
@@ -189,9 +190,9 @@ namespace CashFlowBot.DataBase
             private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "SmallCredits", "BankLoan" };
             public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
 
-            public static string Assets = "AssetID Number, UserID Number, Type Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number";
+            public static string Assets = "AssetID Number, UserID Number, Type Number, Deleted Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number, SellPrice Number";
             public static string AvailableAssets = "Type Number, Value Text";
-            public static string History = "UserID Number, ActionType Number, Amount Number, Percent Number";
+            public static string History = "UserID Number, ActionType Number, Value Number";
         }
     }
 }

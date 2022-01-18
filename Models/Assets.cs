@@ -16,7 +16,7 @@ namespace CashFlowBot.Models
 
         public void CleanUp()
         {
-            Items.Where(x => x.Draft).ForEach(x => x.Delete());
+            Items.Where(x => x.IsDraft).ForEach(x => x.Delete());
             Items.ForEach(x => x.Title = x.Title.SubStringTo("*"));
         }
 
@@ -28,6 +28,7 @@ namespace CashFlowBot.Models
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
+                .Where(x => !x.IsDeleted)
                 .ToList();
 
         public void Clear() => Items.ForEach(x => x.Delete());
@@ -43,9 +44,9 @@ namespace CashFlowBot.Models
         public Asset Add(string title, AssetType type, bool bigCircle = false)
         {
             int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0)");
+            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0, 0)");
 
-            return Items.First(i => i.Draft);
+            return Items.First(i => i.IsDraft);
         }
     }
 }

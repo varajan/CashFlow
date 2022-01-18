@@ -8,7 +8,7 @@ namespace CashFlowBot.Models
     public class Asset
     {
         private long UserId { get; }
-        private long Id { get; }
+        public long Id { get; }
         private string Table { get; }
 
         private string Get(string column) => DB.GetValue($"SELECT {column} FROM {Table} WHERE AssetID = {Id} AND UserID = {UserId}");
@@ -29,18 +29,26 @@ namespace CashFlowBot.Models
                 switch (Type)
                 {
                     case AssetType.Stock:
-                    return $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
+                        return IsDeleted
+                            ? $"*{Title}* - {Qtty} @ {SellPrice.AsCurrency()}"
+                            : $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
 
                     case AssetType.RealEstate:
-                    return $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
+                        return IsDeleted
+                        ? $"*{Title}* - {price}: {SellPrice.AsCurrency()}"
+                        : $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
                     case AssetType.Land:
-                    return $"*{Title}* - {price}: {Price.AsCurrency()}";
+                        return IsDeleted
+                            ? $"*{Title}* - {price}: {SellPrice.AsCurrency()}"
+                            : $"*{Title}* - {price}: {Price.AsCurrency()}";
 
                     case AssetType.Business:
-                        return Mortgage > 0
-                            ? $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}"
-                            : $"*{Title}* - {price}: {Price.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
+                        return IsDeleted
+                            ? $"*{Title}* - {price}: {SellPrice.AsCurrency()}"
+                            : Mortgage > 0
+                                ? $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}"
+                                : $"*{Title}* - {price}: {Price.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
                     default:
                         return string.Empty;
@@ -51,11 +59,26 @@ namespace CashFlowBot.Models
         public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value);}
         public string Title { get => Get("Title"); set => Set("Title", value); }
         public int Price { get => GetInt("Price"); set => Set("Price", value); }
+        public int SellPrice { get => GetInt("SellPrice"); set => Set("SellPrice", value); }
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
         public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
-        public bool Draft { get => GetInt("Draft") == 1; set => Set("Draft", value ? 1 : 0); }
-        public void Delete() => DB.Execute($"DELETE FROM {Table} WHERE AssetID = {Id} AND UserID = {UserId}");
+        public bool IsDraft { get => GetInt("Draft") == 1; set => Set("Draft", value ? 1 : 0); }
+        public bool IsDeleted { get => GetInt("Deleted") == 1; set => Set("Deleted", value ? 1 : 0); }
+
+        public void Sell(ActionType action, int price)
+        {
+            SellPrice = price;
+
+            new User(UserId).Person.History.Add(action, Id);
+            Delete();
+        }
+
+        public void Delete()
+        {
+            IsDeleted = true;
+            Title = Title.SubStringTo("*");
+        }
     }
 }

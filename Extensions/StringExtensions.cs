@@ -17,6 +17,7 @@ namespace CashFlowBot.Extensions
         public static string ReplaceWhitespaces(this string line) => new Regex(@"\s+").Replace(line, String.Empty);
 
         public static int AsCurrency(this string value) => value.Replace("$", "").ReplaceWhitespaces().ToInt();
+        public static string AsCurrency(this long value) => value >= 0 ? $"${value:n0}" : $"-${Math.Abs(value):n0}";
         public static string AsCurrency(this int value) => value >= 0 ? $"${value:n0}" : $"-${Math.Abs(value):n0}";
         public static string SubStringTo(this string line, string to) => line.Contains(to) ? line.Split(to).First() : line;
 

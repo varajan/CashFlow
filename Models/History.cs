@@ -15,6 +15,7 @@ namespace CashFlowBot.Models
 
         public History(long userId) => _userId = userId;
 
+        public bool IsEmpty => !Records.Any();
         private List<HistoryRecord> Records
         {
             get
@@ -28,8 +29,7 @@ namespace CashFlowBot.Models
                     {
                         UserId = item[0].ToLong(),
                         Action = item[1].ParseEnum<ActionType>(),
-                        Amount = item[2].ToInt(),
-                        Percent = item[3].ToDecimal(),
+                        Value = item[2].ToLong()
                     };
 
                     result.Add(record);
@@ -43,9 +43,9 @@ namespace CashFlowBot.Models
 
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
 
-        public void Add(ActionType action, int amount, decimal percent = 0)
+        public void Add(ActionType action, long amount)
         {
-            DB.Execute($@"INSERT INTO {Table} VALUES ({_userId}, {(int)action}, {amount}, '{percent}')");
+            DB.Execute($@"INSERT INTO {Table} VALUES ({_userId}, {(int)action}, {amount})");
         }
     }
 
@@ -53,8 +53,7 @@ namespace CashFlowBot.Models
     {
         public long UserId { get; set; }
         public ActionType Action { get; set; }
-        public int Amount { get; set; }
-        public decimal Percent { get; set; }
+        public long Value { get; set; }
 
         public string Description
         {
@@ -63,22 +62,22 @@ namespace CashFlowBot.Models
                 switch (Action)
                 {
                     case ActionType.PayMoney:
-                        return Terms.Get(103, UserId, "Pay {0}", Amount.AsCurrency());
+                        return Terms.Get(103, UserId, "Pay {0}", Value.AsCurrency());
 
                     case ActionType.GetMoney:
-                        return Terms.Get(104, UserId, "Get {0}", Amount.AsCurrency());
+                        return Terms.Get(104, UserId, "Get {0}", Value.AsCurrency());
 
                     case ActionType.Child:
                         return Terms.Get(105, UserId, "Get a child");
 
                     case ActionType.Downsize:
-                        return Terms.Get(106, UserId, "Downsize and paying {0}", Amount.AsCurrency());
+                        return Terms.Get(106, UserId, "Downsize and paying {0}", Value.AsCurrency());
 
                     case ActionType.Credit:
-                        return Terms.Get(107, UserId, "Get credit: {0}", Amount.AsCurrency());
+                        return Terms.Get(107, UserId, "Get credit: {0}", Value.AsCurrency());
 
                     case ActionType.Charity:
-                        return Terms.Get(108, UserId, "Charity: {0}", Amount.AsCurrency());
+                        return Terms.Get(108, UserId, "Charity: {0}", Value.AsCurrency());
 
                     case ActionType.Mortgage:
                     case ActionType.SchoolLoan:
@@ -88,11 +87,30 @@ namespace CashFlowBot.Models
                     case ActionType.BankLoan:
                         var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
                         var type = Terms.Get((int)Action, UserId, "Liability");
-                        var amount = Amount.AsCurrency();
+                        var amount = Value.AsCurrency();
                         return $"{reduceLiabilities}. {type}: {amount}";
 
+                    case ActionType.BuyRealEstate:
+                    case ActionType.BuyBusiness:
+                    case ActionType.BuyStocks:
+                    case ActionType.BuyLand:
+                        var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
+                        return $"{buyAsset}. {new Asset(UserId, (int) Value).Description}";
+
+                    case ActionType.SellRealEstate:
+                    case ActionType.SellBusiness:
+                    case ActionType.SellStocks:
+                    case ActionType.SellLand:
+                        var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
+                        return $"{sellAsset}. {new Asset(UserId, (int) Value).Description}";
+
+                    // stocks 21, 12
+
                     default:
-                        return $"<{Action}> - {Amount}";
+                        return $"<{Action}> - {Value}";
+
+                    //var person = Persons.Get(user.Id).First(x => x.Profession == user.Person.Profession);
+                    //var perZent = (decimal) person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
                 }
             }
         }

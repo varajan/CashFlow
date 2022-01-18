@@ -142,7 +142,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.Land);
+            var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.Land);
             var prices = AvailableAssets.Get(AssetType.LandPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
@@ -167,7 +167,8 @@ namespace CashFlowBot
 
                     asset.Price = number;
                     user.Person.Cash -= number;
-                    asset.Draft = false;
+                    asset.IsDraft = false;
+                    user.Person.History.Add(ActionType.BuyLand, asset.Id);
 
                     AvailableAssets.Add(asset.Title, AssetType.LandType);
                     AvailableAssets.Add(asset.Price, AssetType.LandPrice);
@@ -195,7 +196,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.Draft)
+            var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.IsDraft)
                         ?? user.Person.Assets.Add(title, AssetType.Business, user.Person.BigCircle);
             var prices = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
@@ -277,7 +278,8 @@ namespace CashFlowBot
 
                 case Stage.BuyBusinessCashFlow:
                     asset.CashFlow = number;
-                    asset.Draft = false;
+                    asset.IsDraft = false;
+                    user.Person.History.Add(ActionType.BuyBusiness, asset.Id);
 
                     AvailableAssets.Add(asset.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
                     AvailableAssets.Add(asset.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
@@ -342,7 +344,7 @@ namespace CashFlowBot
                     var land = lands.First(x => x.Title.EndsWith("*"));
 
                     user.Person.Cash += price;
-                    land.Delete();
+                    land.Sell(ActionType.SellLand, price);
 
                     AvailableAssets.Add(price, AssetType.LandPrice);
 
@@ -403,7 +405,7 @@ namespace CashFlowBot
                     var business = businesses.First(x => x.Title.EndsWith("*"));
 
                     user.Person.Cash += price - business.Mortgage;
-                    business.Delete();
+                    business.Sell(ActionType.SellBusiness, price);
 
                     AvailableAssets.Add(price, AssetType.BigBusinessSellPrice);
 
@@ -433,7 +435,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.RealEstate);
+            var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.RealEstate);
             var prices = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
             var firstPayments = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallFirstPayment : AssetType.RealEstateBigFirstPayment)
@@ -499,7 +501,9 @@ namespace CashFlowBot
 
                 case Stage.BuyRealEstateCashFlow:
                     asset.CashFlow = number;
-                    asset.Draft = false;
+                    asset.IsDraft = false;
+
+                    user.Person.History.Add(ActionType.BuyRealEstate, asset.Id);
 
                     AvailableAssets.Add(asset.Title, user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType);
                     AvailableAssets.Add(asset.Price, user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice);
@@ -562,7 +566,7 @@ namespace CashFlowBot
                     var realEstate = properties.First(x => x.Title.EndsWith("*"));
 
                     user.Person.Cash += price - realEstate.Mortgage;
-                    realEstate.Delete();
+                    realEstate.Sell(ActionType.SellRealEstate, price);
 
                     AvailableAssets.Add(price, AssetType.RealEstateSellPrice);
 
@@ -589,7 +593,7 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.Stocks.FirstOrDefault(a => a.Draft) ?? user.Person.Assets.Add(title, AssetType.Stock);
+            var asset = user.Person.Assets.Stocks.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.Stock);
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
             prices.Add(Terms.Get(6, user, "Cancel"));
 
@@ -644,8 +648,9 @@ namespace CashFlowBot
                     }
 
                     asset.Qtty = number;
-                    asset.Draft = false;
+                    asset.IsDraft = false;
                     user.Person.Cash -= totalPrice;
+                    user.Person.History.Add(ActionType.BuyStocks, asset.Id);
 
                     AvailableAssets.Add(asset.Title, AssetType.Stock);
                     AvailableAssets.Add(asset.Price, AssetType.StockPrice);
@@ -709,7 +714,7 @@ namespace CashFlowBot
                     }
 
                     user.Person.Cash += qtty * number;
-                    stocksToSell.ForEach(x => x.Delete());
+                    stocksToSell.ForEach(x => x.Sell(ActionType.SellStocks, number));
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
 
@@ -1099,7 +1104,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.Mortgage -= expenses;
                     user.Person.Liabilities.Mortgage -= amount;
-                    user.Person.History.Add(ActionType.Mortgage, amount, percent);
+                    user.Person.History.Add(ActionType.Mortgage, amount);
                     break;
 
                 case Stage.ReduceSchoolLoan:
@@ -1110,7 +1115,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SchoolLoan -= expenses;
                     user.Person.Liabilities.SchoolLoan -= amount;
-                    user.Person.History.Add(ActionType.SchoolLoan, amount, percent);
+                    user.Person.History.Add(ActionType.SchoolLoan, amount);
                     break;
 
                 case Stage.ReduceCarLoan:
@@ -1121,7 +1126,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CarLoan -= expenses;
                     user.Person.Liabilities.CarLoan -= amount;
-                    user.Person.History.Add(ActionType.CarLoan, amount, percent);
+                    user.Person.History.Add(ActionType.CarLoan, amount);
                     break;
 
                 case Stage.ReduceCreditCard:
@@ -1132,7 +1137,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CreditCard -= expenses;
                     user.Person.Liabilities.CreditCard -= amount;
-                    user.Person.History.Add(ActionType.CreditCard, amount, percent);
+                    user.Person.History.Add(ActionType.CreditCard, amount);
                     break;
 
                 case Stage.ReduceSmallCredit:
@@ -1143,7 +1148,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SmallCredits -= expenses;
                     user.Person.Liabilities.SmallCredits -= amount;
-                    user.Person.History.Add(ActionType.SmallCredit, amount, percent);
+                    user.Person.History.Add(ActionType.SmallCredit, amount);
                     break;
 
                 case Stage.ReduceBankLoan:
@@ -1154,7 +1159,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.BankLoan -= expenses;
                     user.Person.Liabilities.BankLoan -= amount;
-                    user.Person.History.Add(ActionType.BankLoan, amount, percent);
+                    user.Person.History.Add(ActionType.BankLoan, amount);
                     break;
             }
 
@@ -1303,7 +1308,9 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
+                    user.Person.History.IsEmpty
+                    ? new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")}
+                    : new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
                     new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")},

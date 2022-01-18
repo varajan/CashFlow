@@ -411,6 +411,7 @@ namespace CashFlowBot
                         return;
 
                     // Term 6: Cancel
+                    case "main menu": // todo
                     case "cancel":
                     case "скасувати":
                     case "absagen":
