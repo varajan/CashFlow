@@ -929,28 +929,13 @@ namespace CashFlowBot
         public static void PayWithCreditCard(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
+            AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
 
-            switch (user.Stage)
-            {
-                case Stage.MicroCreditAmount:
-                    var monthly = AvailableAssets.Get(AssetType.MicroCreditMonthly).AsCurrency();
-                    AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
+            user.Person.Liabilities.SmallCredits += amount;
+            user.Person.Expenses.SmallCredits += (int) (amount * 0.05);
+            user.History.Add(ActionType.MicroCredit, amount);
 
-                    user.Person.Liabilities.SmallCredits += amount;
-                    user.Stage = Stage.MicroCreditMonthly;
-                    bot.SetButtons(user.Id, Terms.Get(97, user, "What is the monthly payment?"), monthly);
-                    return;
-
-                case Stage.MicroCreditMonthly:
-                    AvailableAssets.Add(amount, AssetType.MicroCreditMonthly);
-
-                    user.Person.Expenses.SmallCredits += amount;
-                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
-                    return;
-            }
-
-            user.Stage = Stage.MicroCreditAmount;
-            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", Terms.Get(6, user, "Cancel"));
+            SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
         }
 
         public static void MultiplyStocks(TelegramBotClient bot, User user)

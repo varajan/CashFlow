@@ -64,6 +64,8 @@ namespace CashFlowBot.Models
             switch (record.Action)
             {
                 case ActionType.PayMoney:
+                case ActionType.Downsize:
+                case ActionType.Charity:
                     user.Person.Cash += amount;
                     break;
 
@@ -75,18 +77,10 @@ namespace CashFlowBot.Models
                     user.Person.Expenses.Children--;
                     break;
 
-                case ActionType.Downsize:
-                    user.Person.Cash += amount;
-                    break;
-
                 case ActionType.Credit:
                     user.Person.Cash -= amount;
                     user.Person.Expenses.BankLoan -= amount / 10;
                     user.Person.Liabilities.BankLoan -= amount;
-                    break;
-
-                case ActionType.Charity:
-                    user.Person.Cash += (int) record.Value;
                     break;
 
                 case ActionType.Mortgage:
@@ -175,6 +169,11 @@ namespace CashFlowBot.Models
                     asset.Qtty *= 2;
                     break;
 
+                case ActionType.MicroCredit:
+                    user.Person.Liabilities.SmallCredits -= amount;
+                    user.Person.Expenses.SmallCredits -= (int) (amount * 0.05);
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -253,6 +252,9 @@ namespace CashFlowBot.Models
                     case ActionType.Stocks2To1:
                         var multiply = Terms.Get((int) Action, UserId, "Multiply Stocks");
                         return $"{multiply}. {Asset.Description}";
+
+                    case ActionType.MicroCredit:
+                        return Terms.Get(96, UserId, "Pay with Credit Card") + " - " + Value.AsCurrency();
 
                     default:
                         return $"<{Action}> - {Value}";

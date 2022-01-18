@@ -532,7 +532,6 @@ namespace CashFlowBot
                         return;
 
                     case Stage.MicroCreditAmount:
-                    case Stage.MicroCreditMonthly:
                         Actions.PayWithCreditCard(Bot, user, message.Text.Trim());
                         return;
 
