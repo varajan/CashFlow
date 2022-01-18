@@ -53,6 +53,11 @@ namespace CashFlowBot.Models
             var user = new User(_userId);
             var record = Records.Last();
             var asset = new Asset(_userId, (int) record.Value);
+            var amount = (int) record.Value;
+            var person = Persons.Get(_userId).First(x => x.Profession == user.Person.Profession);
+
+            decimal percent;
+            int expenses;
 
             // restore/delete item
             // add/get money
@@ -61,11 +66,11 @@ namespace CashFlowBot.Models
             switch (record.Action)
             {
                 case ActionType.PayMoney:
-                    user.Person.Cash += (int) record.Value;
+                    user.Person.Cash += amount;
                     break;
 
                 case ActionType.GetMoney:
-                    user.Person.Cash -= (int) record.Value;
+                    user.Person.Cash -= amount;
                     break;
 
                 case ActionType.Child:
@@ -73,11 +78,10 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.Downsize:
-                    user.Person.Cash += (int) record.Value;
+                    user.Person.Cash += amount;
                     break;
 
                 case ActionType.Credit:
-                    var amount = (int) record.Value;
                     user.Person.Cash -= amount;
                     user.Person.Expenses.BankLoan -= amount / 10;
                     user.Person.Liabilities.BankLoan -= amount;
@@ -87,15 +91,59 @@ namespace CashFlowBot.Models
                     user.Person.Cash += (int) record.Value;
                     break;
 
-                //case ActionType.Mortgage:
-                //case ActionType.SchoolLoan:
-                //case ActionType.CarLoan:
-                //case ActionType.CreditCard:
-                //case ActionType.SmallCredit:
-                //case ActionType.BankLoan:
+                case ActionType.Mortgage:
+                    percent = (decimal) person.Expenses.Mortgage / person.Liabilities.Mortgage;
+                    expenses = (int) (amount * percent);
 
-                //var person = Persons.Get(user.Id).First(x => x.Profession == user.Person.Profession);
-                //var perZent = (decimal) person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.Mortgage += expenses;
+                    user.Person.Liabilities.Mortgage += amount;
+                    break;
+
+                case ActionType.SchoolLoan:
+                    percent = (decimal) person.Expenses.SchoolLoan / person.Liabilities.SchoolLoan;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.SchoolLoan += expenses;
+                    user.Person.Liabilities.SchoolLoan += amount;
+                    break;
+
+                case ActionType.CarLoan:
+                    percent = (decimal) person.Expenses.CarLoan / person.Liabilities.CarLoan;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.CarLoan += expenses;
+                    user.Person.Liabilities.CarLoan += amount;
+                    break;
+
+                case ActionType.CreditCard:
+                    percent = (decimal) person.Expenses.CreditCard / person.Liabilities.CreditCard;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.CreditCard += expenses;
+                    user.Person.Liabilities.CreditCard += amount;
+                    break;
+
+                case ActionType.SmallCredit:
+                    percent = (decimal) person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.SmallCredits += expenses;
+                    user.Person.Liabilities.SmallCredits += amount;
+                    break;
+
+                case ActionType.BankLoan:
+                    percent = 0.1m;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.BankLoan += expenses;
+                    user.Person.Liabilities.BankLoan += amount;
+                    break;
 
                 case ActionType.BuyRealEstate:
                 case ActionType.BuyBusiness:
