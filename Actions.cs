@@ -31,7 +31,7 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= expenses;
-            user.Person.History.Add(ActionType.Downsize, expenses);
+            user.History.Add(ActionType.Downsize, expenses);
             Cancel(bot, user);
         }
 
@@ -168,7 +168,7 @@ namespace CashFlowBot
                     asset.Price = number;
                     user.Person.Cash -= number;
                     asset.IsDraft = false;
-                    user.Person.History.Add(ActionType.BuyLand, asset.Id);
+                    user.History.Add(ActionType.BuyLand, asset.Id);
 
                     AvailableAssets.Add(asset.Title, AssetType.LandType);
                     AvailableAssets.Add(asset.Price, AssetType.LandPrice);
@@ -279,7 +279,7 @@ namespace CashFlowBot
                 case Stage.BuyBusinessCashFlow:
                     asset.CashFlow = number;
                     asset.IsDraft = false;
-                    user.Person.History.Add(ActionType.BuyBusiness, asset.Id);
+                    user.History.Add(ActionType.BuyBusiness, asset.Id);
 
                     AvailableAssets.Add(asset.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.SmallBusinessType);
                     AvailableAssets.Add(asset.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.SmallBusinessBuyPrice);
@@ -503,7 +503,7 @@ namespace CashFlowBot
                     asset.CashFlow = number;
                     asset.IsDraft = false;
 
-                    user.Person.History.Add(ActionType.BuyRealEstate, asset.Id);
+                    user.History.Add(ActionType.BuyRealEstate, asset.Id);
 
                     AvailableAssets.Add(asset.Title, user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType);
                     AvailableAssets.Add(asset.Price, user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice);
@@ -650,7 +650,7 @@ namespace CashFlowBot
                     asset.Qtty = number;
                     asset.IsDraft = false;
                     user.Person.Cash -= totalPrice;
-                    user.Person.History.Add(ActionType.BuyStocks, asset.Id);
+                    user.History.Add(ActionType.BuyStocks, asset.Id);
 
                     AvailableAssets.Add(asset.Title, AssetType.Stock);
                     AvailableAssets.Add(asset.Price, AssetType.StockPrice);
@@ -988,15 +988,16 @@ namespace CashFlowBot
                 .ForEach(x =>
                 {
                     x.Qtty = (int)(x.Qtty * k);
-                    user.Person.History.Add(action, x.Id);
+                    user.History.Add(action, x.Id);
                 });
 
             Cancel(bot, user);
         }
 
         public static void History(TelegramBotClient bot, User user) =>
-            bot.SetButtons(user.Id, user.Person.History.Description,
-            "Rollback last", "Cancel"); // todo terms
+            bot.SetButtons(user.Id, user.History.Description,
+            "Rollback last action",
+            "Cancel"); // todo terms
 
         public static async void MyData(TelegramBotClient bot, User user)
         {
@@ -1029,7 +1030,7 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= amount;
-            user.Person.History.Add(ActionType.Charity, amount);
+            user.History.Add(ActionType.Charity, amount);
 
             SmallCircleButtons(bot, user, Terms.Get(91, user, "You've payed {0}, now you can use two dice in next 3 turns.",
             amount.AsCurrency()));
@@ -1045,7 +1046,7 @@ namespace CashFlowBot
         {
             var amount = value.AsCurrency();
             user.Person.Cash += amount;
-            user.Person.History.Add(ActionType.GetMoney, amount);
+            user.History.Add(ActionType.GetMoney, amount);
 
             bot.SendMessage(user.Id, Terms.Get(22, user, "Ok, you've got *{0}*", amount.AsCurrency()));
             Cancel(bot, user);
@@ -1062,7 +1063,7 @@ namespace CashFlowBot
             }
 
             user.Person.Cash -= amount;
-            user.Person.History.Add(ActionType.PayMoney, amount);
+            user.History.Add(ActionType.PayMoney, amount);
 
             AvailableAssets.Add(amount, user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
             Cancel(bot, user);
@@ -1111,7 +1112,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.Mortgage -= expenses;
                     user.Person.Liabilities.Mortgage -= amount;
-                    user.Person.History.Add(ActionType.Mortgage, amount);
+                    user.History.Add(ActionType.Mortgage, amount);
                     break;
 
                 case Stage.ReduceSchoolLoan:
@@ -1122,7 +1123,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SchoolLoan -= expenses;
                     user.Person.Liabilities.SchoolLoan -= amount;
-                    user.Person.History.Add(ActionType.SchoolLoan, amount);
+                    user.History.Add(ActionType.SchoolLoan, amount);
                     break;
 
                 case Stage.ReduceCarLoan:
@@ -1133,7 +1134,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CarLoan -= expenses;
                     user.Person.Liabilities.CarLoan -= amount;
-                    user.Person.History.Add(ActionType.CarLoan, amount);
+                    user.History.Add(ActionType.CarLoan, amount);
                     break;
 
                 case Stage.ReduceCreditCard:
@@ -1144,7 +1145,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.CreditCard -= expenses;
                     user.Person.Liabilities.CreditCard -= amount;
-                    user.Person.History.Add(ActionType.CreditCard, amount);
+                    user.History.Add(ActionType.CreditCard, amount);
                     break;
 
                 case Stage.ReduceSmallCredit:
@@ -1155,7 +1156,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.SmallCredits -= expenses;
                     user.Person.Liabilities.SmallCredits -= amount;
-                    user.Person.History.Add(ActionType.SmallCredit, amount);
+                    user.History.Add(ActionType.SmallCredit, amount);
                     break;
 
                 case Stage.ReduceBankLoan:
@@ -1166,7 +1167,7 @@ namespace CashFlowBot
                     user.Person.Cash -= amount;
                     user.Person.Expenses.BankLoan -= expenses;
                     user.Person.Liabilities.BankLoan -= amount;
-                    user.Person.History.Add(ActionType.BankLoan, amount);
+                    user.History.Add(ActionType.BankLoan, amount);
                     break;
             }
 
@@ -1191,7 +1192,7 @@ namespace CashFlowBot
             {
                 case Stage.StopGame:
                     user.Person.Expenses.Clear();
-                    user.Person.History.Clear();
+                    user.History.Clear();
                     user.Person.Clear();
                     user.Stage = Stage.Nothing;
 
@@ -1200,6 +1201,11 @@ namespace CashFlowBot
 
                 case Stage.AdminBringDown:
                     Environment.Exit(0);
+                    return;
+
+                case Stage.Rollback:
+                    user.History.Rollback();
+                    History(bot, user);
                     return;
             }
 
@@ -1315,7 +1321,7 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    user.Person.History.IsEmpty
+                    user.History.IsEmpty
                     ? new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")}
                     : new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },

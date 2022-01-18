@@ -49,5 +49,6 @@
         SellBusinessPrice,
         SellLandTitle,
         SellLandPrice,
+        Rollback,
     }
 }

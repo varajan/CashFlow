@@ -109,7 +109,7 @@ namespace CashFlowBot
                         }
 
                         user.Person.Expenses.Children++;
-                        user.Person.History.Add(ActionType.Child, user.Person.Expenses.Children);
+                        user.History.Add(ActionType.Child, user.Person.Expenses.Children);
 
                         Actions.SmallCircleButtons(Bot, user,
                         Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
@@ -408,6 +408,13 @@ namespace CashFlowBot
                     case "так":
                     case "ja":
                         Actions.Confirm(Bot, user);
+                        return;
+
+                    // todo ROLLBACK
+                    // Term 109: Rollback last action
+                    case "rollback last action":
+                        Actions.Ask(Bot, user, Stage.Rollback,
+                        Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
                         return;
 
                     // Term 6: Cancel

@@ -73,7 +73,7 @@ namespace CashFlowBot.Models
 
             Delete();
 
-            new User(UserId).Person.History.Add(action, Id);
+            new User(UserId).History.Add(action, Id);
         }
 
         public void Delete()

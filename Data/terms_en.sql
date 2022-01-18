@@ -108,6 +108,8 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (106, 'EN', 'Downsize and paying {0}'),
 (107, 'EN', 'Get credit: {0}'),
 (108, 'EN', 'Charity: {0}'),
+(109, 'EN', 'Rollback last action'),
+(110, 'EN', 'Are you sure want to rollback last action?'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

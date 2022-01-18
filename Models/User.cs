@@ -11,6 +11,7 @@ namespace CashFlowBot.Models
     {
         public User(long id) : base(id, DB.Tables.Users) { }
 
+        public History History => new(Id);
         public Person Person => new (Id);
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
@@ -44,7 +45,7 @@ namespace CashFlowBot.Models
             Person.Cash += amount;
             Person.Expenses.BankLoan += amount / 10;
             Person.Liabilities.BankLoan += amount;
-            Person.History.Add(ActionType.Credit, amount);
+            History.Add(ActionType.Credit, amount);
         }
 
         public void Create()
