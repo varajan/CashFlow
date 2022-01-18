@@ -45,7 +45,7 @@ namespace CashFlowBot.Models
             ? Terms.Get(111, _userId, "No records found.")
             : string.Join(Environment.NewLine, Records.Select(x => x.Description));
 
-        public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
+        public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE UserID = {_userId}");
 
         public void Add(ActionType action, long value) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Add();
 
@@ -194,7 +194,7 @@ namespace CashFlowBot.Models
         public void Add()
         {
             long newId = DB.GetValue($"SELECT MAX(ID) FROM {DB.Tables.History}").ToLong() + 1;
-            DB.Execute($@"INSERT INTO {DB.Tables.History} VALUES ({newId}, {UserId}, {(int)Action}, {Value}, '{Text}')");
+            DB.Execute($@"INSERT INTO {DB.Tables.History} VALUES ({newId}, {UserId}, {(int)Action}, {Value}, '• {Text}')");
         }
 
         public void Delete() => DB.Execute($"DELETE FROM {DB.Tables.History} WHERE ID = {Id}");
