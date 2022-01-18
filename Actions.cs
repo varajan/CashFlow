@@ -974,6 +974,7 @@ namespace CashFlowBot
             title = title.Trim().ToUpper();
 
             var k = user.Stage == Stage.Stocks1to2 ? 2 : 0.5;
+            var action = user.Stage == Stage.Stocks1to2 ? ActionType.Stocks1To2 : ActionType.Stocks2To1;
             var stocks = user.Person.Assets.Stocks;
             var assets = stocks.Where(x => x.Title == title).ToList();
 
@@ -983,7 +984,13 @@ namespace CashFlowBot
                 return;
             }
 
-            assets.Where(x => x.Title == title).ToList().ForEach(x => x.Qtty = (int)(x.Qtty * k));
+            assets.Where(x => x.Title == title).ToList()
+                .ForEach(x =>
+                {
+                    x.Qtty = (int)(x.Qtty * k);
+                    user.Person.History.Add(action, x.Id);
+                });
+
             Cancel(bot, user);
         }
 

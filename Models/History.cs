@@ -16,7 +16,7 @@ namespace CashFlowBot.Models
         public History(long userId) => _userId = userId;
 
         public bool IsEmpty => !Records.Any();
-        private List<HistoryRecord> Records
+        private IEnumerable<HistoryRecord> Records
         {
             get
             {
@@ -29,7 +29,8 @@ namespace CashFlowBot.Models
                     {
                         UserId = item[0].ToLong(),
                         Action = item[1].ParseEnum<ActionType>(),
-                        Value = item[2].ToLong()
+                        Value = item[2].ToLong(),
+                        Description = item[3]
                     };
 
                     result.Add(record);
@@ -43,10 +44,7 @@ namespace CashFlowBot.Models
 
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
 
-        public void Add(ActionType action, long amount)
-        {
-            DB.Execute($@"INSERT INTO {Table} VALUES ({_userId}, {(int)action}, {amount})");
-        }
+        public void Add(ActionType action, long value) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Save();
     }
 
     public class HistoryRecord
@@ -54,8 +52,12 @@ namespace CashFlowBot.Models
         public long UserId { get; set; }
         public ActionType Action { get; set; }
         public long Value { get; set; }
+        public string Description { get; set; }
 
-        public string Description
+        public void Save() => DB.Execute($@"INSERT INTO {DB.Tables.History} VALUES ({UserId}, {(int) Action}, {Value}, '{Text}')");
+
+        private Asset Asset => new (UserId, (int)Value);
+        private string Text
         {
             get
             {
@@ -95,16 +97,19 @@ namespace CashFlowBot.Models
                     case ActionType.BuyStocks:
                     case ActionType.BuyLand:
                         var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
-                        return $"{buyAsset}. {new Asset(UserId, (int) Value).Description}";
+                        return $"{buyAsset}. {Asset.Description}";
 
                     case ActionType.SellRealEstate:
                     case ActionType.SellBusiness:
                     case ActionType.SellStocks:
                     case ActionType.SellLand:
                         var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
-                        return $"{sellAsset}. {new Asset(UserId, (int) Value).Description}";
+                        return $"{sellAsset}. {Asset.Description}";
 
-                    // stocks 21, 12
+                    case ActionType.Stocks1To2:
+                    case ActionType.Stocks2To1:
+                        var multiply = Terms.Get((int) Action, UserId, "Multiply Stocks");
+                        return $"{multiply}. {Asset.Description}";
 
                     default:
                         return $"<{Action}> - {Value}";

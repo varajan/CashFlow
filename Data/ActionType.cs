@@ -22,5 +22,7 @@
         SellBusiness = 75,
         SellLand = 98,
         SellStocks = 36,
+        Stocks2To1 = 82,
+        Stocks1To2 = 83,
     }
 }

@@ -71,8 +71,9 @@ namespace CashFlowBot.Models
         {
             SellPrice = price;
 
-            new User(UserId).Person.History.Add(action, Id);
             Delete();
+
+            new User(UserId).Person.History.Add(action, Id);
         }
 
         public void Delete()

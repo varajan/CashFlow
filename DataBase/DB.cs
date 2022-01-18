@@ -192,7 +192,7 @@ namespace CashFlowBot.DataBase
 
             public static string Assets = "AssetID Number, UserID Number, Type Number, Deleted Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number, SellPrice Number";
             public static string AvailableAssets = "Type Number, Value Text";
-            public static string History = "UserID Number, ActionType Number, Value Number";
+            public static string History = "UserID Number, ActionType Number, Value Number, Description Text";
         }
     }
 }
