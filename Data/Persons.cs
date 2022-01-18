@@ -1,4 +1,6 @@
-﻿namespace CashFlowBot.Data
+﻿using System.Linq;
+
+namespace CashFlowBot.Data
 {
     public static class Persons
     {
@@ -33,6 +35,13 @@
             public int CreditCard { get; set; }
             public int SmallCredits { get; set; }
             public int BankLoan { get; set; }
+        }
+
+        public static DefaultPerson Get(long userId, string profession)
+        {
+            var persons = Get(userId);
+            var professionCode = Enumerable.Range(1000, persons.Length).First(code => DataBase.Terms.Get(code).Contains(profession));
+            return persons.First(x => DataBase.Terms.Get(professionCode).Contains(x.Profession));
         }
 
         public static DefaultPerson[] Get(long userId)

@@ -57,7 +57,8 @@ namespace CashFlowBot.Models
             var record = Records.Last();
             var asset = new Asset(_userId, (int) record.Value);
             var amount = (int) record.Value;
-            var person = Persons.Get(_userId).First(x => x.Profession == user.Person.Profession);
+            var person = Persons.Get(user.Id, user.Person.Profession);
+
             decimal percent;
             int expenses;
 

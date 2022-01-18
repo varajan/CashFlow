@@ -1,4 +1,7 @@
-﻿using CashFlowBot.Extensions;
+﻿using System;
+using System.Collections.Generic;
+using CashFlowBot.Data;
+using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 
 namespace CashFlowBot.DataBase
@@ -13,6 +16,20 @@ namespace CashFlowBot.DataBase
             DB.Execute(Data.Terms.terms_en);
             DB.Execute(Data.Terms.terms_ua);
             DB.Execute(Data.Terms.terms_de);
+        }
+
+        public static List<string> Get(int id)
+        {
+            var result = new List<string>();
+
+            foreach (Language language in Enum.GetValues(typeof(Language)))
+            {
+                var term = DB.GetValue($"SELECT Term FROM {Table} WHERE ID = {id} AND Language = '{language}'");
+
+                result.Add(term);
+            }
+
+            return result;
         }
 
         public static string Get(int id, long userId, string defaultValue, params object[] args) =>

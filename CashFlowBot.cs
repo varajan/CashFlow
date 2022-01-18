@@ -75,10 +75,15 @@ namespace CashFlowBot
                     case "en":
                     case "ua":
                     case "de":
+                    case "/en":
+                    case "/ua":
+                    case "/de":
                         user.Language = message.Text.ToUpper().Trim().ParseEnum<Language>();
 
                         if (user.Person.Exists)
                         {
+                            user.Person.Profession = Persons.Get(user.Id, user.Person.Profession).Profession;
+
                             Actions.Cancel(Bot, user);
                         }
                         else
