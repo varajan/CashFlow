@@ -619,6 +619,8 @@ namespace CashFlowBot
                     int upTo50 = upToQtty / 50 * 50;
                     var buttons = new[] { upToQtty, upTo50, upTo50 - 50, upTo50 - 100 }
                         .Where(x => x > 0)
+                        .Distinct()
+                        .OrderBy(x => x)
                         .Select(x => x.ToString())
                         .Append(Terms.Get(6, user, "Cancel"));
 
@@ -994,8 +996,20 @@ namespace CashFlowBot
             Cancel(bot, user);
         }
 
-        public static void History(TelegramBotClient bot, User user) =>
-            bot.SetButtons(user.Id, user.History.Description, Terms.Get(109, user, "Rollback last action"), Terms.Get(6, user, "Cancel"));
+        public static void History(TelegramBotClient bot, User user)
+        {
+            var cancel = Terms.Get(6, user, "Cancel");
+            var rollBack = Terms.Get(109, user, "Rollback last action");
+
+            if (user.History.IsEmpty)
+            {
+                bot.SetButtons(user.Id, user.History.Description, cancel);
+            }
+            else
+            {
+                bot.SetButtons(user.Id, user.History.Description, rollBack, cancel);
+            }
+        }
 
         public static async void MyData(TelegramBotClient bot, User user)
         {
@@ -1319,7 +1333,9 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
+                    user.History.IsEmpty
+                    ? new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")}
+                    : new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
                     new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")},

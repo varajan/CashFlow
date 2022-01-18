@@ -15,6 +15,7 @@ namespace CashFlowBot.Models
 
         public History(long userId) => _userId = userId;
 
+        public bool IsEmpty => !Records.Any();
         private IEnumerable<HistoryRecord> Records
         {
             get
@@ -40,9 +41,9 @@ namespace CashFlowBot.Models
             }
         }
 
-        public string Description => Records.Any()
-            ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
-            : Terms.Get(111, _userId, "No records found.");
+        public string Description => IsEmpty
+            ? Terms.Get(111, _userId, "No records found.")
+            : string.Join(Environment.NewLine, Records.Select(x => x.Description));
 
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
 
@@ -50,18 +51,15 @@ namespace CashFlowBot.Models
 
         public void Rollback()
         {
+            if (IsEmpty) return;
+
             var user = new User(_userId);
             var record = Records.Last();
             var asset = new Asset(_userId, (int) record.Value);
             var amount = (int) record.Value;
             var person = Persons.Get(_userId).First(x => x.Profession == user.Person.Profession);
-
             decimal percent;
             int expenses;
-
-            // restore/delete item
-            // add/get money
-            // remove history record
 
             switch (record.Action)
             {
