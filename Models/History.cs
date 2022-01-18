@@ -15,7 +15,6 @@ namespace CashFlowBot.Models
 
         public History(long userId) => _userId = userId;
 
-        public bool IsEmpty => !Records.Any();
         private IEnumerable<HistoryRecord> Records
         {
             get
@@ -41,8 +40,9 @@ namespace CashFlowBot.Models
             }
         }
 
-        // todo if not empty
-        public string Description => string.Join(Environment.NewLine, Records.Select(x => x.Description));
+        public string Description => Records.Any()
+            ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
+            : Terms.Get(111, _userId, "No records found.");
 
         public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {_userId}");
 

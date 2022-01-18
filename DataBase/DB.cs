@@ -19,7 +19,6 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
-            //TODO: don't delete HISTORY table
             Execute("DROP TABLE IF EXISTS History;");
             Execute("DROP TABLE IF EXISTS Assets;");
 

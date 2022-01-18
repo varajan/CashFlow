@@ -995,9 +995,7 @@ namespace CashFlowBot
         }
 
         public static void History(TelegramBotClient bot, User user) =>
-            bot.SetButtons(user.Id, user.History.Description,
-            "Rollback last action",
-            "Cancel"); // todo terms
+            bot.SetButtons(user.Id, user.History.Description, Terms.Get(109, user, "Rollback last action"), Terms.Get(6, user, "Cancel"));
 
         public static async void MyData(TelegramBotClient bot, User user)
         {
@@ -1321,9 +1319,7 @@ namespace CashFlowBot
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    user.History.IsEmpty
-                    ? new List<KeyboardButton>{Terms.Get(31, user, "Show my Data")}
-                    : new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
+                    new List<KeyboardButton>{Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History")},
                     new List<KeyboardButton>{Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton>{Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market")},
                     new List<KeyboardButton>{ Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby")},

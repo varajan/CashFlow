@@ -133,9 +133,10 @@ namespace CashFlowBot
                         Actions.MyData(Bot, user);
                         return;
 
-                    // todo
                     // Term 2: History
                     case "history":
+                    case "історія":
+                    case "transaktionen":
                         Actions.History(Bot, user);
                         return;
 
@@ -410,15 +411,19 @@ namespace CashFlowBot
                         Actions.Confirm(Bot, user);
                         return;
 
-                    // todo ROLLBACK
                     // Term 109: Rollback last action
                     case "rollback last action":
+                    case "скасувати останню операцію":
+                    case "rollback der letzten transaktion":
                         Actions.Ask(Bot, user, Stage.Rollback,
                         Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
                         return;
 
                     // Term 6: Cancel
-                    case "main menu": // todo
+                    // Term 102: Main menu
+                    case "main menu":
+                    case "головне меню":
+                    case "hauptmenü":
                     case "cancel":
                     case "скасувати":
                     case "absagen":
