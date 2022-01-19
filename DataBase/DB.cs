@@ -131,56 +131,5 @@ namespace CashFlowBot.DataBase
             Logger.Log(sql);
             Logger.Log(ex);
         }
-
-        public static class Tables
-        {
-            public static string Terms = "Terms";
-            public static string Users = "Users";
-            public static string Persons = "Persons";
-            public static string Expenses = "Expenses";
-            public static string Liabilities = "Liabilities";
-            public static string Assets = "Assets";
-            public static string AvailableAssets = "AvailableAssets";
-            public static string History = "History";
-        }
-
-        public static class DefaultValues
-        {
-            private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("''", query.Count(x => x == ',')));
-
-            public static string Users = GetDefaults(CreateColumns.Users);
-            public static string Persons = GetDefaults(CreateColumns.Persons);
-            public static string Expenses = GetDefaults(CreateColumns.Expenses);
-            public static string Liabilities = GetDefaults(CreateColumns.Liabilities);
-        }
-
-        public static class ColumnNames
-        {
-            private static string GetColumns(string query) => string.Join(", ", query.Split(',').Select(x => x.Trim().Split(' ').First()));
-
-            public static string Users = GetColumns(CreateColumns.Users);
-            public static string Persons = GetColumns(CreateColumns.Persons);
-            public static string Expenses = GetColumns(CreateColumns.Expenses);
-            public static string Liabilities = GetColumns(CreateColumns.Liabilities);
-            public static string Assets = GetColumns(CreateColumns.Assets);
-            public static string AvailableAssets = GetColumns(CreateColumns.AvailableAssets);
-            public static string History = GetColumns(CreateColumns.History);
-        }
-
-        public static class CreateColumns
-        {
-            public static string Users = "ID Number, Stage Number, Admin Number, Name Text, Language Text, LastActive Text, FirstLogin Text";
-            public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number, SmallRealEstate Number, ReadyForBigCircle Number, BigCircle Number, InitialCashFlow Number";
-
-            private static readonly string[] _expenses = { "ID", "Taxes", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "SmallCredits", "BankLoan", "Others", "Children", "PerChild" };
-            public static string Expenses = string.Join(", ", _expenses.Select(x => $"{x} Number"));
-
-            private static readonly string[] _liabilities = { "ID", "Mortgage", "SchoolLoan", "CarLoan", "CreditCard", "SmallCredits", "BankLoan" };
-            public static string Liabilities = string.Join(", ", _liabilities.Select(x => $"{x} Number"));
-
-            public static string Assets = "AssetID Number, UserID Number, Type Number, Deleted Number, Draft Number, BigCircle Number, Title Text, Price Number, Qtty Number, Mortgage Number, CashFlow Number, SellPrice Number";
-            public static string AvailableAssets = "Type Number, Value Text";
-            public static string History = "ID Number, UserID Number, ActionType Number, Value Number, Description Text";
-        }
     }
 }

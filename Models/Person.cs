@@ -7,7 +7,7 @@ namespace CashFlowBot.Models
 {
     public class Person : DataModel
     {
-        public Person(long userId) : base(userId, DB.Tables.Persons) { }
+        public Person(long userId) : base(userId, "Persons") { }
 
         public string Profession { get => Get("Profession"); set => Set("Profession", value); }
         public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
@@ -64,7 +64,9 @@ namespace CashFlowBot.Models
             var data = Data.Persons.Get(Id).First(x => x.Profession.ToLower() == profession);
 
             Clear();
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Persons}) VALUES ({Id}, {DB.DefaultValues.Persons})");
+            DB.Execute($"INSERT INTO {Table} " +
+                       "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '', '')");
 
             Assets.Clear();
             Profession = data.Profession;

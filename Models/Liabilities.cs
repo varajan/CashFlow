@@ -5,7 +5,7 @@ namespace CashFlowBot.Models
 {
     public class Liabilities : DataModel
     {
-        public Liabilities(long id) : base(id, DB.Tables.Liabilities) { }
+        public Liabilities(long id) : base(id, "Liabilities") { }
 
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
         public int SchoolLoan { get => GetInt("SchoolLoan"); set => Set("SchoolLoan", value); }
@@ -19,7 +19,8 @@ namespace CashFlowBot.Models
         public void Create(Persons.DefaultLiabilities liabilities)
         {
             Clear();
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Liabilities}) VALUES ({Id}, {DB.DefaultValues.Liabilities})");
+            DB.Execute($"INSERT INTO {Table} (ID, Mortgage, SchoolLoan, CarLoan, CreditCard, SmallCredits, BankLoan) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '')");
 
             Mortgage = liabilities.Mortgage;
             SchoolLoan = liabilities.SchoolLoan;

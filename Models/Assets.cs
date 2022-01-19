@@ -26,7 +26,7 @@ namespace CashFlowBot.Models
         public List<Asset> Lands => Items.Where(x => x.Type == AssetType.Land).ToList();
 
         public List<Asset> Items =>
-            DB.GetColumn($"SELECT AssetID FROM {DB.Tables.Assets} WHERE UserID = {Id}")
+            DB.GetColumn($"SELECT AssetID FROM Assets WHERE UserID = {Id}")
                 .Select(id => new Asset(userId: Id, id: id.ToInt()))
                 .Where(x => !x.IsDeleted)
                 .ToList();
@@ -43,8 +43,10 @@ namespace CashFlowBot.Models
 
         public Asset Add(string title, AssetType type, bool bigCircle = false)
         {
-            int newId = DB.GetValue($"SELECT MAX(AssetID) FROM {DB.Tables.Assets}").ToInt() + 1;
-            DB.Execute($"INSERT INTO {DB.Tables.Assets} ({DB.ColumnNames.Assets}) VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0, 0)");
+            int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+            DB.Execute($"INSERT INTO Assets " +
+                       "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
+                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0, 0)");
 
             return Items.First(i => i.IsDraft);
         }

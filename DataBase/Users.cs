@@ -8,7 +8,7 @@ namespace CashFlowBot.DataBase
     public class Users
     {
         public static List<User> AllUsers =>
-            DB.GetColumn($"SELECT ID FROM {DB.Tables.Users}")
+            DB.GetColumn("SELECT ID FROM Users")
                 .ToLong()
                 .Select(x => new User(x))
                 .ToList();

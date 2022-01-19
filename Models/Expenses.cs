@@ -8,7 +8,7 @@ namespace CashFlowBot.Models
 {
     public class Expenses : DataModel
     {
-        public Expenses(long id) : base(id, DB.Tables.Expenses) { }
+        public Expenses(long id) : base(id, "Expenses") { }
 
         public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses;
 
@@ -64,7 +64,9 @@ namespace CashFlowBot.Models
         public void Create(Persons.DefaultExpenses expenses)
         {
             Clear();
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Expenses}) VALUES ({Id}, {DB.DefaultValues.Expenses})");
+            DB.Execute($"INSERT INTO {Table} " +
+                       "(ID, Taxes, Mortgage, SchoolLoan, CarLoan, CreditCard, SmallCredits, BankLoan, Others, Children, PerChild) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '', '', '', '', '')");
 
             Taxes = expenses.Taxes;
             Mortgage = expenses.Mortgage;

@@ -8,15 +8,13 @@ namespace CashFlowBot.DataBase
 {
     public static class Terms
     {
-        private static readonly string Table = DB.Tables.Terms;
-
         public static List<string> Get(int id)
         {
             var result = new List<string>();
 
             foreach (Language language in Enum.GetValues(typeof(Language)))
             {
-                var term = DB.GetValue($"SELECT Term FROM {Table} WHERE ID = {id} AND Language = '{language}'");
+                var term = DB.GetValue($"SELECT Term FROM Terms WHERE ID = {id} AND Language = '{language}'");
 
                 result.Add(term);
             }
@@ -29,7 +27,7 @@ namespace CashFlowBot.DataBase
 
         public static string Get(int id, User user, string defaultValue, params object[] args)
         {
-            var term = DB.GetValue($"SELECT Term FROM {Table} WHERE ID = {id} AND Language = '{user.Language}'").NullIfEmpty() ?? $"#{id}#{defaultValue}#";
+            var term = DB.GetValue($"SELECT Term FROM Terms WHERE ID = {id} AND Language = '{user.Language}'").NullIfEmpty() ?? $"#{id}#{defaultValue}#";
             return string.Format(term, args);
         }
     }

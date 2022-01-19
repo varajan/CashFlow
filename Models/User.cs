@@ -9,7 +9,7 @@ namespace CashFlowBot.Models
 {
     public class User : DataModel
     {
-        public User(long id) : base(id, DB.Tables.Users) { }
+        public User(long id) : base(id, "Users") { }
 
         public History History => new(Id);
         public Person Person => new (Id);
@@ -50,7 +50,9 @@ namespace CashFlowBot.Models
 
         public void Create()
         {
-            DB.Execute($"INSERT INTO {Table} ({DB.ColumnNames.Users}) VALUES ({Id}, {DB.DefaultValues.Users})");
+            DB.Execute($"INSERT INTO {Table} " +
+                       "(ID, Stage, Admin, Name, Language, LastActive, FirstLogin) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '')");
 
             FirstLogin = DateTime.Now;
             LastActive = DateTime.Now;

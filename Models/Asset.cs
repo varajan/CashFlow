@@ -9,14 +9,13 @@ namespace CashFlowBot.Models
     {
         private long UserId { get; }
         public long Id { get; }
-        private string Table { get; }
 
-        private string Get(string column) => DB.GetValue($"SELECT {column} FROM {Table} WHERE AssetID = {Id} AND UserID = {UserId}");
+        private string Get(string column) => DB.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND UserID = {UserId}");
         private int GetInt(string column) => Get(column).ToInt();
-        private void Set(string column, int value) => DB.Execute($"UPDATE {Table} SET {column} = {value} WHERE AssetID = {Id} AND UserID = {UserId}");
-        private void Set(string column, string value) => DB.Execute($"UPDATE {Table} SET {column} = '{value}' WHERE AssetID = {Id} AND UserID = {UserId}");
+        private void Set(string column, int value) => DB.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND UserID = {UserId}");
+        private void Set(string column, string value) => DB.Execute($"UPDATE Assets SET {column} = '{value}' WHERE AssetID = {Id} AND UserID = {UserId}");
 
-        public Asset(long userId, int id) => (UserId, Id, Table) = (userId, id, DB.Tables.Assets);
+        public Asset(long userId, int id) => (UserId, Id) = (userId, id);
 
         public string Description
         {

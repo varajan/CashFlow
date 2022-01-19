@@ -10,7 +10,6 @@ namespace CashFlowBot.Models
 {
     public class History
     {
-        private static string Table => DB.Tables.History;
         private readonly long _userId;
 
         public History(long userId) => _userId = userId;
@@ -21,7 +20,7 @@ namespace CashFlowBot.Models
             get
             {
                 var result = new List<HistoryRecord>();
-                var records = DB.GetRows($"SELECT {DB.ColumnNames.History} FROM {Table} WHERE UserID = {_userId}");
+                var records = DB.GetRows($"SELECT ID, UserID, ActionType, Value, Description FROM History WHERE UserID = {_userId}");
 
                 foreach (var item in records)
                 {
@@ -45,7 +44,7 @@ namespace CashFlowBot.Models
             ? Terms.Get(111, _userId, "No records found.")
             : string.Join(Environment.NewLine, Records.Select(x => x.Description));
 
-        public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE UserID = {_userId}");
+        public void Clear() => DB.Execute($"DELETE FROM History WHERE UserID = {_userId}");
 
         public void Add(ActionType action, long value) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Add();
 
@@ -193,11 +192,11 @@ namespace CashFlowBot.Models
 
         public void Add()
         {
-            long newId = DB.GetValue($"SELECT MAX(ID) FROM {DB.Tables.History}").ToLong() + 1;
-            DB.Execute($@"INSERT INTO {DB.Tables.History} VALUES ({newId}, {UserId}, {(int)Action}, {Value}, '• {Text}')");
+            long newId = DB.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
+            DB.Execute($@"INSERT INTO History VALUES ({newId}, {UserId}, {(int)Action}, {Value}, '• {Text}')");
         }
 
-        public void Delete() => DB.Execute($"DELETE FROM {DB.Tables.History} WHERE ID = {Id}");
+        public void Delete() => DB.Execute($"DELETE FROM History WHERE ID = {Id}");
 
         private Asset Asset => new (UserId, (int)Value);
         private string Text
