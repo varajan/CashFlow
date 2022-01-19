@@ -22,7 +22,7 @@
 (20, 'DE', '{0}, Sie haben *{1}* Kindernausgaben und {2} Kind.'),
 (21, 'DE', 'Wie fiel?'),
 (22, 'DE', 'Okay, Sie bekommen *{0}*'),
-(23, 'DE', 'Sie haben nicht *{0}*, sondern *{1}*'),
+(23, 'DE', 'Sie haben nicht *{0}*, sondern nur *{1}*'),
 (24, 'DE', 'Ungültige Menge. Der Betrag muss ein Vielfaches von 1000 sein.'),
 (25, 'DE', '{0}, Sie haben *{1}* Kindernausgaben und {2} Kindern.'),
 (26, 'DE', 'Bitte stoppen Sie das aktuelle Spiel, bevor Sie ein neues starten.'),
