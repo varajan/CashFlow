@@ -1055,7 +1055,8 @@ namespace CashFlowBot
 
             if (user.Person.Cash < amount)
             {
-                SmallCircleButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
+                bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
+                Cancel(bot, user);
                 return;
             }
 
