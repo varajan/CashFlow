@@ -835,9 +835,10 @@ namespace CashFlowBot
 
             if (buttons.Any())
             {
+                var cashTerm = Terms.Get(51, user, "Cash");
                 user.Stage = Stage.Nothing;
                 buttons.Add(Terms.Get(6, user, "Cancel"));
-                bot.SetButtons(user.Id, liabilities, buttons);
+                bot.SetButtons(user.Id, $"*{cashTerm}:* {user.Person.Cash.AsCurrency()}{Environment.NewLine}{Environment.NewLine}{liabilities}", buttons);
                 return;
             }
 
