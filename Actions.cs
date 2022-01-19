@@ -1309,10 +1309,11 @@ namespace CashFlowBot
 
         public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
         {
-            if (user.Person.Assets.Income > user.Person.Expenses.Total)
+            user.Person.ReadyForBigCircle = (user.Person.Assets.Income > user.Person.Expenses.Total);
+
+            if (user.Person.ReadyForBigCircle)
             {
                 bot.SendMessage(user.Id, Terms.Get(68, user, "Your income is greater, then expenses. You are ready for Big Circle."));
-                user.Person.ReadyForBigCircle = true;
             }
 
             var rkm = new ReplyKeyboardMarkup
