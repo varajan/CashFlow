@@ -84,30 +84,21 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.Mortgage:
-                    percent = (decimal) person.Expenses.Mortgage / person.Liabilities.Mortgage;
-                    expenses = (int) (amount * percent);
-
                     user.Person.Cash += amount;
-                    user.Person.Expenses.Mortgage += expenses;
-                    user.Person.Liabilities.Mortgage += amount;
+                    user.Person.Expenses.Mortgage = person.Expenses.Mortgage;
+                    user.Person.Liabilities.Mortgage = person.Liabilities.Mortgage;
                     break;
 
                 case ActionType.SchoolLoan:
-                    percent = (decimal) person.Expenses.SchoolLoan / person.Liabilities.SchoolLoan;
-                    expenses = (int) (amount * percent);
-
                     user.Person.Cash += amount;
-                    user.Person.Expenses.SchoolLoan += expenses;
-                    user.Person.Liabilities.SchoolLoan += amount;
+                    user.Person.Expenses.SchoolLoan = person.Expenses.SchoolLoan;
+                    user.Person.Liabilities.SchoolLoan = person.Liabilities.SchoolLoan;
                     break;
 
                 case ActionType.CarLoan:
-                    percent = (decimal) person.Expenses.CarLoan / person.Liabilities.CarLoan;
-                    expenses = (int) (amount * percent);
-
                     user.Person.Cash += amount;
-                    user.Person.Expenses.CarLoan += expenses;
-                    user.Person.Liabilities.CarLoan += amount;
+                    user.Person.Expenses.CarLoan = person.Expenses.CarLoan;
+                    user.Person.Liabilities.CarLoan = person.Liabilities.CarLoan;
                     break;
 
                 case ActionType.CreditCard:

@@ -727,13 +727,6 @@ namespace CashFlowBot
 
         public static void ReduceLiabilities(TelegramBotClient bot, User user, Stage stage)
         {
-            if (user.Person.Cash < 1000)
-            {
-                Cancel(bot, user);
-                return;
-            }
-
-            user.Stage = stage;
             int cost = 0;
 
             switch (stage)
@@ -763,15 +756,31 @@ namespace CashFlowBot
                     break;
             }
 
-            var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash/1000*1000 }
-                .Where(x => x <= user.Person.Cash && x <= cost)
-                .OrderBy(x => x)
-                .Distinct()
-                .Select(x => x.AsCurrency())
-                .ToList();
-            buttons.Add(Terms.Get(6, user, "Cancel"));
+            if (user.Stage == Stage.ReduceBankLoan)
+            {
+                var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash / 1000 * 1000 }
+                    .Where(x => x <= user.Person.Cash && x <= cost)
+                    .OrderBy(x => x)
+                    .Distinct()
+                    .Select(x => x.AsCurrency())
+                    .Append(Terms.Get(6, user, "Cancel"));
 
-            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
+                bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
+                return;
+            }
+
+            if (user.Person.Cash < cost)
+            {
+                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", cost.AsCurrency(), user.Person.Cash.AsCurrency()));
+                ReduceLiabilities(bot, user);
+                return;
+            }
+
+            var reduceLiabilities = Terms.Get(40, user, "Reduce Liabilities");
+            var type = Terms.Get((int)stage, user, "Liability");
+            var yes = Terms.Get(4, user, "Yes");
+
+            Ask(bot, user, stage, $"{reduceLiabilities} - {type}. {yes}?", Terms.Get(4, user, "Yes"));
         }
 
         public static void ReduceLiabilities(TelegramBotClient bot, User user)
@@ -824,15 +833,9 @@ namespace CashFlowBot
                 liabilities += $"*{bankLoan}:* {l.BankLoan.AsCurrency()} - {x.BankLoan.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
-            if (user.Person.Cash < 1000)
-            {
-                bot.SendMessage(user.Id, liabilities);
-                SmallCircleButtons(bot, user, Terms.Get(48, user, "You don't have money to reduce liabilities, your balance is {0}", user.Person.Cash.AsCurrency()));
-                return;
-            }
-
             if (buttons.Any())
             {
+                user.Stage = Stage.Nothing;
                 buttons.Add(Terms.Get(6, user, "Cancel"));
                 bot.SetButtons(user.Id, liabilities, buttons);
                 return;
@@ -1085,8 +1088,6 @@ namespace CashFlowBot
         public static void PayCredit(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
-            int expenses;
-            decimal percent;
 
             if (amount % 1000 > 0 || amount < 1000)
             {
@@ -1100,74 +1101,14 @@ namespace CashFlowBot
                 return;
             }
 
-            switch (user.Stage)
-            {
-                case Stage.ReduceMortgage:
-                    amount = Math.Min(amount, user.Person.Liabilities.Mortgage);
-                    percent = (decimal) user.Person.Expenses.Mortgage / user.Person.Liabilities.Mortgage;
-                    expenses = (int) (amount * percent);
+            amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
+            var percent = (decimal)1 / 10;
+            var expenses = (int) (amount * percent);
 
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.Mortgage -= expenses;
-                    user.Person.Liabilities.Mortgage -= amount;
-                    user.History.Add(ActionType.Mortgage, amount);
-                    break;
-
-                case Stage.ReduceSchoolLoan:
-                    amount = Math.Min(amount, user.Person.Liabilities.SchoolLoan);
-                    percent = (decimal) user.Person.Expenses.SchoolLoan / user.Person.Liabilities.SchoolLoan;
-                    expenses = (int) (amount * percent);
-
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.SchoolLoan -= expenses;
-                    user.Person.Liabilities.SchoolLoan -= amount;
-                    user.History.Add(ActionType.SchoolLoan, amount);
-                    break;
-
-                case Stage.ReduceCarLoan:
-                    amount = Math.Min(amount, user.Person.Liabilities.CarLoan);
-                    percent = (decimal) user.Person.Expenses.CarLoan / user.Person.Liabilities.CarLoan;
-                    expenses = (int) (amount * percent);
-
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.CarLoan -= expenses;
-                    user.Person.Liabilities.CarLoan -= amount;
-                    user.History.Add(ActionType.CarLoan, amount);
-                    break;
-
-                case Stage.ReduceCreditCard:
-                    amount = Math.Min(amount, user.Person.Liabilities.CreditCard);
-                    percent = (decimal) user.Person.Expenses.CreditCard / user.Person.Liabilities.CreditCard;
-                    expenses = (int) (amount * percent);
-
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.CreditCard -= expenses;
-                    user.Person.Liabilities.CreditCard -= amount;
-                    user.History.Add(ActionType.CreditCard, amount);
-                    break;
-
-                case Stage.ReduceSmallCredit:
-                    amount = Math.Min(amount, user.Person.Liabilities.SmallCredits);
-                    percent = (decimal) user.Person.Expenses.SmallCredits / user.Person.Liabilities.SmallCredits;
-                    expenses = (int) (amount * percent);
-
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.SmallCredits -= expenses;
-                    user.Person.Liabilities.SmallCredits -= amount;
-                    user.History.Add(ActionType.SmallCredit, amount);
-                    break;
-
-                case Stage.ReduceBankLoan:
-                    amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
-                    percent = (decimal)1 / 10;
-                    expenses = (int) (amount * percent);
-
-                    user.Person.Cash -= amount;
-                    user.Person.Expenses.BankLoan -= expenses;
-                    user.Person.Liabilities.BankLoan -= amount;
-                    user.History.Add(ActionType.BankLoan, amount);
-                    break;
-            }
+            user.Person.Cash -= amount;
+            user.Person.Expenses.BankLoan -= expenses;
+            user.Person.Liabilities.BankLoan -= amount;
+            user.History.Add(ActionType.BankLoan, amount);
 
             Cancel(bot, user);
         }
@@ -1204,6 +1145,46 @@ namespace CashFlowBot
                 case Stage.Rollback:
                     user.History.Rollback();
                     History(bot, user);
+                    return;
+
+                case Stage.ReduceMortgage:
+                    user.Person.Cash -= user.Person.Liabilities.Mortgage;
+                    user.Person.Expenses.Mortgage = 0;
+                    user.Person.Liabilities.Mortgage = 0;
+                    user.History.Add(ActionType.Mortgage, user.Person.Liabilities.Mortgage);
+                    ReduceLiabilities(bot, user);
+                    return;
+
+                case Stage.ReduceSchoolLoan:
+                    user.Person.Cash -= user.Person.Liabilities.SchoolLoan;
+                    user.Person.Expenses.SchoolLoan = 0;
+                    user.Person.Liabilities.SchoolLoan = 0;
+                    user.History.Add(ActionType.SchoolLoan, user.Person.Liabilities.SchoolLoan);
+                    ReduceLiabilities(bot, user);
+                    return;
+
+                case Stage.ReduceCarLoan:
+                    user.Person.Cash -= user.Person.Liabilities.CarLoan;
+                    user.Person.Expenses.CarLoan = 0;
+                    user.Person.Liabilities.CarLoan = 0;
+                    user.History.Add(ActionType.CarLoan, user.Person.Liabilities.CarLoan);
+                    ReduceLiabilities(bot, user);
+                    return;
+
+                case Stage.ReduceCreditCard:
+                    user.Person.Cash -= user.Person.Liabilities.CreditCard;
+                    user.Person.Expenses.CreditCard = 0;
+                    user.Person.Liabilities.CreditCard = 0;
+                    user.History.Add(ActionType.CreditCard, user.Person.Liabilities.CreditCard);
+                    ReduceLiabilities(bot, user);
+                    return;
+
+                case Stage.ReduceSmallCredit:
+                    user.Person.Cash -= user.Person.Liabilities.SmallCredits;
+                    user.Person.Expenses.SmallCredits = 0;
+                    user.Person.Liabilities.SmallCredits = 0;
+                    user.History.Add(ActionType.SmallCredit, user.Person.Liabilities.SmallCredits);
+                    ReduceLiabilities(bot, user);
                     return;
             }
 

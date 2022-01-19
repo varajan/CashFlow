@@ -539,11 +539,6 @@ namespace CashFlowBot
                         Actions.PayWithCreditCard(Bot, user, message.Text.Trim());
                         return;
 
-                    case Stage.ReduceMortgage:
-                    case Stage.ReduceSchoolLoan:
-                    case Stage.ReduceCarLoan:
-                    case Stage.ReduceCreditCard:
-                    case Stage.ReduceSmallCredit:
                     case Stage.ReduceBankLoan:
                         Actions.PayCredit(Bot, user, message.Text.Trim());
                         return;
