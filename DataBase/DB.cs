@@ -19,9 +19,6 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
-            Execute("DROP TABLE IF EXISTS History;");
-            Execute("DROP TABLE IF EXISTS Assets;");
-
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
@@ -32,7 +29,7 @@ namespace CashFlowBot.DataBase
             Execute($"CREATE TABLE IF NOT EXISTS {Tables.History} ({CreateColumns.History});");
     }
 
-    public static void Execute(string sql)
+    public static void Execute(string sql, bool log = false)
         {
             try
             {
@@ -41,6 +38,8 @@ namespace CashFlowBot.DataBase
 
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
+
+                if (log) Logger.Log(sql);
             }
             catch (Exception e) { e.Log(sql); }
         }

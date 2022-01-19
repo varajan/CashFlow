@@ -119,7 +119,7 @@ namespace CashFlowBot
         {
             var users = Users.AllUsers
                 .OrderBy(x => x.LastActive)
-                .Select(x => $"{(x.IsAdmin ? "A" : "")}[{x.Id}] {x.Name} - {x.FirstLogin.AsString("yyyy.MM.dd")} - {x.LastActive.AsString()}").ToList();
+                .Select(x => $"{(x.IsAdmin ? "••" : "•")}[{x.Id}] {x.Name} - {x.FirstLogin.AsString("yyyy.MM.dd")} - {x.LastActive.AsString()}").ToList();
             bot.SendMessage(user.Id, $"There are {users.Count} users.");
             bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
         }

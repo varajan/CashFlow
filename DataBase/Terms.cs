@@ -12,10 +12,21 @@ namespace CashFlowBot.DataBase
 
         static Terms()
         {
+            Logger.Log("[constructor] Terms >>>");
+
             DB.Execute($"DELETE FROM {Table}");
-            DB.Execute(Data.Terms.terms_en);
-            DB.Execute(Data.Terms.terms_ua);
-            DB.Execute(Data.Terms.terms_de);
+            Logger.Log("Clear table");
+
+            DB.Execute(Data.Terms.terms_en, true);
+            Logger.Log("English");
+
+            DB.Execute(Data.Terms.terms_ua, true);
+            Logger.Log("Ukrainian");
+
+            DB.Execute(Data.Terms.terms_de, true);
+            Logger.Log("Deutsch");
+
+            Logger.Log("[constructor] Terms <<<");
         }
 
         public static List<string> Get(int id)

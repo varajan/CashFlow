@@ -23,13 +23,13 @@ namespace CashFlowBot.Models
         public DateTime FirstLogin
         {
             get => Get("FirstLogin").ToDateTime();
-            private set => Set("FirstLogin", value.ToString("yyyy-MM-dd hh:mm", CultureInfo.InvariantCulture));
+            private set => Set("FirstLogin", value.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
         }
 
         public DateTime LastActive
         {
             get => Get("LastActive").ToDateTime();
-            set => Set("LastActive", value.ToString("yyyy-MM-dd hh:mm", CultureInfo.InvariantCulture));
+            set => Set("LastActive", value.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
         }
 
         public bool IsAdmin { get => GetInt("Admin") == 1; set => Set("Admin", value ? 1 : 0); }
