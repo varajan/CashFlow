@@ -171,12 +171,12 @@ namespace CashFlowBot
                     case "отримати гроші":
                     case "geld bekomen":
                         var buttons = user.Person.BigCircle
-                            ? new[] { "$50 000", "$100 000", "$200 000", user.Person.CurrentCashFlow.AsCurrency() }
-                            : new[] { "$1 000", "$2 000", "$5 000", user.Person.CashFlow.AsCurrency() };
+                            ? new[] { 50_000, 100_000, 200_000, user.Person.CurrentCashFlow }
+                            : new[] { 1_000, 2_000, 5_000, user.Person.CashFlow };
 
                         Actions.Ask(Bot, user, Stage.GetMoney,
                         Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
-                        user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons);
+                        user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons.Distinct().AsCurrency().ToArray());
                         return;
 
                     // Term 33: Give Money
@@ -187,10 +187,9 @@ namespace CashFlowBot
                     case "pay with cash":
                     case "оплатити готівкою":
                     case "mit bargeld zahlen":
-                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().ToArray();
+                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().Distinct().OrderBy(x => x).ToArray();
 
-                        Actions.Ask(Bot, user, Stage.GiveMoney,
-                        Terms.Get(21, user, "How much?"), giveMoney);
+                        Actions.Ask(Bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
                         return;
 
                     #region Reduce Liabilities
