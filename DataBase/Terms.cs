@@ -10,25 +10,6 @@ namespace CashFlowBot.DataBase
     {
         private static readonly string Table = DB.Tables.Terms;
 
-        static Terms()
-        {
-            Logger.Log("[constructor] Terms >>>");
-
-            DB.Execute($"DELETE FROM {Table}");
-            Logger.Log("Clear table");
-
-            DB.Execute(Data.Terms.terms_en, true);
-            Logger.Log("English");
-
-            DB.Execute(Data.Terms.terms_ua, true);
-            Logger.Log("Ukrainian");
-
-            DB.Execute(Data.Terms.terms_de, true);
-            Logger.Log("Deutsch");
-
-            Logger.Log("[constructor] Terms <<<");
-        }
-
         public static List<string> Get(int id)
         {
             var result = new List<string>();

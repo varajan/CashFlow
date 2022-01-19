@@ -4,6 +4,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using CashFlowBot.Extensions;
+using MoreLinq;
 
 namespace CashFlowBot.DataBase
 {
@@ -19,17 +20,14 @@ namespace CashFlowBot.DataBase
                 SQLiteConnection.CreateFile(DBFileName);
             }
 
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Terms} ({CreateColumns.Terms}); ");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Users} ({CreateColumns.Users}); ");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Persons} ({CreateColumns.Persons}); ");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Expenses} ({CreateColumns.Expenses});");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Liabilities} ({CreateColumns.Liabilities});");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.Assets} ({CreateColumns.Assets});");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.AvailableAssets} ({CreateColumns.AvailableAssets});");
-            Execute($"CREATE TABLE IF NOT EXISTS {Tables.History} ({CreateColumns.History});");
-    }
+            Directory
+                .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
+                .Where(file => file.ToLower().EndsWith(".sql"))
+                .Select(File.ReadAllText)
+                .ForEach(Execute);
+        }
 
-    public static void Execute(string sql, bool log = false)
+        public static void Execute(string sql)
         {
             try
             {
@@ -38,8 +36,6 @@ namespace CashFlowBot.DataBase
 
                 cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
-
-                if (log) Logger.Log(sql);
             }
             catch (Exception e) { e.Log(sql); }
         }
@@ -152,20 +148,16 @@ namespace CashFlowBot.DataBase
         {
             private static string GetDefaults(string query) => string.Join(", ", Enumerable.Repeat("''", query.Count(x => x == ',')));
 
-            public static string Terms = GetDefaults(CreateColumns.Terms);
             public static string Users = GetDefaults(CreateColumns.Users);
             public static string Persons = GetDefaults(CreateColumns.Persons);
             public static string Expenses = GetDefaults(CreateColumns.Expenses);
             public static string Liabilities = GetDefaults(CreateColumns.Liabilities);
-            public static string Assets = GetDefaults(CreateColumns.Assets);
-            public static string AvailableAssets = GetDefaults(CreateColumns.AvailableAssets);
         }
 
         public static class ColumnNames
         {
             private static string GetColumns(string query) => string.Join(", ", query.Split(',').Select(x => x.Trim().Split(' ').First()));
 
-            public static string Terms = GetColumns(CreateColumns.Terms);
             public static string Users = GetColumns(CreateColumns.Users);
             public static string Persons = GetColumns(CreateColumns.Persons);
             public static string Expenses = GetColumns(CreateColumns.Expenses);
@@ -177,8 +169,6 @@ namespace CashFlowBot.DataBase
 
         public static class CreateColumns
         {
-            public static string Terms = "ID Number, Language Text, Term Text";
-
             public static string Users = "ID Number, Stage Number, Admin Number, Name Text, Language Text, LastActive Text, FirstLogin Text";
             public static string Persons = "ID Number, Profession Text, Salary Number, Cash Number, SmallRealEstate Number, ReadyForBigCircle Number, BigCircle Number, InitialCashFlow Number";
 

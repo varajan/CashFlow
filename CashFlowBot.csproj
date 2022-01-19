@@ -15,28 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Data\Terms.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Terms.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Data\Terms.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Terms.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Data\terms_de.sql">
+    <None Update="SQL\001_create_tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\terms_en.sql">
+    <None Update="SQL\004_terms_de.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\terms_ua.sql">
+    <None Update="SQL\003_terms_en.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SQL\002_terms_ua.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
