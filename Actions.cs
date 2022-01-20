@@ -756,8 +756,9 @@ namespace CashFlowBot
                     break;
             }
 
-            if (user.Stage == Stage.ReduceBankLoan)
+            if (stage == Stage.ReduceBankLoan)
             {
+                user.Stage = stage;
                 var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash / 1000 * 1000 }
                     .Where(x => x <= user.Person.Cash && x <= cost)
                     .OrderBy(x => x)
@@ -1111,7 +1112,7 @@ namespace CashFlowBot
             user.Person.Liabilities.BankLoan -= amount;
             user.History.Add(ActionType.BankLoan, amount);
 
-            Cancel(bot, user);
+            ReduceLiabilities(bot, user);
         }
 
         public static void Cancel(TelegramBotClient bot, User user)
@@ -1128,6 +1129,8 @@ namespace CashFlowBot
 
         public static void Confirm(TelegramBotClient bot, User user)
         {
+            var person = Persons.Get(user.Id, user.Person.Profession);
+
             switch (user.Stage)
             {
                 case Stage.StopGame:
@@ -1152,7 +1155,7 @@ namespace CashFlowBot
                     user.Person.Cash -= user.Person.Liabilities.Mortgage;
                     user.Person.Expenses.Mortgage = 0;
                     user.Person.Liabilities.Mortgage = 0;
-                    user.History.Add(ActionType.Mortgage, user.Person.Liabilities.Mortgage);
+                    user.History.Add(ActionType.Mortgage, person.Liabilities.Mortgage);
                     ReduceLiabilities(bot, user);
                     return;
 
@@ -1160,7 +1163,7 @@ namespace CashFlowBot
                     user.Person.Cash -= user.Person.Liabilities.SchoolLoan;
                     user.Person.Expenses.SchoolLoan = 0;
                     user.Person.Liabilities.SchoolLoan = 0;
-                    user.History.Add(ActionType.SchoolLoan, user.Person.Liabilities.SchoolLoan);
+                    user.History.Add(ActionType.SchoolLoan, person.Liabilities.SchoolLoan);
                     ReduceLiabilities(bot, user);
                     return;
 
@@ -1168,7 +1171,7 @@ namespace CashFlowBot
                     user.Person.Cash -= user.Person.Liabilities.CarLoan;
                     user.Person.Expenses.CarLoan = 0;
                     user.Person.Liabilities.CarLoan = 0;
-                    user.History.Add(ActionType.CarLoan, user.Person.Liabilities.CarLoan);
+                    user.History.Add(ActionType.CarLoan, person.Liabilities.CarLoan);
                     ReduceLiabilities(bot, user);
                     return;
 
@@ -1176,7 +1179,7 @@ namespace CashFlowBot
                     user.Person.Cash -= user.Person.Liabilities.CreditCard;
                     user.Person.Expenses.CreditCard = 0;
                     user.Person.Liabilities.CreditCard = 0;
-                    user.History.Add(ActionType.CreditCard, user.Person.Liabilities.CreditCard);
+                    user.History.Add(ActionType.CreditCard, person.Liabilities.CreditCard);
                     ReduceLiabilities(bot, user);
                     return;
 
@@ -1184,7 +1187,7 @@ namespace CashFlowBot
                     user.Person.Cash -= user.Person.Liabilities.SmallCredits;
                     user.Person.Expenses.SmallCredits = 0;
                     user.Person.Liabilities.SmallCredits = 0;
-                    user.History.Add(ActionType.SmallCredit, user.Person.Liabilities.SmallCredits);
+                    user.History.Add(ActionType.SmallCredit, person.Liabilities.SmallCredits);
                     ReduceLiabilities(bot, user);
                     return;
             }
