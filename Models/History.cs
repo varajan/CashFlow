@@ -161,8 +161,8 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.MicroCredit:
-                    user.Person.Liabilities.SmallCredits -= amount;
-                    user.Person.Expenses.SmallCredits -= (int) (amount * 0.05);
+                    user.Person.Liabilities.CreditCard -= amount;
+                    user.Person.Expenses.CreditCard -= (int) (amount * 0.03);
                     break;
 
                 default:

@@ -936,8 +936,8 @@ namespace CashFlowBot
             var amount = value.AsCurrency();
             AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
 
-            user.Person.Liabilities.SmallCredits += amount;
-            user.Person.Expenses.SmallCredits += (int) (amount * 0.05);
+            user.Person.Liabilities.CreditCard += amount;
+            user.Person.Expenses.CreditCard += (int) (amount * 0.03);
             user.History.Add(ActionType.MicroCredit, amount);
 
             SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
