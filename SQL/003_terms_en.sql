@@ -114,7 +114,7 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (112, 'EN', 'Buy a boat'),
 (113, 'EN', 'You already have a boat.'),
 (114, 'EN', 'Boat Loan'),
-(115, 'EN', 'Pay off a boat loan. '),
+--(115, 'EN', 'Pay off a boat loan. '),
 (116, 'EN', 'Boat'),
 (117, 'EN', 'You''ve bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}'),
 

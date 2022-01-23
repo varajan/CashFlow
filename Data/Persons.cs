@@ -40,7 +40,7 @@ namespace CashFlowBot.Data
         public static DefaultPerson Get(long userId, string profession)
         {
             var persons = Get(userId);
-            var professionCode = Enumerable.Range(1000, persons.Length).First(code => DataBase.Terms.Get(code).Contains(profession));
+            var professionCode = Enumerable.Range(1001, persons.Length).First(code => DataBase.Terms.Get(code).Contains(profession));
             return persons.First(x => DataBase.Terms.Get(professionCode).Contains(x.Profession));
         }
 

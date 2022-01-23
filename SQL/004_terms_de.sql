@@ -114,7 +114,7 @@
 (112, 'DE', 'Boot kaufen'),
 (113, 'DE', 'Sie haben schon ein Boot.'),
 (114, 'DE', 'Bootredit'),
-(115, 'DE', 'Einen Bootkredit abbezahlen. '),
+--(115, 'DE', 'Einen Bootkredit abbezahlen. '),
 (116, 'DE', 'Boot'),
 (117, 'DE', 'Sie haben ein Boot für {0} gekauft, erste Zahlung ist {1}, monatliche Zahlung ist {2}'),
 

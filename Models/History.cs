@@ -230,6 +230,7 @@ namespace CashFlowBot.Models
                     case ActionType.CreditCard:
                     case ActionType.SmallCredit:
                     case ActionType.BankLoan:
+                    case ActionType.PayOffBoat:
                         var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
                         var type = Terms.Get((int)Action, UserId, "Liability");
                         var amount = Value.AsCurrency();
@@ -260,9 +261,6 @@ namespace CashFlowBot.Models
                     case ActionType.BuyBoat:
                         var buyBoat = Terms.Get(112, UserId, "Buy a boat");
                         return $"{buyBoat}: {Value.AsCurrency()}";
-
-                    case ActionType.PayOffBoat:
-                        return Terms.Get(115, UserId, "Pay off a boat loan. ") + Value.AsCurrency();
 
                     default:
                         return $"<{Action}> - {Value}";

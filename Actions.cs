@@ -949,7 +949,11 @@ namespace CashFlowBot
                 return;
             }
 
-            if (user.Person.Cash < firstPayment) user.GetCredit(firstPayment);
+            if (user.Person.Cash < firstPayment)
+            {
+                user.GetCredit(firstPayment);
+                bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", firstPayment.AsCurrency()));
+            }
 
             boat = user.Person.Assets.Add(Terms.Get(116, user.Id, "Boat"), AssetType.Boat);
 

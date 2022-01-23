@@ -26,6 +26,6 @@
         Stocks1To2 = 83,
         MicroCredit,
         BuyBoat = 112,
-        PayOffBoat,
+        PayOffBoat = 114,
     }
 }
