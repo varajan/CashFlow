@@ -59,7 +59,7 @@
 (57, 'DE', 'Sie haben bereits drei Kinder. Sie brauchen keinen mehr.'),
 (58, 'DE', 'Steuern'),
 (59, 'DE', 'Hypotheken/Mietzinsen'),
-(60, 'DE', 'Andere Zahlung'),
+(60, 'DE', 'Andere Zahlungen'),
 (61, 'DE', 'Kindern'),
 (62, 'DE', 'Kindernausgaben'),
 (63, 'DE', 'pro Kind'),

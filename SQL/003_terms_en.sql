@@ -59,7 +59,7 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (57, 'EN', 'You''re lucky parent of three children. You don''t need one more.'),
 (58, 'EN', 'Taxes'),
 (59, 'EN', 'Mortgage/Rent Pay'),
-(60, 'EN', 'Other Payment'),
+(60, 'EN', 'Other Payments'),
 (61, 'EN', 'Children'),
 (62, 'EN', 'Children Expenses'),
 (63, 'EN', 'per child'),
@@ -113,6 +113,8 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (111, 'EN', 'No records found.'),
 (112, 'EN', 'Buy a boat'),
 (113, 'EN', 'You already have a boat.'),
+(114, 'EN', 'Boat Loan'),
+(115, 'EN', 'Pay off a boat loan. '),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

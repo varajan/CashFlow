@@ -241,6 +241,12 @@ namespace CashFlowBot
                     case "bankkredit":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
+
+                    // todo
+                    // Term 114: Boat Loan
+                    case "boat loan":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceBoatLoan);
+                        return;
                     #endregion
 
                     // Term 90: Charity - Pay 10%

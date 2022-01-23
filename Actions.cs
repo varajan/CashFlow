@@ -754,6 +754,10 @@ namespace CashFlowBot
                 case Stage.ReduceBankLoan:
                     cost = user.Person.Liabilities.BankLoan;
                     break;
+
+                case Stage.ReduceBoatLoan:
+                    cost = user.Person.Assets.Boat.Mortgage;
+                    break;
             }
 
             if (stage == Stage.ReduceBankLoan)
@@ -797,6 +801,7 @@ namespace CashFlowBot
             var creditCard = Terms.Get(46, user, "Credit Card");
             var smallCredit = Terms.Get(92, user, "Small Credit");
             var bankLoan = Terms.Get(47, user, "Bank Loan");
+            var boatLoan = Terms.Get(114, user, "Boat Loan"); // todo
 
             if (l.Mortgage > 0)
             {
@@ -832,6 +837,13 @@ namespace CashFlowBot
             {
                 buttons.Add(bankLoan);
                 liabilities += $"*{bankLoan}:* {l.BankLoan.AsCurrency()} - {x.BankLoan.AsCurrency()} {monthly}{Environment.NewLine}";
+            }
+
+            var boat = user.Person.Assets.Boat;
+            if (boat != null && boat.CashFlow != 0)
+            {
+                buttons.Add(boatLoan);
+                liabilities += $"*{boatLoan}:* {boat.Mortgage.AsCurrency()} - {Math.Abs(boat.CashFlow).AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (buttons.Any())
@@ -950,7 +962,7 @@ namespace CashFlowBot
 
             user.Person.Cash -= firstPayment;
             user.History.Add(ActionType.BuyBoat, boat.Price);
-            bot.SendMessage(user.Id, $"You've bot a boat for {boat.Price.AsCurrency()} in credit, first payment is {firstPayment.AsCurrency()}, monthly payment is {boat.CashFlow.AsCurrency()}"); // todo
+            bot.SendMessage(user.Id, $"You've bot a boat for {boat.Price.AsCurrency()} in credit, first payment is {firstPayment.AsCurrency()}, monthly payment is {Math.Abs(boat.CashFlow).AsCurrency()}"); // todo
 
             Cancel(bot, user);
         }
@@ -1220,6 +1232,15 @@ namespace CashFlowBot
                     user.Person.Expenses.SmallCredits = 0;
                     user.Person.Liabilities.SmallCredits = 0;
                     user.History.Add(ActionType.SmallCredit, person.Liabilities.SmallCredits);
+                    ReduceLiabilities(bot, user);
+                    return;
+
+                case Stage.ReduceBoatLoan:
+                    var boat = user.Person.Assets.Boat;
+                    
+                    user.Person.Cash -= boat.Mortgage;
+                    user.History.Add(ActionType.PayOffBoat, boat.Mortgage);
+                    boat.CashFlow = 0;
                     ReduceLiabilities(bot, user);
                     return;
             }
