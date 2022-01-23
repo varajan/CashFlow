@@ -38,5 +38,7 @@
         RealEstateBigBuyPrice,
         RealEstateBigFirstPayment,
         RealEstateBigCashFlow,
+
+        Boat
     }
 }

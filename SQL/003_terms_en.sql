@@ -111,6 +111,8 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (109, 'EN', 'Rollback last action'),
 (110, 'EN', 'Are you sure want to rollback last action?'),
 (111, 'EN', 'No records found.'),
+(112, 'EN', 'Buy a boat'),
+(113, 'EN', 'You already have a boat.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

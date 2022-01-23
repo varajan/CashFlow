@@ -165,6 +165,10 @@ namespace CashFlowBot.Models
                     user.Person.Expenses.CreditCard -= (int) (amount * 0.03);
                     break;
 
+                case ActionType.BuyBoat:
+                    user.Person.Assets.Boat.Delete();
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -246,6 +250,10 @@ namespace CashFlowBot.Models
 
                     case ActionType.MicroCredit:
                         return Terms.Get(96, UserId, "Pay with Credit Card") + " - " + Value.AsCurrency();
+
+                    case ActionType.BuyBoat:
+                        var buyBoat = Terms.Get(112, UserId, "Buy a boat");
+                        return $"{buyBoat}. {Value.AsCurrency()}";
 
                     default:
                         return $"<{Action}> - {Value}";

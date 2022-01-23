@@ -343,10 +343,16 @@ namespace CashFlowBot
                         return;
 
                     // Term 96: Pay with Credit Card
-                    case "Pay with Credit Card":
+                    case "pay with credit card":
                     case "оплатити кредиткою":
                     case "mit kreditkarte zahlen":
                         Actions.PayWithCreditCard(Bot, user);
+                        return;
+
+                    // todo
+                    // Term 112: Buy a boat
+                    case "buy a boat":
+                        Actions.BuyBoat(Bot, user);
                         return;
 
                     #endregion

@@ -894,6 +894,7 @@ namespace CashFlowBot
                 {
                     new List<KeyboardButton>{Terms.Get(95, user, "Pay with Cash")},
                     new List<KeyboardButton>{Terms.Get(96, user, "Pay with Credit Card")},
+                    new List<KeyboardButton>{Terms.Get(112, user, "Buy a boat")},
                     new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
                 }
             };
@@ -921,6 +922,37 @@ namespace CashFlowBot
             user.Stage = Stage.Nothing;
 
             await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static void BuyBoat(TelegramBotClient bot, User user)
+        {
+            const int firstPayment = 1_000;
+
+            var boat = user.Person.Assets.Boat;
+
+            if (boat != null)
+            {
+                // todo term
+                bot.SendMessage(user.Id, Terms.Get(113, user, "You already have a boat."));
+                Cancel(bot, user);
+                return;
+            }
+
+            if (user.Person.Cash < firstPayment) user.GetCredit(firstPayment);
+
+            // todo
+            boat = user.Person.Assets.Add("Boat", AssetType.Boat);
+
+            boat.CashFlow = -340;
+            boat.Price = 18_000;
+            boat.Mortgage = 17_000;
+            boat.IsDraft = false;
+
+            user.Person.Cash -= firstPayment;
+            user.History.Add(ActionType.BuyBoat, boat.Price);
+            bot.SendMessage(user.Id, $"You've bot a boat for {boat.Price.AsCurrency()} in credit, first payment is {firstPayment.AsCurrency()}, monthly payment is {boat.CashFlow.AsCurrency()}"); // todo
+
+            Cancel(bot, user);
         }
 
         public static void PayWithCreditCard(TelegramBotClient bot, User user)

@@ -24,6 +24,7 @@
         SellStocks = 36,
         Stocks2To1 = 82,
         Stocks1To2 = 83,
-        MicroCredit
+        MicroCredit,
+        BuyBoat = 112
     }
 }
