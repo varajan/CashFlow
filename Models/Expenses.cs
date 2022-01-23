@@ -27,7 +27,7 @@ namespace CashFlowBot.Models
         public int ChildrenExpenses => Children * PerChild;
 
         private Asset Boat => new User(Id).Person.Assets.Boat;
-        private int BoatLoan => Math.Abs(Boat?.CashFlow ?? 0);
+        private int BoatLoan => Boat?.CashFlow ?? 0;
 
         public string Description
         {

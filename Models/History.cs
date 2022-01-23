@@ -166,11 +166,13 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.BuyBoat:
+                    user.Person.Cash += 1_000;
                     user.Person.Assets.Boat.Delete();
                     break;
 
                 case ActionType.PayOffBoat:
-                    user.Person.Assets.Boat.CashFlow = -340;
+                    user.Person.Cash += amount;
+                    user.Person.Assets.Boat.CashFlow = 340;
                     break;
 
                 default:
@@ -257,7 +259,7 @@ namespace CashFlowBot.Models
 
                     case ActionType.BuyBoat:
                         var buyBoat = Terms.Get(112, UserId, "Buy a boat");
-                        return $"{buyBoat}. {Value.AsCurrency()}";
+                        return $"{buyBoat}: {Value.AsCurrency()}";
 
                     case ActionType.PayOffBoat:
                         return Terms.Get(115, UserId, "Pay off a boat loan. ") + Value.AsCurrency();

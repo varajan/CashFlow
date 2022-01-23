@@ -111,6 +111,12 @@
 (109, 'DE', 'Rollback der letzten Transaktion'),
 (110, 'DE', 'Möchten Sie die letzte Transaktion wirklich rückgängig machen?'),
 (111, 'DE', 'Nichts zu zeigen'),
+(112, 'DE', 'Boot kaufen'),
+(113, 'DE', 'Sie haben schon ein Boot.'),
+(114, 'DE', 'Bootredit'),
+(115, 'DE', 'Einen Bootkredit abbezahlen. '),
+(116, 'DE', 'Boot'),
+(117, 'DE', 'Sie haben ein Boot für {0} gekauft, erste Zahlung ist {1}, monatliche Zahlung ist {2}'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

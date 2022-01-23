@@ -801,7 +801,7 @@ namespace CashFlowBot
             var creditCard = Terms.Get(46, user, "Credit Card");
             var smallCredit = Terms.Get(92, user, "Small Credit");
             var bankLoan = Terms.Get(47, user, "Bank Loan");
-            var boatLoan = Terms.Get(114, user, "Boat Loan"); // todo
+            var boatLoan = Terms.Get(114, user, "Boat Loan");
 
             if (l.Mortgage > 0)
             {
@@ -843,7 +843,7 @@ namespace CashFlowBot
             if (boat != null && boat.CashFlow != 0)
             {
                 buttons.Add(boatLoan);
-                liabilities += $"*{boatLoan}:* {boat.Mortgage.AsCurrency()} - {Math.Abs(boat.CashFlow).AsCurrency()} {monthly}{Environment.NewLine}";
+                liabilities += $"*{boatLoan}:* {boat.Mortgage.AsCurrency()} - {boat.CashFlow.AsCurrency()} {monthly}{Environment.NewLine}";
             }
 
             if (buttons.Any())
@@ -944,7 +944,6 @@ namespace CashFlowBot
 
             if (boat != null)
             {
-                // todo term
                 bot.SendMessage(user.Id, Terms.Get(113, user, "You already have a boat."));
                 Cancel(bot, user);
                 return;
@@ -952,17 +951,20 @@ namespace CashFlowBot
 
             if (user.Person.Cash < firstPayment) user.GetCredit(firstPayment);
 
-            // todo
-            boat = user.Person.Assets.Add("Boat", AssetType.Boat);
+            boat = user.Person.Assets.Add(Terms.Get(116, user.Id, "Boat"), AssetType.Boat);
 
-            boat.CashFlow = -340;
+            boat.CashFlow = 340;
             boat.Price = 18_000;
             boat.Mortgage = 17_000;
             boat.IsDraft = false;
 
             user.Person.Cash -= firstPayment;
             user.History.Add(ActionType.BuyBoat, boat.Price);
-            bot.SendMessage(user.Id, $"You've bot a boat for {boat.Price.AsCurrency()} in credit, first payment is {firstPayment.AsCurrency()}, monthly payment is {Math.Abs(boat.CashFlow).AsCurrency()}"); // todo
+
+            var message = Terms.Get(117, user.Id,
+            "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
+            boat.Price.AsCurrency(), firstPayment.AsCurrency(), boat.CashFlow.AsCurrency());
+            bot.SendMessage(user.Id, message);
 
             Cancel(bot, user);
         }

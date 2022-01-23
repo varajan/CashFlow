@@ -242,9 +242,10 @@ namespace CashFlowBot
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
 
-                    // todo
                     // Term 114: Boat Loan
                     case "boat loan":
+                    case "bootredit":
+                    case "кредит за катер":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBoatLoan);
                         return;
                     #endregion
@@ -355,9 +356,10 @@ namespace CashFlowBot
                         Actions.PayWithCreditCard(Bot, user);
                         return;
 
-                    // todo
                     // Term 112: Buy a boat
                     case "buy a boat":
+                    case "boot kaufen":
+                    case "купити катер":
                         Actions.BuyBoat(Bot, user);
                         return;
 
