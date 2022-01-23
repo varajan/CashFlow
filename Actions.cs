@@ -69,11 +69,11 @@ namespace CashFlowBot
             all ? "Clear ALL" : $"Clear {assetType}", "Back");
 
             List<string> GetAssets(AssetType type) =>
-                        AvailableAssets.Get(type)
-                            .Select(x => x.ToInt() == 0
-                                ? $"*{type}*: '{x}'"
-                                : $"*{type}*: '{x}' - '{x.ToInt().AsCurrency()}'")
-                            .ToList();
+                AvailableAssets.Get(type)
+                    .Select(x => x.ToInt() == 0
+                        ? $"*{type}*: '{x}'"
+                        : $"*{type}*: '{x}' - '{x.ToInt().AsCurrency()}'")
+                    .ToList();
         }
 
         public static void ClearAvailableAssets(TelegramBotClient bot, User user, string value)
@@ -158,12 +158,30 @@ namespace CashFlowBot
 
                     if (user.Person.Cash < number)
                     {
-                        SmallCircleButtons(bot, user, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        asset.Price = number;
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
                     asset.Price = number;
                     user.Person.Cash -= number;
+                    asset.IsDraft = false;
+                    user.History.Add(ActionType.BuyLand, asset.Id);
+
+                    AvailableAssets.Add(asset.Title, AssetType.LandTitle);
+                    AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+
+                case Stage.BuyLandCredit:
+                    var delta = asset.Price - user.Person.Cash;
+                    var credit = (int) Math.Ceiling(delta / 1_000d) * 1_000;
+
+                    user.GetCredit(credit);
+                    user.Person.Cash -= asset.Price;
                     asset.IsDraft = false;
                     user.History.Add(ActionType.BuyLand, asset.Id);
 
