@@ -520,10 +520,17 @@ namespace CashFlowBot
                             if (count > 0) assets.Add($"{type} - {count}");
                         }
 
-                        Actions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
-                        assets.Append("All").Append("Back").ToArray());
+                        if (assets.Any())
+                        {
+                            Actions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
+                            assets.Append("All").Append("Back").ToArray());
+                            return;
+                        }
+
+                        Bot.SendMessage(user.Id, "There is no available assets.");
+                        Actions.AdminMenu(Bot, user);
                         return;
-                    #endregion
+                        #endregion
                 }
 
                 switch (user.Stage)

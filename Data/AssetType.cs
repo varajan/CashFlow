@@ -2,43 +2,39 @@
 {
     public enum AssetType
     {
-        Stock,
-        StockPrice,
-        SmallGiveMoney,
-        BigGiveMoney,
+        Stock = 1,
+        StockPrice = 2,
+        SmallGiveMoney = 3,
+        BigGiveMoney = 4,
 
-        Land,
-        LandType,
-        LandPrice,
+        LandTitle = 5,
+        LandBuyPrice = 6,
+        LandSellPrice = 7,
 
-        MicroCreditAmount,
-        MicroCreditMonthly,
+        MicroCreditAmount = 8,
+        Business = 9,
 
-        Business,
+        SmallBusinessType = 10,
+        SmallBusinessBuyPrice = 11,
+        SmallBusinessFirstPayment = 12,
+        SmallBusinessCashFlow = 13,
 
-        SmallBusinessType,
-        SmallBusinessBuyPrice,
-        SmallBusinessSellPrice,
-        SmallBusinessFirstPayment,
-        SmallBusinessCashFlow,
+        BigBusinessType = 14,
+        BigBusinessBuyPrice  = 15,
+        BigBusinessSellPrice = 16,
+        BigBusinessCashFlow  = 17,
 
-        BigBusinessType,
-        BigBusinessBuyPrice,
-        BigBusinessSellPrice,
-        BigBusinessFirstPayment,
-        BigBusinessCashFlow,
+        RealEstate = 17,
+        RealEstateSmallType = 18,
+        RealEstateSmallBuyPrice = 19,
+        RealEstateSellPrice = 20,
+        RealEstateSmallFirstPayment = 21,
+        RealEstateSmallCashFlow = 22,
+        RealEstateBigType = 23,
+        RealEstateBigBuyPrice = 24,
+        RealEstateBigFirstPayment = 25,
+        RealEstateBigCashFlow = 26,
 
-        RealEstate,
-        RealEstateSmallType,
-        RealEstateSmallBuyPrice,
-        RealEstateSellPrice,
-        RealEstateSmallFirstPayment,
-        RealEstateSmallCashFlow,
-        RealEstateBigType,
-        RealEstateBigBuyPrice,
-        RealEstateBigFirstPayment,
-        RealEstateBigCashFlow,
-
-        Boat
+        Boat = 27
     }
 }

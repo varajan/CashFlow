@@ -37,7 +37,7 @@ namespace CashFlowBot.Models
                         ? $"*{Title}* - {price}: {SellPrice.AsCurrency()}"
                         : $"*{Title}* - {price}: {Price.AsCurrency()}, {mortgage}: {Mortgage.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()}";
 
-                    case AssetType.Land:
+                    case AssetType.LandTitle:
                         return IsDeleted
                             ? $"*{Title}* - {price}: {SellPrice.AsCurrency()}"
                             : $"*{Title}* - {price}: {Price.AsCurrency()}";
