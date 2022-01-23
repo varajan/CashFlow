@@ -24,6 +24,7 @@ namespace CashFlowBot.Models
         public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
         public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == ThisUser.Person.BigCircle).ToList();
         public List<Asset> Lands => Items.Where(x => x.Type == AssetType.Land).ToList();
+        public Asset Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
 
         public List<Asset> Items =>
             DB.GetColumn($"SELECT AssetID FROM Assets WHERE UserID = {Id}")

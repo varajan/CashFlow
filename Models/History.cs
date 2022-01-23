@@ -161,8 +161,18 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.MicroCredit:
-                    user.Person.Liabilities.SmallCredits -= amount;
-                    user.Person.Expenses.SmallCredits -= (int) (amount * 0.05);
+                    user.Person.Liabilities.CreditCard -= amount;
+                    user.Person.Expenses.CreditCard -= (int) (amount * 0.03);
+                    break;
+
+                case ActionType.BuyBoat:
+                    user.Person.Cash += 1_000;
+                    user.Person.Assets.Boat.Delete();
+                    break;
+
+                case ActionType.PayOffBoat:
+                    user.Person.Cash += amount;
+                    user.Person.Assets.Boat.CashFlow = 340;
                     break;
 
                 default:
@@ -220,6 +230,7 @@ namespace CashFlowBot.Models
                     case ActionType.CreditCard:
                     case ActionType.SmallCredit:
                     case ActionType.BankLoan:
+                    case ActionType.PayOffBoat:
                         var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
                         var type = Terms.Get((int)Action, UserId, "Liability");
                         var amount = Value.AsCurrency();
@@ -246,6 +257,10 @@ namespace CashFlowBot.Models
 
                     case ActionType.MicroCredit:
                         return Terms.Get(96, UserId, "Pay with Credit Card") + " - " + Value.AsCurrency();
+
+                    case ActionType.BuyBoat:
+                        var buyBoat = Terms.Get(112, UserId, "Buy a boat");
+                        return $"{buyBoat}: {Value.AsCurrency()}";
 
                     default:
                         return $"<{Action}> - {Value}";

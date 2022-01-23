@@ -23,6 +23,7 @@
         ReduceCreditCard = 46,
         ReduceSmallCredit = 92,
         ReduceBankLoan,
+        ReduceBoatLoan = 114,
         Stocks2to1,
         Stocks1to2,
         BuyStocksTitle,

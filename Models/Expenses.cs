@@ -10,7 +10,7 @@ namespace CashFlowBot.Models
     {
         public Expenses(long id) : base(id, "Expenses") { }
 
-        public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses;
+        public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses + BoatLoan;
 
         public int Taxes { get => GetInt("Taxes"); set => Set("Taxes", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
@@ -26,6 +26,9 @@ namespace CashFlowBot.Models
         public int PerChild { get => GetInt("PerChild"); set => Set("PerChild", value); }
         public int ChildrenExpenses => Children * PerChild;
 
+        private Asset Boat => new User(Id).Person.Assets.Boat;
+        private int BoatLoan => Boat?.CashFlow ?? 0;
+
         public string Description
         {
             get
@@ -38,7 +41,8 @@ namespace CashFlowBot.Models
                 var creditCardTerm = Terms.Get(46, Id, "Credit Card");
                 var smallCreditsTerm = Terms.Get(92, Id, "Small Credit");
                 var bankLoanTerm = Terms.Get(47, Id, "Bank Loan");
-                var otherPaymentTerm = Terms.Get(60, Id, "Other Payment");
+                var boatLoanTerm = Terms.Get(114, Id, "Boat Loan");
+                var otherPaymentTerm = Terms.Get(60, Id, "Other Payments");
                 var childrenTerm = Terms.Get(61, Id, "Children");
                 var childrenExpensesTerm = Terms.Get(62, Id, "Children Expenses");
                 var perChildTerm = Terms.Get(63, Id, "per child");
@@ -51,6 +55,7 @@ namespace CashFlowBot.Models
                 if (CreditCard > 0) expenses += $"*{creditCardTerm}:* {CreditCard.AsCurrency()}{Environment.NewLine}";
                 if (SmallCredits > 0) expenses += $"*{smallCreditsTerm}:* {SmallCredits.AsCurrency()}{Environment.NewLine}";
                 if (BankLoan > 0) expenses += $"*{bankLoanTerm}:* {BankLoan.AsCurrency()}{Environment.NewLine}";
+                if (BoatLoan > 0) expenses += $"*{boatLoanTerm}:* {BoatLoan.AsCurrency()}{Environment.NewLine}";
                 expenses += $"*{otherPaymentTerm}:* {Others.AsCurrency()}{Environment.NewLine}";
                 if (ChildrenExpenses > 0) expenses += $"*{childrenTerm}:* {Children} ({PerChild.AsCurrency()} {perChildTerm}){Environment.NewLine}";
                 if (ChildrenExpenses > 0) expenses += $"*{childrenExpensesTerm}:* {ChildrenExpenses.AsCurrency()}{Environment.NewLine}";

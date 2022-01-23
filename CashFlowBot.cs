@@ -241,6 +241,13 @@ namespace CashFlowBot
                     case "bankkredit":
                         Actions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
                         return;
+
+                    // Term 114: Boat Loan
+                    case "boat loan":
+                    case "bootredit":
+                    case "кредит за катер":
+                        Actions.ReduceLiabilities(Bot, user, Stage.ReduceBoatLoan);
+                        return;
                     #endregion
 
                     // Term 90: Charity - Pay 10%
@@ -343,10 +350,17 @@ namespace CashFlowBot
                         return;
 
                     // Term 96: Pay with Credit Card
-                    case "Pay with Credit Card":
+                    case "pay with credit card":
                     case "оплатити кредиткою":
                     case "mit kreditkarte zahlen":
                         Actions.PayWithCreditCard(Bot, user);
+                        return;
+
+                    // Term 112: Buy a boat
+                    case "buy a boat":
+                    case "boot kaufen":
+                    case "купити катер":
+                        Actions.BuyBoat(Bot, user);
                         return;
 
                     #endregion
