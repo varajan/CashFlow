@@ -41,6 +41,7 @@
         BuyBusinessCredit,
         BuyLandTitle,
         BuyLandPrice,
+        BuyLandCredit,
         Sell,
         SellStocksTitle,
         SellStocksPrice,

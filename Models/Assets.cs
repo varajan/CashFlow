@@ -23,7 +23,7 @@ namespace CashFlowBot.Models
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
         public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
         public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == ThisUser.Person.BigCircle).ToList();
-        public List<Asset> Lands => Items.Where(x => x.Type == AssetType.Land).ToList();
+        public List<Asset> Lands => Items.Where(x => x.Type == AssetType.LandTitle).ToList();
         public Asset Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
 
         public List<Asset> Items =>

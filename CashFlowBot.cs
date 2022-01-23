@@ -161,6 +161,11 @@ namespace CashFlowBot
                                 Actions.BuyBusiness(Bot, user, string.Empty);
                                 return;
 
+                            case Stage.BuyLandPrice:
+                                user.Stage = Stage.BuyLandCredit;
+                                Actions.BuyLand(Bot, user, string.Empty);
+                                return;
+
                             default:
                                 Actions.GetCredit(Bot, user);
                                 return;
@@ -520,10 +525,17 @@ namespace CashFlowBot
                             if (count > 0) assets.Add($"{type} - {count}");
                         }
 
-                        Actions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
-                        assets.Append("All").Append("Back").ToArray());
+                        if (assets.Any())
+                        {
+                            Actions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
+                            assets.Append("All").Append("Back").ToArray());
+                            return;
+                        }
+
+                        Bot.SendMessage(user.Id, "There is no available assets.");
+                        Actions.AdminMenu(Bot, user);
                         return;
-                    #endregion
+                        #endregion
                 }
 
                 switch (user.Stage)

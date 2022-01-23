@@ -18,6 +18,9 @@
     <None Update="SQL\001_create_tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="SQL\010_available_assets.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="SQL\004_terms_de.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -58,39 +58,36 @@ namespace CashFlowBot
 
         public static void ShowAvailableAssets(TelegramBotClient bot, User user, string value)
         {
-            if (value == "All")
-            {
-                var assets = new List<string>();
+            var all = value.Equals("All");
+            var assetType = all ? AssetType.Boat : value.SubStringTo("-").Trim().ParseEnum<AssetType>();
+            var assets = all
+                ? Enum.GetValues(typeof(AssetType)).Cast<AssetType>().SelectMany(GetAssets)
+                : GetAssets(assetType);
 
-                foreach (var type in Enum.GetValues(typeof(AssetType)))
-                {
-                    var assetType = type.ToString().ParseEnum<AssetType>();
-                    var count = AvailableAssets.Get(assetType).Count;
+            user.Stage = Stage.AdminAvailableAssetsClear;
+            bot.SetButtons(user.Id, string.Join(Environment.NewLine, assets),
+            all ? "Clear ALL" : $"Clear {assetType}", "Back");
 
-                    if (count > 0)
-                    {
-                        assets.AddRange(AvailableAssets.Get(assetType).Select(x => $"*{assetType}*: '{x}' - '{x.ToInt().AsCurrency()}'"));
-                    }
-                }
-
-                bot.SendMessage(user.Id, string.Join(Environment.NewLine, assets));
-                user.Stage = Stage.Admin;
-                AdminMenu(bot, user);
-            }
-            else
-            {
-                var assetType = value.SubStringTo("-").Trim().ParseEnum<AssetType>();
-                var assets = AvailableAssets.Get(assetType).Select(x => $"'{x}' - '{x.ToInt().AsCurrency()}'");
-
-                user.Stage = Stage.AdminAvailableAssetsClear;
-                bot.SetButtons(user.Id, string.Join(Environment.NewLine, assets), $"Clear {assetType}", "Back");
-            }
+            List<string> GetAssets(AssetType type) =>
+                AvailableAssets.Get(type)
+                    .Select(x => x.ToInt() == 0
+                        ? $"*{type}*: '{x}'"
+                        : $"*{type}*: '{x}' - '{x.ToInt().AsCurrency()}'")
+                    .ToList();
         }
 
         public static void ClearAvailableAssets(TelegramBotClient bot, User user, string value)
         {
-            var assetType = value.Split(" ").Last().ParseEnum<AssetType>();
-            AvailableAssets.Clear(assetType);
+            if (value.Equals("Clear ALL"))
+            {
+                AvailableAssets.ClearAll();
+            }
+            else
+            {
+                var type = value.Split(" ").Last().ParseEnum<AssetType>();
+                AvailableAssets.Clear(type);
+            }
+
             AdminMenu(bot, user);
         }
 
@@ -126,7 +123,7 @@ namespace CashFlowBot
 
         public static void BuyLand(TelegramBotClient bot, User user)
         {
-            var landTypes = AvailableAssets.Get(AssetType.LandType).ToArray();
+            var landTypes = AvailableAssets.Get(AssetType.LandTitle).ToArray();
 
             if (user.Person.Cash == 0)
             {
@@ -142,8 +139,8 @@ namespace CashFlowBot
         {
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
-            var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.Land);
-            var prices = AvailableAssets.Get(AssetType.LandPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.LandTitle);
+            var prices = AvailableAssets.Get(AssetType.LandBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -161,7 +158,10 @@ namespace CashFlowBot
 
                     if (user.Person.Cash < number)
                     {
-                        SmallCircleButtons(bot, user, Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency()));
+                        asset.Price = number;
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
@@ -170,8 +170,23 @@ namespace CashFlowBot
                     asset.IsDraft = false;
                     user.History.Add(ActionType.BuyLand, asset.Id);
 
-                    AvailableAssets.Add(asset.Title, AssetType.LandType);
-                    AvailableAssets.Add(asset.Price, AssetType.LandPrice);
+                    AvailableAssets.Add(asset.Title, AssetType.LandTitle);
+                    AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+
+                case Stage.BuyLandCredit:
+                    var delta = asset.Price - user.Person.Cash;
+                    var credit = (int) Math.Ceiling(delta / 1_000d) * 1_000;
+
+                    user.GetCredit(credit);
+                    user.Person.Cash -= asset.Price;
+                    asset.IsDraft = false;
+                    user.History.Add(ActionType.BuyLand, asset.Id);
+
+                    AvailableAssets.Add(asset.Title, AssetType.LandTitle);
+                    AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -320,7 +335,7 @@ namespace CashFlowBot
         public static void SellLand(TelegramBotClient bot, User user, string value)
         {
             var lands = user.Person.Assets.Lands;
-            var prices = AvailableAssets.Get(AssetType.LandPrice)
+            var prices = AvailableAssets.Get(AssetType.LandSellPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
@@ -346,7 +361,7 @@ namespace CashFlowBot
                     user.Person.Cash += price;
                     land.Sell(ActionType.SellLand, price);
 
-                    AvailableAssets.Add(price, AssetType.LandPrice);
+                    AvailableAssets.Add(price, AssetType.LandSellPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -866,7 +881,7 @@ namespace CashFlowBot
                 {
                     new List<KeyboardButton> {Terms.Get(35, user, "Buy Stocks"), Terms.Get(36, user, "Sell Stocks")},
                     new List<KeyboardButton> {Terms.Get(82, user, "Stocks 2 to 1"), Terms.Get(83, user, "Stocks 1 to 2")},
-                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate")},
+                    new List<KeyboardButton>{Terms.Get(37, user, "Buy Real Estate"), Terms.Get(94, user, "Buy Land") },
                     new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
                 }
             };
@@ -1107,6 +1122,15 @@ namespace CashFlowBot
         public static void GiveMoney(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
+
+            if (!user.Person.BigCircle && user.Person.Cash < amount)
+            {
+                var delta = amount - user.Person.Cash;
+                var credit = (int) Math.Ceiling(delta / 1_000d) * 1_000;
+
+                user.GetCredit(credit);
+                bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
+            }
 
             if (user.Person.Cash < amount)
             {
