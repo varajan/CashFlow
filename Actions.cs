@@ -1123,6 +1123,15 @@ namespace CashFlowBot
         {
             var amount = value.AsCurrency();
 
+            if (!user.Person.BigCircle && user.Person.Cash < amount)
+            {
+                var delta = amount - user.Person.Cash;
+                var credit = (int) Math.Ceiling(delta / 1_000d) * 1_000;
+
+                user.GetCredit(credit);
+                bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
+            }
+
             if (user.Person.Cash < amount)
             {
                 bot.SendMessage(user.Id, Terms.Get(23, user, "You don''t have {0}, but only {1}", amount.AsCurrency(), user.Person.Cash.AsCurrency()));
