@@ -14,10 +14,13 @@
         MicroCreditAmount = 8,
         Business = 9,
 
-        SmallBusinessType = 10,
-        SmallBusinessBuyPrice = 11,
-        SmallBusinessFirstPayment = 12,
-        SmallBusinessCashFlow = 13,
+        SmallBusinessType = 28,
+        SmallBusinessBuyPrice = 29,
+
+        BusinessType = 10,
+        BusinessBuyPrice = 11,
+        BusinessFirstPayment = 12,
+        BusinessCashFlow = 13,
 
         BigBusinessType = 14,
         BigBusinessBuyPrice  = 15,

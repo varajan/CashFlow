@@ -27,5 +27,7 @@
         MicroCredit,
         BuyBoat = 112,
         PayOffBoat = 114,
+        StartCompany = 115,
+        IncreaseCashFlow = 118,
     }
 }

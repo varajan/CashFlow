@@ -161,6 +161,11 @@ namespace CashFlowBot
                                 Actions.BuyBusiness(Bot, user, string.Empty);
                                 return;
 
+                            case Stage.StartCompanyPrice:
+                                user.Stage = Stage.StartCompanyCredit;
+                                Actions.StartCompany(Bot, user, string.Empty);
+                                return;
+
                             case Stage.BuyLandPrice:
                                 user.Stage = Stage.BuyLandCredit;
                                 Actions.BuyLand(Bot, user, string.Empty);
@@ -275,6 +280,13 @@ namespace CashFlowBot
 
                     #region Small opportunities
 
+                    // Term 115: Start a company
+                    case "start a company":
+                    case "заснувати компанію":
+                    case "gründe eine firma":
+                        Actions.StartCompany(Bot, user);
+                        return;
+
                     // Term 81: Small Opportunity
                     case "small opportunity":
                     case "мала можливість":
@@ -303,18 +315,18 @@ namespace CashFlowBot
                         Actions.BuyRealEstate(Bot, user);
                         return;
 
-                    // Term 82: Stocks 2 to 1
-                    case "stocks 2 to 1":
-                    case "акції 2 до 1":
-                    case "aktien 2 -> 1":
+                    // Term 82: 2 to 1
+                    case "2 to 1":
+                    case "2 до 1":
+                    case "2 -> 1":
                         user.Stage = Stage.Stocks2to1;
                         Actions.MultiplyStocks(Bot, user);
                         return;
 
-                    // Term 83: Stocks 1 to 2
-                    case "stocks 1 to 2":
-                    case "акції 1 до 2":
-                    case "aktien 1 -> 2":
+                    // Term 83: 1 to 2
+                    case "1 to 2":
+                    case "1 до 2":
+                    case "1 -> 2":
                         user.Stage = Stage.Stocks1to2;
                         Actions.MultiplyStocks(Bot, user);
                         return;
@@ -391,6 +403,13 @@ namespace CashFlowBot
                     case "продати підприємство":
                     case "geschäft verkaufen":
                         Actions.SellBusiness(Bot, user);
+                        return;
+
+                    // Term 118: Increase cash flow
+                    case "increase cash flow":
+                    case "збільшити грошовий потік":
+                    case "cashflow erhöhen":
+                        Actions.IncreaseCashFlow(Bot, user);
                         return;
 
                     // Term 98 : Sell Land
@@ -583,6 +602,12 @@ namespace CashFlowBot
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
                         Actions.SellStocks(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.StartCompanyTitle:
+                    case Stage.StartCompanyCredit:
+                    case Stage.StartCompanyPrice:
+                        Actions.StartCompany(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyRealEstateTitle:

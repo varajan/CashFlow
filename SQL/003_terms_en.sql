@@ -1,4 +1,4 @@
-INSERT INTO Terms (ID, Language, Term) VALUES
+﻿INSERT INTO Terms (ID, Language, Term) VALUES
 (0, 'EN', 'Your Cash Flow is *{0}*. How many should you get?'),
 (1, 'EN', 'Go to Big Circle'),
 (2, 'EN', 'History'),
@@ -81,8 +81,8 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (79, 'EN', 'Pay Check'),
 (80, 'EN', 'Downsize'),
 (81, 'EN', 'Small Opportunity'),
-(82, 'EN', 'Stocks 2 to 1'),
-(83, 'EN', 'Stocks 1 to 2'),
+(82, 'EN', '2 to 1'),
+(83, 'EN', '1 to 2'),
 (84, 'EN', 'Big Opportunity'),
 (85, 'EN', 'Market'),
 (86, 'EN', 'Doodads'),
@@ -114,9 +114,10 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (112, 'EN', 'Buy a boat'),
 (113, 'EN', 'You already have a boat.'),
 (114, 'EN', 'Boat Loan'),
---(115, 'EN', 'Pay off a boat loan. '),
+(115, 'EN', 'Start a company'),
 (116, 'EN', 'Boat'),
 (117, 'EN', 'You''ve bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}'),
+(118, 'EN', 'Cashflow erhöhen'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
