@@ -315,18 +315,18 @@ namespace CashFlowBot
                         Actions.BuyRealEstate(Bot, user);
                         return;
 
-                    // Term 82: Stocks 2 to 1
-                    case "stocks 2 to 1":
-                    case "акції 2 до 1":
-                    case "aktien 2 -> 1":
+                    // Term 82: 2 to 1
+                    case "2 to 1":
+                    case "2 до 1":
+                    case "2 -> 1":
                         user.Stage = Stage.Stocks2to1;
                         Actions.MultiplyStocks(Bot, user);
                         return;
 
-                    // Term 83: Stocks 1 to 2
-                    case "stocks 1 to 2":
-                    case "акції 1 до 2":
-                    case "aktien 1 -> 2":
+                    // Term 83: 1 to 2
+                    case "1 to 2":
+                    case "1 до 2":
+                    case "1 -> 2":
                         user.Stage = Stage.Stocks1to2;
                         Actions.MultiplyStocks(Bot, user);
                         return;
