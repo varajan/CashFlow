@@ -1,4 +1,4 @@
-INSERT INTO Terms (ID, Language, Term) VALUES
+﻿INSERT INTO Terms (ID, Language, Term) VALUES
 (0, 'EN', 'Your Cash Flow is *{0}*. How many should you get?'),
 (1, 'EN', 'Go to Big Circle'),
 (2, 'EN', 'History'),
@@ -117,6 +117,7 @@ INSERT INTO Terms (ID, Language, Term) VALUES
 (115, 'EN', 'Start a company'),
 (116, 'EN', 'Boat'),
 (117, 'EN', 'You''ve bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}'),
+(118, 'EN', 'Cashflow erhöhen'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

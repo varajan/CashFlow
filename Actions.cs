@@ -940,6 +940,18 @@ namespace CashFlowBot
             }
         }
 
+        public static void IncreaseCashFlow(TelegramBotClient bot, User user)
+        {
+            foreach (var business in user.Person.Assets.SmallBusinesses)
+            {
+                business.CashFlow += 400;
+                user.History.Add(ActionType.IncreaseCashFlow, business.Id);
+            }
+
+            bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+            Cancel(bot, user);
+        }
+
         public static async void SmallOpportunity(TelegramBotClient bot, User user)
         {
             var rkm = new ReplyKeyboardMarkup
@@ -1007,16 +1019,26 @@ namespace CashFlowBot
 
         public static async void Market(TelegramBotClient bot, User user)
         {
-            var rkm = new ReplyKeyboardMarkup
-            {
-                Keyboard = new List<IEnumerable<KeyboardButton>>
+            var rkm = user.Person.Assets.SmallBusinesses.Any()
+                ? new ReplyKeyboardMarkup
                 {
-                    new List<KeyboardButton>{Terms.Get(38, user, "Sell Real Estate")},
-                    new List<KeyboardButton>{Terms.Get(75, user, "Sell Business")},
-                    new List<KeyboardButton>{Terms.Get(98, user, "Sell Land") },
-                    new List<KeyboardButton>{ Terms.Get(6, user, "Cancel") }
+                    Keyboard = new List<IEnumerable<KeyboardButton>>
+                    {
+                        new List<KeyboardButton> { Terms.Get(38, user, "Sell Real Estate"), Terms.Get(98, user, "Sell Land") },
+                        new List<KeyboardButton> { Terms.Get(75, user, "Sell Business"),Terms.Get(118, user, "Increase cash flow") },
+                        new List<KeyboardButton> { Terms.Get(6, user, "Cancel") }
+                    }
                 }
-            };
+                : new ReplyKeyboardMarkup
+                {
+                    Keyboard = new List<IEnumerable<KeyboardButton>>
+                    {
+                        new List<KeyboardButton> { Terms.Get(38, user, "Sell Real Estate") },
+                        new List<KeyboardButton> { Terms.Get(75, user, "Sell Business") },
+                        new List<KeyboardButton> { Terms.Get(98, user, "Sell Land") },
+                        new List<KeyboardButton> { Terms.Get(6, user, "Cancel") }
+                    }
+                };
 
             user.Person.Assets.CleanUp();
             user.Stage = Stage.Nothing;

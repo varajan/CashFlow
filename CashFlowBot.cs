@@ -405,6 +405,13 @@ namespace CashFlowBot
                         Actions.SellBusiness(Bot, user);
                         return;
 
+                    // Term 118: Increase cash flow
+                    case "increase cash flow":
+                    case "збільшити грошовий потік":
+                    case "cashflow erhöhen":
+                        Actions.IncreaseCashFlow(Bot, user);
+                        return;
+
                     // Term 98 : Sell Land
                     case "sell land":
                     case "продати землю":
