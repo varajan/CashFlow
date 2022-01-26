@@ -22,6 +22,7 @@ namespace CashFlowBot.Models
 
         public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
         public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
+        public List<Asset> SmallBusinesses => Items.Where(x => x.Type == AssetType.SmallBusinessType).ToList();
         public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == ThisUser.Person.BigCircle).ToList();
         public List<Asset> Lands => Items.Where(x => x.Type == AssetType.LandTitle).ToList();
         public Asset Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
@@ -36,7 +37,7 @@ namespace CashFlowBot.Models
 
         private User ThisUser => new (Id);
 
-        public int Income => RealEstates.Sum(x => x.CashFlow) + Businesses.Sum(x => x.CashFlow);
+        public int Income => RealEstates.Sum(x => x.CashFlow) + Businesses.Sum(x => x.CashFlow) + SmallBusinesses.Sum(x => x.CashFlow);
 
         public string Description => Items.Any()
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
@@ -45,7 +46,7 @@ namespace CashFlowBot.Models
         public Asset Add(string title, AssetType type, bool bigCircle = false)
         {
             int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
-            DB.Execute($"INSERT INTO Assets " +
+            DB.Execute("INSERT INTO Assets " +
                        "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
                        $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0, 0)");
 

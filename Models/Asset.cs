@@ -54,6 +54,11 @@ namespace CashFlowBot.Models
                     ? $"*{Title}* - {price}: {Price.AsCurrency()}"
                     : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, UserId, "monthly")}: {(-CashFlow).AsCurrency()}";
 
+                    case AssetType.SmallBusinessType:
+                        return CashFlow == 0
+                    ? $"*{Title}* - {price}: {Price.AsCurrency()}"
+                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, UserId, "monthly")}: {CashFlow.AsCurrency()}";
+
                     default:
                         return string.Empty;
                 }

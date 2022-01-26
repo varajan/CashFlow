@@ -131,6 +131,7 @@ namespace CashFlowBot.Models
                 case ActionType.BuyRealEstate:
                 case ActionType.BuyBusiness:
                 case ActionType.BuyLand:
+                case ActionType.StartCompany:
                     user.Person.Cash += asset.Price - asset.Mortgage;
                     asset.Delete();
                     break;
@@ -240,6 +241,7 @@ namespace CashFlowBot.Models
                     case ActionType.BuyBusiness:
                     case ActionType.BuyStocks:
                     case ActionType.BuyLand:
+                    case ActionType.StartCompany:
                         var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
                         return $"{buyAsset}. {Asset.Description}";
 

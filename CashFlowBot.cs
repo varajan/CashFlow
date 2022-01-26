@@ -161,6 +161,11 @@ namespace CashFlowBot
                                 Actions.BuyBusiness(Bot, user, string.Empty);
                                 return;
 
+                            case Stage.StartCompanyPrice:
+                                user.Stage = Stage.StartCompanyCredit;
+                                Actions.StartCompany(Bot, user, string.Empty);
+                                return;
+
                             case Stage.BuyLandPrice:
                                 user.Stage = Stage.BuyLandCredit;
                                 Actions.BuyLand(Bot, user, string.Empty);
@@ -274,6 +279,12 @@ namespace CashFlowBot
                     #endregion
 
                     #region Small opportunities
+
+                    // todo
+                    // Term 115: Start a company
+                    case "start a company":
+                        Actions.StartCompany(Bot, user);
+                        return;
 
                     // Term 81: Small Opportunity
                     case "small opportunity":
@@ -583,6 +594,12 @@ namespace CashFlowBot
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
                         Actions.SellStocks(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.StartCompanyTitle:
+                    case Stage.StartCompanyCredit:
+                    case Stage.StartCompanyPrice:
+                        Actions.StartCompany(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyRealEstateTitle:
