@@ -280,9 +280,10 @@ namespace CashFlowBot
 
                     #region Small opportunities
 
-                    // todo
                     // Term 115: Start a company
                     case "start a company":
+                    case "заснувати компанію":
+                    case "gründe eine firma":
                         Actions.StartCompany(Bot, user);
                         return;
 
