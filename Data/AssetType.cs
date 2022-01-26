@@ -14,8 +14,8 @@
         MicroCreditAmount = 8,
         Business = 9,
 
-        SmallBusinessType,
-        SmallBusinessBuyPrice,
+        SmallBusinessType = 28,
+        SmallBusinessBuyPrice = 29,
 
         BusinessType = 10,
         BusinessBuyPrice = 11,

@@ -363,7 +363,8 @@ namespace CashFlowBot
 
         public static void SellBusiness(TelegramBotClient bot, User user)
         {
-            var businesses = user.Person.Assets.Businesses;
+            var businesses = user.Person.Assets.SmallBusinesses;
+            businesses.AddRange(user.Person.Assets.Businesses);
 
             if (businesses.Any())
             {
@@ -388,7 +389,9 @@ namespace CashFlowBot
 
         public static void SellBusiness(TelegramBotClient bot, User user, string value)
         {
-            var businesses = user.Person.Assets.Businesses;
+            var businesses = user.Person.Assets.SmallBusinesses;
+            businesses.AddRange(user.Person.Assets.Businesses);
+
             var prices = AvailableAssets.Get(AssetType.BusinessBuyPrice)
                 .AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
