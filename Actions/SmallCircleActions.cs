@@ -36,6 +36,13 @@ namespace CashFlowBot.Actions
 
         public static void IncreaseCashFlow(TelegramBotClient bot, User user)
         {
+            if (!user.Person.Assets.SmallBusinesses.Any())
+            {
+                bot.SendMessage(user.Id, Terms.Get(77, user, "You have no Business."));
+                Cancel(bot, user);
+                return;
+            }
+
             foreach (var business in user.Person.Assets.SmallBusinesses)
             {
                 business.CashFlow += 400;

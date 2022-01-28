@@ -308,7 +308,7 @@ namespace CashFlowBot.Actions
                     }
 
                     user.Person.Cash += coin.Qtty * number;
-                    coin.Sell(ActionType.BuyCoins, number);
+                    coin.Sell(ActionType.SellCoins, number);
 
                     AvailableAssets.Add(number, AssetType.CoinSellPrice);
 
