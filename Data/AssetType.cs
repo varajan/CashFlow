@@ -43,5 +43,6 @@
         CoinTitle = 31,
         CoinBuyPrice = 32,
         CoinSellPrice = 33,
+        CoinCount = 34,
     }
 }

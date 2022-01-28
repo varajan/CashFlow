@@ -32,6 +32,7 @@
         BuyCoinsTitle,
         BuyCoinsPrice,
         BuyCoinsCredit,
+        BuyCoinsCount,
         StartCompanyTitle,
         StartCompanyPrice,
         StartCompanyCredit,

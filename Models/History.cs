@@ -181,7 +181,7 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.BuyCoins:
-                    user.Person.Cash += asset.Price;
+                    user.Person.Cash += asset.Price * asset.Qtty;
                     asset.Delete();
                     break;
 

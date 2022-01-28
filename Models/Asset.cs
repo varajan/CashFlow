@@ -60,7 +60,9 @@ namespace CashFlowBot.Models
                         : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, UserId, "monthly")}: {CashFlow.AsCurrency()}";
 
                     case AssetType.Coin:
-                        return $"*{Title}* - {price}: {Price.AsCurrency()}";
+                        return IsDeleted
+                            ? $"*{Title}* - {Qtty} @ {SellPrice.AsCurrency()}"
+                            : $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
 
                     default:
                         return string.Empty;

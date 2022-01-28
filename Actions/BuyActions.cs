@@ -339,9 +339,7 @@ namespace CashFlowBot.Actions
                         .Select(x => x.ToString())
                         .Append(Terms.Get(6, user, "Cancel"));
 
-                    bot.SetButtons(user.Id,
-                    Terms.Get(17, user, "You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty),
-                    buttons);
+                    bot.SetButtons(user.Id, Terms.Get(17, user, "You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty), buttons);
                     return;
 
                 case Stage.BuyStocksQtty:
@@ -500,11 +498,24 @@ namespace CashFlowBot.Actions
             var asset = user.Person.Assets.Coins.FirstOrDefault(a => a.IsDraft) ??
                         user.Person.Assets.Add(title, AssetType.Coin);
             var prices = AvailableAssets.Get(AssetType.CoinBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var counts = AvailableAssets.Get(AssetType.CoinCount).OrderBy(x => x).Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
                 case Stage.BuyCoinsTitle:
+                    user.Stage = Stage.BuyCoinsCount;
+                    bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), counts);
+                    return;
+
+                case Stage.BuyCoinsCount:
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, Terms.Get(18, user, "Invalid quantity value. Try again."), counts);
+                        return;
+                    }
+
                     user.Stage = Stage.BuyCoinsPrice;
+                    asset.Qtty = number;
                     bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
                     return;
 
@@ -516,32 +527,34 @@ namespace CashFlowBot.Actions
                     }
 
                     asset.Price = number;
+                    var totalPrice = asset.Price * asset.Qtty;
 
-                    if (user.Person.Cash < number)
+                    if (user.Person.Cash < totalPrice)
                     {
-                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", totalPrice.AsCurrency(), user.Person.Cash.AsCurrency());
 
                         bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
-                    user.Person.Cash -= asset.Price;
+                    user.Person.Cash -= totalPrice;
                     asset.IsDraft = false;
                     user.History.Add(ActionType.BuyCoins, asset.Id);
 
                     AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
                     AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
+                    AvailableAssets.Add(asset.Qtty, AssetType.CoinCount);
 
                     bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
                     Cancel(bot, user);
                     return;
 
                 case Stage.BuyCoinsCredit:
-                    var delta = asset.Price - user.Person.Cash;
+                    var delta = asset.Price * asset.Qtty - user.Person.Cash;
                     var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                     user.GetCredit(credit);
-                    user.Person.Cash -= asset.Price;
+                    user.Person.Cash -= asset.Price * asset.Qtty;
 
                     asset.IsDraft = false;
                     user.History.Add(ActionType.BuyCoins, asset.Id);

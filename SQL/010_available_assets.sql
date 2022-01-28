@@ -12,9 +12,13 @@
 (7, '200000'),
 
 -- Coin title
-(31, '10 KRUGERANDS'),
-(31, '1 PESO'),
+(31, 'KRUGERAND'),
+(31, 'PESO'),
 
--- Coin PRICE
+-- Coin Price
+(32, '300'),
 (32, '500'),
-(32, '3000')
+
+-- Coin Count
+(34, '1'),
+(34, '10')

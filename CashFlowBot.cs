@@ -623,6 +623,7 @@ namespace CashFlowBot
 
                     case Stage.BuyCoinsTitle:
                     case Stage.BuyCoinsPrice:
+                    case Stage.BuyCoinsCount:
                     case Stage.BuyCoinsCredit:
                         BuyActions.BuyCoins(Bot, user, message.Text.Trim());
                         return;
