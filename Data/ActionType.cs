@@ -29,5 +29,7 @@
         PayOffBoat = 114,
         StartCompany = 115,
         IncreaseCashFlow = 118,
+        BuyCoins = 119,
+        SellCoins = 120,
     }
 }

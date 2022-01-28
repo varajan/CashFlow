@@ -153,6 +153,7 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.SellStocks:
+                case ActionType.SellCoins:
                     user.Person.Cash -= asset.Qtty * asset.SellPrice;
                     asset.Restore();
                     break;
@@ -178,6 +179,11 @@ namespace CashFlowBot.Models
                 case ActionType.PayOffBoat:
                     user.Person.Cash += amount;
                     user.Person.Assets.Boat.CashFlow = 340;
+                    break;
+
+                case ActionType.BuyCoins:
+                    user.Person.Cash += asset.Price * asset.Qtty;
+                    asset.Delete();
                     break;
 
                 default:
@@ -247,6 +253,7 @@ namespace CashFlowBot.Models
                     case ActionType.BuyLand:
                     case ActionType.StartCompany:
                     case ActionType.IncreaseCashFlow:
+                    case ActionType.BuyCoins:
                         var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
                         return $"{buyAsset}. {Asset.Description}";
 
@@ -254,6 +261,7 @@ namespace CashFlowBot.Models
                     case ActionType.SellBusiness:
                     case ActionType.SellStocks:
                     case ActionType.SellLand:
+                    case ActionType.SellCoins:
                         var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
                         return $"{sellAsset}. {Asset.Description}";
 
