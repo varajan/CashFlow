@@ -117,7 +117,8 @@
 (115, 'EN', 'Start a company'),
 (116, 'EN', 'Boat'),
 (117, 'EN', 'You''ve bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}'),
-(118, 'EN', 'Cashflow erhöhen'),
+(118, 'EN', 'Increase cash flow'),
+(119, 'EN', 'Buy coins'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

@@ -180,6 +180,11 @@ namespace CashFlowBot.Models
                     user.Person.Assets.Boat.CashFlow = 340;
                     break;
 
+                case ActionType.BuyCoins:
+                    user.Person.Cash += asset.Price;
+                    asset.Delete();
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -247,6 +252,7 @@ namespace CashFlowBot.Models
                     case ActionType.BuyLand:
                     case ActionType.StartCompany:
                     case ActionType.IncreaseCashFlow:
+                    case ActionType.BuyCoins:
                         var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
                         return $"{buyAsset}. {Asset.Description}";
 

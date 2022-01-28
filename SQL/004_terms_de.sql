@@ -117,7 +117,8 @@
 (115, 'DE', 'Gründe eine Firma'),
 (116, 'DE', 'Boot'),
 (117, 'DE', 'Sie haben ein Boot für {0} gekauft, erste Zahlung ist {1}, monatliche Zahlung ist {2}'),
-(118, 'DE', 'Sie haben ein Boot für {0} gekauft, erste Zahlung ist {1}, monatliche Zahlung ist {2}'),
+(118, 'DE', 'Cashflow erhöhen'),
+(119, 'DE', 'Münzen kaufen'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

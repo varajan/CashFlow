@@ -484,5 +484,75 @@ namespace CashFlowBot.Actions
                     return;
             }
         }
+
+        public static void BuyCoins(TelegramBotClient bot, User user)
+        {
+            user.Stage = Stage.BuyCoinsTitle;
+            var coins = AvailableAssets.Get(AssetType.CoinTitle).Append(Terms.Get(6, user, "Cancel"));
+
+            bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), coins);
+        }
+
+        public static void BuyCoins(TelegramBotClient bot, User user, string value)
+        {
+            var title = value.Trim().ToUpper();
+            var number = value.AsCurrency();
+            var asset = user.Person.Assets.Coins.FirstOrDefault(a => a.IsDraft) ??
+                        user.Person.Assets.Add(title, AssetType.Coin);
+            var prices = AvailableAssets.Get(AssetType.CoinBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.BuyCoinsTitle:
+                    user.Stage = Stage.BuyCoinsPrice;
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.BuyCoinsPrice:
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
+                        return;
+                    }
+
+                    asset.Price = number;
+
+                    if (user.Person.Cash < number)
+                    {
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", number.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
+                        return;
+                    }
+
+                    user.Person.Cash -= asset.Price;
+                    asset.IsDraft = false;
+                    user.History.Add(ActionType.BuyCoins, asset.Id);
+
+                    AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
+                    AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
+
+                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+                    Cancel(bot, user);
+                    return;
+
+                case Stage.BuyCoinsCredit:
+                    var delta = asset.Price - user.Person.Cash;
+                    var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+
+                    user.GetCredit(credit);
+                    user.Person.Cash -= asset.Price;
+
+                    asset.IsDraft = false;
+                    user.History.Add(ActionType.BuyCoins, asset.Id);
+
+                    AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
+                    AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
+
+                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+                    Cancel(bot, user);
+                    return;
+            }
+        }
     }
 }

@@ -172,6 +172,11 @@ namespace CashFlowBot
                                 BuyActions.BuyLand(Bot, user, string.Empty);
                                 return;
 
+                            case Stage.BuyCoinsPrice:
+                                user.Stage = Stage.BuyCoinsCredit;
+                                BuyActions.BuyCoins(Bot, user, string.Empty);
+                                return;
+
                             default:
                                 CreditActions.GetCredit(Bot, user);
                                 return;
@@ -286,6 +291,13 @@ namespace CashFlowBot
                     case "заснувати компанію":
                     case "gründe eine firma":
                         BuyActions.StartCompany(Bot, user);
+                        return;
+
+                    // Term 119: Buy coins
+                    case "buy coins":
+                    case "покупка монет":
+                    case "münzen kaufen":
+                        BuyActions.BuyCoins(Bot, user);
                         return;
 
                     // Term 81: Small Opportunity
@@ -607,6 +619,12 @@ namespace CashFlowBot
                     case Stage.StartCompanyCredit:
                     case Stage.StartCompanyPrice:
                         BuyActions.StartCompany(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.BuyCoinsTitle:
+                    case Stage.BuyCoinsPrice:
+                    case Stage.BuyCoinsCredit:
+                        BuyActions.BuyCoins(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyRealEstateTitle:

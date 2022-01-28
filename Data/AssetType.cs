@@ -38,6 +38,10 @@
         RealEstateBigFirstPayment = 25,
         RealEstateBigCashFlow = 26,
 
-        Boat = 27
+        Boat = 27,
+        Coin = 30,
+        CoinTitle = 31,
+        CoinBuyPrice = 32,
+        CoinSellPrice = 33,
     }
 }
