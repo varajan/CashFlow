@@ -113,26 +113,15 @@ namespace CashFlowBot.Actions
 
         public static async void Market(TelegramBotClient bot, User user)
         {
-            var rkm = user.Person.Assets.SmallBusinesses.Any()
-                ? new ReplyKeyboardMarkup
-                {
-                    Keyboard = new List<IEnumerable<KeyboardButton>>
+            var rkm = new ReplyKeyboardMarkup
+            {
+                Keyboard = new List<IEnumerable<KeyboardButton>>
                     {
-                        new List<KeyboardButton> { Terms.Get(38, user, "Sell Real Estate"), Terms.Get(98, user, "Sell Land") },
-                        new List<KeyboardButton> { Terms.Get(75, user, "Sell Business"),Terms.Get(118, user, "Increase cash flow") },
+                        new List<KeyboardButton> { Terms.Get(38, user, "Sell Real Estate"), Terms.Get(98, user, "Sell Land"), Terms.Get(75, user, "Sell Business") },
+                        new List<KeyboardButton> { Terms.Get(120, user, "Sell Coins"), Terms.Get(118, user, "Increase cash flow") },
                         new List<KeyboardButton> { Terms.Get(6, user, "Cancel") }
                     }
-                }
-                : new ReplyKeyboardMarkup
-                {
-                    Keyboard = new List<IEnumerable<KeyboardButton>>
-                    {
-                        new List<KeyboardButton> { Terms.Get(38, user, "Sell Real Estate") },
-                        new List<KeyboardButton> { Terms.Get(75, user, "Sell Business") },
-                        new List<KeyboardButton> { Terms.Get(98, user, "Sell Land") },
-                        new List<KeyboardButton> { Terms.Get(6, user, "Cancel") }
-                    }
-                };
+            };
 
             user.Person.Assets.CleanUp();
             user.Stage = Stage.Nothing;

@@ -118,7 +118,12 @@
 (116, 'EN', 'Boat'),
 (117, 'EN', 'You''ve bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}'),
 (118, 'EN', 'Increase cash flow'),
-(119, 'EN', 'Buy coins'),
+(119, 'EN', 'Buy Coins'),
+(120, 'EN', 'Sell Coins'),
+(121, 'EN', 'You have no coins.'),
+(122, 'EN', 'What coins do you want to sell?'),
+(123, 'EN', 'Invalid coins title.'),
+(124, 'EN', 'Invalid stocks name.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

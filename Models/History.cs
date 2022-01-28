@@ -153,6 +153,7 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.SellStocks:
+                case ActionType.SellCoins:
                     user.Person.Cash -= asset.Qtty * asset.SellPrice;
                     asset.Restore();
                     break;
@@ -260,6 +261,7 @@ namespace CashFlowBot.Models
                     case ActionType.SellBusiness:
                     case ActionType.SellStocks:
                     case ActionType.SellLand:
+                    case ActionType.SellCoins:
                         var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
                         return $"{sellAsset}. {Asset.Description}";
 

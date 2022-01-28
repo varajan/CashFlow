@@ -1,23 +1,27 @@
 ﻿INSERT OR REPLACE INTO AvailableAssets VALUES
--- Land title
+-- Land Title
 (5, '10 AC'),
 (5, '20 AC'),
 
--- Land buy price
+-- Land Buy Price
 (6, '5000'),
 (6, '10000'),
 
--- Land sell price
+-- Land Sell Price
 (7, '150000'),
 (7, '200000'),
 
--- Coin title
+-- Coin Title
 (31, 'KRUGERAND'),
 (31, 'PESO'),
 
--- Coin Price
+-- Coin Buy Price
 (32, '300'),
 (32, '500'),
+
+-- Coin Sell Price
+(33, '600'),
+(33, '3000'),
 
 -- Coin Count
 (34, '1'),

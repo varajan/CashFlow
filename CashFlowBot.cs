@@ -429,6 +429,13 @@ namespace CashFlowBot
                     case "land verkaufen":
                         SellActions.SellLand(Bot, user);
                         return;
+                    
+                    // Term 120 : Sell Coins
+                    case "sell coins":
+                    case "продаж монет":
+                    case "münzen verkaufen":
+                        SellActions.SellCoins(Bot, user);
+                        return;
 
                     #endregion
 
@@ -613,6 +620,11 @@ namespace CashFlowBot
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
                         SellActions.SellStocks(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.SellCoinsTitle:
+                    case Stage.SellCoinsPrice:
+                        SellActions.SellCoins(Bot, user, message.Text.Trim());
                         return;
 
                     case Stage.StartCompanyTitle:

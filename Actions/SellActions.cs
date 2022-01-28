@@ -230,7 +230,7 @@ namespace CashFlowBot.Actions
 
                     if (!assets.Any())
                     {
-                        SmallCircleButtons(bot, user, "Invalid stocks name.");
+                        SmallCircleButtons(bot, user, Terms.Get(124, user, "Invalid stocks name."));
                         return;
                     }
 
@@ -253,6 +253,64 @@ namespace CashFlowBot.Actions
                     stocksToSell.ForEach(x => x.Sell(ActionType.SellStocks, number));
 
                     AvailableAssets.Add(number, AssetType.StockPrice);
+
+                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    return;
+            }
+        }
+
+        public static void SellCoins(TelegramBotClient bot, User user)
+        {
+            var coins = user.Person.Assets.Coins
+                .Select(x => x.Title)
+                .Append(Terms.Get(6, user, "Cancel"))
+                .ToList();
+
+            if (coins.Count > 1)
+            {
+                user.Stage = Stage.SellCoinsTitle;
+                bot.SetButtons(user.Id, Terms.Get(122, user, "What coins do you want to sell?"), coins);
+            }
+            else
+            {
+                SmallCircleButtons(bot, user, Terms.Get(121, user, "You have no coins."));
+            }
+        }
+
+        public static void SellCoins(TelegramBotClient bot, User user, string value)
+        {
+            var title = value.Trim().ToUpper();
+            var number = value.AsCurrency();
+            var coin = user.Person.Assets.Coins.FirstOrDefault(x => x.Title == title || x.Title.EndsWith("*"));
+            var prices = AvailableAssets.Get(AssetType.CoinSellPrice).AsCurrency().ToList();
+            prices.Add(Terms.Get(6, user, "Cancel"));
+
+            switch (user.Stage)
+            {
+                case Stage.SellCoinsTitle:
+                    if (coin == null)
+                    {
+                        SmallCircleButtons(bot, user, Terms.Get(123, user, "Invalid coins title."));
+                        return;
+                    }
+
+                    user.Stage = Stage.SellCoinsPrice;
+                    coin.Title += "*";
+
+                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+                    return;
+
+                case Stage.SellCoinsPrice:
+                    if (number <= 0)
+                    {
+                        bot.SetButtons(user.Id, Terms.Get(9, user, "Invalid price value. Try again."), prices);
+                        return;
+                    }
+
+                    user.Person.Cash += coin.Qtty * number;
+                    coin.Sell(ActionType.BuyCoins, number);
+
+                    AvailableAssets.Add(number, AssetType.CoinSellPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
