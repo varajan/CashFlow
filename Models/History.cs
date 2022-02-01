@@ -182,6 +182,10 @@ namespace CashFlowBot.Models
                     user.Person.Assets.Boat.CashFlow = 340;
                     break;
 
+                case ActionType.Bankruptcy:
+                    user.Person.Bankruptcy = false;
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -272,6 +276,9 @@ namespace CashFlowBot.Models
                     case ActionType.BuyBoat:
                         var buyBoat = Terms.Get(112, UserId, "Buy a boat");
                         return $"{buyBoat}: {Value.AsCurrency()}";
+
+                    case ActionType.Bankruptcy:
+                        return Terms.Get((int)ActionType.Bankruptcy, UserId, "Bankruptcy");
 
                     default:
                         return $"<{Action}> - {Value}";

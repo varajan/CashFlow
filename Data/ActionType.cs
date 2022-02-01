@@ -31,5 +31,7 @@
         IncreaseCashFlow = 118,
         BuyCoins = 119,
         SellCoins = 120,
+        Bankruptcy = 125,
+        CreditsReduce,
     }
 }

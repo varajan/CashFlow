@@ -234,6 +234,15 @@ namespace CashFlowBot.Actions
         public static void GetMoney(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
+            user.Person.Bankruptcy = user.Person.Cash + amount < 0;
+
+            if (user.Person.Bankruptcy)
+            {
+                user.History.Add(ActionType.Bankruptcy, 0);
+                BankruptcyActions.ShowMenu(bot, user);
+                return;
+            }
+
             user.Person.Cash += amount;
             user.History.Add(ActionType.GetMoney, amount);
 

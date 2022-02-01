@@ -74,10 +74,39 @@ namespace CashFlowBot.Models
 
         public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value);}
         public string Title { get => Get("Title"); set => Set("Title", value); }
+
+        public int BancrupcySellPrice
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case AssetType.Coin:
+                    case AssetType.Stock:
+                        return (Qtty * Price) / 2;
+
+                    case AssetType.LandTitle:
+                    case AssetType.SmallBusinessType:
+                        return Price / 2;
+
+                    case AssetType.RealEstate:
+                    case AssetType.Business:
+                        return (Price - Mortgage) / 2;
+
+                    case AssetType.Boat:
+                        return CashFlow == 0 ? Price/2 : (Price - Mortgage) / 2;
+
+                    default:
+                        return 0;
+                }
+            }
+        }
+
         public int Price { get => GetInt("Price"); set => Set("Price", value); }
         public int SellPrice { get => GetInt("SellPrice"); set => Set("SellPrice", value); }
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
+        public int TotalCashFlow => Qtty * CashFlow;
         public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
         public bool IsDraft { get => GetInt("Draft") == 1; set => Set("Draft", value ? 1 : 0); }

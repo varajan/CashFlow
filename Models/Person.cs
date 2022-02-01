@@ -14,6 +14,7 @@ namespace CashFlowBot.Models
         public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
         public int CashFlow => Salary + Assets.Income - Expenses.Total;
         public bool ReadyForBigCircle { get => GetInt("ReadyForBigCircle") == 1; set => Set("ReadyForBigCircle", value ? 1 : 0); }
+        public bool Bankruptcy { get => GetInt("Bankruptcy") == 1; set => Set("Bankruptcy", value ? 1 : 0); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
         public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
@@ -65,8 +66,8 @@ namespace CashFlowBot.Models
 
             Clear();
             DB.Execute($"INSERT INTO {Table} " +
-                       "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow) " +
-                       $"VALUES ({Id}, '', '', '', '', '', '', '')");
+                       "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '', '', 0)");
 
             Assets.Clear();
             Profession = data.Profession;

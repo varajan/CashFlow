@@ -124,6 +124,12 @@
 (122, 'EN', 'What coins do you want to sell?'),
 (123, 'EN', 'Invalid coins title.'),
 (124, 'EN', 'Invalid stocks name.'),
+(125, 'EN', 'Bankruptcy'),
+(126, 'EN', 'You''re out of money.'),
+(127, 'EN', 'You have to sell your assets till you cash flow is positive.'),
+(128, 'EN', 'What asset do you want to sell?'),
+(129, 'EN', 'You are bankrupt. Game is over.'),
+(130, 'EN', 'You have paid off your debts, you can continue.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

@@ -278,6 +278,8 @@ namespace CashFlowBot
                     case "закінчити гру":
                     case "spiel beenden":
                     case "/clear":
+                        // todo: if bankrupt -> don't ask
+
                         BaseActions.Ask(Bot, user, Stage.StopGame,
                         Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
                         return;
