@@ -55,14 +55,7 @@ namespace CashFlowBot.Actions
                     }
 
                     asset.Price = number;
-                    user.Person.Cash -= number;
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.BuyLand, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.LandTitle);
-                    AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
-
-                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    CompleteTransaction();
                     return;
 
                 case Stage.BuyLandCredit:
@@ -70,15 +63,20 @@ namespace CashFlowBot.Actions
                     var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                     user.GetCredit(credit);
-                    user.Person.Cash -= asset.Price;
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.BuyLand, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.LandTitle);
-                    AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
-
-                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    CompleteTransaction();
                     return;
+            }
+
+            void CompleteTransaction()
+            {
+                user.Person.Cash -= asset.Price;
+                asset.IsDraft = false;
+                user.History.Add(ActionType.BuyLand, asset.Id);
+
+                AvailableAssets.Add(asset.Title, AssetType.LandTitle);
+                AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
+
+                SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
             }
         }
 
@@ -256,8 +254,6 @@ namespace CashFlowBot.Actions
                     }
 
                     user.Stage = Stage.BuyRealEstateCashFlow;
-                    user.Person.Cash -= number;
-
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
                     return;
 
@@ -268,7 +264,6 @@ namespace CashFlowBot.Actions
 
                     user.GetCredit(credit);
                     user.Stage = Stage.BuyRealEstateCashFlow;
-                    user.Person.Cash -= number;
 
                     bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", credit.AsCurrency()));
                     bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
@@ -276,6 +271,7 @@ namespace CashFlowBot.Actions
 
                 case Stage.BuyRealEstateCashFlow:
                     asset.CashFlow = number;
+                    user.Person.Cash -= asset.Price - asset.Mortgage;
                     asset.IsDraft = false;
 
                     user.History.Add(ActionType.BuyRealEstate, asset.Id);
@@ -309,8 +305,8 @@ namespace CashFlowBot.Actions
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.Stocks.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.Stock);
-            var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().ToList();
-            prices.Add(Terms.Get(6, user, "Cancel"));
+            var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var cashFlows = AvailableAssets.Get(AssetType.StockCashFlow).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
 
             switch (user.Stage)
             {
@@ -332,7 +328,10 @@ namespace CashFlowBot.Actions
 
                     int upToQtty = user.Person.Cash / number;
                     int upTo50 = upToQtty / 50 * 50;
-                    var buttons = new[] { upToQtty, upTo50, upTo50 - 50, upTo50 - 100 }
+                    bool isSimple = number < 1000;
+                    var buttons = (isSimple
+                        ? new[] { upToQtty, upTo50, upTo50 - 50, upTo50 - 100 }
+                        : new[] { upToQtty, upToQtty - 1, upToQtty - 2, upToQtty - 3 })
                         .Where(x => x > 0)
                         .Distinct()
                         .OrderBy(x => x)
@@ -352,6 +351,7 @@ namespace CashFlowBot.Actions
                     var totalPrice = asset.Price * number;
                     var availableCash = user.Person.Cash;
                     int availableQtty = availableCash / asset.Price;
+                    bool isprofitable = asset.Price > 1000;
 
                     var defaultMsg = "{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?";
                     var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice.AsCurrency(), availableCash.AsCurrency(), availableQtty);
@@ -363,15 +363,33 @@ namespace CashFlowBot.Actions
                     }
 
                     asset.Qtty = number;
-                    asset.IsDraft = false;
-                    user.Person.Cash -= totalPrice;
-                    user.History.Add(ActionType.BuyStocks, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.Stock);
-                    AvailableAssets.Add(asset.Price, AssetType.StockPrice);
-
-                    SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
+                    if (isprofitable)
+                    {
+                        user.Stage = Stage.BuyStocksCashFlow;
+                        bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                    }
+                    else
+                    {
+                        CompleteTransaction();
+                    }
                     return;
+
+                case Stage.BuyStocksCashFlow:
+                    asset.CashFlow = number;
+                    CompleteTransaction();
+                    return;
+            }
+
+            void CompleteTransaction()
+            {
+                asset.IsDraft = false;
+                user.Person.Cash -= asset.Price * asset.Qtty;
+                user.History.Add(ActionType.BuyStocks, asset.Id);
+
+                AvailableAssets.Add(asset.Title, AssetType.Stock);
+                AvailableAssets.Add(asset.Price, AssetType.StockPrice);
+
+                SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
             }
         }
 
@@ -453,15 +471,7 @@ namespace CashFlowBot.Actions
                         return;
                     }
 
-                    user.Person.Cash -= asset.Price;
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.StartCompany, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.SmallBusinessType);
-                    AvailableAssets.Add(asset.Price, AssetType.SmallBusinessBuyPrice);
-
-                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
-                    Cancel(bot, user);
+                    CompleteTransaction();
                     return;
 
                 case Stage.StartCompanyCredit:
@@ -469,17 +479,22 @@ namespace CashFlowBot.Actions
                     var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                     user.GetCredit(credit);
-                    user.Person.Cash -= asset.Price;
-
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.StartCompany, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.SmallBusinessType);
-                    AvailableAssets.Add(asset.Price, AssetType.SmallBusinessBuyPrice);
-
-                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
-                    Cancel(bot, user);
+                    CompleteTransaction();
                     return;
+            }
+
+            void CompleteTransaction()
+            {
+                user.Person.Cash -= asset.Price;
+
+                asset.IsDraft = false;
+                user.History.Add(ActionType.StartCompany, asset.Id);
+
+                AvailableAssets.Add(asset.Title, AssetType.SmallBusinessType);
+                AvailableAssets.Add(asset.Price, AssetType.SmallBusinessBuyPrice);
+
+                bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+                Cancel(bot, user);
             }
         }
 
@@ -537,16 +552,7 @@ namespace CashFlowBot.Actions
                         return;
                     }
 
-                    user.Person.Cash -= totalPrice;
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.BuyCoins, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
-                    AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
-                    AvailableAssets.Add(asset.Qtty, AssetType.CoinCount);
-
-                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
-                    Cancel(bot, user);
+                    CompleteTransaction();
                     return;
 
                 case Stage.BuyCoinsCredit:
@@ -554,17 +560,23 @@ namespace CashFlowBot.Actions
                     var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                     user.GetCredit(credit);
-                    user.Person.Cash -= asset.Price * asset.Qtty;
-
-                    asset.IsDraft = false;
-                    user.History.Add(ActionType.BuyCoins, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
-                    AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
-
-                    bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
-                    Cancel(bot, user);
+                    CompleteTransaction();
                     return;
+            }
+
+            void CompleteTransaction()
+            {
+                user.Person.Cash -= asset.Price * asset.Qtty;
+
+                asset.IsDraft = false;
+                user.History.Add(ActionType.BuyCoins, asset.Id);
+
+                AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
+                AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
+                AvailableAssets.Add(asset.Qtty, AssetType.CoinCount);
+
+                bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
+                Cancel(bot, user);
             }
         }
     }

@@ -609,6 +609,7 @@ namespace CashFlowBot
                     case Stage.BuyStocksTitle:
                     case Stage.BuyStocksPrice:
                     case Stage.BuyStocksQtty:
+                    case Stage.BuyStocksCashFlow:
                         BuyActions.BuyStocks(Bot, user, message.Text.Trim());
                         return;
 

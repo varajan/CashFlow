@@ -38,7 +38,11 @@ namespace CashFlowBot.Models
 
         private User ThisUser => new (Id);
 
-        public int Income => RealEstates.Sum(x => x.CashFlow) + Businesses.Sum(x => x.CashFlow) + SmallBusinesses.Sum(x => x.CashFlow);
+        public int Income =>
+            RealEstates.Sum(x => x.CashFlow)
+            + Businesses.Sum(x => x.CashFlow)
+            + SmallBusinesses.Sum(x => x.CashFlow)
+            + Stocks.Sum(x => x.Qtty * x.CashFlow);
 
         public string Description => Items.Any()
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"

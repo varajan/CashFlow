@@ -148,7 +148,8 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.BuyStocks:
-                    user.Person.Cash += asset.Qtty * asset.Price;
+                case ActionType.BuyCoins:
+                    user.Person.Cash += asset.Price * asset.Qtty;
                     asset.Delete();
                     break;
 
@@ -179,11 +180,6 @@ namespace CashFlowBot.Models
                 case ActionType.PayOffBoat:
                     user.Person.Cash += amount;
                     user.Person.Assets.Boat.CashFlow = 340;
-                    break;
-
-                case ActionType.BuyCoins:
-                    user.Person.Cash += asset.Price * asset.Qtty;
-                    asset.Delete();
                     break;
 
                 default:
