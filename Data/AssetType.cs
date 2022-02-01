@@ -4,6 +4,7 @@
     {
         Stock = 1,
         StockPrice = 2,
+        StockCashFlow = 35,
         SmallGiveMoney = 3,
         BigGiveMoney = 4,
 

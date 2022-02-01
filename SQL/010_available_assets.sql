@@ -1,4 +1,21 @@
 ﻿INSERT OR REPLACE INTO AvailableAssets VALUES
+
+-- Shares Title
+(1, 'ON2U'),
+(1, 'OK4U'),
+(1, '2BIG'),
+(1, 'CD'),
+
+-- Shares Price
+(2, '5'),
+(2, '10'),
+(2, '1200'),
+(2, '5000'),
+
+-- Shares CashFlow
+(35, '20'),
+(35, '10'),
+
 -- Land Title
 (5, '10 AC'),
 (5, '20 AC'),

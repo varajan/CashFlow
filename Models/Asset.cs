@@ -30,7 +30,9 @@ namespace CashFlowBot.Models
                     case AssetType.Stock:
                         return IsDeleted
                             ? $"*{Title}* - {Qtty} @ {SellPrice.AsCurrency()}"
-                            : $"*{Title}* - {Qtty} @ {Price.AsCurrency()}";
+                            : CashFlow == 0
+                                ? $"*{Title}* - {Qtty} @ {Price.AsCurrency()}"
+                                : $"*{Title}* - {Qtty} @ {Price.AsCurrency()}, {cashFlow}: {CashFlow.AsCurrency()} x {Qtty} = {(CashFlow*Qtty).AsCurrency()}";
 
                     case AssetType.RealEstate:
                         return IsDeleted
