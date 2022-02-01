@@ -284,12 +284,7 @@ namespace CashFlowBot.Actions
             switch (user.Stage)
             {
                 case Stage.StopGame:
-                    user.Person.Expenses.Clear();
-                    user.History.Clear();
-                    user.Person.Clear();
-                    user.Stage = Stage.Nothing;
-
-                    Start(bot, user);
+                    StopGame(bot, user);
                     return;
 
                 case Stage.AdminBringDown:

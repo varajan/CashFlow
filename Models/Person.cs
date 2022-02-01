@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 
@@ -15,6 +16,7 @@ namespace CashFlowBot.Models
         public int CashFlow => Salary + Assets.Income - Expenses.Total;
         public bool ReadyForBigCircle { get => GetInt("ReadyForBigCircle") == 1; set => Set("ReadyForBigCircle", value ? 1 : 0); }
         public bool Bankruptcy { get => GetInt("Bankruptcy") == 1; set => Set("Bankruptcy", value ? 1 : 0); }
+        public bool CreditsReduced { get => GetInt("CreditsReduced") == 1; set => Set("CreditsReduced", value ? 1 : 0); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
         public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
@@ -66,8 +68,8 @@ namespace CashFlowBot.Models
 
             Clear();
             DB.Execute($"INSERT INTO {Table} " +
-                       "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy) " +
-                       $"VALUES ({Id}, '', '', '', '', '', '', '', 0)");
+                       "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
+                       $"VALUES ({Id}, '', '', '', '', '', '', '', 0, 0)");
 
             Assets.Clear();
             Profession = data.Profession;
@@ -79,6 +81,23 @@ namespace CashFlowBot.Models
 
             Liabilities.Clear();
             Liabilities.Create(data.Liabilities);
+        }
+
+        public void ReduceCredits()
+        {
+            if (CreditsReduced) return;
+
+            Expenses.CarLoan /= 2;
+            Expenses.CreditCard /= 2;
+            Expenses.SmallCredits /= 2;
+            Liabilities.CarLoan /= 2;
+            Liabilities.CreditCard /= 2;
+            Liabilities.SmallCredits /= 2;
+
+            CreditsReduced = true;
+            Bankruptcy = CashFlow < 0;
+
+            new User(Id).History.Add(ActionType.BankruptcyCreditsReduce, 0);
         }
     }
 }

@@ -129,7 +129,7 @@
 (127, 'EN', 'You have to sell your assets till you cash flow is positive.'),
 (128, 'EN', 'What asset do you want to sell?'),
 (129, 'EN', 'You are bankrupt. Game is over.'),
-(130, 'EN', 'You have paid off your debts, you can continue.'),
+(130, 'EN', 'You have paid off your debts, you lose 3 turns and can continue.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

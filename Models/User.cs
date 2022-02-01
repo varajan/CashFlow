@@ -48,6 +48,19 @@ namespace CashFlowBot.Models
             History.Add(ActionType.Credit, amount);
         }
 
+        public void PayCredit(int amount)
+        {
+            amount = amount / 1000 * 1000;
+            amount = Math.Min(amount, Person.Liabilities.BankLoan);
+            var percent = (decimal) 1 / 10;
+            var expenses = (int)(amount * percent);
+
+            Person.Cash -= amount;
+            Person.Expenses.BankLoan -= expenses;
+            Person.Liabilities.BankLoan -= amount;
+            History.Add(ActionType.BankLoan, amount);
+        }
+
         public void Create()
         {
             DB.Execute($"INSERT INTO {Table} " +

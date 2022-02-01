@@ -124,6 +124,12 @@
 (122, 'DE', 'Welche Münzen möchten Sie verkaufen?'),
 (123, 'DE', 'Falshen Münzentitel.'),
 (124, 'DE', 'Münzen Aktiennamen.'),
+(125, 'DE', 'Bankrott'),
+(126, 'DE', 'Sie haben kein Geld.'),
+(127, 'DE', 'Sie müssen Ihre Vermögenswerte verkaufen, bis Ihr Cashflow positiv ist.'),
+(128, 'DE', 'Welchen Vermögenswert möchten Sie verkaufen?'),
+(129, 'DE', 'Sie sind bankrott. Das Spiel ist vorbei.'),
+(130, 'DE', 'Du hast deine Schulden abbezahlt, verlierst 3 Runden und kannst weitermachen.'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

@@ -12,6 +12,16 @@ namespace CashFlowBot.Actions
 {
     public class BaseActions
     {
+        public static void StopGame(TelegramBotClient bot, User user)
+        {
+            user.Person.Expenses.Clear();
+            user.History.Clear();
+            user.Person.Clear();
+            user.Stage = Stage.Nothing;
+
+            Start(bot, user);
+        }
+
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
             user.Stage = stage;

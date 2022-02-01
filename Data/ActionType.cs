@@ -32,6 +32,7 @@
         BuyCoins = 119,
         SellCoins = 120,
         Bankruptcy = 125,
-        CreditsReduce,
+        BankruptcySellAsset,
+        BankruptcyCreditsReduce,
     }
 }

@@ -278,10 +278,14 @@ namespace CashFlowBot
                     case "закінчити гру":
                     case "spiel beenden":
                     case "/clear":
-                        // todo: if bankrupt -> don't ask
+                        if (user.Person.Bankruptcy)
+                        {
+                            BaseActions.StopGame(Bot, user);
+                            return;
+                        }
 
                         BaseActions.Ask(Bot, user, Stage.StopGame,
-                        Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
+                            Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
                         return;
 
                     #endregion
@@ -682,6 +686,10 @@ namespace CashFlowBot
                         if (!user.IsAdmin) return;
 
                         AdminActions.ClearAvailableAssets(Bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.Bankruptcy:
+                        BankruptcyActions.SellAsset(Bot, user, message.Text.Trim().Replace("#", "").ToInt());
                         return;
                 }
             }

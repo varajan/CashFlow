@@ -115,7 +115,6 @@ namespace CashFlowBot.Models
         public void Sell(ActionType action, int price)
         {
             SellPrice = price;
-
             Delete();
 
             new User(UserId).History.Add(action, Id);
