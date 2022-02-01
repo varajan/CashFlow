@@ -45,7 +45,7 @@ namespace CashFlowBot.Models
             + Stocks.Sum(x => x.Qtty * x.CashFlow);
 
         public string Description => Items.Any()
-            ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => x.Description))}"
+            ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => $"• {x.Description}"))}"
             : string.Empty;
 
         public Asset Add(string title, AssetType type, bool bigCircle = false)
