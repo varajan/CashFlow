@@ -130,13 +130,11 @@
 (128, 'DE', 'Welchen Vermögenswert möchten Sie verkaufen?'),
 (129, 'DE', 'Sie sind bankrott. Das Spiel ist vorbei.'),
 (130, 'DE', 'Du hast deine Schulden abbezahlt, verlierst 3 Runden und kannst weitermachen.'),
-
 (131, 'DE', 'Verkauf für Schulden'),
 (132, 'DE', 'Umschuldung'),
 (133, 'DE', 'Kreditrückzahlung in Höhe von *{0}*'),
 (134, 'DE', 'Umschuldung. Autokredite, Kleinkredite und Kreditkarte halbiert.'),
 (135, 'DE', 'Kreditrückzahlung'),
-
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),
