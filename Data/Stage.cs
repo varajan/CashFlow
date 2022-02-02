@@ -62,5 +62,6 @@
         SellLandTitle,
         SellLandPrice,
         Rollback,
+        Bankruptcy,
     }
 }

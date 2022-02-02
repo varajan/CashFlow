@@ -70,15 +70,7 @@ namespace CashFlowBot.Actions
                 return;
             }
 
-            amount = Math.Min(amount, user.Person.Liabilities.BankLoan);
-            var percent = (decimal)1 / 10;
-            var expenses = (int)(amount * percent);
-
-            user.Person.Cash -= amount;
-            user.Person.Expenses.BankLoan -= expenses;
-            user.Person.Liabilities.BankLoan -= amount;
-            user.History.Add(ActionType.BankLoan, amount);
-
+            user.PayCredit(amount, regular: true);
             ReduceLiabilities(bot, user);
         }
 
