@@ -26,7 +26,7 @@ namespace CashFlowBot.Actions
 
         public static void BuyLand(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.Lands.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.LandTitle);
             var prices = AvailableAssets.Get(AssetType.LandBuyPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
@@ -73,9 +73,6 @@ namespace CashFlowBot.Actions
                 asset.IsDraft = false;
                 user.History.Add(ActionType.BuyLand, asset.Id);
 
-                AvailableAssets.Add(asset.Title, AssetType.LandTitle);
-                AvailableAssets.Add(asset.Price, AssetType.LandBuyPrice);
-
                 SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
             }
         }
@@ -89,7 +86,7 @@ namespace CashFlowBot.Actions
 
         public static void BuyBusiness(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.Businesses.FirstOrDefault(a => a.IsDraft) ??
                         user.Person.Assets.Add(title, AssetType.Business, user.Person.BigCircle);
@@ -176,11 +173,6 @@ namespace CashFlowBot.Actions
                     asset.IsDraft = false;
                     user.History.Add(ActionType.BuyBusiness, asset.Id);
 
-                    AvailableAssets.Add(asset.Title, user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.BusinessType);
-                    AvailableAssets.Add(asset.Price, user.Person.BigCircle ? AssetType.BigBusinessBuyPrice : AssetType.BusinessBuyPrice);
-                    AvailableAssets.Add(asset.Price - asset.Mortgage, AssetType.BusinessFirstPayment);
-                    AvailableAssets.Add(asset.CashFlow, user.Person.BigCircle ? AssetType.BigBusinessCashFlow : AssetType.BusinessCashFlow);
-
                     bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
                     Cancel(bot, user);
                     return;
@@ -206,7 +198,7 @@ namespace CashFlowBot.Actions
 
         public static void BuyRealEstate(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.RealEstates.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.RealEstate);
             var prices = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice)
@@ -273,13 +265,7 @@ namespace CashFlowBot.Actions
                     asset.CashFlow = number;
                     user.Person.Cash -= asset.Price - asset.Mortgage;
                     asset.IsDraft = false;
-
                     user.History.Add(ActionType.BuyRealEstate, asset.Id);
-
-                    AvailableAssets.Add(asset.Title, user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType);
-                    AvailableAssets.Add(asset.Price, user.Person.SmallRealEstate ? AssetType.RealEstateSmallBuyPrice : AssetType.RealEstateBigBuyPrice);
-                    AvailableAssets.Add(asset.Price - asset.Mortgage, user.Person.SmallRealEstate ? AssetType.RealEstateSmallFirstPayment : AssetType.RealEstateBigFirstPayment);
-                    AvailableAssets.Add(asset.CashFlow, user.Person.SmallRealEstate ? AssetType.RealEstateSmallCashFlow : AssetType.RealEstateBigCashFlow);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -302,7 +288,7 @@ namespace CashFlowBot.Actions
 
         public static void BuyStocks(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.Stocks.FirstOrDefault(a => a.IsDraft) ?? user.Person.Assets.Add(title, AssetType.Stock);
             var prices = AvailableAssets.Get(AssetType.StockPrice).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
@@ -386,9 +372,6 @@ namespace CashFlowBot.Actions
                 user.Person.Cash -= asset.Price * asset.Qtty;
                 user.History.Add(ActionType.BuyStocks, asset.Id);
 
-                AvailableAssets.Add(asset.Title, AssetType.Stock);
-                AvailableAssets.Add(asset.Price, AssetType.StockPrice);
-
                 SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
             }
         }
@@ -440,7 +423,7 @@ namespace CashFlowBot.Actions
 
         public static void StartCompany(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.SmallBusinesses.FirstOrDefault(a => a.IsDraft) ??
                         user.Person.Assets.Add(title, AssetType.SmallBusinessType);
@@ -490,9 +473,6 @@ namespace CashFlowBot.Actions
                 asset.IsDraft = false;
                 user.History.Add(ActionType.StartCompany, asset.Id);
 
-                AvailableAssets.Add(asset.Title, AssetType.SmallBusinessType);
-                AvailableAssets.Add(asset.Price, AssetType.SmallBusinessBuyPrice);
-
                 bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
                 Cancel(bot, user);
             }
@@ -508,7 +488,7 @@ namespace CashFlowBot.Actions
 
         public static void BuyCoins(TelegramBotClient bot, User user, string value)
         {
-            var title = value.Trim().ToUpper();
+            var title = value.Trim();
             var number = value.AsCurrency();
             var asset = user.Person.Assets.Coins.FirstOrDefault(a => a.IsDraft) ??
                         user.Person.Assets.Add(title, AssetType.Coin);
@@ -570,10 +550,6 @@ namespace CashFlowBot.Actions
 
                 asset.IsDraft = false;
                 user.History.Add(ActionType.BuyCoins, asset.Id);
-
-                AvailableAssets.Add(asset.Title, AssetType.CoinTitle);
-                AvailableAssets.Add(asset.Price, AssetType.CoinBuyPrice);
-                AvailableAssets.Add(asset.Qtty, AssetType.CoinCount);
 
                 bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
                 Cancel(bot, user);

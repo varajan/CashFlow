@@ -24,7 +24,6 @@ namespace CashFlowBot.Actions
         public static void PayWithCreditCard(TelegramBotClient bot, User user, string value)
         {
             var amount = value.AsCurrency();
-            AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
 
             user.Person.Liabilities.CreditCard += amount;
             user.Person.Expenses.CreditCard += (int)(amount * 0.03);
