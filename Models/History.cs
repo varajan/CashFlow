@@ -14,6 +14,7 @@ namespace CashFlowBot.Models
 
         public History(long userId) => _userId = userId;
 
+        public int Count(ActionType type) => Records.Count(x => x.Action == type);
         public bool IsEmpty => !Records.Any();
         private IEnumerable<HistoryRecord> Records
         {
@@ -128,6 +129,16 @@ namespace CashFlowBot.Models
                     user.Person.Liabilities.BankLoan += amount;
                     break;
 
+                case ActionType.BankruptcyBankLoan:
+                    percent = 0.1m;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.BankLoan += expenses;
+                    user.Person.Liabilities.BankLoan += amount;
+                    user.Person.Bankruptcy = true;
+                    break;
+
                 case ActionType.BuyRealEstate:
                 case ActionType.BuyBusiness:
                 case ActionType.BuyLand:
@@ -180,6 +191,20 @@ namespace CashFlowBot.Models
                 case ActionType.PayOffBoat:
                     user.Person.Cash += amount;
                     user.Person.Assets.Boat.CashFlow = 340;
+                    break;
+
+                case ActionType.Bankruptcy:
+                    user.Person.Bankruptcy = false;
+                    break;
+
+                case ActionType.BankruptcySellAsset:
+                    user.Person.Cash -= asset.BancrupcySellPrice;
+                    user.Person.Bankruptcy = true;
+                    asset.Restore();
+                    break;
+
+                case ActionType.BankruptcyDebtRestructuring:
+                    user.Person.ReduceCreditsRollback();
                     break;
 
                 default:
@@ -238,6 +263,7 @@ namespace CashFlowBot.Models
                     case ActionType.SmallCredit:
                     case ActionType.BankLoan:
                     case ActionType.PayOffBoat:
+                    case ActionType.BankruptcyBankLoan:
                         var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
                         var type = Terms.Get((int)Action, UserId, "Liability");
                         var amount = Value.AsCurrency();
@@ -258,6 +284,7 @@ namespace CashFlowBot.Models
                     case ActionType.SellStocks:
                     case ActionType.SellLand:
                     case ActionType.SellCoins:
+                    case ActionType.BankruptcySellAsset:
                         var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
                         return $"{sellAsset}. {Asset.Description}";
 
@@ -272,6 +299,10 @@ namespace CashFlowBot.Models
                     case ActionType.BuyBoat:
                         var buyBoat = Terms.Get(112, UserId, "Buy a boat");
                         return $"{buyBoat}: {Value.AsCurrency()}";
+
+                    case ActionType.BankruptcyDebtRestructuring:
+                    case ActionType.Bankruptcy:
+                        return Terms.Get((int)Action, UserId, "Bankruptcy");
 
                     default:
                         return $"<{Action}> - {Value}";

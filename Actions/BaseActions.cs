@@ -12,6 +12,16 @@ namespace CashFlowBot.Actions
 {
     public class BaseActions
     {
+        public static void StopGame(TelegramBotClient bot, User user)
+        {
+            user.Person.Expenses.Clear();
+            user.History.Clear();
+            user.Person.Clear();
+            user.Stage = Stage.Nothing;
+
+            Start(bot, user);
+        }
+
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
             user.Stage = stage;
@@ -114,6 +124,12 @@ namespace CashFlowBot.Actions
 
         public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
         {
+            if (user.Person.Bankruptcy)
+            {
+                BankruptcyActions.ShowMenu(bot, user);
+                return;
+            }
+
             user.Person.ReadyForBigCircle = user.Person.Assets.Income > user.Person.Expenses.Total;
 
             if (user.Person.ReadyForBigCircle)

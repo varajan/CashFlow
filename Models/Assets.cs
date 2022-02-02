@@ -38,11 +38,7 @@ namespace CashFlowBot.Models
 
         private User ThisUser => new (Id);
 
-        public int Income =>
-            RealEstates.Sum(x => x.CashFlow)
-            + Businesses.Sum(x => x.CashFlow)
-            + SmallBusinesses.Sum(x => x.CashFlow)
-            + Stocks.Sum(x => x.Qtty * x.CashFlow);
+        public int Income => Items.Sum(x => x.TotalCashFlow);
 
         public string Description => Items.Any()
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => $"• {x.Description}"))}"
@@ -53,7 +49,7 @@ namespace CashFlowBot.Models
             int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
             DB.Execute("INSERT INTO Assets " +
                        "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
-                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 0, 0, 0)");
+                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
 
             return Items.First(i => i.IsDraft);
         }
