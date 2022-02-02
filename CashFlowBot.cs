@@ -203,7 +203,12 @@ namespace CashFlowBot
                     case "pay with cash":
                     case "оплатити готівкою":
                     case "mit bargeld zahlen":
-                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney).AsCurrency().Distinct().OrderBy(x => x).ToArray();
+                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney)
+                            .ToInt()
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .AsCurrency()
+                            .ToArray();
 
                         BaseActions.Ask(Bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
                         return;
