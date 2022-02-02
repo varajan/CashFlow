@@ -1,15 +1,23 @@
 ﻿INSERT OR REPLACE INTO AvailableAssets VALUES
 
 -- Shares Title
+(1, 'GRO4US'),
+(1, 'MYT4U'),
 (1, 'ON2U'),
 (1, 'OK4U'),
 (1, '2BIG'),
 (1, 'CD'),
 
 -- Shares Price
+(2, '1'),
 (2, '5'),
 (2, '10'),
+(2, '20'),
+(2, '30'),
+(2, '40'),
+(2, '50'),
 (2, '1200'),
+(2, '4000'),
 (2, '5000'),
 
 -- SmallGiveMoney
@@ -36,13 +44,42 @@
 (3, '2000'),
 (3, '4000'),
 
+-- RealEstateSmallType
+(18, '2/1'),
+(18, '3/2'),
+
+-- RealEstateSmallBuyPrice
+(19, '35000'),
+(19, '40000'),
+(19, '45000'),
+(19, '50000'),
+(19, '55000'),
+(19, '60000'),
+(19, '65000'),
+
+-- RealEstateSmallFirstPayment
+(21, '0'),
+(21, '2000'),
+(21, '3000'),
+(21, '4000'),
+(21, '5000'),
+
+-- RealEstateSmallCashFlow
+(22, '-100'),
+(22, '100'),
+(22, '140'),
+(22, '160'),
+(22, '200'),
+(22, '220'),
+(22, '250'),
+
 -- Shares CashFlow
 (35, '20'),
 (35, '10'),
 
 -- Land Title
-(5, '10 AC'),
-(5, '20 AC'),
+(5, '10 Acrs'),
+(5, '20 Acrs'),
 
 -- Land Buy Price
 (6, '5000'),
@@ -52,9 +89,17 @@
 (7, '150000'),
 (7, '200000'),
 
+-- SmallBusinessType
+(28, 'Auto Tools'),
+(28, 'Computer Programs'),
+
+-- SmallBusinessBuyPrice
+(29, '3000'),
+(29, '5000'),
+
 -- Coin Title
-(31, 'KRUGERAND'),
-(31, 'PESO'),
+(31, 'Krugerand'),
+(31, 'Peso'),
 
 -- Coin Buy Price
 (32, '300'),
