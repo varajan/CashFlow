@@ -65,8 +65,6 @@ namespace CashFlowBot.Actions
                     user.Person.Cash += price;
                     land.Sell(ActionType.SellLand, price);
 
-                    AvailableAssets.Add(price, AssetType.LandSellPrice);
-
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
@@ -129,8 +127,6 @@ namespace CashFlowBot.Actions
                     user.Person.Cash += price - business.Mortgage;
                     business.Sell(ActionType.SellBusiness, price);
 
-                    AvailableAssets.Add(price, AssetType.BigBusinessSellPrice);
-
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
@@ -188,8 +184,6 @@ namespace CashFlowBot.Actions
 
                     user.Person.Cash += price - realEstate.Mortgage;
                     realEstate.Sell(ActionType.SellRealEstate, price);
-
-                    AvailableAssets.Add(price, AssetType.RealEstateSellPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
@@ -252,8 +246,6 @@ namespace CashFlowBot.Actions
                     user.Person.Cash += qtty * number;
                     stocksToSell.ForEach(x => x.Sell(ActionType.SellStocks, number));
 
-                    AvailableAssets.Add(number, AssetType.StockPrice);
-
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
             }
@@ -309,8 +301,6 @@ namespace CashFlowBot.Actions
 
                     user.Person.Cash += coin.Qtty * number;
                     coin.Sell(ActionType.SellCoins, number);
-
-                    AvailableAssets.Add(number, AssetType.CoinSellPrice);
 
                     SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
                     return;
