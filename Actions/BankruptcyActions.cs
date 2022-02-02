@@ -13,15 +13,23 @@ namespace CashFlowBot.Actions
     {
         public static void SellAsset(TelegramBotClient bot, User user, int item)
         {
+            var price = Terms.Get(64, user, "Price");
+            var sellForDepbts = Terms.Get(131, user, "Sale for debts");
+
             var assets = user.Person.Assets.Items.OrderBy(x => x.Type).ToList();
 
-            if (item <= assets.Count)
+            if (item >= 0 && item <= assets.Count)
             {
                 var asset = assets[item-1];
                 asset.Sell(ActionType.BankruptcySellAsset, asset.BancrupcySellPrice);
 
                 user.Person.Cash += asset.BancrupcySellPrice;
-                user.PayCredit(user.Person.Cash);
+                //var amount = user.PayCredit(user.Person.Cash, regular: false);
+                //var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}" +
+                //    Environment.NewLine + Terms.Get(133, user, "Credit repayment in the amount of {0}", amount.AsCurrency());
+                var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}";
+
+                bot.SendMessage(user.Id, message);
             }
 
             ShowMenu(bot, user);
@@ -39,13 +47,18 @@ namespace CashFlowBot.Actions
                 return;
             }
 
+            if (user.Person.Cash >= 1000)
+            {
+                ReduceCredit(bot, user);
+            }
+
             if (user.Person.Assets.Items.Any())
             {
                 ShowSellAssetsMenu(bot, user);
                 return;
             }
 
-            user.Person.ReduceCredits();
+            ReduceCredits(bot, user);
 
             if (user.Person.Bankruptcy)
             {
@@ -56,6 +69,14 @@ namespace CashFlowBot.Actions
             ReturnToGame(bot, user);
         }
 
+        private static void ReduceCredit(TelegramBotClient bot, User user)
+        {
+            var amount = user.PayCredit(user.Person.Cash, regular: false);
+            var message = Terms.Get(133, user, "Credit repayment in the amount of {0}", amount.AsCurrency());
+
+            bot.SendMessage(user.Id, message);
+        }
+
         private static void ReturnToGame(TelegramBotClient bot, User user)
         {
             user.Person.CreditsReduced = false;
@@ -63,12 +84,31 @@ namespace CashFlowBot.Actions
             Cancel(bot, user);
         }
 
+        private static void ReduceCredits(TelegramBotClient bot, User user)
+        {
+            user.Person.ReduceCredits();
+
+            var cashFlow = Terms.Get(55, user, "Cash Flow");
+            var cash = Terms.Get(51, user, "Cash");
+            var bankLoan = Terms.Get(47, user, "Bank Loan");
+            var message = $"*{Terms.Get(126, user, "You're out of money.")}*" +
+                Environment.NewLine + $"{bankLoan}: *{user.Person.Liabilities.BankLoan.AsCurrency()}*" +
+                Environment.NewLine + $"{cashFlow}: *{user.Person.CashFlow.AsCurrency()}*" +
+                Environment.NewLine + $"{cash}: *{user.Person.Cash.AsCurrency()}*";
+
+            bot.SendMessage(user.Id, Terms.Get(134, user, "Debt restructuring. Car loans, small loans and credit card halved."));
+            bot.SendMessage(user.Id, message);
+        }
+
         private static void ShowSellAssetsMenu(TelegramBotClient bot, User user)
         {
             var history = Terms.Get(2, user, "History");
             var price = Terms.Get(64, user, "Price");
             var cashFlow = Terms.Get(55, user, "Cash Flow");
+            var cash = Terms.Get(51, user, "Cash");
             var bankLoan = Terms.Get(47, user, "Bank Loan");
+            var stopGame = Terms.Get(41, user, "Stop Game");
+
             var buttons = new List<string>();
             var assets = new List<string>();
 
@@ -82,14 +122,15 @@ namespace CashFlowBot.Actions
             }
 
             var message = $"*{Terms.Get(126, user, "You're out of money.")}*" +
-                Environment.NewLine + $"{bankLoan}: {user.Person.Liabilities.BankLoan.AsCurrency()}" +
-                Environment.NewLine + $"{cashFlow}: {user.Person.CashFlow.AsCurrency()}" +
-                Environment.NewLine + Terms.Get(127, user, "You have to sell your assets till you cash flow is positive.") +
+                Environment.NewLine + $"{bankLoan}: *{user.Person.Liabilities.BankLoan.AsCurrency()}*" +
+                Environment.NewLine + $"{cashFlow}: *{user.Person.CashFlow.AsCurrency()}*" +
+                Environment.NewLine + $"{cash}: *{user.Person.Cash.AsCurrency()}*" + Environment.NewLine +
+                Environment.NewLine + Terms.Get(127, user, "You have to sell your assets till you cash flow is positive.") + Environment.NewLine +
                 Environment.NewLine + Terms.Get(128, user, "What asset do you want to sell?") +
                 Environment.NewLine + string.Join(Environment.NewLine, assets);
 
             user.Stage = Stage.Bankruptcy;
-            bot.SetButtons(user.Id, message, buttons.Append(history));
+            bot.SetButtons(user.Id, message, buttons.Append(history).Append(stopGame));
         }
     }
 }

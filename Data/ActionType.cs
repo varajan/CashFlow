@@ -34,5 +34,6 @@
         Bankruptcy = 125,
         BankruptcySellAsset = 131,
         BankruptcyDebtRestructuring = 132,
+        BankruptcyBankLoan = 135,
     }
 }

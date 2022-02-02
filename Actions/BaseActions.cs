@@ -124,6 +124,12 @@ namespace CashFlowBot.Actions
 
         public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
         {
+            if (user.Person.Bankruptcy)
+            {
+                BankruptcyActions.ShowMenu(bot, user);
+                return;
+            }
+
             user.Person.ReadyForBigCircle = user.Person.Assets.Income > user.Person.Expenses.Total;
 
             if (user.Person.ReadyForBigCircle)

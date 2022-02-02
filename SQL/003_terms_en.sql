@@ -132,6 +132,9 @@
 (130, 'EN', 'You have paid off your debts, you lose 3 turns and can continue.'),
 (131, 'EN', 'Sale for debts'),
 (132, 'EN', 'Debt restructuring'),
+(133, 'EN', 'Credit repayment in the amount of *{0}*'),
+(134, 'EN', 'Debt restructuring. Car loans, small loans and credit card halved.'),
+(135, 'EN', 'Credit repayment'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

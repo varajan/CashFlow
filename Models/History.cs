@@ -129,6 +129,16 @@ namespace CashFlowBot.Models
                     user.Person.Liabilities.BankLoan += amount;
                     break;
 
+                case ActionType.BankruptcyBankLoan:
+                    percent = 0.1m;
+                    expenses = (int) (amount * percent);
+
+                    user.Person.Cash += amount;
+                    user.Person.Expenses.BankLoan += expenses;
+                    user.Person.Liabilities.BankLoan += amount;
+                    user.Person.Bankruptcy = true;
+                    break;
+
                 case ActionType.BuyRealEstate:
                 case ActionType.BuyBusiness:
                 case ActionType.BuyLand:
@@ -189,6 +199,7 @@ namespace CashFlowBot.Models
 
                 case ActionType.BankruptcySellAsset:
                     user.Person.Cash -= asset.BancrupcySellPrice;
+                    user.Person.Bankruptcy = true;
                     asset.Restore();
                     break;
 
@@ -252,6 +263,7 @@ namespace CashFlowBot.Models
                     case ActionType.SmallCredit:
                     case ActionType.BankLoan:
                     case ActionType.PayOffBoat:
+                    case ActionType.BankruptcyBankLoan:
                         var reduceLiabilities = Terms.Get(40, UserId, "Reduce Liabilities");
                         var type = Terms.Get((int)Action, UserId, "Liability");
                         var amount = Value.AsCurrency();
@@ -290,7 +302,7 @@ namespace CashFlowBot.Models
 
                     case ActionType.BankruptcyDebtRestructuring:
                     case ActionType.Bankruptcy:
-                        return Terms.Get((int)ActionType.Bankruptcy, UserId, "Bankruptcy");
+                        return Terms.Get((int)Action, UserId, "Bankruptcy");
 
                     default:
                         return $"<{Action}> - {Value}";

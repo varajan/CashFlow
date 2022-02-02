@@ -70,7 +70,7 @@ namespace CashFlowBot.Actions
                 return;
             }
 
-            user.PayCredit(amount);
+            user.PayCredit(amount, regular: true);
             ReduceLiabilities(bot, user);
         }
 

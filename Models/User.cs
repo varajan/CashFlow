@@ -48,7 +48,7 @@ namespace CashFlowBot.Models
             History.Add(ActionType.Credit, amount);
         }
 
-        public void PayCredit(int amount)
+        public int PayCredit(int amount, bool regular)
         {
             amount = amount / 1000 * 1000;
             amount = Math.Min(amount, Person.Liabilities.BankLoan);
@@ -58,7 +58,9 @@ namespace CashFlowBot.Models
             Person.Cash -= amount;
             Person.Expenses.BankLoan -= expenses;
             Person.Liabilities.BankLoan -= amount;
-            History.Add(ActionType.BankLoan, amount);
+            History.Add(regular ? ActionType.BankLoan : ActionType.BankruptcyBankLoan, amount);
+
+            return amount;
         }
 
         public void Create()
