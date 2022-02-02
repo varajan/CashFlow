@@ -130,6 +130,8 @@
 (128, 'EN', 'What asset do you want to sell?'),
 (129, 'EN', 'You are bankrupt. Game is over.'),
 (130, 'EN', 'You have paid off your debts, you lose 3 turns and can continue.'),
+(131, 'EN', 'Sale for debts'),
+(132, 'EN', 'Debt restructuring'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

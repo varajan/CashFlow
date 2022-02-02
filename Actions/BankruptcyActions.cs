@@ -15,9 +15,9 @@ namespace CashFlowBot.Actions
         {
             var assets = user.Person.Assets.Items.OrderBy(x => x.Type).ToList();
 
-            if (item < assets.Count)
+            if (item <= assets.Count)
             {
-                var asset = assets[item];
+                var asset = assets[item-1];
                 asset.Sell(ActionType.BankruptcySellAsset, asset.BancrupcySellPrice);
 
                 user.Person.Cash += asset.BancrupcySellPrice;
@@ -75,10 +75,10 @@ namespace CashFlowBot.Actions
             int i = 0;
             foreach (var asset in user.Person.Assets.Items.OrderBy(x => x.Type))
             {
-                buttons.Add($"#{i++}");
+                buttons.Add($"#{++i}");
                 assets.Add(asset.CashFlow == 0
-                ? $"#{i} - {asset.Title} - {price}: {asset.BancrupcySellPrice}"
-                : $"#{i} - {asset.Title} - {price}: {asset.BancrupcySellPrice}, {cashFlow}: {asset.TotalCashFlow.AsCurrency()}");
+                ? $"#{i} - *{asset.Title}* - {price}: {asset.BancrupcySellPrice}"
+                : $"#{i} - *{asset.Title}* - {price}: {asset.BancrupcySellPrice}, {cashFlow}: {asset.TotalCashFlow.AsCurrency()}");
             }
 
             var message = $"*{Terms.Get(126, user, "You're out of money.")}*" +

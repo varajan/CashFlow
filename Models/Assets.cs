@@ -49,7 +49,7 @@ namespace CashFlowBot.Models
             int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
             DB.Execute("INSERT INTO Assets " +
                        "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
-                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 0, 1, 0, 0)");
+                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
 
             return Items.First(i => i.IsDraft);
         }

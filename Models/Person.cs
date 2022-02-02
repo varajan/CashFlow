@@ -83,6 +83,33 @@ namespace CashFlowBot.Models
             Liabilities.Create(data.Liabilities);
         }
 
+        public void ReduceCreditsRollback()
+        {
+            var user = new User(Id);
+            var person = Persons.Get(user.Id, user.Person.Profession);
+            var count = user.History.Count(ActionType.BankruptcyDebtRestructuring);
+
+            Expenses.CarLoan         = person.Expenses.CarLoan;
+            Expenses.CreditCard      = person.Expenses.CreditCard;
+            Expenses.SmallCredits    = person.Expenses.SmallCredits;
+            Liabilities.CarLoan      = person.Liabilities.CarLoan;
+            Liabilities.CreditCard   = person.Liabilities.CreditCard;
+            Liabilities.SmallCredits = person.Liabilities.SmallCredits;
+
+            for (var i = 0; i < count; i++)
+            {
+                Expenses.CarLoan /= 2;
+                Expenses.CreditCard /= 2;
+                Expenses.SmallCredits /= 2;
+                Liabilities.CarLoan /= 2;
+                Liabilities.CreditCard /= 2;
+                Liabilities.SmallCredits /= 2;
+            }
+
+            CreditsReduced = false;
+            Bankruptcy = CashFlow < 0;
+        }
+
         public void ReduceCredits()
         {
             if (CreditsReduced) return;
@@ -97,7 +124,9 @@ namespace CashFlowBot.Models
             CreditsReduced = true;
             Bankruptcy = CashFlow < 0;
 
-            new User(Id).History.Add(ActionType.BankruptcyCreditsReduce, 0);
+            var history = new User(Id).History;
+            var count = history.Count(ActionType.BankruptcyDebtRestructuring);
+            history.Add(ActionType.BankruptcyDebtRestructuring, count);
         }
     }
 }

@@ -14,6 +14,7 @@ namespace CashFlowBot.Models
 
         public History(long userId) => _userId = userId;
 
+        public int Count(ActionType type) => Records.Count(x => x.Action == type);
         public bool IsEmpty => !Records.Any();
         private IEnumerable<HistoryRecord> Records
         {
@@ -186,6 +187,15 @@ namespace CashFlowBot.Models
                     user.Person.Bankruptcy = false;
                     break;
 
+                case ActionType.BankruptcySellAsset:
+                    user.Person.Cash -= asset.BancrupcySellPrice;
+                    asset.Restore();
+                    break;
+
+                case ActionType.BankruptcyDebtRestructuring:
+                    user.Person.ReduceCreditsRollback();
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -262,6 +272,7 @@ namespace CashFlowBot.Models
                     case ActionType.SellStocks:
                     case ActionType.SellLand:
                     case ActionType.SellCoins:
+                    case ActionType.BankruptcySellAsset:
                         var sellAsset = Terms.Get((int) Action, UserId, "Sell Asset");
                         return $"{sellAsset}. {Asset.Description}";
 
@@ -277,6 +288,7 @@ namespace CashFlowBot.Models
                         var buyBoat = Terms.Get(112, UserId, "Buy a boat");
                         return $"{buyBoat}: {Value.AsCurrency()}";
 
+                    case ActionType.BankruptcyDebtRestructuring:
                     case ActionType.Bankruptcy:
                         return Terms.Get((int)ActionType.Bankruptcy, UserId, "Bankruptcy");
 
