@@ -87,5 +87,5 @@
 -- Coin Count
 (34, '1'), (34, '10'),
 
--- SmallBusinessCashFlow
-(35, '250'), (35, '400')
+-- IncreaseCashFlow
+(36, '250'), (36, '400')

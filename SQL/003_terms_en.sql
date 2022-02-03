@@ -135,6 +135,7 @@
 (133, 'EN', 'Credit repayment in the amount of *{0}*'),
 (134, 'EN', 'Debt restructuring. Car loans, small loans and credit card halved.'),
 (135, 'EN', 'Credit repayment'),
+(136, 'EN', 'You have no small Business.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

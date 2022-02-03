@@ -17,7 +17,7 @@
 
         SmallBusinessType = 28,
         SmallBusinessBuyPrice = 29,
-        SmallBusinessCashFlow = 35,
+        IncreaseCashFlow = 36,
 
         BusinessType = 10,
         BusinessBuyPrice = 11,

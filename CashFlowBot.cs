@@ -691,6 +691,10 @@ namespace CashFlowBot
                     case Stage.Bankruptcy:
                         BankruptcyActions.SellAsset(Bot, user, message.Text.Trim().Replace("#", "").ToInt());
                         return;
+
+                    case Stage.IncreaseCashFlow:
+                        SmallCircleActions.IncreaseCashFlow(Bot, user, message.Text.Trim().AsCurrency());
+                        return;
                 }
             }
             catch (Exception e)
