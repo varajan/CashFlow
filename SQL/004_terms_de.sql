@@ -135,6 +135,7 @@
 (133, 'DE', 'Kreditrückzahlung in Höhe von *{0}*'),
 (134, 'DE', 'Umschuldung. Autokredite, Kleinkredite und Kreditkarte halbiert.'),
 (135, 'DE', 'Kreditrückzahlung'),
+(136, 'DE', 'Sie haben kein Kleingewerbe.'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),
