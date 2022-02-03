@@ -15,8 +15,9 @@ namespace CashFlowBot.Actions
     {
         public static void PayWithCreditCard(TelegramBotClient bot, User user)
         {
+            var cancel = Terms.Get(6, user, "Cancel");
             user.Stage = Stage.MicroCreditAmount;
-            var monthly = AvailableAssets.Get(AssetType.MicroCreditAmount).AsCurrency().Append(Terms.Get(6, user, "Cancel"));
+            var monthly = AvailableAssets.GetAsCurrency(AssetType.MicroCreditAmount).Append(cancel);
 
             bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), monthly);
         }
@@ -34,8 +35,9 @@ namespace CashFlowBot.Actions
 
         public static void GetCredit(TelegramBotClient bot, User user)
         {
+            var cancel = Terms.Get(6, user, "Cancel");
             user.Stage = Stage.GetCredit;
-            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", Terms.Get(6, user, "Cancel"));
+            bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", cancel);
         }
 
         public static void GetCredit(TelegramBotClient bot, User user, string value)
@@ -76,6 +78,7 @@ namespace CashFlowBot.Actions
         public static void ReduceLiabilities(TelegramBotClient bot, User user, Stage stage)
         {
             int cost = 0;
+            var cancel = Terms.Get(6, user, "Cancel");
 
             switch (stage)
             {
@@ -116,7 +119,7 @@ namespace CashFlowBot.Actions
                     .OrderBy(x => x)
                     .Distinct()
                     .Select(x => x.AsCurrency())
-                    .Append(Terms.Get(6, user, "Cancel"));
+                    .Append(cancel);
 
                 bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
                 return;
@@ -150,6 +153,7 @@ namespace CashFlowBot.Actions
             var smallCredit = Terms.Get(92, user, "Small Credit");
             var bankLoan = Terms.Get(47, user, "Bank Loan");
             var boatLoan = Terms.Get(114, user, "Boat Loan");
+            var cancel = Terms.Get(6, user, "Cancel");
 
             if (l.Mortgage > 0)
             {
@@ -198,8 +202,7 @@ namespace CashFlowBot.Actions
             {
                 var cashTerm = Terms.Get(51, user, "Cash");
                 user.Stage = Stage.Nothing;
-                buttons.Add(Terms.Get(6, user, "Cancel"));
-                bot.SetButtons(user.Id, $"*{cashTerm}:* {user.Person.Cash.AsCurrency()}{Environment.NewLine}{Environment.NewLine}{liabilities}", buttons);
+                bot.SetButtons(user.Id, $"*{cashTerm}:* {user.Person.Cash.AsCurrency()}{Environment.NewLine}{Environment.NewLine}{liabilities}", buttons.Append(cancel));
                 return;
             }
 

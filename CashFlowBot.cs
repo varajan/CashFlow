@@ -203,12 +203,7 @@ namespace CashFlowBot
                     case "pay with cash":
                     case "оплатити готівкою":
                     case "mit bargeld zahlen":
-                        var giveMoney = AvailableAssets.Get(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney)
-                            .ToInt()
-                            .Distinct()
-                            .OrderBy(x => x)
-                            .AsCurrency()
-                            .ToArray();
+                        var giveMoney = AvailableAssets.GetAsCurrency(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
 
                         BaseActions.Ask(Bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
                         return;
@@ -568,7 +563,7 @@ namespace CashFlowBot
                         foreach (var type in Enum.GetValues(typeof(AssetType)))
                         {
                             var assetType = type.ToString().ParseEnum<AssetType>();
-                            var count = AvailableAssets.Get(assetType).Count;
+                            var count = AvailableAssets.Get(assetType).Count();
 
                             if (count > 0) assets.Add($"{type} - {count}");
                         }

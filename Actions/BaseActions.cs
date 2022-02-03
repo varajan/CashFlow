@@ -22,6 +22,9 @@ namespace CashFlowBot.Actions
             Start(bot, user);
         }
 
+        public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, IEnumerable<string> buttons) =>
+            Ask(bot, user, stage, question, buttons.ToArray());
+
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
             user.Stage = stage;
