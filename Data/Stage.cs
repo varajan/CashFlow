@@ -63,5 +63,6 @@
         SellLandPrice,
         Rollback,
         Bankruptcy,
+        IncreaseCashFlow,
     }
 }

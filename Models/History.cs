@@ -148,7 +148,7 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.IncreaseCashFlow:
-                    asset.CashFlow -= 400;
+                    user.Person.Assets.SmallBusinesses.ForEach(x => x.CashFlow -= (int)record.Value);
                     break;
 
                 case ActionType.SellRealEstate:
@@ -274,10 +274,13 @@ namespace CashFlowBot.Models
                     case ActionType.BuyStocks:
                     case ActionType.BuyLand:
                     case ActionType.StartCompany:
-                    case ActionType.IncreaseCashFlow:
                     case ActionType.BuyCoins:
                         var buyAsset = Terms.Get((int) Action, UserId, "Buy Asset");
                         return $"{buyAsset}. {Asset.Description}";
+
+                    case ActionType.IncreaseCashFlow:
+                        var increaseCashFlow = Terms.Get((int)Action, UserId, "Increase Cash Flow");
+                        return $"{increaseCashFlow}. {Value.AsCurrency()}";
 
                     case ActionType.SellRealEstate:
                     case ActionType.SellBusiness:

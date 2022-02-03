@@ -38,15 +38,23 @@ namespace CashFlowBot.Actions
         {
             if (!user.Person.Assets.SmallBusinesses.Any())
             {
-                bot.SendMessage(user.Id, Terms.Get(77, user, "You have no Business."));
+                bot.SendMessage(user.Id, Terms.Get(136, user, "You have no small Business."));
                 Cancel(bot, user);
                 return;
             }
 
+            var question = Terms.Get(12, user, "What is the cash flow?");
+            var amounts = AvailableAssets.GetAsCurrency(AssetType.IncreaseCashFlow);
+
+            Ask(bot, user, Stage.IncreaseCashFlow, question, amounts);
+        }
+
+        public static void IncreaseCashFlow(TelegramBotClient bot, User user, int amount)
+        {
             foreach (var business in user.Person.Assets.SmallBusinesses)
             {
-                business.CashFlow += 400;
-                user.History.Add(ActionType.IncreaseCashFlow, business.Id);
+                business.CashFlow += amount;
+                user.History.Add(ActionType.IncreaseCashFlow, amount);
             }
 
             bot.SendMessage(user.Id, Terms.Get(13, user, "Done."));
@@ -273,7 +281,6 @@ namespace CashFlowBot.Actions
             user.Person.Cash -= amount;
             user.History.Add(ActionType.PayMoney, amount);
 
-            AvailableAssets.Add(amount, user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
             Cancel(bot, user);
         }
 
