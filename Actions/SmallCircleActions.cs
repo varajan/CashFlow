@@ -45,7 +45,7 @@ namespace CashFlowBot.Actions
 
             foreach (var business in user.Person.Assets.SmallBusinesses)
             {
-                business.CashFlow += 400;
+                business.CashFlow += 400; // todo
                 user.History.Add(ActionType.IncreaseCashFlow, business.Id);
             }
 

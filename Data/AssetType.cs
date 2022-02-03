@@ -17,15 +17,16 @@
 
         SmallBusinessType = 28,
         SmallBusinessBuyPrice = 29,
+        SmallBusinessCashFlow = 35,
 
         BusinessType = 10,
         BusinessBuyPrice = 11,
         BusinessFirstPayment = 12,
         BusinessCashFlow = 13,
+        BusinessSellPrice = 16,
 
         BigBusinessType = 14,
         BigBusinessBuyPrice  = 15,
-        BigBusinessSellPrice = 16,
         BigBusinessCashFlow  = 17,
 
         RealEstate = 17,

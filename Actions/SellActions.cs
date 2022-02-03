@@ -103,7 +103,7 @@ namespace CashFlowBot.Actions
             var businesses = user.Person.Assets.SmallBusinesses;
             businesses.AddRange(user.Person.Assets.Businesses);
 
-            var prices = AvailableAssets.GetAsCurrency(AssetType.BusinessBuyPrice).Append(cancel);
+            var prices = AvailableAssets.GetAsCurrency(AssetType.BusinessSellPrice).Append(cancel);
 
             switch (user.Stage)
             {
