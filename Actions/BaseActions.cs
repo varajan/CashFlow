@@ -32,7 +32,7 @@ namespace CashFlowBot.Actions
         }
 
         public static void ChangeLanguage(TelegramBotClient bot, User user) =>
-            Ask(bot, user, Stage.Nothing, "Language/Мова", "UA", "EN", "DE"); // todo -- get from enum
+            Ask(bot, user, Stage.SelectLanguage, "Language/Мова", "UA", "EN", "DE"); // todo -- get from enum
 
         public static async void Start(TelegramBotClient bot, User user, string name = null)
         {

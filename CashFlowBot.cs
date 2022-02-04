@@ -52,6 +52,11 @@ namespace CashFlowBot
                 await Bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
                 if (message.Type != MessageType.Text) return;
+                if (!user.Person.Exists && !new[] { Stage.SelectLanguage, Stage.GetProfession }.Contains(user.Stage))
+                {
+                    BaseActions.Start(Bot, user, message.Chat.Username);
+                    return;
+                }
 
                 // Make user admin
                 var makeAdmin = Regex.Match(message.Text, @"Make (\d+) admin");

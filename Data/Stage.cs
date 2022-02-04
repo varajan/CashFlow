@@ -8,6 +8,7 @@
         AdminAvailableAssets,
         AdminAvailableAssetsClear,
         Nothing,
+        SelectLanguage,
         StopGame,
         GetProfession,
         GetChild,
