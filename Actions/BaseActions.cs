@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
@@ -31,8 +32,17 @@ namespace CashFlowBot.Actions
             bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
         }
 
-        public static void ChangeLanguage(TelegramBotClient bot, User user) =>
-            Ask(bot, user, Stage.Nothing, "Language/Мова", "UA", "EN", "DE"); // todo -- get from enum
+        public static void ChangeLanguage(TelegramBotClient bot, User user)
+        {
+            var languages = new List<string>();
+            foreach (var language in Enum.GetValues(typeof(Language)))
+            {
+                languages.Add(language.ToString());
+            }
+
+            user.Stage = Stage.SelectLanguage;
+            bot.SetButtons(user.Id, "Language/Мова", languages);
+        }
 
         public static async void Start(TelegramBotClient bot, User user, string name = null)
         {
