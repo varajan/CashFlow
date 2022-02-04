@@ -7,6 +7,15 @@ namespace CashFlowBot.Data
 {
     public class AvailableAssets
     {
+        public static void Add(int value, AssetType type) => Add(value.ToString(), type);
+        public static void Add(string value, AssetType type)
+        {
+            if (Get(type).Contains(value)) return;
+
+            DB.Execute("INSERT INTO AvailableAssets (Type, Value) " +
+                       $"VALUES ({(int)type}, '{value}')");
+        }
+
         public static IEnumerable<string> Get(AssetType type) =>
             DB.GetColumn($"SELECT Value FROM AvailableAssets WHERE Type = {(int) type} ORDER BY CAST(Value as Number)").Distinct();
 
