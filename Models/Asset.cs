@@ -106,7 +106,7 @@ namespace CashFlowBot.Models
         public int SellPrice { get => GetInt("SellPrice"); set => Set("SellPrice", value); }
         public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }
         public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
-        public int TotalCashFlow => Qtty * CashFlow;
+        public int TotalCashFlow => Type == AssetType.Boat ? -CashFlow : Qtty * CashFlow;
         public int CashFlow { get => GetInt("CashFlow"); set => Set("CashFlow", value); }
         public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
         public bool IsDraft { get => GetInt("Draft") == 1; set => Set("Draft", value ? 1 : 0); }
