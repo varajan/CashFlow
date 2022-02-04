@@ -326,6 +326,12 @@ namespace CashFlowBot.Actions
                         .Select(x => x.ToString())
                         .Append(cancel);
 
+                    if (upToQtty == 0)
+                    {
+                        SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                        return;
+                    }
+
                     bot.SetButtons(user.Id, Terms.Get(17, user, "You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty), buttons);
                     return;
 
