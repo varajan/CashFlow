@@ -82,5 +82,19 @@ namespace CashFlowBot.Extensions
 
         public static DateTime ToDateTime(this string date) => DateTime.Parse(date);
         public static string AsString(this DateTime dateTime, string format = "yyyy.MM.dd HH:mm") => dateTime.ToString(format, CultureInfo.InvariantCulture);
+ 
+        public static int GetAppartmentsCount(this string title)
+        {
+            int result = 1;
+
+            if (title.ToLower().Contains("plex"))
+            {
+                result = title.ToLower().Replace("-plex", "").Replace("*", "").Split("x")
+                    .Select(x => x.ToInt())
+                    .Aggregate((x, r) => x * r);
+            }
+
+            return result;
+        }
     }
 }

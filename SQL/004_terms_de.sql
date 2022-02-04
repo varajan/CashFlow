@@ -136,6 +136,7 @@
 (134, 'DE', 'Umschuldung. Autokredite, Kleinkredite und Kreditkarte halbiert.'),
 (135, 'DE', 'Kreditrückzahlung'),
 (136, 'DE', 'Sie haben kein Kleingewerbe.'),
+(137, 'DE', 'Sie haben *{0}* Wohnungen. Was ist der Preis pro Wohnung?'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

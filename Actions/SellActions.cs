@@ -175,14 +175,20 @@ namespace CashFlowBot.Actions
                         return;
                     }
 
-                    properties[index - 1].Title += "*";
+                    var property = properties[index - 1];
+                    var question = property.Title.GetAppartmentsCount() == 1
+                        ? Terms.Get(8, user, "What is the price?")
+                        : Terms.Get(137, user, "You have *{0}* appartments. What is the price per one appartment?", property.Title.GetAppartmentsCount());
+
+                    property.Title += "*";
                     user.Stage = Stage.SellRealEstatePrice;
-                    bot.SetButtons(user.Id, Terms.Get(8, user, "What is the price?"), prices);
+
+                    bot.SetButtons(user.Id, question, prices);
                     return;
 
                 case Stage.SellRealEstatePrice:
-                    var price = value.AsCurrency();
                     var realEstate = properties.First(x => x.Title.EndsWith("*"));
+                    var price = realEstate.Title.GetAppartmentsCount() * value.AsCurrency();
 
                     user.Person.Cash += price - realEstate.Mortgage;
                     realEstate.Sell(ActionType.SellRealEstate, price);

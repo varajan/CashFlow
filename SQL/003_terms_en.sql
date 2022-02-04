@@ -136,6 +136,7 @@
 (134, 'EN', 'Debt restructuring. Car loans, small loans and credit card halved.'),
 (135, 'EN', 'Credit repayment'),
 (136, 'EN', 'You have no small Business.'),
+(137, 'EN', 'You have *{0}* apartments. What is the price per one?'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
