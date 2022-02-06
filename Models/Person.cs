@@ -46,7 +46,7 @@ namespace CashFlowBot.Models
                      $"*{CashFlowTerm}*: {CashFlow.AsCurrency()}";
 
         private string BigCircleDescription => $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
-                                              $"{InitialTerm} {CashFlowTerm}:{InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
+                                              $"{InitialTerm} {CashFlowTerm}: {InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{CurrentTerm} {CashFlowTerm}: {CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{TargetTerm} {CashFlowTerm}: {TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{Assets.Description}";
