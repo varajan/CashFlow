@@ -60,7 +60,7 @@ namespace CashFlowBot.Extensions
         {
             try
             {
-                return int.Parse(number);
+                return int.Parse(number.Replace(" ", "").Trim());
             }
             catch
             {
