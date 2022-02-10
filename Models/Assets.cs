@@ -40,6 +40,10 @@ namespace CashFlowBot.Models
 
         public int Income => Items.Where(x => x.Type != AssetType.Boat).Sum(x => x.TotalCashFlow);
 
+        public string BigCircleDescription => Businesses.Any()
+            ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Businesses.Select(x => $"• {x.Description}"))}"
+            : string.Empty;
+
         public string Description => Items.Any()
             ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, Id, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => $"• {x.Description}"))}"
             : string.Empty;

@@ -36,7 +36,7 @@ namespace CashFlowBot.Models
 
         public int InitialCashFlow { get => GetInt("InitialCashFlow"); set => Set("InitialCashFlow", value); }
         public int TargetCashFlow => InitialCashFlow + 50_000;
-        public int CurrentCashFlow => InitialCashFlow + Assets.Income;
+        public int CurrentCashFlow => InitialCashFlow + Assets.Businesses.Sum(x => x.TotalCashFlow);
 
         private string SmallCircleDescription => $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
                      $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
@@ -49,7 +49,7 @@ namespace CashFlowBot.Models
                                               $"{InitialTerm} {CashFlowTerm}: {InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{CurrentTerm} {CashFlowTerm}: {CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
                                               $"{TargetTerm} {CashFlowTerm}: {TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
-                                              $"{Assets.Description}";
+                                              $"{Assets.BigCircleDescription}";
 
         public string Description
         {

@@ -454,7 +454,7 @@ namespace CashFlowBot
                     case "divorce":
                     case "розлучення":
                     case "die ehescheidung":
-                        BigCircleActions.Divorce(Bot, user);
+                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash, ActionType.Divorce);
                         return;
 
                     // Term 1: Go to Big Circle
@@ -465,14 +465,17 @@ namespace CashFlowBot
                         return;
 
                     // Term 70: Tax Audit
-                    // Term 71: Lawsuit
                     case "tax audit":
-                    case "lawsuit":
                     case "die steuerprüfung":
-                    case "die klage":
                     case "податкова перевірка":
+                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash/2, ActionType.TaxAudit);
+                        return;
+
+                    // Term 71: Lawsuit
+                    case "lawsuit":
+                    case "die klage":
                     case "судовий процес":
-                        BigCircleActions.TaxAudit(Bot, user);
+                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash/2, ActionType.Lawsuit);
                         return;
 
                     // Term 4 - YES

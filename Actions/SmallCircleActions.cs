@@ -246,7 +246,7 @@ namespace CashFlowBot.Actions
 
             if (user.Person.Bankruptcy)
             {
-                user.History.Add(ActionType.Bankruptcy, 0);
+                user.History.Add(ActionType.Bankruptcy);
                 BankruptcyActions.ShowMenu(bot, user);
                 return;
             }

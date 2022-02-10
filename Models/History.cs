@@ -47,7 +47,7 @@ namespace CashFlowBot.Models
 
         public void Clear() => DB.Execute($"DELETE FROM History WHERE UserID = {_userId}");
 
-        public void Add(ActionType action, long value) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Add();
+        public void Add(ActionType action, long value = 0) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Add();
 
         public void Rollback()
         {
@@ -207,6 +207,18 @@ namespace CashFlowBot.Models
                     user.Person.ReduceCreditsRollback();
                     break;
 
+                case ActionType.GoToBigCircle:
+                    user.Person.Cash -= user.Person.InitialCashFlow;
+                    user.Person.InitialCashFlow = 0;
+                    user.Person.BigCircle = false;
+                    break;
+
+                case ActionType.Divorce:
+                case ActionType.TaxAudit:
+                case ActionType.Lawsuit:
+                    user.Person.Cash += amount;
+                    break;
+
                 default:
                     throw new Exception($"<{record.Action}> ???");
             }
@@ -306,6 +318,12 @@ namespace CashFlowBot.Models
                     case ActionType.BankruptcyDebtRestructuring:
                     case ActionType.Bankruptcy:
                         return Terms.Get((int)Action, UserId, "Bankruptcy");
+
+                    case ActionType.GoToBigCircle:
+                    case ActionType.Divorce:
+                    case ActionType.TaxAudit:
+                    case ActionType.Lawsuit:
+                        return Terms.Get((int)Action, UserId, "BigCircle");
 
                     default:
                         return $"<{Action}> - {Value}";
