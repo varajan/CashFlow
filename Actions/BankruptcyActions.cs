@@ -24,9 +24,6 @@ namespace CashFlowBot.Actions
                 asset.Sell(ActionType.BankruptcySellAsset, asset.BancrupcySellPrice);
 
                 user.Person.Cash += asset.BancrupcySellPrice;
-                //var amount = user.PayCredit(user.Person.Cash, regular: false);
-                //var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}" +
-                //    Environment.NewLine + Terms.Get(133, user, "Credit repayment in the amount of {0}", amount.AsCurrency());
                 var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}";
 
                 bot.SendMessage(user.Id, message);
@@ -50,6 +47,8 @@ namespace CashFlowBot.Actions
             if (user.Person.Cash >= 1000)
             {
                 ReduceCredit(bot, user);
+                ShowMenu(bot, user);
+                return;
             }
 
             if (user.Person.Assets.Items.Any())

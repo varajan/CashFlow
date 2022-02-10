@@ -13,7 +13,7 @@ namespace CashFlowBot.Actions
         public static void BuyLand(TelegramBotClient bot, User user)
         {
             var cancel = Terms.Get(6, user, "Cancel");
-            var landTypes = AvailableAssets.GetAsText(AssetType.LandTitle).Append(cancel);
+            var landTypes = AvailableAssets.GetAsText(AssetType.LandTitle, user.Language).Append(cancel);
 
             if (user.Person.Cash == 0)
             {
@@ -83,7 +83,9 @@ namespace CashFlowBot.Actions
         {
             user.Stage = Stage.BuyBusinessTitle;
             var cancel = Terms.Get(6, user, "Cancel");
-            var businesses = AvailableAssets.GetAsText(user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.BusinessType).Append(cancel);
+            var type = user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.BusinessType;
+            var businesses = AvailableAssets.GetAsText(type, user.Language).Append(cancel);
+
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), businesses);
         }
 
@@ -275,7 +277,7 @@ namespace CashFlowBot.Actions
         public static void BuyStocks(TelegramBotClient bot, User user)
         {
             var cancel = Terms.Get(6, user, "Cancel");
-            var stocks = AvailableAssets.GetAsText(AssetType.Stock).Append(cancel);
+            var stocks = AvailableAssets.GetAsText(AssetType.Stock, user.Language).Append(cancel);
 
             if (user.Person.Cash == 0)
             {
@@ -325,6 +327,12 @@ namespace CashFlowBot.Actions
                         .OrderBy(x => x)
                         .Select(x => x.ToString())
                         .Append(cancel);
+
+                    if (upToQtty == 0)
+                    {
+                        SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
+                        return;
+                    }
 
                     bot.SetButtons(user.Id, Terms.Get(17, user, "You can buy up to {0} stocks. How much stocks would you like to buy?", upToQtty), buttons);
                     return;
@@ -419,7 +427,7 @@ namespace CashFlowBot.Actions
         {
             user.Stage = Stage.StartCompanyTitle;
             var cancel = Terms.Get(6, user, "Cancel");
-            var businesses = AvailableAssets.GetAsText(AssetType.SmallBusinessType).Append(cancel);
+            var businesses = AvailableAssets.GetAsText(AssetType.SmallBusinessType, user.Language).Append(cancel);
 
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), businesses);
         }
@@ -485,7 +493,7 @@ namespace CashFlowBot.Actions
         {
             user.Stage = Stage.BuyCoinsTitle;
             var cancel = Terms.Get(6, user, "Cancel");
-            var coins = AvailableAssets.GetAsText(AssetType.CoinTitle).Append(cancel);
+            var coins = AvailableAssets.GetAsText(AssetType.CoinTitle, user.Language).Append(cancel);
 
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), coins);
         }
@@ -498,7 +506,7 @@ namespace CashFlowBot.Actions
             var asset = user.Person.Assets.Coins.FirstOrDefault(a => a.IsDraft) ??
                         user.Person.Assets.Add(title, AssetType.Coin);
             var prices = AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(cancel);
-            var counts = AvailableAssets.GetAsText(AssetType.CoinCount).Append(cancel);
+            var counts = AvailableAssets.GetAsText(AssetType.CoinCount, user.Language).Append(cancel);
 
             switch (user.Stage)
             {

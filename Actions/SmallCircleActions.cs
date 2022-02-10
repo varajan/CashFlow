@@ -246,7 +246,7 @@ namespace CashFlowBot.Actions
 
             if (user.Person.Bankruptcy)
             {
-                user.History.Add(ActionType.Bankruptcy, 0);
+                user.History.Add(ActionType.Bankruptcy);
                 BankruptcyActions.ShowMenu(bot, user);
                 return;
             }
@@ -280,6 +280,8 @@ namespace CashFlowBot.Actions
 
             user.Person.Cash -= amount;
             user.History.Add(ActionType.PayMoney, amount);
+
+            if (user.Person.BigCircle) AvailableAssets.Add(amount, AssetType.BigGiveMoney);
 
             Cancel(bot, user);
         }

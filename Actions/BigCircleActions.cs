@@ -7,17 +7,11 @@ namespace CashFlowBot.Actions
 {
     public class BigCircleActions : BaseActions
     {
-        public static void Divorce(TelegramBotClient bot, User user)
+        public static void LostMoney(TelegramBotClient bot, User user, int amount, Data.ActionType action)
         {
-            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", user.Person.Cash.AsCurrency()));
-            user.Person.Cash = 0;
-            Cancel(bot, user);
-        }
-
-        public static void TaxAudit(TelegramBotClient bot, User user)
-        {
-            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", (user.Person.Cash / 2).AsCurrency()));
-            user.Person.Cash /= 2;
+            bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", amount.AsCurrency()));
+            user.Person.Cash -= amount;
+            user.History.Add(action, amount);
             Cancel(bot, user);
         }
 
@@ -26,7 +20,8 @@ namespace CashFlowBot.Actions
             user.Person.InitialCashFlow = user.Person.Assets.Income / 10 * 1000;
             user.Person.Cash += user.Person.InitialCashFlow;
             user.Person.BigCircle = true;
-            user.Person.Assets.Clear();
+
+            user.History.Add(Data.ActionType.GoToBigCircle);
 
             Cancel(bot, user);
         }

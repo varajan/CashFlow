@@ -2,7 +2,7 @@
 {
     public enum ActionType
     {
-        PayMoney,
+        PayMoney = -20,
         GetMoney,
         Child,
         Downsize,
@@ -35,5 +35,11 @@
         BankruptcySellAsset = 131,
         BankruptcyDebtRestructuring = 132,
         BankruptcyBankLoan = 135,
+        GoToBigCircle = 1,
+        Divorce = 69,
+        TaxAudit = 70,
+        Lawsuit = 71,
+
+
     }
 }
