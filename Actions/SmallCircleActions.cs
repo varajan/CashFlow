@@ -281,6 +281,8 @@ namespace CashFlowBot.Actions
             user.Person.Cash -= amount;
             user.History.Add(ActionType.PayMoney, amount);
 
+            if (user.Person.BigCircle) AvailableAssets.Add(amount, AssetType.BigGiveMoney);
+
             Cancel(bot, user);
         }
 
