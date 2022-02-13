@@ -113,8 +113,12 @@ namespace CashFlowBot.Actions
         {
             if (user.Person.CurrentCashFlow >= user.Person.TargetCashFlow)
             {
+                var history = Terms.Get(2, user, "History");
+                var stopGame = Terms.Get(41, user, "Stop Game");
+                var youAreWinner = Terms.Get(73, user, "You are the winner!");
+
                 bot.SendMessage(user.Id, user.Person.Description);
-                bot.SetButtons(user.Id, Terms.Get(73, user, "You are the winner!"), Terms.Get(41, user, "Stop Game"));
+                bot.SetButtons(user.Id, youAreWinner, history, stopGame);
                 return;
             }
 
