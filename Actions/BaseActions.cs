@@ -126,10 +126,10 @@ namespace CashFlowBot.Actions
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money")},
-                    new List<KeyboardButton>{Terms.Get(69, user, "Divorce"), Terms.Get(70, user, "Tax Audit"), Terms.Get(71, user, "Lawsuit")},
-                    new List<KeyboardButton>{Terms.Get(74, user, "Buy Business"), Terms.Get(2, user, "History") },
-                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game") }
+                    new List<KeyboardButton>{ Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money") },
+                    new List<KeyboardButton>{ Terms.Get(69, user, "Divorce"), Terms.Get(70, user, "Tax Audit"), Terms.Get(71, user, "Lawsuit")},
+                    new List<KeyboardButton>{ Terms.Get(74, user, "Buy Business"), Terms.Get(2, user, "History") },
+                    new List<KeyboardButton>{ Terms.Get(41, user, "Stop Game") }
                 }
             };
 
@@ -164,7 +164,7 @@ namespace CashFlowBot.Actions
                     new List<KeyboardButton> { Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton> { Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market") },
                     new List<KeyboardButton> {  Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby") },
-                    new List<KeyboardButton> { Terms.Get(79, user, "Pay Check") }
+                    new List<KeyboardButton> { Terms.Get(79, user, "Pay Check"), Terms.Get(33, user, "Give Money") }
                 }
             };
 
