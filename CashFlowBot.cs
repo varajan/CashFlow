@@ -4,10 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using CashFlowBot.Actions;
 using CashFlowBot.Data;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
-using CashFlowBot.Actions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -28,9 +28,9 @@ namespace CashFlowBot
         {
             ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
 
-            Bot.OnMessage       += BotOnMessageReceived;
+            Bot.OnMessage += BotOnMessageReceived;
             Bot.OnMessageEdited += BotOnMessageReceived;
-            Bot.OnReceiveError  += BotOnReceiveError;
+            Bot.OnReceiveError += BotOnReceiveError;
 
             Bot.StartReceiving(Array.Empty<UpdateType>());
 
@@ -104,9 +104,12 @@ namespace CashFlowBot
 
                     // Term 79: Pay Check
                     case "pay check":
-                    case "зарплатня":
+                    case "грошовий потік":
                     case "gehalt":
-                        SmallCircleActions.GetMoney(Bot, user, user.Person.CashFlow.AsCurrency());
+                        var amount = user.Person.BigCircle
+                            ? user.Person.CurrentCashFlow.AsCurrency()
+                            : user.Person.CashFlow.AsCurrency();
+                        SmallCircleActions.GetMoney(Bot, user, amount);
                         return;
 
                     // Term 39: Baby
@@ -196,8 +199,8 @@ namespace CashFlowBot
                             : new[] { 1_000, 2_000, 5_000, user.Person.CashFlow };
 
                         BaseActions.Ask(Bot, user, Stage.GetMoney,
-                        Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
-                        user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons.Distinct().AsCurrency().ToArray());
+                            Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
+                                user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons.Distinct().AsCurrency().ToArray());
                         return;
 
                     // Term 33: Give Money
@@ -440,7 +443,7 @@ namespace CashFlowBot
                     case "land verkaufen":
                         SellActions.SellLand(Bot, user);
                         return;
-                    
+
                     // Term 120 : Sell Coins
                     case "sell coins":
                     case "продаж монет":
@@ -468,14 +471,14 @@ namespace CashFlowBot
                     case "tax audit":
                     case "die steuerprüfung":
                     case "податкова перевірка":
-                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash/2, ActionType.TaxAudit);
+                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash / 2, ActionType.TaxAudit);
                         return;
 
                     // Term 71: Lawsuit
                     case "lawsuit":
                     case "die klage":
                     case "судовий процес":
-                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash/2, ActionType.Lawsuit);
+                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash / 2, ActionType.Lawsuit);
                         return;
 
                     // Term 4 - YES
