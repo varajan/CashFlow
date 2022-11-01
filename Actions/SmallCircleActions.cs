@@ -180,7 +180,7 @@ namespace CashFlowBot.Actions
             assets.Where(x => x.Title == title).ToList()
                 .ForEach(x =>
                 {
-                    x.Qtty = (int)(x.Qtty * k);
+                    x.Qtty = (int) (x.Qtty * k);
                     user.History.Add(action, x.Id);
                 });
 
@@ -189,7 +189,7 @@ namespace CashFlowBot.Actions
 
         public static void History(TelegramBotClient bot, User user)
         {
-            var cancel = Terms.Get(6, user, "Cancel");
+            var cancel = Terms.Get(102, user, "Main menu");
             var rollBack = Terms.Get(109, user, "Rollback last action");
 
             if (user.History.IsEmpty)

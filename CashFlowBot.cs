@@ -498,6 +498,7 @@ namespace CashFlowBot
 
                     // Term 6: Cancel
                     // Term 102: Main menu
+                    // Term 138: No
                     case "main menu":
                     case "головне меню":
                     case "hauptmenü":
@@ -505,6 +506,9 @@ namespace CashFlowBot
                     case "скасувати":
                     case "absagen":
                     case "/cancel":
+                    case "ні":
+                    case "no":
+                    case "nein":
                         BaseActions.Cancel(Bot, user);
                         return;
 

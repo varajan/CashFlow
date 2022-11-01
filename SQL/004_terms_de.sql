@@ -137,6 +137,7 @@
 (135, 'DE', 'Kreditrückzahlung'),
 (136, 'DE', 'Sie haben kein Kleingewerbe.'),
 (137, 'DE', 'Sie haben *{0}* Wohnungen. Was ist der Preis pro Wohnung?'),
+(138, 'DE', 'Nein'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

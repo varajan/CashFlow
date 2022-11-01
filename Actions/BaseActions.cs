@@ -28,8 +28,11 @@ namespace CashFlowBot.Actions
 
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
         {
+            var cancel = stage == Stage.Rollback
+                ? Terms.Get(138, user, "No")
+                : Terms.Get(6, user, "Cancel");
             user.Stage = stage;
-            bot.SetButtons(user.Id, question, buttons.Append(Terms.Get(6, user, "Cancel")));
+            bot.SetButtons(user.Id, question, buttons.Append(cancel));
         }
 
         public static void ChangeLanguage(TelegramBotClient bot, User user)
