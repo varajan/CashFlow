@@ -107,6 +107,7 @@ namespace CashFlowBot.Actions
 
             user.History.Clear();
             user.Person.Create(profession);
+            user.Person.Cash += user.Person.CashFlow;
 
             SmallCircleButtons(bot, user, Terms.Get(30, user, "Welcome, {0}!", user.Person.Profession));
         }
