@@ -29,6 +29,7 @@
         Stocks1to2,
         BuyStocksTitle,
         BuyStocksQtty,
+        BuyStocksGetCredit,
         BuyStocksPrice,
         BuyStocksCashFlow,
         BuyCoinsTitle,

@@ -328,34 +328,46 @@ namespace CashFlowBot.Actions
 
                     var totalPrice = asset.Price * number;
                     var availableCash = user.Person.Cash;
-                    int availableQtty = availableCash / asset.Price;
-                    bool isProfitable = asset.Price > 1000;
-
-                    var defaultMsg = "{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?";
-                    var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice.AsCurrency(), availableCash.AsCurrency(), availableQtty);
+                    asset.Qtty = number;
 
                     if (totalPrice > availableCash)
                     {
-                        bot.SendMessage(user.Id, message);
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", totalPrice.AsCurrency(), user.Person.Cash.AsCurrency());
+
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
                         return;
                     }
 
-                    asset.Qtty = number;
-                    if (isProfitable)
-                    {
-                        user.Stage = Stage.BuyStocksCashFlow;
-                        bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
-                    }
-                    else
-                    {
-                        CompleteTransaction();
-                    }
+                    BuyStockAsset();
+                    return;
+
+                case Stage.BuyStocksGetCredit:
+                    var delta =  asset.Price * asset.Qtty - user.Person.Cash;
+                    var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+
+                    user.GetCredit(credit);
+                    BuyStockAsset();
                     return;
 
                 case Stage.BuyStocksCashFlow:
                     asset.CashFlow = number;
                     CompleteTransaction();
                     return;
+            }
+
+            void BuyStockAsset()
+            {
+                bool isProfitable = asset.Price > 1000;
+
+                if (isProfitable)
+                {
+                    user.Stage = Stage.BuyStocksCashFlow;
+                    bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);
+                }
+                else
+                {
+                    CompleteTransaction();
+                }
             }
 
             void CompleteTransaction()

@@ -187,6 +187,11 @@ namespace CashFlowBot
                                 BuyActions.BuyRealEstate(_bot, user, string.Empty);
                                 return;
 
+                            case Stage.BuyStocksQtty:
+                                user.Stage = Stage.BuyStocksGetCredit;
+                                BuyActions.BuyStocks(_bot, user, string.Empty);
+                                return;
+
                             case Stage.BuyBusinessFirstPayment:
                                 user.Stage = Stage.BuyBusinessCredit;
                                 BuyActions.BuyBusiness(_bot, user, string.Empty);
