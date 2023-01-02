@@ -15,12 +15,6 @@ namespace CashFlowBot.Actions
             var cancel = Terms.Get(6, user, "Cancel");
             var landTypes = AvailableAssets.GetAsText(AssetType.LandTitle, user.Language).Append(cancel);
 
-            if (user.Person.Cash == 0)
-            {
-                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
-                return;
-            }
-
             user.Stage = Stage.BuyLandTitle;
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), landTypes);
         }
@@ -190,12 +184,6 @@ namespace CashFlowBot.Actions
                 .ThenBy(x => x)
                 .Append(cancel);
 
-            if (user.Person.Cash == 0)
-            {
-                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
-                return;
-            }
-
             user.Stage = Stage.BuyRealEstateTitle;
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), properties);
         }
@@ -279,12 +267,6 @@ namespace CashFlowBot.Actions
             var cancel = Terms.Get(6, user, "Cancel");
             var stocks = AvailableAssets.GetAsText(AssetType.Stock, user.Language).Append(cancel);
 
-            if (user.Person.Cash == 0)
-            {
-                SmallCircleButtons(bot, user, Terms.Get(5, user, "You don't have enough money"));
-                return;
-            }
-
             user.Stage = Stage.BuyStocksTitle;
             bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), stocks);
         }
@@ -347,7 +329,7 @@ namespace CashFlowBot.Actions
                     var totalPrice = asset.Price * number;
                     var availableCash = user.Person.Cash;
                     int availableQtty = availableCash / asset.Price;
-                    bool isprofitable = asset.Price > 1000;
+                    bool isProfitable = asset.Price > 1000;
 
                     var defaultMsg = "{0} x {1} = {2}. You have only {3}. You can buy {4} stocks. So, what quantity of stocks do you want to buy?";
                     var message = Terms.Get(19, user, defaultMsg, number, asset.Price.AsCurrency(), totalPrice.AsCurrency(), availableCash.AsCurrency(), availableQtty);
@@ -359,7 +341,7 @@ namespace CashFlowBot.Actions
                     }
 
                     asset.Qtty = number;
-                    if (isprofitable)
+                    if (isProfitable)
                     {
                         user.Stage = Stage.BuyStocksCashFlow;
                         bot.SetButtons(user.Id, Terms.Get(12, user, "What is the cash flow?"), cashFlows);

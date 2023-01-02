@@ -60,13 +60,17 @@ namespace CashFlowBot.Actions
             if (user.Person.Exists)
             {
                 bot.SetButtons(user.Id,
-                Terms.Get(26, user, "Please stop current game before starting a new one."),
-                Terms.Get(41, user, "Stop Game"),
-                Terms.Get(6, user, "Cancel"));
+                    Terms.Get(26, user, "Please stop current game before starting a new one."),
+                    Terms.Get(41, user, "Stop Game"),
+                    Terms.Get(6, user, "Cancel"));
                 return;
             }
 
-            var professions = Persons.Get(user.Id).Select(x => x.Profession).OrderBy(x => x).ToList();
+            var professions = Persons.Get(user.Id)
+                .Select(x => x.Profession)
+                .OrderBy(x => x)
+                .Append(Terms.Get(139, user, "Random"))
+                .ToList();
             var rkm = new ReplyKeyboardMarkup { Keyboard = new List<IEnumerable<KeyboardButton>>() };
 
             while (professions.Any())
@@ -86,7 +90,14 @@ namespace CashFlowBot.Actions
 
         public static void SetProfession(TelegramBotClient bot, User user, string profession)
         {
-            var professions = Persons.Get(user.Id).Select(x => x.Profession.ToLower());
+            var random = Terms.Get(139, user, "Pick random").Equals(profession, StringComparison.InvariantCultureIgnoreCase);
+            var professions = Persons.Get(user.Id).Select(x => x.Profession.ToLower()).ToList();
+
+            if (random)
+            {
+                var index = new Random().Next(professions.Count);
+                profession = professions[index];
+            }
 
             if (!professions.Contains(profession))
             {
@@ -162,8 +173,8 @@ namespace CashFlowBot.Actions
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
                     user.History.IsEmpty
-                    ? new List<KeyboardButton> { Terms.Get(31, user, "Show my Data") }
-                    : new List<KeyboardButton> { Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History") },
+                        ? new List<KeyboardButton> { Terms.Get(31, user, "Show my Data") }
+                        : new List<KeyboardButton> { Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History") },
                     new List<KeyboardButton> { Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton> { Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market") },
                     new List<KeyboardButton> {  Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby") },

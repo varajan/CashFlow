@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,26 +19,47 @@ namespace CashFlowBot
 {
     public class CashFlowBot
     {
-#if DEBUG
-        private static readonly TelegramBotClient Bot = new("1357607824:AAFbYG2hjms9b3mtlphXMiwRHEjIA13nJF8");
-#else
-        private static readonly TelegramBotClient Bot = new("1991657067:AAGyDAK1xfqrfIEAFIKNsRjWOvy9owiKU40");
-#endif
+        private static TelegramBotClient _bot;
 
         public static void Main()
         {
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            _bot = InitBot();
+            ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 
-            Bot.OnMessage += BotOnMessageReceived;
-            Bot.OnMessageEdited += BotOnMessageReceived;
-            Bot.OnReceiveError += BotOnReceiveError;
+            _bot.OnMessage += BotOnMessageReceived;
+            _bot.OnMessageEdited += BotOnMessageReceived;
+            _bot.OnReceiveError += BotOnReceiveError;
 
-            Bot.StartReceiving(Array.Empty<UpdateType>());
+            _bot.StartReceiving(Array.Empty<UpdateType>());
 
             Console.WriteLine("Starting Bot.");
             Console.ReadLine();
 
-            Bot.StopReceiving();
+            _bot.StopReceiving();
+        }
+
+        private static TelegramBotClient InitBot()
+        {
+            // debug:       1357607824:AAFbYG2hjms9b3mtlphXMiwRHEjIA13nJF8
+            // production:  1991657067:AAGyDAK1xfqrfIEAFIKNsRjWOvy9owiKU40
+
+            try
+            {
+                var pattern = @"^\d{10}:[a-zA-Z0-9]{35}$";
+                var botIdFile = $"{AppDomain.CurrentDomain.BaseDirectory}/BotID.txt";
+                var id = File.ReadAllLines(botIdFile).FirstOrDefault(x => !string.IsNullOrEmpty(x));
+
+                if (string.IsNullOrEmpty(id)) throw new ArgumentException("id is null or empty");
+                if (!Regex.IsMatch(id, pattern)) throw new InvalidDataException("Invalid bot ID");
+
+                return new TelegramBotClient(id);
+            }
+            catch (Exception)
+            {
+                var howTo = $"{AppDomain.CurrentDomain.BaseDirectory}/index.html";
+                Process.Start(new ProcessStartInfo("cmd", $"/c start {howTo}") { CreateNoWindow = true });
+                throw;
+            }
         }
 
         private static async void BotOnMessageReceived(object sender, MessageEventArgs messageEventArgs)
@@ -49,12 +71,12 @@ namespace CashFlowBot
 
                 Logger.Log($"{message.Chat.Id} - {message.Chat.Username} - {message.Text}");
 
-                await Bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
+                await _bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
                 if (message.Type != MessageType.Text) return;
                 if (!user.Person.Exists && !new[] { Stage.SelectLanguage, Stage.GetProfession }.Contains(user.Stage))
                 {
-                    BaseActions.Start(Bot, user, message.Chat.Username);
+                    BaseActions.Start(_bot, user, message.Chat.Username);
                     return;
                 }
 
@@ -71,7 +93,7 @@ namespace CashFlowBot
 
                     usr.IsAdmin = true;
 
-                    BaseActions.Cancel(Bot, user);
+                    BaseActions.Cancel(_bot, user);
                     return;
                 }
                 // Make user admin
@@ -90,16 +112,16 @@ namespace CashFlowBot
                         {
                             user.Person.Profession = Persons.Get(user.Id, user.Person.Profession).Profession;
 
-                            BaseActions.Cancel(Bot, user);
+                            BaseActions.Cancel(_bot, user);
                         }
                         else
                         {
-                            BaseActions.Start(Bot, user);
+                            BaseActions.Start(_bot, user);
                         }
                         return;
 
                     case "/start":
-                        BaseActions.Start(Bot, user, message.Chat.Username);
+                        BaseActions.Start(_bot, user, message.Chat.Username);
                         return;
 
                     // Term 79: Pay Check
@@ -109,7 +131,7 @@ namespace CashFlowBot
                         var amount = user.Person.BigCircle
                             ? user.Person.CurrentCashFlow.AsCurrency()
                             : user.Person.CashFlow.AsCurrency();
-                        SmallCircleActions.GetMoney(Bot, user, amount);
+                        SmallCircleActions.GetMoney(_bot, user, amount);
                         return;
 
                     // Term 39: Baby
@@ -118,14 +140,14 @@ namespace CashFlowBot
                     case "kind":
                         if (user.Person.Expenses.Children == 3)
                         {
-                            Bot.SendMessage(user.Id, Terms.Get(57, user, "You're lucky parent of three children. You don't need one more."));
+                            _bot.SendMessage(user.Id, Terms.Get(57, user, "You're lucky parent of three children. You don't need one more."));
                             return;
                         }
 
                         user.Person.Expenses.Children++;
                         user.History.Add(ActionType.Child, user.Person.Expenses.Children);
 
-                        BaseActions.SmallCircleButtons(Bot, user,
+                        BaseActions.SmallCircleButtons(_bot, user,
                         Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
                         user, "{0}, you have {1} children expenses and {2} children.",
                         user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
@@ -135,7 +157,7 @@ namespace CashFlowBot
                     case "downsize":
                     case "звільнення":
                     case "entlassung":
-                        SmallCircleActions.Downsize(Bot, user);
+                        SmallCircleActions.Downsize(_bot, user);
                         return;
 
                     #region My Data
@@ -144,14 +166,14 @@ namespace CashFlowBot
                     case "show my data":
                     case "мої дані":
                     case "meine info":
-                        SmallCircleActions.MyData(Bot, user);
+                        SmallCircleActions.MyData(_bot, user);
                         return;
 
                     // Term 2: History
                     case "history":
                     case "історія":
                     case "transaktionen":
-                        SmallCircleActions.History(Bot, user);
+                        SmallCircleActions.History(_bot, user);
                         return;
 
                     // Term 34: Get Credit
@@ -162,31 +184,31 @@ namespace CashFlowBot
                         {
                             case Stage.BuyRealEstateFirstPayment:
                                 user.Stage = Stage.BuyRealEstateCredit;
-                                BuyActions.BuyRealEstate(Bot, user, string.Empty);
+                                BuyActions.BuyRealEstate(_bot, user, string.Empty);
                                 return;
 
                             case Stage.BuyBusinessFirstPayment:
                                 user.Stage = Stage.BuyBusinessCredit;
-                                BuyActions.BuyBusiness(Bot, user, string.Empty);
+                                BuyActions.BuyBusiness(_bot, user, string.Empty);
                                 return;
 
                             case Stage.StartCompanyPrice:
                                 user.Stage = Stage.StartCompanyCredit;
-                                BuyActions.StartCompany(Bot, user, string.Empty);
+                                BuyActions.StartCompany(_bot, user, string.Empty);
                                 return;
 
                             case Stage.BuyLandPrice:
                                 user.Stage = Stage.BuyLandCredit;
-                                BuyActions.BuyLand(Bot, user, string.Empty);
+                                BuyActions.BuyLand(_bot, user, string.Empty);
                                 return;
 
                             case Stage.BuyCoinsPrice:
                                 user.Stage = Stage.BuyCoinsCredit;
-                                BuyActions.BuyCoins(Bot, user, string.Empty);
+                                BuyActions.BuyCoins(_bot, user, string.Empty);
                                 return;
 
                             default:
-                                CreditActions.GetCredit(Bot, user);
+                                CreditActions.GetCredit(_bot, user);
                                 return;
                         }
 
@@ -198,7 +220,7 @@ namespace CashFlowBot
                             ? new[] { 50_000, 100_000, 200_000, user.Person.CurrentCashFlow }
                             : new[] { 1_000, 2_000, 5_000, user.Person.CashFlow };
 
-                        BaseActions.Ask(Bot, user, Stage.GetMoney,
+                        BaseActions.Ask(_bot, user, Stage.GetMoney,
                             Terms.Get(0, user, "Your Cash Flow is *{0}*. How much should you get?",
                                 user.Person.BigCircle ? user.Person.CurrentCashFlow.AsCurrency() : user.Person.CashFlow.AsCurrency()), buttons.Distinct().AsCurrency().ToArray());
                         return;
@@ -213,7 +235,7 @@ namespace CashFlowBot
                     case "mit bargeld zahlen":
                         var giveMoney = AvailableAssets.GetAsCurrency(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
 
-                        BaseActions.Ask(Bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
+                        BaseActions.Ask(_bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
                         return;
 
                     #region Reduce Liabilities
@@ -221,56 +243,56 @@ namespace CashFlowBot
                     case "reduce liabilities":
                     case "зменшити борги":
                     case "verbindlichkeiten reduzieren":
-                        CreditActions.ReduceLiabilities(Bot, user);
+                        CreditActions.ReduceLiabilities(_bot, user);
                         return;
 
                     // Term 43: Mortgage
                     case "mortgage":
                     case "іпотека":
                     case "hypothek":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceMortgage);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceMortgage);
                         return;
 
                     // Term 44: School Loan
                     case "school loan":
                     case "кредит на освіту":
                     case "schuldarlehen":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceSchoolLoan);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceSchoolLoan);
                         return;
 
                     // Term 45: Car Loan
                     case "car loan":
                     case "кредит на авто":
                     case "autokredit":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceCarLoan);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceCarLoan);
                         return;
 
                     // Term 46: Credit Card
                     case "credit card":
                     case "кредитна картка":
                     case "kreditkarte":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceCreditCard);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceCreditCard);
                         return;
 
                     // Term 92: Small Credit
                     case "small credit":
                     case "мікрокредит":
                     case "klein kredit":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceSmallCredit);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceSmallCredit);
                         return;
 
                     // Term 47: Bank Loan
                     case "bank loan":
                     case "банківська позика":
                     case "bankkredit":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceBankLoan);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceBankLoan);
                         return;
 
                     // Term 114: Boat Loan
                     case "boat loan":
                     case "bootredit":
                     case "кредит за катер":
-                        CreditActions.ReduceLiabilities(Bot, user, Stage.ReduceBoatLoan);
+                        CreditActions.ReduceLiabilities(_bot, user, Stage.ReduceBoatLoan);
                         return;
                     #endregion
 
@@ -278,7 +300,7 @@ namespace CashFlowBot
                     case "charity - pay 10%":
                     case "благодійність - віддати 10%":
                     case "nächstenliebe - 10% zahlen":
-                        SmallCircleActions.Charity(Bot, user);
+                        SmallCircleActions.Charity(_bot, user);
                         return;
 
                     // Term 41: Stop Game
@@ -288,11 +310,11 @@ namespace CashFlowBot
                     case "/clear":
                         if (user.Person.Bankruptcy)
                         {
-                            BaseActions.StopGame(Bot, user);
+                            BaseActions.StopGame(_bot, user);
                             return;
                         }
 
-                        BaseActions.Ask(Bot, user, Stage.StopGame,
+                        BaseActions.Ask(_bot, user, Stage.StopGame,
                             Terms.Get(3, user, "Are you sure want to stop current game?"), Terms.Get(4, user, "Yes"));
                         return;
 
@@ -304,42 +326,42 @@ namespace CashFlowBot
                     case "start a company":
                     case "заснувати компанію":
                     case "gründe eine firma":
-                        BuyActions.StartCompany(Bot, user);
+                        BuyActions.StartCompany(_bot, user);
                         return;
 
                     // Term 119: Buy coins
                     case "buy coins":
                     case "покупка монет":
                     case "münzen kaufen":
-                        BuyActions.BuyCoins(Bot, user);
+                        BuyActions.BuyCoins(_bot, user);
                         return;
 
                     // Term 81: Small Opportunity
                     case "small opportunity":
                     case "мала можливість":
                     case "kleine chance":
-                        SmallCircleActions.SmallOpportunity(Bot, user);
+                        SmallCircleActions.SmallOpportunity(_bot, user);
                         return;
 
                     // Term 35: Buy Stocks
                     case "buy stocks":
                     case "купити акції":
                     case "aktien kaufen":
-                        BuyActions.BuyStocks(Bot, user);
+                        BuyActions.BuyStocks(_bot, user);
                         return;
 
                     // Term 36: Sell Stocks
                     case "sell stocks":
                     case "продати акції":
                     case "aktien verkaufen":
-                        SellActions.SellStocks(Bot, user);
+                        SellActions.SellStocks(_bot, user);
                         return;
 
                     // Term 37: Buy Real Estate
                     case "buy real estate":
                     case "купити нерухомість":
                     case "immobilien kaufen":
-                        BuyActions.BuyRealEstate(Bot, user);
+                        BuyActions.BuyRealEstate(_bot, user);
                         return;
 
                     // Term 82: 2 to 1
@@ -347,7 +369,7 @@ namespace CashFlowBot
                     case "2 до 1":
                     case "2 -> 1":
                         user.Stage = Stage.Stocks2to1;
-                        SmallCircleActions.MultiplyStocks(Bot, user);
+                        SmallCircleActions.MultiplyStocks(_bot, user);
                         return;
 
                     // Term 83: 1 to 2
@@ -355,7 +377,7 @@ namespace CashFlowBot
                     case "1 до 2":
                     case "1 -> 2":
                         user.Stage = Stage.Stocks1to2;
-                        SmallCircleActions.MultiplyStocks(Bot, user);
+                        SmallCircleActions.MultiplyStocks(_bot, user);
                         return;
 
                     #endregion
@@ -366,21 +388,21 @@ namespace CashFlowBot
                     case "big opportunity":
                     case "велика можливість":
                     case "große chance":
-                        SmallCircleActions.BigOpportunity(Bot, user);
+                        SmallCircleActions.BigOpportunity(_bot, user);
                         return;
 
                     // Term 74: Buy Business
                     case "buy business":
                     case "купити підприємство":
                     case "geschäft kaufen":
-                        BuyActions.BuyBusiness(Bot, user);
+                        BuyActions.BuyBusiness(_bot, user);
                         return;
 
                     // Term 94: Buy Land
                     case "buy land":
                     case "купити землю":
                     case "land kaufen":
-                        BuyActions.BuyLand(Bot, user);
+                        BuyActions.BuyLand(_bot, user);
                         return;
                     #endregion
 
@@ -388,21 +410,21 @@ namespace CashFlowBot
                     // Term 86: Doodads
                     case "doodads":
                     case "дрібнички":
-                        SmallCircleActions.Doodads(Bot, user);
+                        SmallCircleActions.Doodads(_bot, user);
                         return;
 
                     // Term 96: Pay with Credit Card
                     case "pay with credit card":
                     case "оплатити кредиткою":
                     case "mit kreditkarte zahlen":
-                        CreditActions.PayWithCreditCard(Bot, user);
+                        CreditActions.PayWithCreditCard(_bot, user);
                         return;
 
                     // Term 112: Buy a boat
                     case "buy a boat":
                     case "boot kaufen":
                     case "купити катер":
-                        BuyActions.BuyBoat(Bot, user);
+                        BuyActions.BuyBoat(_bot, user);
                         return;
 
                     #endregion
@@ -413,42 +435,42 @@ namespace CashFlowBot
                     case "market":
                     case "ринок":
                     case "markt":
-                        SmallCircleActions.Market(Bot, user);
+                        SmallCircleActions.Market(_bot, user);
                         return;
 
                     // Term 38: Sell Real Estate
                     case "sell real estate":
                     case "продати нерухомість":
                     case "immobilien verkaufen":
-                        SellActions.SellRealEstate(Bot, user);
+                        SellActions.SellRealEstate(_bot, user);
                         return;
 
                     // Term 75: Sell Business
                     case "sell business":
                     case "продати підприємство":
                     case "geschäft verkaufen":
-                        SellActions.SellBusiness(Bot, user);
+                        SellActions.SellBusiness(_bot, user);
                         return;
 
                     // Term 118: Increase cash flow
                     case "increase cash flow":
                     case "збільшити грошовий потік":
                     case "cashflow erhöhen":
-                        SmallCircleActions.IncreaseCashFlow(Bot, user);
+                        SmallCircleActions.IncreaseCashFlow(_bot, user);
                         return;
 
                     // Term 98 : Sell Land
                     case "sell land":
                     case "продати землю":
                     case "land verkaufen":
-                        SellActions.SellLand(Bot, user);
+                        SellActions.SellLand(_bot, user);
                         return;
 
                     // Term 120 : Sell Coins
                     case "sell coins":
                     case "продаж монет":
                     case "münzen verkaufen":
-                        SellActions.SellCoins(Bot, user);
+                        SellActions.SellCoins(_bot, user);
                         return;
 
                     #endregion
@@ -457,42 +479,42 @@ namespace CashFlowBot
                     case "divorce":
                     case "розлучення":
                     case "die ehescheidung":
-                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash, ActionType.Divorce);
+                        BigCircleActions.LostMoney(_bot, user, user.Person.Cash, ActionType.Divorce);
                         return;
 
                     // Term 1: Go to Big Circle
                     case "go to big circle":
                     case "перейти до великого кола":
                     case "eintreten den großen kreis":
-                        BigCircleActions.GoToBigCircle(Bot, user);
+                        BigCircleActions.GoToBigCircle(_bot, user);
                         return;
 
                     // Term 70: Tax Audit
                     case "tax audit":
                     case "die steuerprüfung":
                     case "податкова перевірка":
-                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash / 2, ActionType.TaxAudit);
+                        BigCircleActions.LostMoney(_bot, user, user.Person.Cash / 2, ActionType.TaxAudit);
                         return;
 
                     // Term 71: Lawsuit
                     case "lawsuit":
                     case "die klage":
                     case "судовий процес":
-                        BigCircleActions.LostMoney(Bot, user, user.Person.Cash / 2, ActionType.Lawsuit);
+                        BigCircleActions.LostMoney(_bot, user, user.Person.Cash / 2, ActionType.Lawsuit);
                         return;
 
                     // Term 4 - YES
                     case "yes":
                     case "так":
                     case "ja":
-                        SmallCircleActions.Confirm(Bot, user);
+                        SmallCircleActions.Confirm(_bot, user);
                         return;
 
                     // Term 109: Rollback last action
                     case "rollback last action":
                     case "скасувати останню операцію":
                     case "rollback der letzten transaktion":
-                        BaseActions.Ask(Bot, user, Stage.Rollback,
+                        BaseActions.Ask(_bot, user, Stage.Rollback,
                         Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
                         return;
 
@@ -509,31 +531,31 @@ namespace CashFlowBot
                     case "ні":
                     case "no":
                     case "nein":
-                        BaseActions.Cancel(Bot, user);
+                        BaseActions.Cancel(_bot, user);
                         return;
 
                     #region Admin
                     case "admin":
                         if (user.IsAdmin)
                         {
-                            AdminActions.AdminMenu(Bot, user);
+                            AdminActions.AdminMenu(_bot, user);
                         }
                         else
                         {
-                            AdminActions.NotifyAdmins(Bot, user);
+                            AdminActions.NotifyAdmins(_bot, user);
                         }
                         return;
 
                     case "bring down":
                         if (!user.IsAdmin) break;
 
-                        BaseActions.Ask(Bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes", "Back");
+                        BaseActions.Ask(_bot, user, Stage.AdminBringDown, "Are you sure want to shut BOT down?", "Yes", "Back");
                         return;
 
                     case "logs":
                         if (!user.IsAdmin) break;
 
-                        BaseActions.Ask(Bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top", "Back");
+                        BaseActions.Ask(_bot, user, Stage.AdminLogs, "Which log would you like to get?", "Full", "Top", "Back");
                         return;
 
                     case "full":
@@ -543,8 +565,8 @@ namespace CashFlowBot
                         {
                             await using var stream = File.Open(Logger.LogFile, FileMode.Open);
                             var fts = new InputOnlineFile(stream, "logs.txt");
-                            await Bot.SendDocumentAsync(user.Id, fts);
-                            AdminActions.AdminMenu(Bot, user);
+                            await _bot.SendDocumentAsync(user.Id, fts);
+                            AdminActions.AdminMenu(_bot, user);
                         }
                         return;
 
@@ -553,21 +575,21 @@ namespace CashFlowBot
 
                         if (user.Stage == Stage.AdminLogs)
                         {
-                            Bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
+                            _bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
                         }
-                        AdminActions.AdminMenu(Bot, user);
+                        AdminActions.AdminMenu(_bot, user);
                         return;
 
                     case "users":
                         if (!user.IsAdmin) break;
 
-                        AdminActions.ShowUsers(Bot, user);
+                        AdminActions.ShowUsers(_bot, user);
                         return;
 
                     case "back":
                         if (!user.IsAdmin) break;
 
-                        AdminActions.AdminMenu(Bot, user);
+                        AdminActions.AdminMenu(_bot, user);
                         return;
 
                     case "available assets":
@@ -585,13 +607,13 @@ namespace CashFlowBot
 
                         if (assets.Any())
                         {
-                            BaseActions.Ask(Bot, user, Stage.AdminAvailableAssets, "What types to show?",
+                            BaseActions.Ask(_bot, user, Stage.AdminAvailableAssets, "What types to show?",
                             assets.Append("All").Append("Back").ToArray());
                             return;
                         }
 
-                        Bot.SendMessage(user.Id, "There is no available assets.");
-                        AdminActions.AdminMenu(Bot, user);
+                        _bot.SendMessage(user.Id, "There is no available assets.");
+                        AdminActions.AdminMenu(_bot, user);
                         return;
                         #endregion
                 }
@@ -600,115 +622,115 @@ namespace CashFlowBot
                 {
                     case Stage.Stocks1to2:
                     case Stage.Stocks2to1:
-                        SmallCircleActions.MultiplyStocks(Bot, user, message.Text.Trim());
+                        SmallCircleActions.MultiplyStocks(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.GetProfession:
-                        BaseActions.SetProfession(Bot, user, message.Text.Trim().ToLower());
+                        BaseActions.SetProfession(_bot, user, message.Text.Trim().ToLower());
                         return;
 
                     case Stage.GetCredit:
-                        CreditActions.GetCredit(Bot, user, message.Text.Trim());
+                        CreditActions.GetCredit(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.GetMoney:
-                        SmallCircleActions.GetMoney(Bot, user, message.Text.Trim());
+                        SmallCircleActions.GetMoney(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.GiveMoney:
-                        SmallCircleActions.GiveMoney(Bot, user, message.Text.Trim());
+                        SmallCircleActions.GiveMoney(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.MicroCreditAmount:
-                        CreditActions.PayWithCreditCard(Bot, user, message.Text.Trim());
+                        CreditActions.PayWithCreditCard(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.ReduceBankLoan:
-                        CreditActions.PayCredit(Bot, user, message.Text.Trim());
+                        CreditActions.PayCredit(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyStocksTitle:
                     case Stage.BuyStocksPrice:
                     case Stage.BuyStocksQtty:
                     case Stage.BuyStocksCashFlow:
-                        BuyActions.BuyStocks(Bot, user, message.Text.Trim());
+                        BuyActions.BuyStocks(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyLandPrice:
                     case Stage.BuyLandTitle:
-                        BuyActions.BuyLand(Bot, user, message.Text.Trim());
+                        BuyActions.BuyLand(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellStocksTitle:
                     case Stage.SellStocksPrice:
-                        SellActions.SellStocks(Bot, user, message.Text.Trim());
+                        SellActions.SellStocks(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellCoinsTitle:
                     case Stage.SellCoinsPrice:
-                        SellActions.SellCoins(Bot, user, message.Text.Trim());
+                        SellActions.SellCoins(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.StartCompanyTitle:
                     case Stage.StartCompanyCredit:
                     case Stage.StartCompanyPrice:
-                        BuyActions.StartCompany(Bot, user, message.Text.Trim());
+                        BuyActions.StartCompany(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyCoinsTitle:
                     case Stage.BuyCoinsPrice:
                     case Stage.BuyCoinsCount:
                     case Stage.BuyCoinsCredit:
-                        BuyActions.BuyCoins(Bot, user, message.Text.Trim());
+                        BuyActions.BuyCoins(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyRealEstateTitle:
                     case Stage.BuyRealEstatePrice:
                     case Stage.BuyRealEstateFirstPayment:
                     case Stage.BuyRealEstateCashFlow:
-                        BuyActions.BuyRealEstate(Bot, user, message.Text.Trim());
+                        BuyActions.BuyRealEstate(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellRealEstateTitle:
                     case Stage.SellRealEstatePrice:
-                        SellActions.SellRealEstate(Bot, user, message.Text.Trim());
+                        SellActions.SellRealEstate(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellLandTitle:
                     case Stage.SellLandPrice:
-                        SellActions.SellLand(Bot, user, message.Text.Trim());
+                        SellActions.SellLand(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.BuyBusinessTitle:
                     case Stage.BuyBusinessPrice:
                     case Stage.BuyBusinessFirstPayment:
                     case Stage.BuyBusinessCashFlow:
-                        BuyActions.BuyBusiness(Bot, user, message.Text.Trim());
+                        BuyActions.BuyBusiness(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.SellBusinessTitle:
                     case Stage.SellBusinessPrice:
-                        SellActions.SellBusiness(Bot, user, message.Text.Trim());
+                        SellActions.SellBusiness(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.AdminAvailableAssets:
                         if (!user.IsAdmin) return;
 
-                        AdminActions.ShowAvailableAssets(Bot, user, message.Text.Trim());
+                        AdminActions.ShowAvailableAssets(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.AdminAvailableAssetsClear:
                         if (!user.IsAdmin) return;
 
-                        AdminActions.ClearAvailableAssets(Bot, user, message.Text.Trim());
+                        AdminActions.ClearAvailableAssets(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.Bankruptcy:
-                        BankruptcyActions.SellAsset(Bot, user, message.Text.Trim().Replace("#", "").ToInt());
+                        BankruptcyActions.SellAsset(_bot, user, message.Text.Trim().Replace("#", "").ToInt());
                         return;
 
                     case Stage.IncreaseCashFlow:
-                        SmallCircleActions.IncreaseCashFlow(Bot, user, message.Text.Trim().AsCurrency());
+                        SmallCircleActions.IncreaseCashFlow(_bot, user, message.Text.Trim().AsCurrency());
                         return;
                 }
             }
