@@ -139,6 +139,10 @@
 (137, 'DE', 'Sie haben *{0}* Wohnungen. Was ist der Preis pro Wohnung?'),
 (138, 'DE', 'Nein'),
 (139, 'DE', 'Wähle zufällig'),
+(140, 'DE', 'Freunde'),
+(141, 'DE', 'There are no other players.'),
+(142, 'DE', 'Auf kleinem Kreis:'),
+(143, 'DE', 'Auf großem Kreis:'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

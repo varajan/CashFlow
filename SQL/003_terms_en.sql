@@ -139,6 +139,10 @@
 (137, 'EN', 'You have *{0}* apartments. What is the price per one?'),
 (138, 'EN', 'No'),
 (139, 'EN', 'Pick random'),
+(140, 'EN', 'Friends'),
+(141, 'EN', 'There are no other players.'),
+(142, 'EN', 'On Small circle:'),
+(143, 'EN', 'On Big circle:'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

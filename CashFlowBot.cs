@@ -7,6 +7,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using CashFlowBot.Actions;
 using CashFlowBot.Data;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
@@ -148,9 +149,9 @@ namespace CashFlowBot
                         user.History.Add(ActionType.Child, user.Person.Expenses.Children);
 
                         BaseActions.SmallCircleButtons(_bot, user,
-                        Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
-                        user, "{0}, you have {1} children expenses and {2} children.",
-                        user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
+                            Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
+                                user, "{0}, you have {1} children expenses and {2} children.",
+                                user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
                         return;
 
                     // Term 80: Downsize
@@ -167,6 +168,13 @@ namespace CashFlowBot
                     case "мої дані":
                     case "meine info":
                         SmallCircleActions.MyData(_bot, user);
+                        return;
+
+                    // Term 140: Friends
+                    case "friends":
+                    case "друзі":
+                    case "freunde":
+                        BaseActions.ShowFriends(_bot, user);
                         return;
 
                     // Term 2: History
@@ -315,7 +323,7 @@ namespace CashFlowBot
                     case "/clear":
                         if (user.Person.Bankruptcy)
                         {
-                            BaseActions.StopGame(_bot, user);
+                            BaseActions.StopGame(_bot, user, message.From);
                             return;
                         }
 
@@ -512,7 +520,7 @@ namespace CashFlowBot
                     case "yes":
                     case "так":
                     case "ja":
-                        SmallCircleActions.Confirm(_bot, user);
+                        SmallCircleActions.Confirm(_bot, user, message.From);
                         return;
 
                     // Term 109: Rollback last action
@@ -520,7 +528,7 @@ namespace CashFlowBot
                     case "скасувати останню операцію":
                     case "rollback der letzten transaktion":
                         BaseActions.Ask(_bot, user, Stage.Rollback,
-                        Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
+                            Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
                         return;
 
                     // Term 6: Cancel
@@ -625,6 +633,18 @@ namespace CashFlowBot
 
                 switch (user.Stage)
                 {
+                    case Stage.ShowFriendData:
+                        var friend = Users.AllUsers.OrderBy(x => x.LastActive).LastOrDefault(x => x.Name == message.Text);
+                        if (friend != null)
+                        {
+                            var language = friend.Language;
+                            friend.Language = user.Language;
+                            _bot.SendMessage(user.Id, friend.Person.BigCircle ? friend.Person.Description : friend.Description);
+                            friend.Language = language;
+                        }
+                        BaseActions.ShowFriends(_bot, user);
+                        return;
+
                     case Stage.Stocks1to2:
                     case Stage.Stocks2to1:
                         SmallCircleActions.MultiplyStocks(_bot, user, message.Text.Trim());

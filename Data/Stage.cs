@@ -66,5 +66,6 @@
         Rollback,
         Bankruptcy,
         IncreaseCashFlow,
+        ShowFriendData,
     }
 }

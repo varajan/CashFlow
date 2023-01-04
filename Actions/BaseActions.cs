@@ -8,19 +8,20 @@ using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramUser = Telegram.Bot.Types.User;
 
 namespace CashFlowBot.Actions
 {
     public class BaseActions
     {
-        public static void StopGame(TelegramBotClient bot, User user)
+        public static void StopGame(TelegramBotClient bot, User user, TelegramUser from)
         {
             user.Person.Expenses.Clear();
             user.History.Clear();
             user.Person.Clear();
             user.Stage = Stage.Nothing;
 
-            Start(bot, user);
+            Start(bot, user, from);
         }
 
         public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, IEnumerable<string> buttons) =>
@@ -47,7 +48,7 @@ namespace CashFlowBot.Actions
             bot.SetButtons(user.Id, "Language/Мова", languages);
         }
 
-        public static async void Start(TelegramBotClient bot, User user, Telegram.Bot.Types.User from = null)
+        public static async void Start(TelegramBotClient bot, User user, TelegramUser from)
         {
             if (!user.Exists)
             {
@@ -144,7 +145,7 @@ namespace CashFlowBot.Actions
                 {
                     new List<KeyboardButton>{ Terms.Get(79, user, "Pay Check"), Terms.Get(32, user, "Get Money"), Terms.Get(33, user, "Give Money") },
                     new List<KeyboardButton>{ Terms.Get(69, user, "Divorce"), Terms.Get(70, user, "Tax Audit"), Terms.Get(71, user, "Lawsuit")},
-                    new List<KeyboardButton>{ Terms.Get(74, user, "Buy Business"), Terms.Get(2, user, "History") },
+                    new List<KeyboardButton>{ Terms.Get(74, user, "Buy Business"), Terms.Get(140, user, "Friends"), Terms.Get(2, user, "History") },
                     new List<KeyboardButton>{ Terms.Get(41, user, "Stop Game") }
                 }
             };
@@ -193,6 +194,38 @@ namespace CashFlowBot.Actions
             }
 
             await bot.SendTextMessageAsync(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        }
+
+        public static void ShowFriends(TelegramBotClient bot, User user)
+        {
+            var users = Users
+                .AllUsers
+                .Where(x => x.Id != user.Id)
+                .Where(x => x.Person.Exists)
+                .Where(x => x.LastActive > DateTime.Now.AddMinutes(-15))
+                .OrderBy(x => x.Name)
+                .ToList();
+
+            if (users.Any())
+            {
+                var cancel = Terms.Get(6, user, "Cancel");
+                var onSmall = Terms.Get(142, user, "On Small circle:");
+                var onBig = Terms.Get(143, user, "On Big circle:");
+
+                var onSmallCircle = users.Where(u => !u.Person.BigCircle).ToList();
+                var onBigCircle = users.Where(u => u.Person.BigCircle).ToList();
+                var message = string.Empty;
+
+                if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
+                if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
+
+                user.Stage = Stage.ShowFriendData;
+                bot.SetButtons(user.Id, message.Trim(), users.Select(x => x.Name).Append(cancel));
+            }
+            else
+            {
+                bot.SendMessage(user.Id, Terms.Get(141, user, "There are no other players."));
+            }
         }
     }
 }

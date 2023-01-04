@@ -38,6 +38,8 @@ namespace CashFlowBot.Extensions
             return line.Substring(start);
         }
 
+        public static string Escape(this string line) => line.Replace("_", "\\_");
+
         public static bool ContainsIgnoreCase(this string line, string word) => line.IndexOf(word ?? string.Empty, StringComparison.OrdinalIgnoreCase) >= 0;
 
         public static bool IsValidEmail(this string email) => new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").IsMatch(email);
@@ -82,8 +84,8 @@ namespace CashFlowBot.Extensions
 
         public static DateTime ToDateTime(this string date) => DateTime.Parse(date);
         public static string AsString(this DateTime dateTime, string format = "yyyy.MM.dd HH:mm") => dateTime.ToString(format, CultureInfo.InvariantCulture);
- 
-        public static int GetAppartmentsCount(this string title)
+
+        public static int GetApartmentsCount(this string title)
         {
             int result = 1;
 

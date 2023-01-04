@@ -7,6 +7,7 @@ using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TelegramUser = Telegram.Bot.Types.User;
 using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot.Actions
@@ -17,8 +18,7 @@ namespace CashFlowBot.Actions
         {
             var expenses = user.Person.Expenses.Total;
 
-            bot.SendMessage(user.Id,
-            Terms.Get(87, user, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency()));
+            bot.SendMessage(user.Id, Terms.Get(87, user, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency()));
 
             if (user.Person.Cash < expenses)
             {
@@ -210,7 +210,7 @@ namespace CashFlowBot.Actions
                 {
                     new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit")},
                     new List<KeyboardButton>{Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities")},
-                    new List<KeyboardButton>{Terms.Get(41, user, "Stop Game")},
+                    new List<KeyboardButton>{Terms.Get(140, user, "Friends"), Terms.Get(41, user, "Stop Game") },
                     new List<KeyboardButton>{Terms.Get(102, user, "Main menu") }
                 }
             };
@@ -286,14 +286,14 @@ namespace CashFlowBot.Actions
             Cancel(bot, user);
         }
 
-        public static void Confirm(TelegramBotClient bot, User user)
+        public static void Confirm(TelegramBotClient bot, User user, TelegramUser from)
         {
             var person = Persons.Get(user.Id, user.Person.Profession);
 
             switch (user.Stage)
             {
                 case Stage.StopGame:
-                    StopGame(bot, user);
+                    StopGame(bot, user, from);
                     return;
 
                 case Stage.AdminBringDown:

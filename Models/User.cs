@@ -4,6 +4,7 @@ using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
+using TelegramUser = Telegram.Bot.Types.User;
 
 namespace CashFlowBot.Models
 {
@@ -20,15 +21,10 @@ namespace CashFlowBot.Models
 
         public string Name { get => Get("Name"); private set => Set("Name", value); }
 
-        public void SetName(Telegram.Bot.Types.User user = null)
+        public void SetName(TelegramUser user = null)
         {
             var name = $"{user?.FirstName} {user?.LastName}".Trim();
-            name = string.IsNullOrEmpty(name) ? user?.Username : name;
-
-            if (!string.IsNullOrEmpty(name) && Name == "N/A")
-            {
-                Name = name;
-            }
+            Name = string.IsNullOrEmpty(name) ? user?.Username : name;
         }
 
         public DateTime FirstLogin

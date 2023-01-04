@@ -10,7 +10,16 @@ namespace CashFlowBot.Models
     {
         public Person(long userId) : base(userId, "Persons") { }
 
-        public string Profession { get => Get("Profession"); set => Set("Profession", value); }
+        public string Profession
+        {
+            get
+            {
+                var profession = Get("Profession");
+                return Persons.Get(Id, profession).Profession;
+            }
+            set => Set("Profession", value);
+        }
+
         public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
         public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
         public int CashFlow => Salary + Assets.Income - Expenses.Total;
@@ -22,7 +31,7 @@ namespace CashFlowBot.Models
 
         public Expenses Expenses => new(Id);
         public Liabilities Liabilities => new(Id);
-        public Assets Assets => new (Id);
+        public Assets Assets => new(Id);
 
         private string ProfessionTerm => Terms.Get(50, Id, "Profession");
         private string CashTerm => Terms.Get(51, Id, "Cash");
@@ -38,18 +47,21 @@ namespace CashFlowBot.Models
         public int TargetCashFlow => InitialCashFlow + 50_000;
         public int CurrentCashFlow => InitialCashFlow + Assets.Businesses.Sum(x => x.TotalCashFlow);
 
-        private string SmallCircleDescription => $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
-                     $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
-                     $"*{SalaryTerm}:* {Salary.AsCurrency()}{Environment.NewLine}" +
-                     $"*{IncomeTerm}:* {Assets.Income.AsCurrency()}{Environment.NewLine}" +
-                     $"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
-                     $"*{CashFlowTerm}*: {CashFlow.AsCurrency()}";
+        private string SmallCircleDescription =>
+            $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
+            $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
+            $"*{SalaryTerm}:* {Salary.AsCurrency()}{Environment.NewLine}" +
+            $"*{IncomeTerm}:* {Assets.Income.AsCurrency()}{Environment.NewLine}" +
+            $"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
+            $"*{CashFlowTerm}*: {CashFlow.AsCurrency()}";
 
-        private string BigCircleDescription => $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
-                                              $"{InitialTerm} {CashFlowTerm}: {InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
-                                              $"{CurrentTerm} {CashFlowTerm}: {CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
-                                              $"{TargetTerm} {CashFlowTerm}: {TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
-                                              $"{Assets.BigCircleDescription}";
+        private string BigCircleDescription =>
+            $"*{ProfessionTerm}:* {Profession}{Environment.NewLine}" +
+            $"*{CashTerm}:* {Cash.AsCurrency()}{Environment.NewLine}" +
+            $"{InitialTerm} {CashFlowTerm}: {InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{CurrentTerm} {CashFlowTerm}: {CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{TargetTerm} {CashFlowTerm}: {TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{Assets.BigCircleDescription}";
 
         public string Description
         {
@@ -90,11 +102,11 @@ namespace CashFlowBot.Models
             var person = Persons.Get(user.Id, user.Person.Profession);
             var count = user.History.Count(ActionType.BankruptcyDebtRestructuring);
 
-            Expenses.CarLoan         = person.Expenses.CarLoan;
-            Expenses.CreditCard      = person.Expenses.CreditCard;
-            Expenses.SmallCredits    = person.Expenses.SmallCredits;
-            Liabilities.CarLoan      = person.Liabilities.CarLoan;
-            Liabilities.CreditCard   = person.Liabilities.CreditCard;
+            Expenses.CarLoan = person.Expenses.CarLoan;
+            Expenses.CreditCard = person.Expenses.CreditCard;
+            Expenses.SmallCredits = person.Expenses.SmallCredits;
+            Liabilities.CarLoan = person.Liabilities.CarLoan;
+            Liabilities.CreditCard = person.Liabilities.CreditCard;
             Liabilities.SmallCredits = person.Liabilities.SmallCredits;
 
             for (var i = 0; i < count; i++)

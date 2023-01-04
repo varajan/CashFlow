@@ -9,15 +9,15 @@ namespace CashFlowBot.Extensions
 {
     public static class BotExtensions
     {
-        public static void SetButtons(this TelegramBotClient bot, long userId, string message, IEnumerable<string> buttons) =>
-            bot.SetButtons(userId, message, buttons.ToArray());
-
-        public static async void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons)
+        public static async void SetButtons(this TelegramBotClient bot, long userId, string message, IEnumerable<string> buttons, ParseMode parseMode = ParseMode.Markdown)
         {
             var buttonsInRow = buttons.Any(x => x.Length > 9) ? 3 : 4;
-            var rkm = GetButtons(buttons, buttonsInRow);
-            await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+            var rkm = GetButtons(buttons.ToArray(), buttonsInRow);
+            await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: parseMode);
         }
+
+        public static void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons) =>
+            bot.SetButtons(userId, message, buttons.ToList());
 
         private static ReplyKeyboardMarkup GetButtons(string[] buttons, int inRow)
         {
