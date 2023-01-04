@@ -76,7 +76,7 @@ namespace CashFlowBot
                 if (message.Type != MessageType.Text) return;
                 if (!user.Person.Exists && !new[] { Stage.SelectLanguage, Stage.GetProfession }.Contains(user.Stage))
                 {
-                    BaseActions.Start(_bot, user, message.Chat.Username);
+                    BaseActions.Start(_bot, user, message.From);
                     return;
                 }
 
@@ -116,12 +116,12 @@ namespace CashFlowBot
                         }
                         else
                         {
-                            BaseActions.Start(_bot, user);
+                            BaseActions.Start(_bot, user, message.From);
                         }
                         return;
 
                     case "/start":
-                        BaseActions.Start(_bot, user, message.Chat.Username);
+                        BaseActions.Start(_bot, user, message.From);
                         return;
 
                     // Term 79: Pay Check

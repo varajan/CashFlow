@@ -47,12 +47,12 @@ namespace CashFlowBot.Actions
             bot.SetButtons(user.Id, "Language/Мова", languages);
         }
 
-        public static async void Start(TelegramBotClient bot, User user, string name = null)
+        public static async void Start(TelegramBotClient bot, User user, Telegram.Bot.Types.User from = null)
         {
             if (!user.Exists)
             {
                 user.Create();
-                user.Name = name ?? "N/A";
+                user.SetName(from);
                 ChangeLanguage(bot, user);
                 return;
             }
@@ -84,6 +84,7 @@ namespace CashFlowBot.Actions
             }
 
             user.Stage = Stage.GetProfession;
+            user.SetName(from);
             await bot.SendTextMessageAsync(user.Id, Terms.Get(28, user, "Choose your *profession*"),
                 replyMarkup: rkm, parseMode: ParseMode.Markdown);
         }

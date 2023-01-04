@@ -12,13 +12,24 @@ namespace CashFlowBot.Models
         public User(long id) : base(id, "Users") { }
 
         public History History => new(Id);
-        public Person Person => new (Id);
+        public Person Person => new(Id);
 
         public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
 
-        public Stage Stage { get => (Stage) GetInt("Stage"); set => Set("Stage", (int)value); }
+        public Stage Stage { get => (Stage) GetInt("Stage"); set => Set("Stage", (int) value); }
 
-        public string Name { get => Get("Name"); set => Set("Name", value); }
+        public string Name { get => Get("Name"); private set => Set("Name", value); }
+
+        public void SetName(Telegram.Bot.Types.User user = null)
+        {
+            var name = $"{user?.FirstName} {user?.LastName}".Trim();
+            name = string.IsNullOrEmpty(name) ? user?.Username : name;
+
+            if (!string.IsNullOrEmpty(name) && Name == "N/A")
+            {
+                Name = name;
+            }
+        }
 
         public DateTime FirstLogin
         {
@@ -34,7 +45,7 @@ namespace CashFlowBot.Models
 
         public bool IsAdmin { get => GetInt("Admin") == 1; set => Set("Admin", value ? 1 : 0); }
 
-        public Language Language { get => (Language) GetInt("Language"); set => Set("Language", (int)value); }
+        public Language Language { get => (Language) GetInt("Language"); set => Set("Language", (int) value); }
 
         public string Description => Person.Description +
                                      Person.Assets.Description +
