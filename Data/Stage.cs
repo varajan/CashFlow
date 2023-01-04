@@ -67,5 +67,8 @@
         Bankruptcy,
         IncreaseCashFlow,
         ShowFriendData,
+        TransferMoneyTo,
+        TransferMoneyAmount,
+        TransferMoneyCredit,
     }
 }

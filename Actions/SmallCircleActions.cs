@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CashFlowBot.Data;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
@@ -210,7 +211,7 @@ namespace CashFlowBot.Actions
                 {
                     new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit")},
                     new List<KeyboardButton>{Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities")},
-                    new List<KeyboardButton>{Terms.Get(140, user, "Friends"), Terms.Get(41, user, "Stop Game") },
+                    new List<KeyboardButton>{ Terms.Get(140, user, "Friends"), Terms.Get(144, user, "Transfer"), Terms.Get(41, user, "Stop Game") },
                     new List<KeyboardButton>{Terms.Get(102, user, "Main menu") }
                 }
             };
@@ -284,6 +285,80 @@ namespace CashFlowBot.Actions
             if (user.Person.BigCircle) AvailableAssets.Add(amount, AssetType.BigGiveMoney);
 
             Cancel(bot, user);
+        }
+
+        public static void SendMoney(TelegramBotClient bot, User user)
+        {
+            var cancel = Terms.Get(6, user, "Cancel");
+            var users = Users.ActiveUsersNames(user).Append(cancel);
+
+            user.Person.Assets.Transfer?.Delete();
+            user.Stage = Stage.TransferMoneyTo;
+            bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users);
+        }
+
+        public static void SendMoney(TelegramBotClient bot, User user, string value)
+        {
+            switch (user.Stage)
+            {
+                case Stage.TransferMoneyTo:
+                    if (!Users.ActiveUsersNames(user).Contains(value))
+                    {
+                        bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
+                        Cancel(bot, user);
+                        return;
+                    }
+
+                    var cancel = Terms.Get(6, user, "Cancel");
+                    var buttons = Enumerable.Range(1, 8)
+                        .Select(x => (500 * x).AsCurrency())
+                        .Append(cancel);
+
+                    user.Person.Assets.Add(value, AssetType.Transfer);
+                    user.Stage = Stage.TransferMoneyAmount;
+                    bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
+                    return;
+
+                case Stage.TransferMoneyAmount:
+                    user.Person.Assets.Transfer.Qtty = value.AsCurrency();
+                    if (user.Person.Cash <= user.Person.Assets.Transfer.Qtty)
+                    {
+                        var message = Terms.Get(23, user, "You don''t have {0}, but only {1}", user.Person.Assets.Transfer.Qtty.AsCurrency(), user.Person.Cash.AsCurrency());
+                        bot.SetButtons(user.Id, message, Terms.Get(34, user, "Get Credit"), Terms.Get(6, user, "Cancel"));
+                        return;
+                    }
+
+                    Transfer();
+                    return;
+
+                case Stage.TransferMoneyCredit:
+                    var delta = user.Person.Assets.Transfer.Qtty - user.Person.Cash;
+                    var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+
+                    user.GetCredit(credit);
+                    Transfer();
+                    return;
+            }
+
+            void Transfer()
+            {
+                var to = user.Person.Assets.Transfer.Title;
+                var amount = user.Person.Assets.Transfer.Qtty;
+                var friend = Users.ActiveUsers(user).First(x => x.Name == to);
+                var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend.Name, amount.AsCurrency());
+
+                user.Person.Cash -= amount;
+                user.History.Add(ActionType.PayMoney, amount);
+
+                friend.Person.Cash += amount;
+                friend.History.Add(ActionType.GetMoney, amount);
+
+                bot.SendMessage(user.Id, message);
+                bot.SendMessage(friend.Id, message);
+
+                user.Person.Assets.Transfer.Delete();
+                Cancel(bot, user);
+            }
         }
 
         public static void Confirm(TelegramBotClient bot, User user, TelegramUser from)

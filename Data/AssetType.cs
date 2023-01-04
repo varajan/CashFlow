@@ -46,5 +46,7 @@
         CoinBuyPrice = 32,
         CoinSellPrice = 33,
         CoinCount = 34,
+
+        Transfer = 144,
     }
 }

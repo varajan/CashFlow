@@ -143,6 +143,10 @@
 (141, 'EN', 'There are no other players.'),
 (142, 'EN', 'On Small circle:'),
 (143, 'EN', 'On Big circle:'),
+(144, 'EN', 'Transfer'),
+(145, 'EN', 'Not found'),
+(146, 'EN', '{0} transferred {2} to {1}.'),
+(147, 'EN', 'Whom?'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

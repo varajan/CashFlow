@@ -198,13 +198,7 @@ namespace CashFlowBot.Actions
 
         public static void ShowFriends(TelegramBotClient bot, User user)
         {
-            var users = Users
-                .AllUsers
-                .Where(x => x.Id != user.Id)
-                .Where(x => x.Person.Exists)
-                .Where(x => x.LastActive > DateTime.Now.AddMinutes(-15))
-                .OrderBy(x => x.Name)
-                .ToList();
+            var users = Users.ActiveUsers(user);
 
             if (users.Any())
             {

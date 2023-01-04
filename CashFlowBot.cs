@@ -177,6 +177,13 @@ namespace CashFlowBot
                         BaseActions.ShowFriends(_bot, user);
                         return;
 
+                    // Term 144: Transfer
+                    case "transfer":
+                    case "переказ":
+                    case "überweisung":
+                        SmallCircleActions.SendMoney(_bot, user);
+                        return;
+
                     // Term 2: History
                     case "history":
                     case "історія":
@@ -218,6 +225,11 @@ namespace CashFlowBot
                             case Stage.BuyCoinsPrice:
                                 user.Stage = Stage.BuyCoinsCredit;
                                 BuyActions.BuyCoins(_bot, user, string.Empty);
+                                return;
+
+                            case Stage.TransferMoneyAmount:
+                                user.Stage = Stage.TransferMoneyCredit;
+                                SmallCircleActions.SendMoney(_bot, user, string.Empty);
                                 return;
 
                             default:
@@ -664,6 +676,12 @@ namespace CashFlowBot
 
                     case Stage.GiveMoney:
                         SmallCircleActions.GiveMoney(_bot, user, message.Text.Trim());
+                        return;
+
+                    case Stage.TransferMoneyTo:
+                    case Stage.TransferMoneyAmount:
+                    case Stage.TransferMoneyCredit:
+                        SmallCircleActions.SendMoney(_bot, user, message.Text.Trim());
                         return;
 
                     case Stage.MicroCreditAmount:

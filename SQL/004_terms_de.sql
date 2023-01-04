@@ -143,6 +143,10 @@
 (141, 'DE', 'There are no other players.'),
 (142, 'DE', 'Auf kleinem Kreis:'),
 (143, 'DE', 'Auf großem Kreis:'),
+(144, 'DE', 'Überweisung'),
+(145, 'DE', 'Nicht gefunden'),
+(146, 'DE', '{0} überwies {2} an {1}.'),
+(147, 'DE', 'Wem?'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

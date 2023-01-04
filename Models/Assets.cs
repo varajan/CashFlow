@@ -36,7 +36,9 @@ namespace CashFlowBot.Models
 
         public void Clear() => Items.ForEach(x => x.Delete());
 
-        private User ThisUser => new (Id);
+        public Asset Transfer => Items.SingleOrDefault(x => x.Type == AssetType.Transfer);
+
+        private User ThisUser => new(Id);
 
         public int Income => Items.Where(x => x.Type != AssetType.Boat).Sum(x => x.TotalCashFlow);
 
@@ -53,7 +55,7 @@ namespace CashFlowBot.Models
             int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
             DB.Execute("INSERT INTO Assets " +
                        "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
-                       $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
+                       $"VALUES ({newId}, {Id}, {(int) type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
 
             return Items.First(i => i.IsDraft);
         }
