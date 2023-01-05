@@ -10,19 +10,19 @@ namespace CashFlowBot.DataBase
 {
     public static class DB
     {
-        public static string DBFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
-        private static string ConnectionString => $"Data Source={DBFileName}; Version=3; Cache=Shared";
-        private static SQLiteConnection connection;
+        private static readonly SQLiteConnection _connection;
 
         static DB()
         {
-            if (!File.Exists(DBFileName))
+            var databaseFileName = $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
+
+            if (!File.Exists(databaseFileName))
             {
-                SQLiteConnection.CreateFile(DBFileName);
+                SQLiteConnection.CreateFile(databaseFileName);
             }
 
-            connection = new SQLiteConnection(ConnectionString);
-            connection = connection.OpenAndReturn();
+            _connection = new SQLiteConnection($"Data Source={databaseFileName}; Version=3; Cache=Shared");
+            _connection = _connection.OpenAndReturn();
 
             Directory
                 .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
@@ -33,16 +33,11 @@ namespace CashFlowBot.DataBase
 
         public static void Execute(string sql)
         {
-            var cmd = new SQLiteCommand(sql, connection);
+            var cmd = new SQLiteCommand(sql, _connection);
 
             try
             {
-                // using var connectionnew SQLiteConnection(ConnectionString);
-                //var cmd = new SQLiteCommand(sql, connection);
-
-                // cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
-                cmd.Dispose();
             }
             catch (Exception e)
             {
@@ -57,13 +52,10 @@ namespace CashFlowBot.DataBase
         public static string GetValue(string sql)
         {
             string result = null;
-            var cmd = new SQLiteCommand(sql, connection);
+            var cmd = new SQLiteCommand(sql, _connection);
 
             try
             {
-                // using var connectionnew SQLiteConnection(ConnectionString);
-
-                // cmd.Connection.Open();
                 result = (cmd.ExecuteScalar() ?? string.Empty).ToString();
             }
             catch (Exception e)
@@ -81,14 +73,10 @@ namespace CashFlowBot.DataBase
         public static List<string> GetColumn(string sql)
         {
             var result = new List<string>();
-            var cmd = new SQLiteCommand(sql, connection);
+            var cmd = new SQLiteCommand(sql, _connection);
 
             try
             {
-                // using var connectionnew SQLiteConnection(ConnectionString);
-                //using var cmd = new SQLiteCommand(sql, connection);
-                // cmd.Connection.Open();
-
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -110,14 +98,10 @@ namespace CashFlowBot.DataBase
         public static List<List<string>> GetRows(string sql, bool toLoverCase = false)
         {
             var result = new List<List<string>>();
-            var cmd = new SQLiteCommand(sql, connection);
+            var cmd = new SQLiteCommand(sql, _connection);
 
             try
             {
-                // using var connectionnew SQLiteConnection(ConnectionString);
-                //using var cmd = new SQLiteCommand(sql, connection);
-                // cmd.Connection.Open();
-
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -141,14 +125,10 @@ namespace CashFlowBot.DataBase
         public static List<string> GetRow(string sql)
         {
             var result = new List<string>();
-            var cmd = new SQLiteCommand(sql, connection);
+            var cmd = new SQLiteCommand(sql, _connection);
 
             try
             {
-                // using var connectionnew SQLiteConnection(ConnectionString);
-                //using var cmd = new SQLiteCommand(sql, connection);
-                // cmd.Connection.Open();
-
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
