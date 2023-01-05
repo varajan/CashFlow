@@ -209,10 +209,10 @@ namespace CashFlowBot.Actions
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton>{Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit")},
-                    new List<KeyboardButton>{Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities")},
-                    new List<KeyboardButton>{ Terms.Get(140, user, "Friends"), Terms.Get(144, user, "Transfer"), Terms.Get(41, user, "Stop Game") },
-                    new List<KeyboardButton>{Terms.Get(102, user, "Main menu") }
+                    new List<KeyboardButton> {Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit") },
+                    new List<KeyboardButton> {Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities") },
+                    new List<KeyboardButton> { Terms.Get(140, user, "Friends"), Terms.Get(41, user, "Stop Game") },
+                    new List<KeyboardButton> {Terms.Get(102, user, "Main menu") }
                 }
             };
 
@@ -290,7 +290,7 @@ namespace CashFlowBot.Actions
         public static void SendMoney(TelegramBotClient bot, User user)
         {
             var cancel = Terms.Get(6, user, "Cancel");
-            var users = Users.ActiveUsersNames(user).Append(cancel);
+            var users = Users.ActiveUsersNames(user, Circle.Small).Append(cancel);
 
             user.Person.Assets.Transfer?.Delete();
             user.Stage = Stage.TransferMoneyTo;
@@ -302,7 +302,7 @@ namespace CashFlowBot.Actions
             switch (user.Stage)
             {
                 case Stage.TransferMoneyTo:
-                    if (!Users.ActiveUsersNames(user).Contains(value))
+                    if (!Users.ActiveUsersNames(user, Circle.Small).Contains(value))
                     {
                         bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
                         Cancel(bot, user);

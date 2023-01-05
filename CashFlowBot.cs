@@ -177,13 +177,6 @@ namespace CashFlowBot
                         BaseActions.ShowFriends(_bot, user);
                         return;
 
-                    // Term 144: Transfer
-                    case "transfer":
-                    case "переказ":
-                    case "überweisung":
-                        SmallCircleActions.SendMoney(_bot, user);
-                        return;
-
                     // Term 2: History
                     case "history":
                     case "історія":
@@ -254,13 +247,22 @@ namespace CashFlowBot
                     case "give money":
                     case "заплатити гроші":
                     case "geld geben":
+                        if (user.Person.BigCircle)
+                        {
+                            BaseActions.Ask(_bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"),
+                                AvailableAssets.GetAsCurrency(AssetType.BigGiveMoney));
+                            return;
+                        }
+
+                        SmallCircleActions.SendMoney(_bot, user);
+                        return;
+
                     // Term 95: Pay with Cash
                     case "pay with cash":
                     case "оплатити готівкою":
                     case "mit bargeld zahlen":
-                        var giveMoney = AvailableAssets.GetAsCurrency(user.Person.BigCircle ? AssetType.BigGiveMoney : AssetType.SmallGiveMoney);
-
-                        BaseActions.Ask(_bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"), giveMoney);
+                        BaseActions.Ask(_bot, user, Stage.GiveMoney, Terms.Get(21, user, "How much?"),
+                            AvailableAssets.GetAsCurrency(AssetType.SmallGiveMoney));
                         return;
 
                     #region Reduce Liabilities

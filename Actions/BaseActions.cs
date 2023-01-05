@@ -206,8 +206,8 @@ namespace CashFlowBot.Actions
                 var onSmall = Terms.Get(142, user, "On Small circle:");
                 var onBig = Terms.Get(143, user, "On Big circle:");
 
-                var onSmallCircle = users.Where(u => !u.Person.BigCircle).ToList();
-                var onBigCircle = users.Where(u => u.Person.BigCircle).ToList();
+                var onSmallCircle = Users.ActiveUsers(user, Circle.Big);
+                var onBigCircle = Users.ActiveUsers(user, Circle.Small);
                 var message = string.Empty;
 
                 if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
