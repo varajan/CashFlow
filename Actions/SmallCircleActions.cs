@@ -290,11 +290,17 @@ namespace CashFlowBot.Actions
         public static void SendMoney(TelegramBotClient bot, User user)
         {
             var cancel = Terms.Get(6, user, "Cancel");
-            var users = Users.ActiveUsersNames(user, Circle.Small).Append(cancel);
+            var users = Users.ActiveUsersNames(user, Circle.Small).ToList();
+
+            if (!users.Any())
+            {
+                bot.SendMessage(user.Id, Terms.Get(141, user, "There are no other players."));
+                return;
+            }
 
             user.Person.Assets.Transfer?.Delete();
             user.Stage = Stage.TransferMoneyTo;
-            bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users);
+            bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(cancel));
         }
 
         public static void SendMoney(TelegramBotClient bot, User user, string value)
