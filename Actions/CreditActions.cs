@@ -5,8 +5,6 @@ using CashFlowBot.Data;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
-using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot.Actions
@@ -28,7 +26,7 @@ namespace CashFlowBot.Actions
             AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
 
             user.Person.Liabilities.CreditCard += amount;
-            user.Person.Expenses.CreditCard += (int)(amount * 0.03);
+            user.Person.Expenses.CreditCard += (int) (amount * 0.03);
             user.History.Add(ActionType.MicroCredit, amount);
 
             SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
@@ -78,7 +76,7 @@ namespace CashFlowBot.Actions
 
         public static void ReduceLiabilities(TelegramBotClient bot, User user, Stage stage)
         {
-            int cost = 0;
+            int cost = 1_000;
             var cancel = Terms.Get(6, user, "Cancel");
 
             switch (stage)
@@ -112,6 +110,13 @@ namespace CashFlowBot.Actions
                     break;
             }
 
+            if (user.Person.Cash < cost)
+            {
+                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", cost.AsCurrency(), user.Person.Cash.AsCurrency()));
+                ReduceLiabilities(bot, user);
+                return;
+            }
+
             if (stage == Stage.ReduceBankLoan)
             {
                 user.Stage = stage;
@@ -123,13 +128,6 @@ namespace CashFlowBot.Actions
                     .Append(cancel);
 
                 bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
-                return;
-            }
-
-            if (user.Person.Cash < cost)
-            {
-                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", cost.AsCurrency(), user.Person.Cash.AsCurrency()));
-                ReduceLiabilities(bot, user);
                 return;
             }
 

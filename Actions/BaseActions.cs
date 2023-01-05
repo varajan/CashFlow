@@ -176,8 +176,8 @@ namespace CashFlowBot.Actions
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
                     user.History.IsEmpty
-                        ? new List<KeyboardButton> { Terms.Get(31, user, "Show my Data") }
-                        : new List<KeyboardButton> { Terms.Get(31, user, "Show my Data"), Terms.Get(2, user, "History") },
+                        ? new List<KeyboardButton> { Terms.Get(31, user, "Show my Data"), Terms.Get(140, user, "Friends") }
+                        : new List<KeyboardButton> { Terms.Get(31, user, "Show my Data"), Terms.Get(140, user, "Friends"), Terms.Get(2, user, "History") },
                     new List<KeyboardButton> { Terms.Get(81, user, "Small Opportunity"), Terms.Get(84, user, "Big Opportunity") },
                     new List<KeyboardButton> { Terms.Get(86, user, "Doodads"), Terms.Get(85, user, "Market") },
                     new List<KeyboardButton> {  Terms.Get(80, user, "Downsize"), Terms.Get(39, user, "Baby") },
@@ -206,8 +206,8 @@ namespace CashFlowBot.Actions
                 var onSmall = Terms.Get(142, user, "On Small circle:");
                 var onBig = Terms.Get(143, user, "On Big circle:");
 
-                var onSmallCircle = Users.ActiveUsers(user, Circle.Big);
-                var onBigCircle = Users.ActiveUsers(user, Circle.Small);
+                var onSmallCircle = Users.ActiveUsers(user, Circle.Small);
+                var onBigCircle = Users.ActiveUsers(user, Circle.Big);
                 var message = string.Empty;
 
                 if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";

@@ -209,10 +209,10 @@ namespace CashFlowBot.Actions
             {
                 Keyboard = new List<IEnumerable<KeyboardButton>>
                 {
-                    new List<KeyboardButton> {Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit") },
-                    new List<KeyboardButton> {Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities") },
-                    new List<KeyboardButton> { Terms.Get(140, user, "Friends"), Terms.Get(41, user, "Stop Game") },
-                    new List<KeyboardButton> {Terms.Get(102, user, "Main menu") }
+                    new List<KeyboardButton> { Terms.Get(32, user, "Get Money"), Terms.Get(34, user, "Get Credit") },
+                    new List<KeyboardButton> { Terms.Get(90, user, "Charity - Pay 10%"), Terms.Get(40, user, "Reduce Liabilities") },
+                    new List<KeyboardButton> { Terms.Get(41, user, "Stop Game") },
+                    new List<KeyboardButton> { Terms.Get(102, user, "Main menu") }
                 }
             };
 
