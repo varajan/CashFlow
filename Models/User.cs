@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
@@ -43,9 +44,28 @@ namespace CashFlowBot.Models
 
         public Language Language { get => (Language) GetInt("Language"); set => Set("Language", (int) value); }
 
-        public string Description => Person.Description +
-                                     Person.Assets.Description +
-                                     Person.Expenses.Description;
+        public string Description
+        {
+            get
+            {
+                var file = "c:/varajan/log.txt";
+
+                File.AppendAllText(file, $"\r\n");
+                File.AppendAllText(file, $"{DateTime.Now:mm-ss-fff} - x0\r\n");
+                var x1 = Person.Description;
+                File.AppendAllText(file, $"{DateTime.Now:mm-ss-fff} - x1\r\n");
+                var x2 = Person.Assets.Description;
+                File.AppendAllText(file, $"{DateTime.Now:mm-ss-fff} - x2\r\n");
+                var x3 = Person.Expenses.Description;
+                File.AppendAllText(file, $"{DateTime.Now:mm-ss-fff} - x3\r\n");
+
+                return x1 + x2 + x3;
+            }
+        }
+
+        //public string Description => Person.Description +
+        //                             Person.Assets.Description +
+        //                             Person.Expenses.Description;
 
         public void GetCredit(int amount)
         {

@@ -11,7 +11,8 @@ namespace CashFlowBot.DataBase
     public static class DB
     {
         public static string DBFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
-        private static string Connection => $"Data Source={DBFileName}; Version=3;";
+        private static string ConnectionString => $"Data Source={DBFileName}; Version=3; Cache=Shared";
+        private static SQLiteConnection connection;
 
         static DB()
         {
@@ -19,6 +20,9 @@ namespace CashFlowBot.DataBase
             {
                 SQLiteConnection.CreateFile(DBFileName);
             }
+
+            connection = new SQLiteConnection(ConnectionString);
+            connection = connection.OpenAndReturn();
 
             Directory
                 .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
@@ -29,30 +33,47 @@ namespace CashFlowBot.DataBase
 
         public static void Execute(string sql)
         {
+            var cmd = new SQLiteCommand(sql, connection);
+
             try
             {
-                using var connection = new SQLiteConnection(Connection);
-                using var cmd = new SQLiteCommand(sql, connection);
+                // using var connectionnew SQLiteConnection(ConnectionString);
+                //var cmd = new SQLiteCommand(sql, connection);
 
-                cmd.Connection.Open();
+                // cmd.Connection.Open();
                 cmd.ExecuteNonQuery();
+                cmd.Dispose();
             }
-            catch (Exception e) { e.Log(sql); }
+            catch (Exception e)
+            {
+                e.Log(sql);
+            }
+            finally
+            {
+                cmd.Dispose();
+            }
         }
 
         public static string GetValue(string sql)
         {
             string result = null;
+            var cmd = new SQLiteCommand(sql, connection);
 
             try
             {
-                using var connection = new SQLiteConnection(Connection);
-                using var cmd = new SQLiteCommand(sql, connection);
+                // using var connectionnew SQLiteConnection(ConnectionString);
 
-                cmd.Connection.Open();
+                // cmd.Connection.Open();
                 result = (cmd.ExecuteScalar() ?? string.Empty).ToString();
             }
-            catch (Exception e) { e.Log(sql); }
+            catch (Exception e)
+            {
+                e.Log(sql);
+            }
+            finally
+            {
+                cmd.Dispose();
+            }
 
             return result;
         }
@@ -60,12 +81,13 @@ namespace CashFlowBot.DataBase
         public static List<string> GetColumn(string sql)
         {
             var result = new List<string>();
+            var cmd = new SQLiteCommand(sql, connection);
 
             try
             {
-                using var connection = new SQLiteConnection(Connection);
-                using var cmd = new SQLiteCommand(sql, connection);
-                cmd.Connection.Open();
+                // using var connectionnew SQLiteConnection(ConnectionString);
+                //using var cmd = new SQLiteCommand(sql, connection);
+                // cmd.Connection.Open();
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -73,7 +95,14 @@ namespace CashFlowBot.DataBase
                     result.Add(reader[Columns(sql).First()].ToString());
                 }
             }
-            catch (Exception e) { e.Log(sql); }
+            catch (Exception e)
+            {
+                e.Log(sql);
+            }
+            finally
+            {
+                cmd.Dispose();
+            }
 
             return result;
         }
@@ -81,12 +110,13 @@ namespace CashFlowBot.DataBase
         public static List<List<string>> GetRows(string sql, bool toLoverCase = false)
         {
             var result = new List<List<string>>();
+            var cmd = new SQLiteCommand(sql, connection);
 
             try
             {
-                using var connection = new SQLiteConnection(Connection);
-                using var cmd = new SQLiteCommand(sql, connection);
-                cmd.Connection.Open();
+                // using var connectionnew SQLiteConnection(ConnectionString);
+                //using var cmd = new SQLiteCommand(sql, connection);
+                // cmd.Connection.Open();
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -96,7 +126,14 @@ namespace CashFlowBot.DataBase
                     result.Add(toLoverCase ? values.Select(x => x.ToLower()).ToList() : values);
                 }
             }
-            catch (Exception e) { e.Log(sql); }
+            catch (Exception e)
+            {
+                e.Log(sql);
+            }
+            finally
+            {
+                cmd.Dispose();
+            }
 
             return result;
         }
@@ -104,12 +141,13 @@ namespace CashFlowBot.DataBase
         public static List<string> GetRow(string sql)
         {
             var result = new List<string>();
+            var cmd = new SQLiteCommand(sql, connection);
 
             try
             {
-                using var connection = new SQLiteConnection(Connection);
-                using var cmd = new SQLiteCommand(sql, connection);
-                cmd.Connection.Open();
+                // using var connectionnew SQLiteConnection(ConnectionString);
+                //using var cmd = new SQLiteCommand(sql, connection);
+                // cmd.Connection.Open();
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
@@ -117,7 +155,14 @@ namespace CashFlowBot.DataBase
                     result = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
                 }
             }
-            catch (Exception e) { e.Log(sql); }
+            catch (Exception e)
+            {
+                e.Log(sql);
+            }
+            finally
+            {
+                cmd.Dispose();
+            }
 
             return result;
         }

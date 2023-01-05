@@ -229,7 +229,7 @@ namespace CashFlowBot.Actions
             if (user.Person.Cash <= amount)
             {
                 SmallCircleButtons(bot, user, Terms.Get(23, user, "You don't have {0}, but only {1}",
-                amount.AsCurrency(), user.Person.Cash.AsCurrency()));
+                    amount.AsCurrency(), user.Person.Cash.AsCurrency()));
                 return;
             }
 
@@ -237,7 +237,7 @@ namespace CashFlowBot.Actions
             user.History.Add(ActionType.Charity, amount);
 
             SmallCircleButtons(bot, user, Terms.Get(91, user, "You've payed {0}, now you can use two dice in next 3 turns.",
-            amount.AsCurrency()));
+                amount.AsCurrency()));
         }
 
         public static void GetMoney(TelegramBotClient bot, User user, string value)
