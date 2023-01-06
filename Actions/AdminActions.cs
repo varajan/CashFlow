@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using Telegram.Bot.Types.Enums;
+using System.Linq;
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using Telegram.Bot;
+using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Terms = CashFlowBot.DataBase.Terms;
 
@@ -18,7 +18,7 @@ namespace CashFlowBot.Actions
         {
             user.Stage = Stage.Admin;
             bot.SetButtons(user.Id, "Hi, Admin.",
-            "Logs", "Bring Down", "Users", "Available Assets", "Cancel");
+                "Logs", "Bring Down", "Users", "Available Assets", "Cancel");
         }
 
         public static void ShowAvailableAssets(TelegramBotClient bot, User user, string value)
@@ -31,7 +31,7 @@ namespace CashFlowBot.Actions
 
             user.Stage = Stage.AdminAvailableAssetsClear;
             bot.SetButtons(user.Id, string.Join(Environment.NewLine, assets),
-            all ? "Clear ALL" : $"Clear {assetType}", "Back");
+                all ? "Clear ALL" : $"Clear {assetType}", "Back");
 
             List<string> GetAssets(AssetType type) =>
                 AvailableAssets.Get(type)

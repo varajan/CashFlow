@@ -67,7 +67,7 @@
 (65, 'DE', 'Initial'),
 (66, 'DE', 'Anwesend'),
 (67, 'DE', 'Ziel'),
-(68, 'DE', 'Ihre Einkommen sind größer als Ausgaben. Sie sind bereit für den großen Kreis.'),
+(68, 'DE', 'Die Einkommen von {0} sind größer als Ausgaben. {0} ist bereit für den großen Kreis.'),
 (69, 'DE', 'die Ehescheidung'),
 (70, 'DE', 'die Steuerprüfung'),
 (71, 'DE', 'die Klage'),
@@ -147,6 +147,7 @@
 (145, 'DE', 'Nicht gefunden'),
 (146, 'DE', '{0} überwies {2} an {1}.'),
 (147, 'DE', 'Wem?'),
+(148, 'DE', '{0} gewinnt das Spiel!'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),

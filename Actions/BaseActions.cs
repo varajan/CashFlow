@@ -5,6 +5,7 @@ using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
+using MoreLinq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -136,6 +137,8 @@ namespace CashFlowBot.Actions
 
                 bot.SendMessage(user.Id, user.Person.Description);
                 bot.SetButtons(user.Id, youAreWinner, history, stopGame);
+
+                Users.ActiveUsers(user).ForEach(u => bot.SendMessage(u.Id, Terms.Get(148, user, "{0} is the winner!", user.Name)));
                 return;
             }
 
@@ -168,7 +171,9 @@ namespace CashFlowBot.Actions
 
             if (user.Person.ReadyForBigCircle)
             {
-                bot.SendMessage(user.Id, Terms.Get(68, user, "Your income is greater, then expenses. You are ready for Big Circle."));
+                var notifyMessage = Terms.Get(68, user, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", user.Name);
+
+                Users.ActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, notifyMessage));
             }
 
             var rkm = new ReplyKeyboardMarkup

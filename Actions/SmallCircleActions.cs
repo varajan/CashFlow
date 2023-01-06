@@ -5,6 +5,7 @@ using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
+using MoreLinq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -359,8 +360,7 @@ namespace CashFlowBot.Actions
                 friend.Person.Cash += amount;
                 friend.History.Add(ActionType.GetMoney, amount);
 
-                bot.SendMessage(user.Id, message);
-                bot.SendMessage(friend.Id, message);
+                Users.ActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
 
                 user.Person.Assets.Transfer.Delete();
                 Cancel(bot, user);

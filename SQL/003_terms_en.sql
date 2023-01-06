@@ -67,7 +67,7 @@
 (65, 'EN', 'Initial'),
 (66, 'EN', 'Current'),
 (67, 'EN', 'Target'),
-(68, 'EN', 'Your income is greater, then expenses. You are ready for Big Circle.'),
+(68, 'EN', '{0}'' income is greater, then expenses. {0} is ready for Big Circle.'),
 (69, 'EN', 'Divorce'),
 (70, 'EN', 'Tax Audit'),
 (71, 'EN', 'Lawsuit'),
@@ -147,6 +147,7 @@
 (145, 'EN', 'Not found'),
 (146, 'EN', '{0} transferred {2} to {1}.'),
 (147, 'EN', 'Whom?'),
+(148, 'EN', '{0} is the winner!'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),
