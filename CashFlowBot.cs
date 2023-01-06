@@ -635,7 +635,7 @@ namespace CashFlowBot
                         if (assets.Any())
                         {
                             BaseActions.Ask(_bot, user, Stage.AdminAvailableAssets, "What types to show?",
-                            assets.Append("All").Append("Back").ToArray());
+                                assets.Append("All").Append("Back").ToArray());
                             return;
                         }
 
@@ -651,10 +651,8 @@ namespace CashFlowBot
                         var friend = Users.AllUsers.OrderBy(x => x.LastActive).LastOrDefault(x => x.Name == message.Text);
                         if (friend != null)
                         {
-                            var language = friend.Language;
-                            friend.Language = user.Language;
                             _bot.SendMessage(user.Id, friend.Person.BigCircle ? friend.Person.Description : friend.Description);
-                            friend.Language = language;
+                            _bot.SendMessage(user.Id, friend.History.TopFive);
                         }
                         BaseActions.ShowFriends(_bot, user);
                         return;

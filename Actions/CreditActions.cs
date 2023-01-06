@@ -110,15 +110,15 @@ namespace CashFlowBot.Actions
                     break;
             }
 
-            if (user.Person.Cash < cost)
-            {
-                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", cost.AsCurrency(), user.Person.Cash.AsCurrency()));
-                ReduceLiabilities(bot, user);
-                return;
-            }
-
             if (stage == Stage.ReduceBankLoan)
             {
+                if (user.Person.Cash < 1000)
+                {
+                    bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", 1_000.AsCurrency(), user.Person.Cash.AsCurrency()));
+                    ReduceLiabilities(bot, user);
+                    return;
+                }
+
                 user.Stage = stage;
                 var buttons = new[] { 1000, 5000, 10000, cost, user.Person.Cash / 1000 * 1000 }
                     .Where(x => x <= user.Person.Cash && x <= cost)
@@ -128,6 +128,13 @@ namespace CashFlowBot.Actions
                     .Append(cancel);
 
                 bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), buttons);
+                return;
+            }
+
+            if (user.Person.Cash < cost)
+            {
+                bot.SendMessage(user.Id, Terms.Get(23, user, "You don't have {0}, but only {1}", cost.AsCurrency(), user.Person.Cash.AsCurrency()));
+                ReduceLiabilities(bot, user);
                 return;
             }
 

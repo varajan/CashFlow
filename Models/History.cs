@@ -45,6 +45,10 @@ namespace CashFlowBot.Models
             ? Terms.Get(111, _userId, "No records found.")
             : string.Join(Environment.NewLine, Records.Select(x => x.Description));
 
+        public string TopFive => IsEmpty
+            ? Terms.Get(111, _userId, "No records found.")
+            : string.Join(Environment.NewLine, Records.Take(5).Select(x => x.Description));
+
         public void Clear() => DB.Execute($"DELETE FROM History WHERE UserID = {_userId}");
 
         public void Add(ActionType action, long value = 0) => new HistoryRecord { UserId = _userId, Action = action, Value = value }.Add();
@@ -148,7 +152,7 @@ namespace CashFlowBot.Models
                     break;
 
                 case ActionType.IncreaseCashFlow:
-                    user.Person.Assets.SmallBusinesses.ForEach(x => x.CashFlow -= (int)record.Value);
+                    user.Person.Assets.SmallBusinesses.ForEach(x => x.CashFlow -= (int) record.Value);
                     break;
 
                 case ActionType.SellRealEstate:
@@ -238,12 +242,12 @@ namespace CashFlowBot.Models
         public void Add()
         {
             long newId = DB.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
-            DB.Execute($@"INSERT INTO History VALUES ({newId}, {UserId}, {(int)Action}, {Value}, '• {Text}')");
+            DB.Execute($@"INSERT INTO History VALUES ({newId}, {UserId}, {(int) Action}, {Value}, '• {Text}')");
         }
 
         public void Delete() => DB.Execute($"DELETE FROM History WHERE ID = {Id}");
 
-        private Asset Asset => new (UserId, (int)Value);
+        private Asset Asset => new(UserId, (int) Value);
         private string Text
         {
             get
@@ -317,13 +321,13 @@ namespace CashFlowBot.Models
 
                     case ActionType.BankruptcyDebtRestructuring:
                     case ActionType.Bankruptcy:
-                        return Terms.Get((int)Action, UserId, "Bankruptcy");
+                        return Terms.Get((int) Action, UserId, "Bankruptcy");
 
                     case ActionType.GoToBigCircle:
                     case ActionType.Divorce:
                     case ActionType.TaxAudit:
                     case ActionType.Lawsuit:
-                        return Terms.Get((int)Action, UserId, "BigCircle");
+                        return Terms.Get((int) Action, UserId, "BigCircle");
 
                     default:
                         return $"<{Action}> - {Value}";
