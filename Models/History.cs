@@ -47,7 +47,7 @@ namespace CashFlowBot.Models
 
         public string TopFive => IsEmpty
             ? Terms.Get(111, _userId, "No records found.")
-            : string.Join(Environment.NewLine, Records.Take(5).Select(x => x.Description));
+            : string.Join(Environment.NewLine, Records.Reverse().Take(5).Select(x => x.Description));
 
         public void Clear() => DB.Execute($"DELETE FROM History WHERE UserID = {_userId}");
 
