@@ -391,19 +391,15 @@ namespace CashFlowBot
                         BuyActions.BuyRealEstate(_bot, user);
                         return;
 
-                    // Term 82: 2 to 1
-                    case "2 to 1":
-                    case "2 до 1":
-                    case "2 -> 1":
-                        user.Stage = Stage.Stocks2to1;
+                    // Term 82: x2
+                    case "x2":
+                        user.Stage = Stage.Stocks1to2;
                         SmallCircleActions.MultiplyStocks(_bot, user);
                         return;
 
-                    // Term 83: 1 to 2
-                    case "1 to 2":
-                    case "1 до 2":
-                    case "1 -> 2":
-                        user.Stage = Stage.Stocks1to2;
+                    // Term 83: ÷2
+                    case "÷2":
+                        user.Stage = Stage.Stocks2to1;
                         SmallCircleActions.MultiplyStocks(_bot, user);
                         return;
 
