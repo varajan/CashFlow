@@ -73,8 +73,8 @@ namespace CashFlowBot.Actions
                     {
                         Terms.Get(35, user, "Buy Stocks"),
                         Terms.Get(36, user, "Sell Stocks"),
-                        Terms.Get(82, user, "Stocks 2 to 1"),
-                        Terms.Get(83, user, "Stocks 1 to 2")
+                        Terms.Get(82, user, "Stocks x2"),
+                        Terms.Get(83, user, "Stocks ÷2")
                     },
                     new List<KeyboardButton>{ Terms.Get(37, user, "Buy Real Estate"), Terms.Get(94, user, "Buy Land") },
                     new List<KeyboardButton>{ Terms.Get(119, user, "Buy coins"), Terms.Get(115, user, "Start a company") },
