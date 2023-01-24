@@ -1,8 +1,7 @@
-﻿using System;
+﻿using CashFlowBot.Extensions;
+using CashFlowBot.Models;
 using System.Collections.Generic;
 using System.Linq;
-using CashFlowBot.Extensions;
-using CashFlowBot.Models;
 
 namespace CashFlowBot.DataBase
 {
@@ -17,7 +16,7 @@ namespace CashFlowBot.DataBase
             AllUsers
                 .Where(x => x.Id != currentUser.Id)
                 .Where(x => x.Person.Exists)
-                .Where(x => x.LastActive > DateTime.Now.AddMinutes(-15))
+                //.Where(x => x.LastActive > DateTime.Now.AddMinutes(-15))
                 .OrderBy(x => x.Name)
                 .Filter(circle)
                 .ToList();

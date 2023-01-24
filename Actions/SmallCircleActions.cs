@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CashFlowBot.Data;
+﻿using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
 using MoreLinq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
@@ -352,7 +352,7 @@ namespace CashFlowBot.Actions
                 var to = user.Person.Assets.Transfer.Title;
                 var amount = user.Person.Assets.Transfer.Qtty;
                 var friend = Users.ActiveUsers(user).First(x => x.Name == to);
-                var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend.Name, amount.AsCurrency());
+                var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend.Name, amount.AsCurrency(), Environment.NewLine);
 
                 user.Person.Cash -= amount;
                 user.History.Add(ActionType.PayMoney, amount);
