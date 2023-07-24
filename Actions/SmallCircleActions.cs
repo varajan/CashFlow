@@ -381,11 +381,6 @@ namespace CashFlowBot.Actions
                     Environment.Exit(0);
                     return;
 
-                case Stage.Rollback:
-                    user.History.Rollback();
-                    History(bot, user);
-                    return;
-
                 case Stage.ReduceMortgage:
                     user.Person.Cash -= user.Person.Liabilities.Mortgage;
                     user.Person.Expenses.Mortgage = 0;

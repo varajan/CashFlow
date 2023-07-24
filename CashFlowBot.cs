@@ -1,15 +1,15 @@
-﻿using System;
+﻿using CashFlowBot.Actions;
+using CashFlowBot.Data;
+using CashFlowBot.DataBase;
+using CashFlowBot.Extensions;
+using CashFlowBot.Models;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using CashFlowBot.Actions;
-using CashFlowBot.Data;
-using CashFlowBot.DataBase;
-using CashFlowBot.Extensions;
-using CashFlowBot.Models;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
@@ -542,8 +542,8 @@ namespace CashFlowBot
                     case "rollback last action":
                     case "скасувати останню операцію":
                     case "rollback der letzten transaktion":
-                        BaseActions.Ask(_bot, user, Stage.Rollback,
-                            Terms.Get(110, user, "Are you sure want to rollback last action?"), Terms.Get(4, user, "Yes"));
+                        user.History.Rollback();
+                        SmallCircleActions.History(_bot, user);
                         return;
 
                     // Term 6: Cancel
