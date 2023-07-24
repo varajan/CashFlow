@@ -148,6 +148,7 @@
 (146, 'EN', '{0} transferred {2} to {1}.'),
 (147, 'EN', 'Whom?'),
 (148, 'EN', '{0} is the winner!'),
+(149, 'EN', 'Bank'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

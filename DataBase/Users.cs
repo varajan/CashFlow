@@ -30,17 +30,12 @@ namespace CashFlowBot.DataBase
 
         private static IEnumerable<User> Filter(this IEnumerable<User> users, Circle circle)
         {
-            switch (circle)
+            return circle switch
             {
-                case Circle.Small:
-                    return users.Where(x => !x.Person.BigCircle);
-
-                case Circle.Big:
-                    return users.Where(x => x.Person.BigCircle);
-
-                default:
-                    return users;
-            }
+                Circle.Small => users.Where(x => !x.Person.BigCircle),
+                Circle.Big => users.Where(x => x.Person.BigCircle),
+                _ => users
+            };
         }
     }
 

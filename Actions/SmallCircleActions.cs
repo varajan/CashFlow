@@ -291,25 +291,22 @@ namespace CashFlowBot.Actions
         public static void SendMoney(TelegramBotClient bot, User user)
         {
             var cancel = Terms.Get(6, user, "Cancel");
+            var bank = Terms.Get(149, user, "Bank");
             var users = Users.ActiveUsersNames(user, Circle.Small).ToList();
-
-            if (!users.Any())
-            {
-                bot.SendMessage(user.Id, Terms.Get(141, user, "There are no other players."));
-                return;
-            }
 
             user.Person.Assets.Transfer?.Delete();
             user.Stage = Stage.TransferMoneyTo;
-            bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(cancel));
+            bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(bank).Append(cancel));
         }
 
         public static void SendMoney(TelegramBotClient bot, User user, string value)
         {
+            var bank = Terms.Get(149, user, "Bank");
+
             switch (user.Stage)
             {
                 case Stage.TransferMoneyTo:
-                    if (!Users.ActiveUsersNames(user, Circle.Small).Contains(value))
+                    if (value != bank && !Users.ActiveUsersNames(user, Circle.Small).Contains(value))
                     {
                         bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
                         Cancel(bot, user);
@@ -351,14 +348,17 @@ namespace CashFlowBot.Actions
             {
                 var to = user.Person.Assets.Transfer.Title;
                 var amount = user.Person.Assets.Transfer.Qtty;
-                var friend = Users.ActiveUsers(user).First(x => x.Name == to);
-                var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend.Name, amount.AsCurrency(), Environment.NewLine);
+                var friend = Users.ActiveUsers(user).FirstOrDefault(x => x.Name == to);
+                var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
 
                 user.Person.Cash -= amount;
                 user.History.Add(ActionType.PayMoney, amount);
 
-                friend.Person.Cash += amount;
-                friend.History.Add(ActionType.GetMoney, amount);
+                if (friend is not null)
+                {
+                    friend.Person.Cash += amount;
+                    friend.History.Add(ActionType.GetMoney, amount);
+                }
 
                 Users.ActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
 

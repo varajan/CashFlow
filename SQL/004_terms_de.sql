@@ -148,6 +148,7 @@
 (146, 'DE', '{0} überwies {2} an {1}.'),
 (147, 'DE', 'Wem?'),
 (148, 'DE', '{0} gewinnt das Spiel!'),
+(149, 'DE', 'Bank'),
 
 (1001, 'DE', 'Umwalt'),
 (1002, 'DE', 'Manager'),
