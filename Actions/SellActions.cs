@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CashFlowBot.Data;
+﻿using CashFlowBot.Data;
 using CashFlowBot.Extensions;
 using CashFlowBot.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Telegram.Bot;
 using Terms = CashFlowBot.DataBase.Terms;
 
@@ -277,7 +277,7 @@ namespace CashFlowBot.Actions
             var title = value.Trim().ToUpper();
             var number = value.AsCurrency();
             var cancel = Terms.Get(6, user, "Cancel");
-            var coin = user.Person.Assets.Coins.FirstOrDefault(x => x.Title == title || x.Title.EndsWith("*"));
+            var coin = user.Person.Assets.Coins.FirstOrDefault(x => x.Title.Equals(title, StringComparison.InvariantCultureIgnoreCase) || x.Title.EndsWith("*"));
             var prices = AvailableAssets.GetAsCurrency(AssetType.CoinSellPrice);
 
             switch (user.Stage)
