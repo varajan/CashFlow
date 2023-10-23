@@ -14,11 +14,12 @@ namespace CashFlowBot.Extensions
             return line;
         }
 
-        public static string ReplaceWhitespaces(this string line) => new Regex(@"\s+").Replace(line, String.Empty);
+        public static string ReplaceWhitespaces(this string line) => new Regex(@"\s+").Replace(line, string.Empty);
 
-        public static int AsCurrency(this string value) => value.Replace("$", "").ReplaceWhitespaces().ToInt();
-        public static string AsCurrency(this long value) => value >= 0 ? $"${value:n0}" : $"-${Math.Abs(value):n0}";
-        public static string AsCurrency(this int value) => value >= 0 ? $"${value:n0}" : $"-${Math.Abs(value):n0}";
+        public static int AsCurrency(this string value) => value.Replace("$", "").Replace(",", "").ReplaceWhitespaces().ToInt();
+        public static string AsCurrency(this long value) => (value >= 0 ? "$" : "-$") + Math.Abs(value).ToString("n0", CultureInfo.InvariantCulture);
+        public static string AsCurrency(this int value) => (value >= 0 ? "$" : "-$") + Math.Abs(value).ToString("n0", CultureInfo.InvariantCulture);
+
         public static string SubStringTo(this string line, string to) => line.Contains(to) ? line.Split(to).First() : line;
 
         public static string SubString(this string line, string from, string to)
@@ -40,7 +41,7 @@ namespace CashFlowBot.Extensions
 
         public static string Escape(this string line) => line.Replace("_", "\\_");
 
-        public static bool ContainsIgnoreCase(this string line, string word) => line.IndexOf(word ?? string.Empty, StringComparison.OrdinalIgnoreCase) >= 0;
+        public static bool ContainsIgnoreCase(this string line, string word) => line.Contains(word ?? string.Empty, StringComparison.OrdinalIgnoreCase);
 
         public static bool IsValidEmail(this string email) => new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").IsMatch(email);
 
