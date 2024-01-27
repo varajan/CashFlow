@@ -1,9 +1,8 @@
-﻿namespace CashFlowBot.Data
+﻿namespace CashFlowBot.Data;
+
+public enum Language
 {
-    public enum Language
-    {
-        EN,
-        DE,
-        UA,
-    }
+    EN,
+    DE,
+    UA,
 }
