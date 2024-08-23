@@ -43,7 +43,7 @@ public class CashFlowBot
     {
         try
         {
-            var pattern = @"^\d{10}:[a-zA-Z0-9]{35}$";
+            var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
             var botIdFile = $"{AppDomain.CurrentDomain.BaseDirectory}/BotID.txt";
             var id = File.ReadAllLines(botIdFile).FirstOrDefault(x => !string.IsNullOrEmpty(x));
 
