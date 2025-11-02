@@ -4,9 +4,9 @@ using CashFlowBot.Extensions;
 using System;
 using System.Linq;
 
-namespace CashFlowBot.Data.Users;
+namespace CashFlowBot.Data.Users.UserData;
 
-public class Person(IDataBase dataBase, long userId) : DataModel(dataBase, userId, "Persons"), IPerson
+public class Person(IDataBase dataBase, IUser user) : DataModel(dataBase, user.Id, "Persons"), IPerson
 {
     public string Profession
     {
@@ -18,7 +18,7 @@ public class Person(IDataBase dataBase, long userId) : DataModel(dataBase, userI
         set => Set("Profession", value);
     }
 
-    private IUser User => new User(DataBase, Id);
+    private IUser User { get; } = user;
     public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
     public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
     public int CashFlow => Salary + Assets.Income - Expenses.Total;
@@ -29,7 +29,7 @@ public class Person(IDataBase dataBase, long userId) : DataModel(dataBase, userI
     public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
     public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
-    public Expenses Expenses => new(DataBase, Id);
+    public Expenses Expenses => new(DataBase, User);
     public Liabilities Liabilities => new(DataBase, Id);
     public Assets Assets => new(DataBase, Id);
 

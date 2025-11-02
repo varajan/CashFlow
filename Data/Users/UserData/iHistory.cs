@@ -1,6 +1,6 @@
 ﻿using CashFlowBot.Data.Consts;
 
-namespace CashFlowBot.Data.Users;
+namespace CashFlowBot.Data.Users.UserData;
 
 public interface IHistory
 {

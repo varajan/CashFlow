@@ -3,7 +3,7 @@ using CashFlowBot.Data.DataBase;
 using CashFlowBot.Extensions;
 using System.Collections.Generic;
 
-namespace CashFlowBot.Data.Users;
+namespace CashFlowBot.Data.Users.UserData;
 
 public class HistoryRecord(IDataBase dataBase)
 {

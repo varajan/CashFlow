@@ -2,16 +2,17 @@
 using System.Globalization;
 using System;
 using System.Linq;
-using TelegramUser = Telegram.Bot.Types.User;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
+using CashFlowBot.Data.Users.UserData;
+using TelegramUser = Telegram.Bot.Types.User;
 
 namespace CashFlowBot.Data.Users;
 
 public class User(IDataBase dataBase, long id) : DataModel(dataBase, id, "Users"), IUser
 {
     public IHistory History => new History(DataBase, this);
-    public IPerson Person => new Person(DataBase, Id);
+    public IPerson Person => new Person(DataBase, this);
 
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
 

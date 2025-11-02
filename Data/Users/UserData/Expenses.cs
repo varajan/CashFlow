@@ -1,15 +1,13 @@
 ﻿using CashFlowBot.Data.DataBase;
 using CashFlowBot.Extensions;
 using System;
-using Terms = CashFlowBot.Data.Terms;
 
-namespace CashFlowBot.Data.Users;
+namespace CashFlowBot.Data.Users.UserData;
 
-public class Expenses : DataModel
+public class Expenses(IDataBase dataBase, IUser user) : DataModel(dataBase, user.Id, "Expenses")
 {
-    public Expenses(IDataBase dataBase, long id) : base(dataBase, id, "Expenses") { }
+    private IUser User { get; } = user;
 
-    private IUser User => new User(DataBase, Id);
     public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses + BoatLoan;
 
     public int Taxes { get => GetInt("Taxes"); set => Set("Taxes", value); }

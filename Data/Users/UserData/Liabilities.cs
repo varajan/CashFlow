@@ -1,6 +1,6 @@
 ﻿using CashFlowBot.Data.DataBase;
 
-namespace CashFlowBot.Data.Users;
+namespace CashFlowBot.Data.Users.UserData;
 
 public class Liabilities(IDataBase dataBase, long id) : DataModel(dataBase, id, "Liabilities")
 {
