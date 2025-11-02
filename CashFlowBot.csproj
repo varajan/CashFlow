@@ -27,10 +27,10 @@
     <None Update="README.md">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
-    <None Update="SQL\000_delete_tables.sql">
+    <None Update="SQL\001_init_tables.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SQL\001_create_tables.sql">
+    <None Update="SQL\011_default_persons.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SQL\010_available_assets.sql">

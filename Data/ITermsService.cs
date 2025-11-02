@@ -1,10 +1,10 @@
-﻿using CashFlowBot.Data.Users;
-using System.Collections.Generic;
+﻿using CashFlowBot.Data.Consts;
+using CashFlowBot.Data.Users;
 
 namespace CashFlowBot.Data;
 
 public interface ITermsService
 {
-    IList<string> Get(int id);
-    string Get(int id, IUser user, string defaultValue, params object[] args);
+    string Get(int id, Language language, string defaultValue = null, params object[] args);
+    string Get(int id, IUser user, string defaultValue = null, params object[] args);
 }

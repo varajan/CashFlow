@@ -114,7 +114,8 @@ public class CashFlowBot
 
                     if (user.Person.Exists)
                     {
-                        user.Person.Profession = Persons.Get(user, user.Person.Profession).Profession;
+                        // overwrite profession after changing language
+                        //user.Person.Profession = Persons.Get(user, user.Person.Profession).Profession;
 
                         BaseActions.Cancel(_bot, user);
                     }

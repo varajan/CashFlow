@@ -14,7 +14,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
         get
         {
             var profession = Get("Profession");
-            return Persons.Get(User, profession).Profession;
+            return Persons.Get(profession).Profession[User.Language];
         }
         set => Set("Profession", value);
     }
@@ -78,7 +78,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
 
     public void Create(string profession)
     {
-        var data = Persons.Get(User).First(x => x.Profession.ToLower() == profession);
+        var defaultProfessionData = Persons.Get(profession);
 
         Clear();
         DataBase.Execute($"INSERT INTO {Table} " +
@@ -86,20 +86,20 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
                    $"VALUES ({Id}, '', '', '', '', '', '', '', 0, 0)");
 
         Assets.Clear();
-        Profession = data.Profession;
-        Cash = data.Cash;
-        Salary = data.Salary;
+        Profession = defaultProfessionData.Profession[User.Language];
+        Cash = defaultProfessionData.Cash;
+        Salary = defaultProfessionData.Salary;
 
         Expenses.Clear();
-        Expenses.Create(data.Expenses);
+        Expenses.Create(defaultProfessionData.Expenses);
 
         Liabilities.Clear();
-        Liabilities.Create(data.Liabilities);
+        Liabilities.Create(defaultProfessionData.Liabilities);
     }
 
     public void ReduceCreditsRollback()
     {
-        var person = Persons.Get(User, User.Person.Profession);
+        var person = Persons.Get(User.Person.Profession);
         var count = User.History.Count(ActionType.BankruptcyDebtRestructuring);
 
         Expenses.CarLoan = person.Expenses.CarLoan;

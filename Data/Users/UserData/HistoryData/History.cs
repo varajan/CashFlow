@@ -51,7 +51,7 @@ public class History(IDataBase dataBase, IUser user) : IHistory
         var record = Records.Last();
         var asset = new Asset(DataBase, User, (int)record.Value);
         var amount = (int)record.Value;
-        var person = Persons.Get(User, User.Person.Profession);
+        var person = Persons.Get(User.Person.Profession);
 
         decimal percent;
         int expenses;

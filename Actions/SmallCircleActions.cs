@@ -376,7 +376,7 @@ public class SmallCircleActions : BaseActions
 
     public static void Confirm(TelegramBotClient bot, IUser user, TelegramUser from)
     {
-        var person = Persons.Get(user, user.Person.Profession);
+        var person = Persons.Get(user.Person.Profession);
 
         switch (user.Stage)
         {

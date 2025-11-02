@@ -75,8 +75,8 @@ public class BaseActions
             return;
         }
 
-        var professions = Persons.Get(user)
-            .Select(x => x.Profession)
+        var professions = Persons.GetAll()
+            .Select(x => x.Profession[user.Language])
             .OrderBy(x => x)
             .Append(Terms.Get(139, user, "Random"))
             .ToList();
@@ -101,7 +101,7 @@ public class BaseActions
     public static void SetProfession(TelegramBotClient bot, IUser user, string profession)
     {
         var random = Terms.Get(139, user, "Pick random").Equals(profession, StringComparison.InvariantCultureIgnoreCase);
-        var professions = Persons.Get(user).Select(x => x.Profession.ToLower()).ToList();
+        var professions = Persons.GetAll().Select(x => x.Profession[user.Language].ToLower()).ToList();
 
         if (random)
         {
