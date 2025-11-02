@@ -1,9 +1,10 @@
 ﻿using CashFlowBot.Extensions;
 using System.Globalization;
 using System;
-using CashFlowBot.DataBase;
 using System.Linq;
 using TelegramUser = Telegram.Bot.Types.User;
+using CashFlowBot.Data.Consts;
+using CashFlowBot.Data.DataBase;
 
 namespace CashFlowBot.Data.Users;
 

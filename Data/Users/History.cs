@@ -1,4 +1,5 @@
-﻿using CashFlowBot.DataBase;
+﻿using CashFlowBot.Data.Consts;
+using CashFlowBot.Data.DataBase;
 using CashFlowBot.Models;
 using System;
 using System.Collections.Generic;

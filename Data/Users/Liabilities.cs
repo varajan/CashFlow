@@ -1,4 +1,4 @@
-﻿using CashFlowBot.DataBase;
+﻿using CashFlowBot.Data.DataBase;
 
 namespace CashFlowBot.Data.Users;
 

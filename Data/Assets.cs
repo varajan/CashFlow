@@ -1,11 +1,11 @@
-﻿using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
+﻿using CashFlowBot.Data.Consts;
+using CashFlowBot.Data.DataBase;
+using CashFlowBot.Data.Users;
 using CashFlowBot.Extensions;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Data;
 

@@ -1,4 +1,4 @@
-﻿namespace CashFlowBot.Data;
+﻿namespace CashFlowBot.Data.Consts;
 
 public enum AssetType
 {
@@ -26,8 +26,8 @@ public enum AssetType
     BusinessSellPrice = 16,
 
     BigBusinessType = 14,
-    BigBusinessBuyPrice  = 15,
-    BigBusinessCashFlow  = 17,
+    BigBusinessBuyPrice = 15,
+    BigBusinessCashFlow = 17,
 
     RealEstate = 17,
     RealEstateSmallType = 18,

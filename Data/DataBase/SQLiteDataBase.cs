@@ -7,7 +7,7 @@ using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 
-namespace CashFlowBot.DataBase;
+namespace CashFlowBot.Data.DataBase;
 
 public class SQLiteDataBase(ILogger logger) : IDataBase
 {

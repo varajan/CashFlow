@@ -1,4 +1,4 @@
-﻿using CashFlowBot.DataBase;
+﻿using CashFlowBot.Data.DataBase;
 using CashFlowBot.Extensions;
 using System;
 using Terms = CashFlowBot.Data.Terms;

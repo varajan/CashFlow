@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CashFlowBot.DataBase;
+namespace CashFlowBot.Data.DataBase;
 
 public interface IDataBase
 {

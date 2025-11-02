@@ -1,4 +1,5 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
@@ -13,7 +14,7 @@ public class BigCircleActions : BaseActions
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static Terms Terms => new Terms(dataBase);
 
-    public static void LostMoney(TelegramBotClient bot, IUser user, int amount, Data.ActionType action)
+    public static void LostMoney(TelegramBotClient bot, IUser user, int amount, CashFlowBot.Data.Consts.ActionType action)
     {
         bot.SendMessage(user.Id, Terms.Get(72, user, "You've lost {0}.", amount.AsCurrency()));
         user.Person.Cash -= amount;
@@ -27,7 +28,7 @@ public class BigCircleActions : BaseActions
         user.Person.Cash += user.Person.InitialCashFlow;
         user.Person.Circle = Circle.Big;
 
-        user.History.Add(Data.ActionType.GoToBigCircle);
+        user.History.Add(CashFlowBot.Data.Consts.ActionType.GoToBigCircle);
 
         Cancel(bot, user);
     }

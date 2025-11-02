@@ -1,4 +1,6 @@
-﻿namespace CashFlowBot.Data.Users;
+﻿using CashFlowBot.Data.Consts;
+
+namespace CashFlowBot.Data.Users;
 
 public interface IHistory
 {

@@ -1,4 +1,4 @@
-﻿namespace CashFlowBot.Data;
+﻿namespace CashFlowBot.Data.Consts;
 
 public enum Language
 {
