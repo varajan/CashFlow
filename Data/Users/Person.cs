@@ -1,15 +1,12 @@
-﻿using CashFlowBot.Data;
-using CashFlowBot.DataBase;
+﻿using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using System;
 using System.Linq;
 
-namespace CashFlowBot.Models;
+namespace CashFlowBot.Data.Users;
 
-public class Person : DataModel
+public class Person(IDataBase dataBase, long userId) : DataModel(dataBase, userId, "Persons"), IPerson
 {
-    public Person(long userId) : base(userId, "Persons") { }
-
     public string Profession
     {
         get
@@ -20,18 +17,20 @@ public class Person : DataModel
         set => Set("Profession", value);
     }
 
+    private IUser User => new User(DataBase, Id);
     public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
     public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
     public int CashFlow => Salary + Assets.Income - Expenses.Total;
     public bool ReadyForBigCircle { get => GetInt("ReadyForBigCircle") == 1; set => Set("ReadyForBigCircle", value ? 1 : 0); }
     public bool Bankruptcy { get => GetInt("Bankruptcy") == 1; set => Set("Bankruptcy", value ? 1 : 0); }
     public bool CreditsReduced { get => GetInt("CreditsReduced") == 1; set => Set("CreditsReduced", value ? 1 : 0); }
+    public Circle Circle { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
     public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
-    public Expenses Expenses => new(Id);
-    public Liabilities Liabilities => new(Id);
-    public Assets Assets => new(Id);
+    public Expenses Expenses => new(DataBase, Id);
+    public Liabilities Liabilities => new(DataBase, Id);
+    public Assets Assets => new(DataBase, Id);
 
     private string ProfessionTerm => Terms.Get(50, Id, "Profession");
     private string CashTerm => Terms.Get(51, Id, "Cash");
@@ -67,20 +66,20 @@ public class Person : DataModel
     {
         get
         {
-            new User(Id).LastActive = DateTime.Now;
+            User.LastActive = DateTime.Now;
             return BigCircle ? BigCircleDescription : SmallCircleDescription;
         }
     }
 
-    public bool Exists => DB.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
-    public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
+    public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
+    public void Clear() => DataBase.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
 
     public void Create(string profession)
     {
-        var data = Data.Persons.Get(Id).First(x => x.Profession.ToLower() == profession);
+        var data = Persons.Get(Id).First(x => x.Profession.ToLower() == profession);
 
         Clear();
-        DB.Execute($"INSERT INTO {Table} " +
+        DataBase.Execute($"INSERT INTO {Table} " +
                    "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
                    $"VALUES ({Id}, '', '', '', '', '', '', '', 0, 0)");
 
@@ -98,9 +97,8 @@ public class Person : DataModel
 
     public void ReduceCreditsRollback()
     {
-        var user = new User(Id);
-        var person = Persons.Get(user.Id, user.Person.Profession);
-        var count = user.History.Count(ActionType.BankruptcyDebtRestructuring);
+        var person = Persons.Get(User.Id, User.Person.Profession);
+        var count = User.History.Count(ActionType.BankruptcyDebtRestructuring);
 
         Expenses.CarLoan = person.Expenses.CarLoan;
         Expenses.CreditCard = person.Expenses.CreditCard;
@@ -128,7 +126,6 @@ public class Person : DataModel
         if (CreditsReduced) return;
 
         Expenses.CarLoan /= 2;
-        Expenses.CreditCard /= 2;
         Expenses.SmallCredits /= 2;
         Liabilities.CarLoan /= 2;
         Liabilities.CreditCard /= 2;
@@ -137,7 +134,7 @@ public class Person : DataModel
         CreditsReduced = true;
         Bankruptcy = CashFlow < 0;
 
-        var history = new User(Id).History;
+        var history = new History(DataBase, User);
         var count = history.Count(ActionType.BankruptcyDebtRestructuring);
         history.Add(ActionType.BankruptcyDebtRestructuring, count);
     }

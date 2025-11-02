@@ -9,23 +9,34 @@ using System.Linq;
 
 namespace CashFlowBot.DataBase;
 
-public static class DB
+public class SQLiteDataBase(ILogger logger) : IDataBase
 {
-    private static readonly SQLiteConnection _connection;
-    private static ILogger _logger = new FileLogger();
+    private readonly ILogger _logger = logger;
 
-    static DB()
+    private static string DatabaseFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
+    private static string ConnectionString => $"Data Source={DatabaseFileName}; Version=3; Cache=Shared";
+
+    private SQLiteConnection _connection;
+    private SQLiteConnection Connection
     {
-        var databaseFileName = $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
-
-        if (!File.Exists(databaseFileName))
+        get
         {
-            SQLiteConnection.CreateFile(databaseFileName);
+            if (_connection == null || !IsReady)
+            {
+                InitDataBase();
+                _connection = new SQLiteConnection(ConnectionString);
+                _connection = _connection.OpenAndReturn();
+            }
+
+            return _connection;
         }
+    }
 
-        _connection = new SQLiteConnection($"Data Source={databaseFileName}; Version=3; Cache=Shared");
-        _connection = _connection.OpenAndReturn();
+    private static bool IsReady => File.Exists(DatabaseFileName);
 
+    private void InitDataBase()
+    {
+        SQLiteConnection.CreateFile(DatabaseFileName);
         Directory
             .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
             .Where(file => file.ToLower().EndsWith(".sql"))
@@ -33,9 +44,9 @@ public static class DB
             .ForEach(Execute);
     }
 
-    public static void Execute(string sql)
+    public void Execute(string sql)
     {
-        var cmd = new SQLiteCommand(sql, _connection);
+        var cmd = new SQLiteCommand(sql, Connection);
 
         try
         {
@@ -43,7 +54,7 @@ public static class DB
         }
         catch (Exception e)
         {
-            e.Log(sql);
+            Log(e, sql);
         }
         finally
         {
@@ -51,10 +62,10 @@ public static class DB
         }
     }
 
-    public static string GetValue(string sql)
+    public string GetValue(string sql)
     {
         string result = null;
-        var cmd = new SQLiteCommand(sql, _connection);
+        var cmd = new SQLiteCommand(sql, Connection);
 
         try
         {
@@ -62,7 +73,7 @@ public static class DB
         }
         catch (Exception e)
         {
-            e.Log(sql);
+            Log(e, sql);
         }
         finally
         {
@@ -72,10 +83,10 @@ public static class DB
         return result;
     }
 
-    public static List<string> GetColumn(string sql)
+    public IList<string> GetColumn(string sql)
     {
         var result = new List<string>();
-        var cmd = new SQLiteCommand(sql, _connection);
+        var cmd = new SQLiteCommand(sql, Connection);
 
         try
         {
@@ -87,7 +98,7 @@ public static class DB
         }
         catch (Exception e)
         {
-            e.Log(sql);
+            Log(e, sql);
         }
         finally
         {
@@ -97,10 +108,10 @@ public static class DB
         return result;
     }
 
-    public static List<List<string>> GetRows(string sql, bool toLoverCase = false)
+    public IList<IList<string>> GetRows(string sql)
     {
-        var result = new List<List<string>>();
-        var cmd = new SQLiteCommand(sql, _connection);
+        var result = new List<IList<string>>();
+        var cmd = new SQLiteCommand(sql, Connection);
 
         try
         {
@@ -108,13 +119,12 @@ public static class DB
             while (reader.Read())
             {
                 var values = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
-
-                result.Add(toLoverCase ? values.Select(x => x.ToLower()).ToList() : values);
+                result.Add(values);
             }
         }
         catch (Exception e)
         {
-            e.Log(sql);
+            Log(e, sql);
         }
         finally
         {
@@ -124,10 +134,10 @@ public static class DB
         return result;
     }
 
-    public static List<string> GetRow(string sql)
+    public IList<string> GetRow(string sql)
     {
         var result = new List<string>();
-        var cmd = new SQLiteCommand(sql, _connection);
+        var cmd = new SQLiteCommand(sql, Connection);
 
         try
         {
@@ -139,7 +149,7 @@ public static class DB
         }
         catch (Exception e)
         {
-            e.Log(sql);
+            Log(e, sql);
         }
         finally
         {
@@ -149,10 +159,10 @@ public static class DB
         return result;
     }
 
-    private static IEnumerable<string> Columns(string sql) =>
+    private static string[] Columns(string sql) =>
         sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",");
 
-    private static void Log(this Exception ex, string sql)
+    private void Log(Exception ex, string sql)
     {
         Console.WriteLine($"{ex.Message}{Environment.NewLine}{sql}{Environment.NewLine}{ex.StackTrace}");
         _logger.Log(sql);

@@ -1,5 +1,6 @@
 ﻿using CashFlowBot.Actions;
 using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
@@ -14,13 +15,18 @@ using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot;
 
 public class CashFlowBot
 {
-    private static ILogger Logger = new FileLogger();
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static IUsers Users => new Users(dataBase);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
     private static TelegramBotClient _bot;
 
     public static void Main()
@@ -66,9 +72,9 @@ public class CashFlowBot
         try
         {
             var message = messageEventArgs.Message;
-            var user = new User(message.Chat.Id);
+            var user = new User(dataBase, message.Chat.Id);
 
-            Logger.Log($"{message.Chat.Id} - {message.Chat.Username} - {message.Text}");
+            logger.Log($"{message.Chat.Id} - {message.Chat.Username} - {message.Text}");
 
             await _bot.SendChatActionAsync(message.Chat.Id, ChatAction.Typing);
 
@@ -84,7 +90,7 @@ public class CashFlowBot
             if (makeAdmin.Success)
             {
                 var userId = makeAdmin.Groups[1].Value.ToInt();
-                var usr = new User(userId);
+                var usr = new User(dataBase, userId);
 
                 if (!usr.Exists) return;
                 if (usr.IsAdmin) return;
@@ -603,7 +609,7 @@ public class CashFlowBot
 
                     if (user.Stage == Stage.AdminLogs)
                     {
-                        var topMessages = Logger.GetTop30Records();
+                        var topMessages = logger.GetTop30Records();
                         _bot.SendMessage(user.Id, string.Join(Environment.NewLine, topMessages), ParseMode.Default);
                     }
                     AdminActions.AdminMenu(_bot, user);
@@ -782,7 +788,7 @@ public class CashFlowBot
         catch (Exception e)
         {
             Console.WriteLine(e);
-            Logger.Log(e);
+            logger.Log(e);
         }
     }
 

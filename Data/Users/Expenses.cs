@@ -1,15 +1,15 @@
-﻿using CashFlowBot.Data;
-using CashFlowBot.DataBase;
+﻿using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using System;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
-namespace CashFlowBot.Models;
+namespace CashFlowBot.Data.Users;
 
 public class Expenses : DataModel
 {
-    public Expenses(long id) : base(id, "Expenses") { }
+    public Expenses(IDataBase dataBase, long id) : base(dataBase, id, "Expenses") { }
 
+    private IUser User => new User(DataBase, Id);
     public int Total => Others + Taxes + Mortgage + SchoolLoan + CarLoan + CreditCard + SmallCredits + BankLoan + ChildrenExpenses + BoatLoan;
 
     public int Taxes { get => GetInt("Taxes"); set => Set("Taxes", value); }
@@ -26,7 +26,7 @@ public class Expenses : DataModel
     public int PerChild { get => GetInt("PerChild"); set => Set("PerChild", value); }
     public int ChildrenExpenses => Children * PerChild;
 
-    private Asset Boat => new User(Id).Person.Assets.Boat;
+    private Asset Boat => User.Person.Assets.Boat;
     private int BoatLoan => Boat?.CashFlow ?? 0;
 
     public string Description
@@ -64,12 +64,12 @@ public class Expenses : DataModel
         }
     }
 
-    public void Clear() => DB.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
+    public void Clear() => DataBase.Execute($"DELETE FROM {Table} WHERE ID = {Id}");
 
     public void Create(Persons.DefaultExpenses expenses)
     {
         Clear();
-        DB.Execute($"INSERT INTO {Table} " +
+        DataBase.Execute($"INSERT INTO {Table} " +
                    "(ID, Taxes, Mortgage, SchoolLoan, CarLoan, CreditCard, SmallCredits, BankLoan, Others, Children, PerChild) " +
                    $"VALUES ({Id}, '', '', '', '', '', '', '', '', '', '')");
 

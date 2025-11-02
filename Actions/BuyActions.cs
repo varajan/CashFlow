@@ -1,16 +1,23 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using System;
 using System.Linq;
 using Telegram.Bot;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
 public class BuyActions : BaseActions
 {
-    public static void BuyLand(TelegramBotClient bot, User user)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
+    public static void BuyLand(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var landTypes = AvailableAssets.GetAsText(AssetType.LandTitle, user.Language).Append(cancel);
@@ -19,7 +26,7 @@ public class BuyActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), landTypes);
     }
 
-    public static void BuyLand(TelegramBotClient bot, User user, string value)
+    public static void BuyLand(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();
@@ -73,17 +80,17 @@ public class BuyActions : BaseActions
         }
     }
 
-    public static void BuyBusiness(TelegramBotClient bot, User user)
+    public static void BuyBusiness(TelegramBotClient bot, IUser user)
     {
         user.Stage = Stage.BuyBusinessTitle;
         var cancel = Terms.Get(6, user, "Cancel");
-        var type = user.Person.BigCircle ? AssetType.BigBusinessType : AssetType.BusinessType;
+        var type = user.Person.Circle == Circle.Big ? AssetType.BigBusinessType : AssetType.BusinessType;
         var businesses = AvailableAssets.GetAsText(type, user.Language).Append(cancel);
 
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), businesses);
     }
 
-    public static void BuyBusiness(TelegramBotClient bot, User user, string value)
+    public static void BuyBusiness(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();
@@ -176,7 +183,7 @@ public class BuyActions : BaseActions
         }
     }
 
-    public static void BuyRealEstate(TelegramBotClient bot, User user)
+    public static void BuyRealEstate(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var properties = AvailableAssets.Get(user.Person.SmallRealEstate ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType)
@@ -188,7 +195,7 @@ public class BuyActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), properties);
     }
 
-    public static void BuyRealEstate(TelegramBotClient bot, User user, string value)
+    public static void BuyRealEstate(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();
@@ -262,7 +269,7 @@ public class BuyActions : BaseActions
         }
     }
 
-    public static void BuyStocks(TelegramBotClient bot, User user)
+    public static void BuyStocks(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var stocks = AvailableAssets.GetAsText(AssetType.Stock, user.Language).Append(cancel);
@@ -271,7 +278,7 @@ public class BuyActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), stocks);
     }
 
-    public static void BuyStocks(TelegramBotClient bot, User user, string value)
+    public static void BuyStocks(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();
@@ -380,7 +387,7 @@ public class BuyActions : BaseActions
         }
     }
 
-    public static void BuyBoat(TelegramBotClient bot, User user)
+    public static void BuyBoat(TelegramBotClient bot, IUser user)
     {
         const int firstPayment = 1_000;
 
@@ -417,7 +424,7 @@ public class BuyActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static void StartCompany(TelegramBotClient bot, User user)
+    public static void StartCompany(TelegramBotClient bot, IUser user)
     {
         user.Stage = Stage.StartCompanyTitle;
         var cancel = Terms.Get(6, user, "Cancel");
@@ -426,7 +433,7 @@ public class BuyActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), businesses);
     }
 
-    public static void StartCompany(TelegramBotClient bot, User user, string value)
+    public static void StartCompany(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();
@@ -483,7 +490,7 @@ public class BuyActions : BaseActions
         }
     }
 
-    public static void BuyCoins(TelegramBotClient bot, User user)
+    public static void BuyCoins(TelegramBotClient bot, IUser user)
     {
         user.Stage = Stage.BuyCoinsTitle;
         var cancel = Terms.Get(6, user, "Cancel");
@@ -492,7 +499,7 @@ public class BuyActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(7, user, "Title:"), coins);
     }
 
-    public static void BuyCoins(TelegramBotClient bot, User user, string value)
+    public static void BuyCoins(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim();
         var number = value.AsCurrency();

@@ -1,7 +1,8 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -10,13 +11,19 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TelegramUser = Telegram.Bot.Types.User;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
 public class SmallCircleActions : BaseActions
 {
-    public static void Downsize(TelegramBotClient bot, User user)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static IUsers Users => new Users(dataBase);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
+    public static void Downsize(TelegramBotClient bot, IUser user)
     {
         var expenses = user.Person.Expenses.Total;
 
@@ -36,7 +43,7 @@ public class SmallCircleActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static void IncreaseCashFlow(TelegramBotClient bot, User user)
+    public static void IncreaseCashFlow(TelegramBotClient bot, IUser user)
     {
         if (!user.Person.Assets.SmallBusinesses.Any())
         {
@@ -51,7 +58,7 @@ public class SmallCircleActions : BaseActions
         Ask(bot, user, Stage.IncreaseCashFlow, question, amounts);
     }
 
-    public static void IncreaseCashFlow(TelegramBotClient bot, User user, int amount)
+    public static void IncreaseCashFlow(TelegramBotClient bot, IUser user, int amount)
     {
         foreach (var business in user.Person.Assets.SmallBusinesses)
         {
@@ -63,7 +70,7 @@ public class SmallCircleActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static async void SmallOpportunity(TelegramBotClient bot, User user)
+    public static async void SmallOpportunity(TelegramBotClient bot, IUser user)
     {
         var rkm = new ReplyKeyboardMarkup
         {
@@ -89,7 +96,7 @@ public class SmallCircleActions : BaseActions
         await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static async void BigOpportunity(TelegramBotClient bot, User user)
+    public static async void BigOpportunity(TelegramBotClient bot, IUser user)
     {
         var rkm = new ReplyKeyboardMarkup
         {
@@ -109,7 +116,7 @@ public class SmallCircleActions : BaseActions
         await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static async void Doodads(TelegramBotClient bot, User user)
+    public static async void Doodads(TelegramBotClient bot, IUser user)
     {
         var rkm = new ReplyKeyboardMarkup
         {
@@ -128,7 +135,7 @@ public class SmallCircleActions : BaseActions
         await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static async void Market(TelegramBotClient bot, User user)
+    public static async void Market(TelegramBotClient bot, IUser user)
     {
         var rkm = new ReplyKeyboardMarkup
         {
@@ -146,7 +153,7 @@ public class SmallCircleActions : BaseActions
         await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static void MultiplyStocks(TelegramBotClient bot, User user)
+    public static void MultiplyStocks(TelegramBotClient bot, IUser user)
     {
         var stocks = user.Person.Assets.Stocks
             .Select(x => x.Title)
@@ -164,7 +171,7 @@ public class SmallCircleActions : BaseActions
         }
     }
 
-    public static void MultiplyStocks(TelegramBotClient bot, User user, string title)
+    public static void MultiplyStocks(TelegramBotClient bot, IUser user, string title)
     {
         title = title.Trim().ToUpper();
 
@@ -189,7 +196,7 @@ public class SmallCircleActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static void History(TelegramBotClient bot, User user)
+    public static void History(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(102, user, "Main menu");
         var rollBack = Terms.Get(109, user, "Rollback last action");
@@ -204,7 +211,7 @@ public class SmallCircleActions : BaseActions
         }
     }
 
-    public static async void MyData(TelegramBotClient bot, User user)
+    public static async void MyData(TelegramBotClient bot, IUser user)
     {
         var rkm = new ReplyKeyboardMarkup
         {
@@ -223,7 +230,7 @@ public class SmallCircleActions : BaseActions
         await bot.SendTextMessageAsync(user.Id, user.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static void Charity(TelegramBotClient bot, User user)
+    public static void Charity(TelegramBotClient bot, IUser user)
     {
         var amount = (user.Person.Assets.Income + user.Person.Salary) / 10;
 
@@ -241,7 +248,7 @@ public class SmallCircleActions : BaseActions
             amount.AsCurrency()));
     }
 
-    public static void GetMoney(TelegramBotClient bot, User user, string value)
+    public static void GetMoney(TelegramBotClient bot, IUser user, string value)
     {
         var amount = value.AsCurrency();
         user.Person.Bankruptcy = user.Person.Cash + amount < 0;
@@ -260,7 +267,7 @@ public class SmallCircleActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static void GiveMoney(TelegramBotClient bot, User user, string value)
+    public static void GiveMoney(TelegramBotClient bot, IUser user, string value)
     {
         var amount = value.AsCurrency();
 
@@ -288,25 +295,25 @@ public class SmallCircleActions : BaseActions
         Cancel(bot, user);
     }
 
-    public static void SendMoney(TelegramBotClient bot, User user)
+    public static void SendMoney(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var bank = Terms.Get(149, user, "Bank");
-        var users = Users.ActiveUsersNames(user, Circle.Small).ToList();
+        var users = Users.GetActiveUsersNames(user, Circle.Small).ToList();
 
         user.Person.Assets.Transfer?.Delete();
         user.Stage = Stage.TransferMoneyTo;
         bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(bank).Append(cancel));
     }
 
-    public static void SendMoney(TelegramBotClient bot, User user, string value)
+    public static void SendMoney(TelegramBotClient bot, IUser user, string value)
     {
         var bank = Terms.Get(149, user, "Bank");
 
         switch (user.Stage)
         {
             case Stage.TransferMoneyTo:
-                if (value != bank && !Users.ActiveUsersNames(user, Circle.Small).Contains(value))
+                if (value != bank && !Users.GetActiveUsersNames(user, Circle.Small).Contains(value))
                 {
                     bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
                     Cancel(bot, user);
@@ -348,7 +355,7 @@ public class SmallCircleActions : BaseActions
         {
             var to = user.Person.Assets.Transfer.Title;
             var amount = user.Person.Assets.Transfer.Qtty;
-            var friend = Users.ActiveUsers(user).FirstOrDefault(x => x.Name == to);
+            var friend = Users.GetActiveUsers(user).FirstOrDefault(x => x.Name == to);
             var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
 
             user.Person.Cash -= amount;
@@ -360,14 +367,14 @@ public class SmallCircleActions : BaseActions
                 friend.History.Add(ActionType.GetMoney, amount);
             }
 
-            Users.ActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
+            Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
 
             user.Person.Assets.Transfer.Delete();
             Cancel(bot, user);
         }
     }
 
-    public static void Confirm(TelegramBotClient bot, User user, TelegramUser from)
+    public static void Confirm(TelegramBotClient bot, IUser user, TelegramUser from)
     {
         var person = Persons.Get(user.Id, user.Person.Profession);
 

@@ -1,7 +1,8 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,11 @@ namespace CashFlowBot.Actions;
 
 public class BankruptcyActions : BaseActions
 {
-    public static void SellAsset(TelegramBotClient bot, User user, int item)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static Terms Terms => new Terms(dataBase);
+
+    public static void SellAsset(TelegramBotClient bot, IUser user, int item)
     {
         var price = Terms.Get(64, user, "Price");
         var sellForDepbts = Terms.Get(131, user, "Sale for debts");
@@ -32,7 +37,7 @@ public class BankruptcyActions : BaseActions
         ShowMenu(bot, user);
     }
 
-    public static void ShowMenu(TelegramBotClient bot, User user)
+    public static void ShowMenu(TelegramBotClient bot, IUser user)
     {
         var stopGame = Terms.Get(41, user, "Stop Game");
         var history = Terms.Get(2, user, "History");
@@ -68,7 +73,7 @@ public class BankruptcyActions : BaseActions
         ReturnToGame(bot, user);
     }
 
-    private static void ReduceCredit(TelegramBotClient bot, User user)
+    private static void ReduceCredit(TelegramBotClient bot, IUser user)
     {
         var amount = user.PayCredit(user.Person.Cash, regular: false);
         var message = Terms.Get(133, user, "Credit repayment in the amount of {0}", amount.AsCurrency());
@@ -76,14 +81,14 @@ public class BankruptcyActions : BaseActions
         bot.SendMessage(user.Id, message);
     }
 
-    private static void ReturnToGame(TelegramBotClient bot, User user)
+    private static void ReturnToGame(TelegramBotClient bot, IUser user)
     {
         user.Person.CreditsReduced = false;
         bot.SendMessage(user.Id, Terms.Get(130, user, "You have paid off your debts, you can continue."));
         Cancel(bot, user);
     }
 
-    private static void ReduceCredits(TelegramBotClient bot, User user)
+    private static void ReduceCredits(TelegramBotClient bot, IUser user)
     {
         user.Person.ReduceCredits();
 
@@ -99,7 +104,7 @@ public class BankruptcyActions : BaseActions
         bot.SendMessage(user.Id, message);
     }
 
-    private static void ShowSellAssetsMenu(TelegramBotClient bot, User user)
+    private static void ShowSellAssetsMenu(TelegramBotClient bot, IUser user)
     {
         var history = Terms.Get(2, user, "History");
         var price = Terms.Get(64, user, "Price");

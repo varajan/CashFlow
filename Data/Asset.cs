@@ -1,29 +1,29 @@
-﻿using CashFlowBot.Data;
+﻿using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
-namespace CashFlowBot.Models;
+namespace CashFlowBot.Data;
 
-public class Asset
+public class Asset(IDataBase dataBase, IUser user, int id)
 {
-    private long UserId { get; }
-    public long Id { get; }
+    private IDataBase DataBase { get; } = dataBase;
+    private IUser User { get; } = user;
+    public long Id { get; } = id;
 
-    private string Get(string column) => DB.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND UserID = {UserId}");
+    private Terms Terms => new Terms(DataBase);
+    private string Get(string column) => DataBase.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND User.Id = {User.Id}");
     private int GetInt(string column) => Get(column).ToInt();
-    private void Set(string column, int value) => DB.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND UserID = {UserId}");
-    private void Set(string column, string value) => DB.Execute($"UPDATE Assets SET {column} = '{value}' WHERE AssetID = {Id} AND UserID = {UserId}");
-
-    public Asset(long userId, int id) => (UserId, Id) = (userId, id);
+    private void Set(string column, int value) => DataBase.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND User.Id = {User.Id}");
+    private void Set(string column, string value) => DataBase.Execute($"UPDATE Assets SET {column} = '{value}' WHERE AssetID = {Id} AND User.Id = {User.Id}");
 
     public string Description
     {
         get
         {
-            var mortgage = Terms.Get(43, UserId, "Mortgage");
-            var price = Terms.Get(64, UserId, "Price");
-            var cashFlow = Terms.Get(55, UserId, "Cash Flow");
+            var mortgage = Terms.Get(43, User.Id, "Mortgage");
+            var price = Terms.Get(64, User.Id, "Price");
+            var cashFlow = Terms.Get(55, User.Id, "Cash Flow");
 
             switch (Type)
             {
@@ -54,12 +54,12 @@ public class Asset
                 case AssetType.Boat:
                     return CashFlow == 0
                     ? $"*{Title}* - {price}: {Price.AsCurrency()}"
-                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, UserId, "monthly")}: {(-CashFlow).AsCurrency()}";
+                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User.Id, "monthly")}: {(-CashFlow).AsCurrency()}";
 
                 case AssetType.SmallBusinessType:
                     return CashFlow == 0
                     ? $"*{Title}* - {price}: {Price.AsCurrency()}"
-                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, UserId, "monthly")}: {CashFlow.AsCurrency()}";
+                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User.Id, "monthly")}: {CashFlow.AsCurrency()}";
 
                 case AssetType.Coin:
                     return IsDeleted
@@ -72,7 +72,7 @@ public class Asset
         }
     }
 
-    public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int) value); }
+    public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value); }
     public string Title { get => Get("Title"); set => Set("Title", value); }
 
     public int BancrupcySellPrice
@@ -83,7 +83,7 @@ public class Asset
             {
                 case AssetType.Coin:
                 case AssetType.Stock:
-                    return (Qtty * Price) / 2;
+                    return Qtty * Price / 2;
 
                 case AssetType.LandTitle:
                 case AssetType.SmallBusinessType:
@@ -116,8 +116,7 @@ public class Asset
     {
         SellPrice = price;
         Delete();
-
-        new User(UserId).History.Add(action, Id);
+        User.History.Add(action, Id);
     }
 
     public void Restore()

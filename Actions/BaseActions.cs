@@ -1,7 +1,8 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,12 @@ namespace CashFlowBot.Actions;
 
 public class BaseActions
 {
-    public static void StopGame(TelegramBotClient bot, User user, TelegramUser from)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static Terms Terms => new Terms(dataBase);
+    private static IUsers Users => new Users(dataBase);
+
+    public static void StopGame(TelegramBotClient bot, IUser user, TelegramUser from)
     {
         user.Person.Expenses.Clear();
         user.History.Clear();
@@ -25,10 +31,10 @@ public class BaseActions
         Start(bot, user, from);
     }
 
-    public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, IEnumerable<string> buttons) =>
+    public static void Ask(TelegramBotClient bot, IUser user, Stage stage, string question, IEnumerable<string> buttons) =>
         Ask(bot, user, stage, question, buttons.ToArray());
 
-    public static void Ask(TelegramBotClient bot, User user, Stage stage, string question, params string[] buttons)
+    public static void Ask(TelegramBotClient bot, IUser user, Stage stage, string question, params string[] buttons)
     {
         var cancel = stage == Stage.Rollback
             ? Terms.Get(138, user, "No")
@@ -37,7 +43,7 @@ public class BaseActions
         bot.SetButtons(user.Id, question, buttons.Append(cancel));
     }
 
-    public static void ChangeLanguage(TelegramBotClient bot, User user)
+    public static void ChangeLanguage(TelegramBotClient bot, IUser user)
     {
         var languages = new List<string>();
         foreach (var language in Enum.GetValues(typeof(Language)))
@@ -49,7 +55,7 @@ public class BaseActions
         bot.SetButtons(user.Id, "Language/Мова", languages);
     }
 
-    public static async void Start(TelegramBotClient bot, User user, TelegramUser from)
+    public static async void Start(TelegramBotClient bot, IUser user, TelegramUser from)
     {
         if (!user.Exists)
         {
@@ -91,7 +97,7 @@ public class BaseActions
             replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static void SetProfession(TelegramBotClient bot, User user, string profession)
+    public static void SetProfession(TelegramBotClient bot, IUser user, string profession)
     {
         var random = Terms.Get(139, user, "Pick random").Equals(profession, StringComparison.InvariantCultureIgnoreCase);
         var professions = Persons.Get(user.Id).Select(x => x.Profession.ToLower()).ToList();
@@ -115,9 +121,9 @@ public class BaseActions
         SmallCircleButtons(bot, user, Terms.Get(30, user, "Welcome, {0}!", user.Person.Profession));
     }
 
-    public static void Cancel(TelegramBotClient bot, User user)
+    public static void Cancel(TelegramBotClient bot, IUser user)
     {
-        if (user.Person.BigCircle)
+        if (user.Person.Circle == Circle.Big)
         {
             BigCircleButtons(bot, user);
             return;
@@ -127,7 +133,7 @@ public class BaseActions
         SmallCircleButtons(bot, user, user.Person.Description);
     }
 
-    private static async void BigCircleButtons(TelegramBotClient bot, User user)
+    private static async void BigCircleButtons(TelegramBotClient bot, IUser user)
     {
         if (user.Person.CurrentCashFlow >= user.Person.TargetCashFlow)
         {
@@ -138,7 +144,7 @@ public class BaseActions
             bot.SendMessage(user.Id, user.Person.Description);
             bot.SetButtons(user.Id, youAreWinner, history, stopGame);
 
-            Users.ActiveUsers(user).ForEach(u => bot.SendMessage(u.Id, Terms.Get(148, user, "{0} is the winner!", user.Name)));
+            Users.GetActiveUsers(user).ForEach(u => bot.SendMessage(u.Id, Terms.Get(148, user, "{0} is the winner!", user.Name)));
             return;
         }
 
@@ -159,7 +165,7 @@ public class BaseActions
         await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static async void SmallCircleButtons(TelegramBotClient bot, User user, string message)
+    public static async void SmallCircleButtons(TelegramBotClient bot, IUser user, string message)
     {
         if (user.Person.Bankruptcy)
         {
@@ -173,7 +179,7 @@ public class BaseActions
         {
             var notifyMessage = Terms.Get(68, user, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", user.Name);
 
-            Users.ActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, notifyMessage));
+            Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, notifyMessage));
         }
 
         var rkm = new ReplyKeyboardMarkup
@@ -201,9 +207,9 @@ public class BaseActions
         await bot.SendTextMessageAsync(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public static void ShowFriends(TelegramBotClient bot, User user)
+    public static void ShowFriends(TelegramBotClient bot, IUser user)
     {
-        var users = Users.ActiveUsers(user);
+        var users = Users.GetActiveUsers(user);
 
         if (users.Any())
         {
@@ -211,8 +217,8 @@ public class BaseActions
             var onSmall = Terms.Get(142, user, "On Small circle:");
             var onBig = Terms.Get(143, user, "On Big circle:");
 
-            var onSmallCircle = Users.ActiveUsers(user, Circle.Small);
-            var onBigCircle = Users.ActiveUsers(user, Circle.Big);
+            var onSmallCircle = Users.GetActiveUsers(user, Circle.Small);
+            var onBigCircle = Users.GetActiveUsers(user, Circle.Big);
             var message = string.Empty;
 
             if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";

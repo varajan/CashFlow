@@ -1,17 +1,25 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
 public class CreditActions : BaseActions
 {
-    public static void PayWithCreditCard(TelegramBotClient bot, User user)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static IUsers Users => new Users(dataBase);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
+    public static void PayWithCreditCard(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         user.Stage = Stage.MicroCreditAmount;
@@ -20,7 +28,7 @@ public class CreditActions : BaseActions
         bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), monthly);
     }
 
-    public static void PayWithCreditCard(TelegramBotClient bot, User user, string value)
+    public static void PayWithCreditCard(TelegramBotClient bot, IUser user, string value)
     {
         var amount = value.AsCurrency();
         AvailableAssets.Add(amount, AssetType.MicroCreditAmount);
@@ -32,14 +40,14 @@ public class CreditActions : BaseActions
         SmallCircleButtons(bot, user, Terms.Get(13, user, "Done."));
     }
 
-    public static void GetCredit(TelegramBotClient bot, User user)
+    public static void GetCredit(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         user.Stage = Stage.GetCredit;
         bot.SetButtons(user.Id, Terms.Get(21, user, "How much?"), "1000", "2000", "5000", "10 000", "20 000", cancel);
     }
 
-    public static void GetCredit(TelegramBotClient bot, User user, string value)
+    public static void GetCredit(TelegramBotClient bot, IUser user, string value)
     {
         var amount = value.AsCurrency();
 
@@ -54,7 +62,7 @@ public class CreditActions : BaseActions
         SmallCircleButtons(bot, user, Terms.Get(22, user, "Ok, you've got {0}", amount.AsCurrency()));
     }
 
-    public static void PayCredit(TelegramBotClient bot, User user, string value)
+    public static void PayCredit(TelegramBotClient bot, IUser user, string value)
     {
         var amount = value.AsCurrency();
 
@@ -74,7 +82,7 @@ public class CreditActions : BaseActions
         ReduceLiabilities(bot, user);
     }
 
-    public static void ReduceLiabilities(TelegramBotClient bot, User user, Stage stage)
+    public static void ReduceLiabilities(TelegramBotClient bot, IUser user, Stage stage)
     {
         int cost = 1_000;
         var cancel = Terms.Get(6, user, "Cancel");
@@ -145,7 +153,7 @@ public class CreditActions : BaseActions
         Ask(bot, user, stage, $"{reduceLiabilities} - {type}. {yes}?", Terms.Get(4, user, "Yes"));
     }
 
-    public static void ReduceLiabilities(TelegramBotClient bot, User user)
+    public static void ReduceLiabilities(TelegramBotClient bot, IUser user)
     {
         var l = user.Person.Liabilities;
         var x = user.Person.Expenses;

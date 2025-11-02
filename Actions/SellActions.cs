@@ -1,17 +1,25 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
+using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
 public class SellActions : BaseActions
 {
-    public static void SellLand(TelegramBotClient bot, User user)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static IUsers Users => new Users(dataBase);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
+    public static void SellLand(TelegramBotClient bot, IUser user)
     {
         var lands = user.Person.Assets.Lands;
         var cancel = Terms.Get(6, user, "Cancel");
@@ -36,7 +44,7 @@ public class SellActions : BaseActions
         SmallCircleButtons(bot, user, Terms.Get(100, user, "You have no Land."));
     }
 
-    public static void SellLand(TelegramBotClient bot, User user, string value)
+    public static void SellLand(TelegramBotClient bot, IUser user, string value)
     {
         var lands = user.Person.Assets.Lands;
         var cancel = Terms.Get(6, user, "Cancel");
@@ -70,7 +78,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellBusiness(TelegramBotClient bot, User user)
+    public static void SellBusiness(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var businesses = user.Person.Assets.SmallBusinesses;
@@ -97,7 +105,7 @@ public class SellActions : BaseActions
         SmallCircleButtons(bot, user, Terms.Get(77, user, "You have no Business."));
     }
 
-    public static void SellBusiness(TelegramBotClient bot, User user, string value)
+    public static void SellBusiness(TelegramBotClient bot, IUser user, string value)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var businesses = user.Person.Assets.SmallBusinesses;
@@ -133,7 +141,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellRealEstate(TelegramBotClient bot, User user)
+    public static void SellRealEstate(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var properties = user.Person.Assets.RealEstates;
@@ -158,7 +166,7 @@ public class SellActions : BaseActions
         SmallCircleButtons(bot, user, Terms.Get(15, user, "You have no properties."));
     }
 
-    public static void SellRealEstate(TelegramBotClient bot, User user, string value)
+    public static void SellRealEstate(TelegramBotClient bot, IUser user, string value)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var properties = user.Person.Assets.RealEstates;
@@ -198,7 +206,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellStocks(TelegramBotClient bot, User user)
+    public static void SellStocks(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var stocks = user.Person.Assets.Stocks.Select(x => x.Title).Distinct();
@@ -214,7 +222,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellStocks(TelegramBotClient bot, User user, string value)
+    public static void SellStocks(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim().ToUpper();
         var number = value.AsCurrency();
@@ -256,7 +264,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellCoins(TelegramBotClient bot, User user)
+    public static void SellCoins(TelegramBotClient bot, IUser user)
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var coins = user.Person.Assets.Coins.Select(x => x.Title);
@@ -272,7 +280,7 @@ public class SellActions : BaseActions
         }
     }
 
-    public static void SellCoins(TelegramBotClient bot, User user, string value)
+    public static void SellCoins(TelegramBotClient bot, IUser user, string value)
     {
         var title = value.Trim().ToUpper();
         var number = value.AsCurrency();

@@ -5,37 +5,40 @@ using System.Linq;
 
 namespace CashFlowBot.Data;
 
-public class AvailableAssets
+public class AvailableAssets(IDataBase dataBase)
 {
+    private IDataBase DataBase { get; } = dataBase;
+
     public const string DefaultLanguage = "-";
 
-    public static void Add(int value, AssetType type) => Add(value.ToString(), type, DefaultLanguage);
-    public static void Add(string value, AssetType type, string language)
+    public void Add(int value, AssetType type) => Add(value.ToString(), type, DefaultLanguage);
+    public void Add(string value, AssetType type, string language)
     {
         if (Get(type).Contains(value)) return;
 
-        DB.Execute("INSERT INTO AvailableAssets (Type, Language, Value) " +
-                   $"VALUES ({(int) type}, '{language}', '{value}')");
+        DataBase.Execute(@"
+            INSERT INTO AvailableAssets (Type, Language, Value) " +
+            $"VALUES ({(int) type}, '{language}', '{value}')");
     }
 
-    public static IEnumerable<string> Get(AssetType type, string language = DefaultLanguage)
+    public IEnumerable<string> Get(AssetType type, string language = DefaultLanguage)
     {
         var select = "SELECT Value FROM AvailableAssets WHERE Type = {0} AND Language = '{1}' ORDER BY CAST(Value as Number)";
 
-        var assetsByLanguage = DB.GetColumn(string.Format(select, (int)type, language)).Distinct();
-        var assetsDefault = DB.GetColumn(string.Format(select, (int)type, DefaultLanguage)).Distinct();
+        var assetsByLanguage = DataBase.GetColumn(string.Format(select, (int)type, language)).Distinct();
+        var assetsDefault = DataBase.GetColumn(string.Format(select, (int)type, DefaultLanguage)).Distinct();
 
         return assetsByLanguage.Any() ? assetsByLanguage : assetsDefault;
     }
 
-    public static IEnumerable<string> GetAsCurrency(AssetType type) =>
+    public IEnumerable<string> GetAsCurrency(AssetType type) =>
         Get(type).ToInt().Distinct().OrderBy(x => x).AsCurrency();
 
-    public static IEnumerable<string> GetAsText(AssetType type, Language language) =>
+    public IEnumerable<string> GetAsText(AssetType type, Language language) =>
         Get(type, language.ToString()).Distinct().OrderBy(x => x);
 
-    public static void Clear(AssetType type) =>
-        DB.Execute($"DELETE FROM AvailableAssets WHERE Type = {(int) type}");
+    public void Clear(AssetType type) =>
+        DataBase.Execute($"DELETE FROM AvailableAssets WHERE Type = {(int) type}");
 
-    public static void ClearAll() => DB.Execute("DROP TABLE AvailableAssets");
+    public void ClearAll() => DataBase.Execute("DROP TABLE AvailableAssets");
 }

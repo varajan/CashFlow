@@ -1,24 +1,26 @@
-﻿using CashFlowBot.Data;
+﻿using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
-namespace CashFlowBot.Models;
+namespace CashFlowBot.Data;
 
-public class Assets
+public class Assets(IDataBase dataBase, long id)
 {
-    private long Id { get; }
-    public Assets(long id) => Id = id;
+    private IDataBase DataBase { get; } = dataBase;
+    private long Id { get; } = id;
 
     public void CleanUp()
     {
         Items.Where(x => x.IsDraft).ForEach(x => x.Delete());
         Items.ForEach(x => x.Title = x.Title.SubStringTo("*"));
     }
+
+    private Terms Terms => new Terms(DataBase);
 
     public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
     public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
@@ -29,8 +31,8 @@ public class Assets
     public Asset Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
 
     public List<Asset> Items =>
-        DB.GetColumn($"SELECT AssetID FROM Assets WHERE UserID = {Id}")
-            .Select(id => new Asset(userId: Id, id: id.ToInt()))
+        DataBase.GetColumn($"SELECT AssetID FROM Assets WHERE UserID = {Id}")
+            .Select(id => new Asset(DataBase, ThisUser, id: id.ToInt()))
             .Where(x => !x.IsDeleted)
             .ToList();
 
@@ -38,7 +40,7 @@ public class Assets
 
     public Asset Transfer => Items.SingleOrDefault(x => x.Type == AssetType.Transfer);
 
-    private User ThisUser => new(Id);
+    private IUser ThisUser => new User(DataBase, Id);
 
     public int Income => Items.Where(x => x.Type != AssetType.Boat).Sum(x => x.TotalCashFlow);
 
@@ -52,10 +54,11 @@ public class Assets
 
     public Asset Add(string title, AssetType type, bool bigCircle = false)
     {
-        int newId = DB.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
-        DB.Execute("INSERT INTO Assets " +
-                   "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
-                   $"VALUES ({newId}, {Id}, {(int) type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
+        int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+        DataBase.Execute(@"
+            INSERT INTO Assets " +
+            "(AssetID, UserID, Type, Deleted, Draft, BigCircle, Title, Price, Qtty, Mortgage, CashFlow, SellPrice) " +
+            $"VALUES ({newId}, {Id}, {(int)type}, 0, 1, {(bigCircle ? 1 : 0)}, '{title}', 0, 1, 0, 0, 0)");
 
         return Items.First(i => i.IsDraft);
     }

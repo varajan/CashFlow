@@ -1,27 +1,34 @@
 ﻿using CashFlowBot.Data;
+using CashFlowBot.Data.Users;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
-using CashFlowBot.Models;
+using CashFlowBot.Loggers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Terms = CashFlowBot.DataBase.Terms;
+using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
 public class AdminActions
 {
-    public static void AdminMenu(TelegramBotClient bot, User user)
+    private static ILogger logger = new FileLogger();
+    private static IDataBase dataBase = new SQLiteDataBase(logger);
+    private static IUsers Users => new Users(dataBase);
+    private static Terms Terms => new Terms(dataBase);
+    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+
+    public static void AdminMenu(TelegramBotClient bot, IUser user)
     {
         user.Stage = Stage.Admin;
         bot.SetButtons(user.Id, "Hi, Admin.",
             "Logs", "Bring Down", "Users", "Available Assets", "Cancel");
     }
 
-    public static void ShowAvailableAssets(TelegramBotClient bot, User user, string value)
+    public static void ShowAvailableAssets(TelegramBotClient bot, IUser user, string value)
     {
         var all = value.Equals("All");
         var assetType = all ? AssetType.Boat : value.SubStringTo("-").Trim().ParseEnum<AssetType>();
@@ -41,7 +48,7 @@ public class AdminActions
                 .ToList();
     }
 
-    public static void ClearAvailableAssets(TelegramBotClient bot, User user, string value)
+    public static void ClearAvailableAssets(TelegramBotClient bot, IUser user, string value)
     {
         if (value.Equals("Clear ALL"))
         {
@@ -56,7 +63,7 @@ public class AdminActions
         AdminMenu(bot, user);
     }
 
-    public static void NotifyAdmins(TelegramBotClient bot, User user)
+    public static void NotifyAdmins(TelegramBotClient bot, IUser user)
     {
         if (Users.AllUsers.All(x => !x.IsAdmin))
         {
@@ -77,7 +84,7 @@ public class AdminActions
         }
     }
 
-    public static void ShowUsers(TelegramBotClient bot, User user)
+    public static void ShowUsers(TelegramBotClient bot, IUser user)
     {
         var users = Users.AllUsers
             .OrderBy(x => x.LastActive)
