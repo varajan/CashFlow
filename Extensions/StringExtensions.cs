@@ -43,8 +43,6 @@ public static class StringExtensions
 
     public static bool ContainsIgnoreCase(this string line, string word) => line.Contains(word ?? string.Empty, StringComparison.OrdinalIgnoreCase);
 
-    public static bool IsValidEmail(this string email) => new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$").IsMatch(email);
-
     public static T ParseEnum<T>(this string value) => (T) Enum.Parse(typeof(T), value, true);
 
     public static long ToLong(this string number)

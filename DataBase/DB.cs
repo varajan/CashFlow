@@ -1,4 +1,5 @@
 ﻿using CashFlowBot.Extensions;
+using CashFlowBot.Loggers;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace CashFlowBot.DataBase;
 public static class DB
 {
     private static readonly SQLiteConnection _connection;
+    private static ILogger _logger = new FileLogger();
 
     static DB()
     {
@@ -153,7 +155,7 @@ public static class DB
     private static void Log(this Exception ex, string sql)
     {
         Console.WriteLine($"{ex.Message}{Environment.NewLine}{sql}{Environment.NewLine}{ex.StackTrace}");
-        Logger.Log(sql);
-        Logger.Log(ex);
+        _logger.Log(sql);
+        _logger.Log(ex);
     }
 }

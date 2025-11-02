@@ -2,6 +2,7 @@
 using CashFlowBot.Data;
 using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
+using CashFlowBot.Loggers;
 using CashFlowBot.Models;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,13 @@ using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.InputFiles;
 using Terms = CashFlowBot.DataBase.Terms;
 
 namespace CashFlowBot;
 
 public class CashFlowBot
 {
+    private static ILogger Logger = new FileLogger();
     private static TelegramBotClient _bot;
 
     public static void Main()
@@ -588,10 +589,12 @@ public class CashFlowBot
 
                     if (user.Stage == Stage.AdminLogs)
                     {
-                        await using var stream = File.Open(Logger.LogFile, FileMode.Open);
-                        var fts = new InputOnlineFile(stream, "logs.txt");
-                        await _bot.SendDocumentAsync(user.Id, fts);
-                        AdminActions.AdminMenu(_bot, user);
+                        throw new NotImplementedException();
+
+                        //await using var stream = File.Open(Logger.LogFile, FileMode.Open);
+                        //var fts = new InputOnlineFile(stream, "logs.txt");
+                        //await _bot.SendDocumentAsync(user.Id, fts);
+                        //AdminActions.AdminMenu(_bot, user);
                     }
                     return;
 
@@ -600,7 +603,8 @@ public class CashFlowBot
 
                     if (user.Stage == Stage.AdminLogs)
                     {
-                        _bot.SendMessage(user.Id, Logger.Top, ParseMode.Default);
+                        var topMessages = Logger.GetTop30Records();
+                        _bot.SendMessage(user.Id, string.Join(Environment.NewLine, topMessages), ParseMode.Default);
                     }
                     AdminActions.AdminMenu(_bot, user);
                     return;

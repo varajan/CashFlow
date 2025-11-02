@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CashFlowBot.Loggers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Telegram.Bot;
@@ -50,7 +51,9 @@ public static class BotExtensions
         catch (Exception exception)
         {
             Console.WriteLine(exception);
-            Logger.Log(exception);
+            // ISSUE
+            ILogger _logger = new FileLogger();
+            _logger.Log(exception);
         }
     }
 }
