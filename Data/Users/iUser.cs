@@ -1,6 +1,7 @@
 ﻿using System;
 using CashFlowBot.Data.Consts;
-using CashFlowBot.Data.Users.UserData;
+using CashFlowBot.Data.Users.UserData.HistoryData;
+using CashFlowBot.Data.Users.UserData.PersonData;
 using TelegramUser = Telegram.Bot.Types.User;
 
 namespace CashFlowBot.Data.Users;

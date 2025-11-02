@@ -1,17 +1,18 @@
 ﻿using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
+using CashFlowBot.Data.Users.UserData.PersonData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CashFlowBot.Data.Users.UserData;
+namespace CashFlowBot.Data.Users.UserData.HistoryData;
 
 public class History(IDataBase dataBase, IUser user) : IHistory
 {
     private IDataBase DataBase { get; } = dataBase;
     private IUser User { get; } = user;
 
-    private Terms Terms => new Terms(DataBase);
+    private ITermsService Terms => new TermsService(DataBase);
     public int Count(ActionType type) => Records.Count(x => x.Action == type);
     public bool IsEmpty => !Records.Any();
     private IEnumerable<HistoryRecord> Records
@@ -32,11 +33,11 @@ public class History(IDataBase dataBase, IUser user) : IHistory
     }
 
     public string Description => IsEmpty
-        ? Terms.Get(111, User.Id, "No records found.")
+        ? Terms.Get(111, User, "No records found.")
         : string.Join(Environment.NewLine, Records.Select(x => x.Description));
 
     public string TopFive => IsEmpty
-        ? Terms.Get(111, User.Id, "No records found.")
+        ? Terms.Get(111, User, "No records found.")
         : string.Join(Environment.NewLine, Records.Reverse().Take(5).Select(x => x.Description));
 
     public void Clear() => DataBase.Execute($"DELETE FROM History WHERE UserID = {User.Id}");
@@ -50,7 +51,7 @@ public class History(IDataBase dataBase, IUser user) : IHistory
         var record = Records.Last();
         var asset = new Asset(DataBase, User, (int)record.Value);
         var amount = (int)record.Value;
-        var person = Persons.Get(User.Id, User.Person.Profession);
+        var person = Persons.Get(User, User.Person.Profession);
 
         decimal percent;
         int expenses;

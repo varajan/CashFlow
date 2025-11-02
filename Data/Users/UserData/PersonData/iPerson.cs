@@ -1,4 +1,4 @@
-﻿namespace CashFlowBot.Data.Users.UserData;
+﻿namespace CashFlowBot.Data.Users.UserData.PersonData;
 
 public interface IPerson
 {
@@ -15,9 +15,9 @@ public interface IPerson
     string Description { get; }
     bool SmallRealEstate { get; set; }
 
-    Assets Assets { get; }
-    Expenses Expenses { get; }
-    Liabilities Liabilities { get; }
+    IAssets Assets { get; }
+    IExpenses Expenses { get; }
+    ILiabilities Liabilities { get; }
     string Profession { get; set; }
     int Cash { get; set; }
     bool Bankruptcy { get; set; }

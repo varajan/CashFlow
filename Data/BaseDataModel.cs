@@ -3,15 +3,15 @@ using CashFlowBot.Extensions;
 
 namespace CashFlowBot.Data;
 
-public abstract class DataModel
+public abstract class BaseDataModel
 {
     protected IDataBase DataBase { get; }
     public long Id { get; }
     protected string Table { get; }
 
-    public DataModel(IDataBase dataBase, long id, string table) => (DataBase, Id, Table) = (dataBase, id, table);
+    public BaseDataModel(IDataBase dataBase, long id, string table) => (DataBase, Id, Table) = (dataBase, id, table);
 
-    protected Terms Terms => new Terms(DataBase);
+    protected ITermsService Terms => new TermsService(DataBase);
 
     protected string Get(string column) => DataBase.GetValue($"SELECT {column} FROM {Table} WHERE ID = {Id}");
     protected int GetInt(string column) => Get(column).ToInt();

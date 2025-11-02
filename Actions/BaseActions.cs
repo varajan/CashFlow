@@ -2,7 +2,6 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using MoreLinq;
@@ -20,7 +19,7 @@ public class BaseActions
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
     private static IUsers Users => new Users(dataBase);
 
     public static void StopGame(TelegramBotClient bot, IUser user, TelegramUser from)
@@ -76,7 +75,7 @@ public class BaseActions
             return;
         }
 
-        var professions = Persons.Get(user.Id)
+        var professions = Persons.Get(user)
             .Select(x => x.Profession)
             .OrderBy(x => x)
             .Append(Terms.Get(139, user, "Random"))
@@ -102,7 +101,7 @@ public class BaseActions
     public static void SetProfession(TelegramBotClient bot, IUser user, string profession)
     {
         var random = Terms.Get(139, user, "Pick random").Equals(profession, StringComparison.InvariantCultureIgnoreCase);
-        var professions = Persons.Get(user.Id).Select(x => x.Profession.ToLower()).ToList();
+        var professions = Persons.Get(user).Select(x => x.Profession.ToLower()).ToList();
 
         if (random)
         {

@@ -1,19 +1,20 @@
 ﻿using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
+using CashFlowBot.Data.Users.UserData.HistoryData;
 using CashFlowBot.Extensions;
 using System;
 using System.Linq;
 
-namespace CashFlowBot.Data.Users.UserData;
+namespace CashFlowBot.Data.Users.UserData.PersonData;
 
-public class Person(IDataBase dataBase, IUser user) : DataModel(dataBase, user.Id, "Persons"), IPerson
+public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, user.Id, "Persons"), IPerson
 {
     public string Profession
     {
         get
         {
             var profession = Get("Profession");
-            return Persons.Get(Id, profession).Profession;
+            return Persons.Get(User, profession).Profession;
         }
         set => Set("Profession", value);
     }
@@ -29,19 +30,19 @@ public class Person(IDataBase dataBase, IUser user) : DataModel(dataBase, user.I
     public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
     public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
-    public Expenses Expenses => new(DataBase, User);
-    public Liabilities Liabilities => new(DataBase, Id);
-    public Assets Assets => new(DataBase, Id);
+    public IExpenses Expenses => new Expenses(DataBase, User);
+    public ILiabilities Liabilities => new Liabilities(DataBase, User);
+    public IAssets Assets => new Assets(DataBase, User);
 
-    private string ProfessionTerm => Terms.Get(50, Id, "Profession");
-    private string CashTerm => Terms.Get(51, Id, "Cash");
-    private string SalaryTerm => Terms.Get(52, Id, "Salary");
-    private string IncomeTerm => Terms.Get(53, Id, "Income");
-    private string ExpensesTerm => Terms.Get(54, Id, "Expenses");
-    private string CashFlowTerm => Terms.Get(55, Id, "Cash Flow");
-    private string InitialTerm => Terms.Get(65, Id, "Initial");
-    private string CurrentTerm => Terms.Get(66, Id, "Current");
-    private string TargetTerm => Terms.Get(67, Id, "Target");
+    private string ProfessionTerm => Terms.Get(50, User, "Profession");
+    private string CashTerm => Terms.Get(51, User, "Cash");
+    private string SalaryTerm => Terms.Get(52, User, "Salary");
+    private string IncomeTerm => Terms.Get(53, User, "Income");
+    private string ExpensesTerm => Terms.Get(54, User, "Expenses");
+    private string CashFlowTerm => Terms.Get(55, User, "Cash Flow");
+    private string InitialTerm => Terms.Get(65, User, "Initial");
+    private string CurrentTerm => Terms.Get(66, User, "Current");
+    private string TargetTerm => Terms.Get(67, User, "Target");
 
     public int InitialCashFlow { get => GetInt("InitialCashFlow"); set => Set("InitialCashFlow", value); }
     public int TargetCashFlow => InitialCashFlow + 50_000;
@@ -77,7 +78,7 @@ public class Person(IDataBase dataBase, IUser user) : DataModel(dataBase, user.I
 
     public void Create(string profession)
     {
-        var data = Persons.Get(Id).First(x => x.Profession.ToLower() == profession);
+        var data = Persons.Get(User).First(x => x.Profession.ToLower() == profession);
 
         Clear();
         DataBase.Execute($"INSERT INTO {Table} " +
@@ -98,7 +99,7 @@ public class Person(IDataBase dataBase, IUser user) : DataModel(dataBase, user.I
 
     public void ReduceCreditsRollback()
     {
-        var person = Persons.Get(User.Id, User.Person.Profession);
+        var person = Persons.Get(User, User.Person.Profession);
         var count = User.History.Count(ActionType.BankruptcyDebtRestructuring);
 
         Expenses.CarLoan = person.Expenses.CarLoan;

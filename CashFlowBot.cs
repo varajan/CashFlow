@@ -3,10 +3,8 @@ using CashFlowBot.Data;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
-using CashFlowBot.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +15,6 @@ using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
-using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot;
 
@@ -26,7 +23,7 @@ public class CashFlowBot
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static IUsers Users => new Users(dataBase);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
     private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
 
     private static TelegramBotClient _bot;
@@ -117,7 +114,7 @@ public class CashFlowBot
 
                     if (user.Person.Exists)
                     {
-                        user.Person.Profession = Persons.Get(user.Id, user.Person.Profession).Profession;
+                        user.Person.Profession = Persons.Get(user, user.Person.Profession).Profession;
 
                         BaseActions.Cancel(_bot, user);
                     }

@@ -2,7 +2,6 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using System;
@@ -16,7 +15,7 @@ public class BankruptcyActions : BaseActions
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
 
     public static void SellAsset(TelegramBotClient bot, IUser user, int item)
     {

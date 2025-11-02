@@ -1,4 +1,5 @@
 ﻿using CashFlowBot.Data.DataBase;
+using CashFlowBot.Data.Users;
 using CashFlowBot.Loggers;
 using System.Linq;
 
@@ -8,7 +9,7 @@ public static class Persons
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
 
     public class DefaultPerson
     {
@@ -43,20 +44,20 @@ public static class Persons
         public int BankLoan { get; set; }
     }
 
-    public static DefaultPerson Get(long userId, string profession)
+    public static DefaultPerson Get(IUser user, string profession)
     {
-        var persons = Get(userId);
+        var persons = Get(user);
         var professionCode = Enumerable.Range(1001, persons.Length).First(code => Terms.Get(code).Contains(profession));
         return persons.First(x => Terms.Get(professionCode).Contains(x.Profession));
     }
 
-    public static DefaultPerson[] Get(long userId)
+    public static DefaultPerson[] Get(IUser user)
     {
         return new DefaultPerson[]
         {
             new()
             {
-                Profession = Terms.Get(1001, userId, "Lawyer"),
+                Profession = Terms.Get(1001, user, "Lawyer"),
                 Salary = 7_500,
                 Cash = 400,
 
@@ -83,7 +84,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1002, userId, "Business manager"),
+                Profession = Terms.Get(1002, user, "Business manager"),
                 Salary = 4_600,
                 Cash = 400,
 
@@ -110,7 +111,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1004, userId, "Track driver"),
+                Profession = Terms.Get(1004, user, "Track driver"),
                 Salary = 2_500,
                 Cash = 750,
 
@@ -138,7 +139,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1005, userId, "Janitor"),
+                Profession = Terms.Get(1005, user, "Janitor"),
                 Salary = 1_600,
                 Cash = 560,
 
@@ -166,7 +167,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1006, userId, "Nurse"),
+                Profession = Terms.Get(1006, user, "Nurse"),
                 Salary = 3_100,
                 Cash = 480,
 
@@ -194,7 +195,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1007, userId, "Police officer"),
+                Profession = Terms.Get(1007, user, "Police officer"),
                 Salary = 3_000,
                 Cash = 520,
 
@@ -222,7 +223,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1008, userId, "Doctor"),
+                Profession = Terms.Get(1008, user, "Doctor"),
                 Salary = 13_200,
                 Cash = 400,
 
@@ -250,7 +251,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1009, userId, "Teacher"),
+                Profession = Terms.Get(1009, user, "Teacher"),
                 Salary = 3_300,
                 Cash = 400,
 
@@ -278,7 +279,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1010, userId, "Car mechanic"),
+                Profession = Terms.Get(1010, user, "Car mechanic"),
                 Salary = 2_000,
                 Cash = 670,
 
@@ -306,7 +307,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1011, userId, "Secretary"),
+                Profession = Terms.Get(1011, user, "Secretary"),
                 Salary = 2_500,
                 Cash = 710,
 
@@ -334,7 +335,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1012, userId, "Pilot"),
+                Profession = Terms.Get(1012, user, "Pilot"),
                 Salary = 9_500,
                 Cash = 400,
 
@@ -362,7 +363,7 @@ public static class Persons
 
             new()
             {
-                Profession = Terms.Get(1003, userId, "Engineer"),
+                Profession = Terms.Get(1003, user, "Engineer"),
                 Salary = 4_900,
                 Cash = 400,
 

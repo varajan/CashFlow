@@ -2,7 +2,6 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using System;
@@ -11,7 +10,6 @@ using System.Linq;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
-using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
@@ -20,7 +18,7 @@ public class AdminActions
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static IUsers Users => new Users(dataBase);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
     private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
 
     public static void AdminMenu(TelegramBotClient bot, IUser user)

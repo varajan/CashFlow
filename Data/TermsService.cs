@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace CashFlowBot.Data;
 
-public class Terms(IDataBase dataBase)
+public class TermsService(IDataBase dataBase) : ITermsService
 {
     private readonly IDataBase _dataBase = dataBase;
 
@@ -24,9 +24,6 @@ public class Terms(IDataBase dataBase)
 
         return result;
     }
-
-    public string Get(int id, long userId, string defaultValue, params object[] args) =>
-        Get(id, new User(_dataBase, userId), defaultValue, args);
 
     public string Get(int id, IUser user, string defaultValue, params object[] args)
     {

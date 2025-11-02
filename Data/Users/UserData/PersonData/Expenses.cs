@@ -2,9 +2,9 @@
 using CashFlowBot.Extensions;
 using System;
 
-namespace CashFlowBot.Data.Users.UserData;
+namespace CashFlowBot.Data.Users.UserData.PersonData;
 
-public class Expenses(IDataBase dataBase, IUser user) : DataModel(dataBase, user.Id, "Expenses")
+public class Expenses(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, user.Id, "Expenses"), IExpenses
 {
     private IUser User { get; } = user;
 
@@ -31,19 +31,19 @@ public class Expenses(IDataBase dataBase, IUser user) : DataModel(dataBase, user
     {
         get
         {
-            var expensesTerm = Terms.Get(54, Id, "Expenses");
-            var taxesTerm = Terms.Get(58, Id, "Taxes");
-            var mortgageTerm = Terms.Get(59, Id, "Mortgage/Rent Pay");
-            var schoolLoanTerm = Terms.Get(44, Id, "School Loan");
-            var carLoanTerm = Terms.Get(45, Id, "Car Loan");
-            var creditCardTerm = Terms.Get(46, Id, "Credit Card");
-            var smallCreditsTerm = Terms.Get(92, Id, "Small Credit");
-            var bankLoanTerm = Terms.Get(47, Id, "Bank Loan");
-            var boatLoanTerm = Terms.Get(114, Id, "Boat Loan");
-            var otherPaymentTerm = Terms.Get(60, Id, "Other Payments");
-            var childrenTerm = Terms.Get(61, Id, "Children");
-            var childrenExpensesTerm = Terms.Get(62, Id, "Children Expenses");
-            var perChildTerm = Terms.Get(63, Id, "per child");
+            var expensesTerm = Terms.Get(54, User, "Expenses");
+            var taxesTerm = Terms.Get(58, User, "Taxes");
+            var mortgageTerm = Terms.Get(59, User, "Mortgage/Rent Pay");
+            var schoolLoanTerm = Terms.Get(44, User, "School Loan");
+            var carLoanTerm = Terms.Get(45, User, "Car Loan");
+            var creditCardTerm = Terms.Get(46, User, "Credit Card");
+            var smallCreditsTerm = Terms.Get(92, User, "Small Credit");
+            var bankLoanTerm = Terms.Get(47, User, "Bank Loan");
+            var boatLoanTerm = Terms.Get(114, User, "Boat Loan");
+            var otherPaymentTerm = Terms.Get(60, User, "Other Payments");
+            var childrenTerm = Terms.Get(61, User, "Children");
+            var childrenExpensesTerm = Terms.Get(62, User, "Children Expenses");
+            var perChildTerm = Terms.Get(63, User, "per child");
 
             var expenses = $"{Environment.NewLine}{Environment.NewLine}*{expensesTerm}:*{Environment.NewLine}";
             expenses += $"*{taxesTerm}:* {Taxes.AsCurrency()}{Environment.NewLine}";

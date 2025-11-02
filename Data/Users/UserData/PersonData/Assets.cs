@@ -1,15 +1,14 @@
 ﻿using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
-using CashFlowBot.Data.Users;
 using CashFlowBot.Extensions;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CashFlowBot.Data;
+namespace CashFlowBot.Data.Users.UserData.PersonData;
 
-public class Assets(IDataBase dataBase, IUser user)
+public class Assets(IDataBase dataBase, IUser user) : IAssets
 {
     private IDataBase DataBase { get; } = dataBase;
     private IUser User { get; } = user;
@@ -20,7 +19,7 @@ public class Assets(IDataBase dataBase, IUser user)
         Items.ForEach(x => x.Title = x.Title.SubStringTo("*"));
     }
 
-    private Terms Terms => new Terms(DataBase);
+    private ITermsService Terms => new TermsService(DataBase);
 
     public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
     public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();

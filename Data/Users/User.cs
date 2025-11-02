@@ -4,12 +4,13 @@ using System;
 using System.Linq;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
-using CashFlowBot.Data.Users.UserData;
 using TelegramUser = Telegram.Bot.Types.User;
+using CashFlowBot.Data.Users.UserData.HistoryData;
+using CashFlowBot.Data.Users.UserData.PersonData;
 
 namespace CashFlowBot.Data.Users;
 
-public class User(IDataBase dataBase, long id) : DataModel(dataBase, id, "Users"), IUser
+public class User(IDataBase dataBase, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
     public IHistory History => new History(DataBase, this);
     public IPerson Person => new Person(DataBase, this);

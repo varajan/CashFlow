@@ -2,13 +2,11 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
-using CashFlowBot.DataBase;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using System;
 using System.Linq;
 using Telegram.Bot;
-using Terms = CashFlowBot.Data.Terms;
 
 namespace CashFlowBot.Actions;
 
@@ -16,7 +14,7 @@ public class BuyActions : BaseActions
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static Terms Terms => new Terms(dataBase);
+    private static ITermsService Terms => new TermsService(dataBase);
     private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
 
     public static void BuyLand(TelegramBotClient bot, IUser user)
@@ -408,7 +406,7 @@ public class BuyActions : BaseActions
             bot.SendMessage(user.Id, Terms.Get(88, user, "You've taken {0} from bank.", firstPayment.AsCurrency()));
         }
 
-        boat = user.Person.Assets.Add(Terms.Get(116, user.Id, "Boat"), AssetType.Boat);
+        boat = user.Person.Assets.Add(Terms.Get(116, user, "Boat"), AssetType.Boat);
 
         boat.CashFlow = 340;
         boat.Price = 18_000;
@@ -418,7 +416,7 @@ public class BuyActions : BaseActions
         user.Person.Cash -= firstPayment;
         user.History.Add(ActionType.BuyBoat, boat.Price);
 
-        var message = Terms.Get(117, user.Id,
+        var message = Terms.Get(117, user,
         "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
         boat.Price.AsCurrency(), firstPayment.AsCurrency(), boat.CashFlow.AsCurrency());
         bot.SendMessage(user.Id, message);

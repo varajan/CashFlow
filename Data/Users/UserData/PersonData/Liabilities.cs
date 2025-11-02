@@ -1,8 +1,8 @@
 ﻿using CashFlowBot.Data.DataBase;
 
-namespace CashFlowBot.Data.Users.UserData;
+namespace CashFlowBot.Data.Users.UserData.PersonData;
 
-public class Liabilities(IDataBase dataBase, long id) : DataModel(dataBase, id, "Liabilities")
+public class Liabilities(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, user.Id, "Liabilities"), ILiabilities
 {
     public int Mortgage { get => GetInt("Mortgage"); set => Set("Mortgage", value); }
     public int SchoolLoan { get => GetInt("SchoolLoan"); set => Set("SchoolLoan", value); }

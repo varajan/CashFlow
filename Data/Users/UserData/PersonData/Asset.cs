@@ -1,9 +1,8 @@
 ﻿using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
-using CashFlowBot.Data.Users;
 using CashFlowBot.Extensions;
 
-namespace CashFlowBot.Data;
+namespace CashFlowBot.Data.Users.UserData.PersonData;
 
 public class Asset(IDataBase dataBase, IUser user, int id)
 {
@@ -11,7 +10,7 @@ public class Asset(IDataBase dataBase, IUser user, int id)
     private IUser User { get; } = user;
     public long Id { get; } = id;
 
-    private Terms Terms => new Terms(DataBase);
+    private ITermsService Terms => new TermsService(DataBase);
     private string Get(string column) => DataBase.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND User.Id = {User.Id}");
     private int GetInt(string column) => Get(column).ToInt();
     private void Set(string column, int value) => DataBase.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND User.Id = {User.Id}");
@@ -21,9 +20,9 @@ public class Asset(IDataBase dataBase, IUser user, int id)
     {
         get
         {
-            var mortgage = Terms.Get(43, User.Id, "Mortgage");
-            var price = Terms.Get(64, User.Id, "Price");
-            var cashFlow = Terms.Get(55, User.Id, "Cash Flow");
+            var mortgage = Terms.Get(43, User, "Mortgage");
+            var price = Terms.Get(64, User, "Price");
+            var cashFlow = Terms.Get(55, User, "Cash Flow");
 
             switch (Type)
             {
@@ -54,12 +53,12 @@ public class Asset(IDataBase dataBase, IUser user, int id)
                 case AssetType.Boat:
                     return CashFlow == 0
                     ? $"*{Title}* - {price}: {Price.AsCurrency()}"
-                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User.Id, "monthly")}: {(-CashFlow).AsCurrency()}";
+                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User, "monthly")}: {(-CashFlow).AsCurrency()}";
 
                 case AssetType.SmallBusinessType:
                     return CashFlow == 0
                     ? $"*{Title}* - {price}: {Price.AsCurrency()}"
-                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User.Id, "monthly")}: {CashFlow.AsCurrency()}";
+                    : $"*{Title}* - {price}: {Price.AsCurrency()}, {Terms.Get(42, User, "monthly")}: {CashFlow.AsCurrency()}";
 
                 case AssetType.Coin:
                     return IsDeleted
