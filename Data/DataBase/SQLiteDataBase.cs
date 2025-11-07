@@ -16,16 +16,22 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     private static string DatabaseFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
     private static string ConnectionString => $"Data Source={DatabaseFileName}; Version=3; Cache=Shared";
 
-    private SQLiteConnection _connection;
+    private static SQLiteConnection _connection;
     private SQLiteConnection Connection
     {
         get
         {
             if (_connection == null || !IsReady)
             {
-                InitDataBase();
+                SQLiteConnection.CreateFile(DatabaseFileName);
                 _connection = new SQLiteConnection(ConnectionString);
                 _connection = _connection.OpenAndReturn();
+
+                Directory
+                    .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
+                    .Where(file => file.ToLower().EndsWith(".sql"))
+                    .Select(File.ReadAllText)
+                    .ForEach(sql => Execute(sql, _connection));
             }
 
             return _connection;
@@ -34,19 +40,10 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
 
     private static bool IsReady => File.Exists(DatabaseFileName);
 
-    private void InitDataBase()
+    public void Execute(string sql) => Execute(sql, Connection);
+    private void Execute(string sql, SQLiteConnection connection = null)
     {
-        SQLiteConnection.CreateFile(DatabaseFileName);
-        Directory
-            .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
-            .Where(file => file.ToLower().EndsWith(".sql"))
-            .Select(File.ReadAllText)
-            .ForEach(Execute);
-    }
-
-    public void Execute(string sql)
-    {
-        var cmd = new SQLiteCommand(sql, Connection);
+        var cmd = new SQLiteCommand(sql, connection ?? Connection);
 
         try
         {
