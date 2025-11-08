@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CashFlowBot.Data.Users;
 
-public class Users(IDataBase dataBase) : IUsers
+public class Users(IDataBase dataBase, INotifyService notifyService) : IUsers
 {
     private readonly IDataBase _dataBase = dataBase;
 
@@ -27,6 +27,6 @@ public class Users(IDataBase dataBase) : IUsers
     public IList<IUser> AllUsers =>
         _dataBase.GetColumn("SELECT ID FROM Users")
             .ToLong()
-            .Select(x => (IUser) new User(_dataBase, x))
+            .Select(x => (IUser) new User(_dataBase, notifyService, x))
             .ToList();
 }

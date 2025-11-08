@@ -6,10 +6,12 @@ using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users.UserData.HistoryData;
 using CashFlowBot.Data.Users.UserData.PersonData;
+using System.Threading.Tasks;
+using CashFlowBot.Stages;
 
 namespace CashFlowBot.Data.Users;
 
-public class User(IDataBase dataBase, long id) : BaseDataModel(dataBase, id, "Users"), IUser
+public class User(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
     public IHistory History => new History(DataBase, this);
     public IPerson Person => new Person(DataBase, this);
@@ -67,4 +69,7 @@ public class User(IDataBase dataBase, long id) : BaseDataModel(dataBase, id, "Us
         Set("FirstLogin", DateTime.Now.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture));
         LastActive = DateTime.Now;
     }
+
+    public async Task SetButtons(IStage stage) => await notifyService.SetButtons(stage);
+    public async Task Notify(string message) => await notifyService.Notify(message);
 }

@@ -14,6 +14,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types;
 using Telegram.Bot.Polling;
+using CashFlowBot.Data.Users;
 
 namespace CashFlowBot;
 
@@ -86,10 +87,11 @@ public class CashFlowBot
 
         try
         {
-            var user = new Data.Users.User(DataBase, message.Chat.Id);
-            var buttonsService = new TelegramBotButtonsService(bot);
+            var notifyService = new TelegramBotNotifyService(bot, message.Chat.Id);
+            var user = new Data.Users.User(DataBase, notifyService, message.Chat.Id);
+            var users = new Users(DataBase, notifyService);
             var termsService = new TermsService(DataBase);
-            var stage = user.Exists ? BaseStage.GetCurrentStage(user, termsService, buttonsService) : null;
+            var stage = user.Exists ? BaseStage.GetCurrentStage(users, user, termsService, Logger) : null;
 
             if (stage is null)
             {
@@ -98,13 +100,11 @@ public class CashFlowBot
 
                 user.Create();
                 user.Name = userName;
-                stage = new Start(user, termsService, buttonsService);
+                stage = new Start(users, user, termsService, Logger);
             }
 
-            await stage
-                .HandleMessage(message.Text)
-                .NextStage()
-                .SetButtons();
+            await stage.HandleMessage(message.Text.Trim());
+            await stage.NextStage().SetButtons();
         }
         catch (Exception e)
         {

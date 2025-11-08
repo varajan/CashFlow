@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.Users.UserData.HistoryData;
 using CashFlowBot.Data.Users.UserData.PersonData;
+using CashFlowBot.Stages;
 
 namespace CashFlowBot.Data.Users;
 
@@ -23,4 +25,7 @@ public interface IUser
     void Create();
     int PayCredit(int amount, bool regular);
     void GetCredit(int amount);
+
+    Task SetButtons(IStage stage);
+    Task Notify(string message);
 }

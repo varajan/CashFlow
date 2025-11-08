@@ -10,12 +10,13 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CashFlowBot.Extensions;
 
-public interface IButtonsService
+public interface INotifyService
 {
     Task SetButtons(IStage stage);
+    Task Notify(string message);
 }
 
-public class TelegramBotButtonsService(ITelegramBotClient bot) : IButtonsService
+public class TelegramBotNotifyService(ITelegramBotClient bot, long chatId) : INotifyService
 {
     public async Task SetButtons(IStage stage)
     {
@@ -23,9 +24,11 @@ public class TelegramBotButtonsService(ITelegramBotClient bot) : IButtonsService
 
         var buttonsInRow = stage.Buttons.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = GetButtons([.. stage.Buttons], buttonsInRow);
-        await bot.SendMessage(stage.User.Id, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
-        stage.HandleMessage(string.Empty);
+        await bot.SendMessage(chatId, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        //stage.HandleMessage(string.Empty);
     }
+
+    public async Task Notify(string message) => await bot.SendMessage(chatId, message, parseMode: ParseMode.Markdown);
 
     private static ReplyKeyboardMarkup GetButtons(string[] buttons, int inRow)
     {

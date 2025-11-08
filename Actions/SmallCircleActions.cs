@@ -19,7 +19,7 @@ public class SmallCircleActions : BaseActions
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static IUsers Users => new Users(dataBase);
+    private static IUsers Users => new Users(dataBase, new TelegramBotNotifyService(null, 0));
     private static ITermsService Terms => new TermsService(dataBase);
     private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
 
