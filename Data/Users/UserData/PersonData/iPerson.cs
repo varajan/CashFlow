@@ -5,7 +5,7 @@ public interface IPerson
     bool Exists { get; }
     int CashFlow { get; }
     bool CreditsReduced { get; set; }
-    bool ReadyForBigCircle { get; set; }
+    bool ReadyForBigCircle { get; }
     int Salary { get; set; }
     int InitialCashFlow { get; set; }
     int CurrentCashFlow { get; }

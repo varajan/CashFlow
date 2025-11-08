@@ -80,7 +80,7 @@ public class AdminActions
         {
             if (!usr.IsAdmin) continue;
 
-            bot.SendTextMessageAsync(usr.Id, $"{user.Name} wants to become Admin.", replyMarkup: rkm, parseMode: ParseMode.Default);
+            //bot.SendTextMessageAsync(usr.Id, $"{user.Name} wants to become Admin.", replyMarkup: rkm, parseMode: ParseMode.Default);
         }
     }
 
@@ -90,6 +90,7 @@ public class AdminActions
             .OrderBy(x => x.LastActive)
             .Select(x => $"{(x.IsAdmin ? "••" : "•")}[{x.Id}] {x.Name} - {x.FirstLogin.AsString("yyyy.MM.dd")} - {x.LastActive.AsString()}").ToList();
         bot.SendMessage(user.Id, $"There are {users.Count} users.");
-        bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
+        bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.None);
+        //bot.SendMessage(user.Id, string.Join(Environment.NewLine, users), ParseMode.Default);
     }
 }

@@ -93,7 +93,7 @@ public class SmallCircleActions : BaseActions
         user.Person.SmallRealEstate = true;
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static async void BigOpportunity(TelegramBotClient bot, IUser user)
@@ -113,7 +113,7 @@ public class SmallCircleActions : BaseActions
         user.Person.SmallRealEstate = false;
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static async void Doodads(TelegramBotClient bot, IUser user)
@@ -132,7 +132,7 @@ public class SmallCircleActions : BaseActions
         user.Person.Assets.CleanUp();
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static async void Market(TelegramBotClient bot, IUser user)
@@ -150,7 +150,7 @@ public class SmallCircleActions : BaseActions
         user.Person.Assets.CleanUp();
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, Terms.Get(89, user, "What do you want?"), replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static void MultiplyStocks(TelegramBotClient bot, IUser user)
@@ -227,7 +227,7 @@ public class SmallCircleActions : BaseActions
         user.Person.Assets.CleanUp();
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, user.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, user.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static void Charity(TelegramBotClient bot, IUser user)

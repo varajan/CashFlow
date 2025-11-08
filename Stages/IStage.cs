@@ -1,5 +1,3 @@
 ﻿namespace CashFlowBot.Stages;
 
-public interface IStage
-{
-}
+// Move interface here

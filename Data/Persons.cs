@@ -47,7 +47,7 @@ public static class Persons
         public int BankLoan { get; set; }
     }
 
-    public static DefaultPerson Get(string profession) => GetAll().First(x => x.Profession.ContainsValue(profession));
+    public static DefaultPerson Get(string profession) => GetAll().First(x => x.Profession.Select(p => p.Value.ToLower()).Contains(profession.ToLower()));
 
     public static List<DefaultPerson> GetAll()
     {

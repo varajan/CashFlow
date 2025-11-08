@@ -4,7 +4,6 @@ using System;
 using System.Linq;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
-using TelegramUser = Telegram.Bot.Types.User;
 using CashFlowBot.Data.Users.UserData.HistoryData;
 using CashFlowBot.Data.Users.UserData.PersonData;
 
@@ -16,16 +15,9 @@ public class User(IDataBase dataBase, long id) : BaseDataModel(dataBase, id, "Us
     public IPerson Person => new Person(DataBase, this);
 
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
-
-    public Stage Stage { get => (Stage)GetInt("Stage"); set => Set("Stage", (int)value); }
-
-    public string Name { get => Get("Name"); private set => Set("Name", value); }
-
-    public void SetName(TelegramUser user = null)
-    {
-        var name = $"{user?.FirstName} {user?.LastName}".Trim();
-        Name = string.IsNullOrEmpty(name) ? user?.Username : name;
-    }
+    public Stage Stage { get => throw new Exception(); set => throw new Exception(); }
+    public string StageName { get => Get("Stage"); set => Set("Stage", value); }
+    public string Name { get => Get("Name"); set => Set("Name", value); }
 
     public DateTime FirstLogin => Get("FirstLogin").ToDateTime();
 

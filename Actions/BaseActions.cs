@@ -61,7 +61,7 @@ public class BaseActions
         if (!user.Exists)
         {
             user.Create();
-            user.SetName(from);
+            //user.SetName(from);
             ChangeLanguage(bot, user);
             return;
         }
@@ -80,21 +80,21 @@ public class BaseActions
             .OrderBy(x => x)
             .Append(Terms.Get(139, user, "Random"))
             .ToList();
-        var rkm = new ReplyKeyboardMarkup { Keyboard = new List<IEnumerable<KeyboardButton>>() };
+        var rkm = new ReplyKeyboardMarkup { Keyboard = [] };
 
         while (professions.Any())
         {
             var x = professions.Take(3).ToList();
             professions = professions.Skip(3).ToList();
 
-            if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2] }); continue; }
-            if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1] }); continue; }
-            if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0] }); }
+            if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2]]); continue; }
+            if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1]]); continue; }
+            if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append([x[0]]); }
         }
 
         user.Stage = Stage.GetProfession;
-        user.SetName(from);
-        await bot.SendTextMessageAsync(user.Id, Terms.Get(28, user, "Choose your *profession*"),
+        //user.SetName(from);
+        await bot.SendMessage(user.Id, Terms.Get(28, user, "Choose your *profession*"),
             replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
@@ -163,7 +163,7 @@ public class BaseActions
         user.Person.Assets.CleanUp();
         user.Stage = Stage.Nothing;
 
-        await bot.SendTextMessageAsync(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, user.Person.Description, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static async void SmallCircleButtons(TelegramBotClient bot, IUser user, string message)
@@ -174,7 +174,7 @@ public class BaseActions
             return;
         }
 
-        user.Person.ReadyForBigCircle = user.Person.Assets.Income > user.Person.Expenses.Total;
+        //user.Person.ReadyForBigCircle = user.Person.Assets.Income > user.Person.Expenses.Total;
 
         if (user.Person.ReadyForBigCircle)
         {
@@ -205,7 +205,7 @@ public class BaseActions
             rkm.Keyboard = rkm.Keyboard.Append(new List<KeyboardButton> { Terms.Get(1, user, "Go to Big Circle") });
         }
 
-        await bot.SendTextMessageAsync(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(user.Id, message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public static void ShowFriends(TelegramBotClient bot, IUser user)

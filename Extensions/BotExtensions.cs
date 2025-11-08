@@ -1,12 +1,54 @@
 ﻿using CashFlowBot.Loggers;
+using CashFlowBot.Stages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CashFlowBot.Extensions;
+
+public interface IButtonsService
+{
+    Task SetButtons(IStage stage);
+}
+
+public class TelegramBotButtonsService(ITelegramBotClient bot) : IButtonsService
+{
+    public async Task SetButtons(IStage stage)
+    {
+        if (stage.Message is null || stage.Buttons.Count == 0) return;
+
+        var buttonsInRow = stage.Buttons.Any(x => x.Length > 9) ? 3 : 4;
+        var rkm = GetButtons([.. stage.Buttons], buttonsInRow);
+        await bot.SendMessage(stage.User.Id, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        stage.HandleMessage(string.Empty);
+    }
+
+    private static ReplyKeyboardMarkup GetButtons(string[] buttons, int inRow)
+    {
+        var rkm = new ReplyKeyboardMarkup { Keyboard = [] };
+        var last = buttons.Last();
+        buttons = buttons.Take(buttons.Length - 1).ToArray();
+
+        while (buttons.Any())
+        {
+            var x = buttons.Take(inRow).ToList();
+            buttons = buttons.Skip(inRow).ToArray();
+
+            if (x.Count == 4) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2], x[3]]); continue; }
+            if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2]]); continue; }
+            if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1]]); continue; }
+            if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append([x[0]]); }
+        }
+
+        rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { last });
+
+        return rkm;
+    }
+}
 
 public static class BotExtensions
 {
@@ -14,7 +56,7 @@ public static class BotExtensions
     {
         var buttonsInRow = buttons.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = GetButtons(buttons.ToArray(), buttonsInRow);
-        await bot.SendTextMessageAsync(userId, message, replyMarkup: rkm, parseMode: parseMode);
+        await bot.SendMessage(userId, message, replyMarkup: rkm, parseMode: parseMode);
     }
 
     public static void SetButtons(this TelegramBotClient bot, long userId, string message, params string[] buttons) =>
@@ -31,10 +73,10 @@ public static class BotExtensions
             var x = buttons.Take(inRow).ToList();
             buttons = buttons.Skip(inRow).ToArray();
 
-            if (x.Count == 4) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2], x[3] }); continue; }
-            if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1], x[2] }); continue; }
-            if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0], x[1] }); continue; }
-            if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { x[0] }); }
+            if (x.Count == 4) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2], x[3]]); continue; }
+            if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2]]); continue; }
+            if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1]]); continue; }
+            if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append([x[0]]); }
         }
 
         rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { last });
@@ -42,11 +84,11 @@ public static class BotExtensions
         return rkm;
     }
 
-    public static async void SendMessage(this TelegramBotClient bot, long userId, string message, ParseMode parseMode = ParseMode.Markdown)
+    public static void SendMessage(this TelegramBotClient bot, long userId, string message, ParseMode parseMode = ParseMode.Markdown)
     {
         try
         {
-            await bot.SendTextMessageAsync(userId, message, parseMode);
+            bot.SendMessage(userId, message, parseMode);
         }
         catch (Exception exception)
         {
