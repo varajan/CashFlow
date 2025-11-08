@@ -1,6 +1,7 @@
 ﻿using CashFlowBot.Data;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.Users;
+using CashFlowBot.Data.Users.UserData.HistoryData;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using MoreLinq;
@@ -43,7 +44,7 @@ public abstract class BaseStage : IStage
         User.StageName = Name;
     }
 
-    public async virtual Task HandleMessage(string message) { }
+    public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public virtual IStage NextStage() => this;
     public Task SetButtons() => User.SetButtons(this);
 
@@ -64,9 +65,6 @@ public class Start(IUsers users, IUser user,ITermsService termsService, ILogger 
     private IStage nextStage;
 
     public override IStage NextStage() => nextStage ?? new ChooseLanguage(Users, User, Terms, Logger);
-
-    //// ??? Maybe 'START' should be 'AskLanguage'?
-    //public override IStage NextStage() => new AskLanguage(Users, User, Terms, Logger);
 }
 
 public class SmallCircle(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
@@ -104,74 +102,44 @@ public class SmallCircle(IUsers users, IUser user,ITermsService termsService, IL
             Users.GetActiveUsers(User).ForEach(u => u.Notify(notifyMessage));
         }
 
-        if (MessageEquals(message, 31, "Show my Data"))
+        switch (message)
         {
-            return;
+            case var m when MessageEquals(m, 31, "Show my Data"):
+                nextStage = new ShowMyData(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 141, "Friends"):
+                nextStage = new Friends(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 2, "History"):
+                nextStage = new History(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 81, "Small Opportunity"):
+                nextStage = new SmallOpportunity(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 84, "Big Opportunity"):
+                nextStage = new BigOpportunity(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 80, "Downsize"):
+                await Downsize();
+                return;
+
+            case var m when MessageEquals(m, 39, "Kid"):
+                await Kid();
+                return;
+
+            case var m when MessageEquals(m, 79, "Pay Check"):
+                nextStage = new GetMoney(Users, User, Terms, Logger);
+                return;
+
+            case var m when MessageEquals(m, 33, "Give Money"):
+                nextStage = new SendMoney(Users, User, Terms, Logger);
+                return;
         }
-
-        if (MessageEquals(message, 141, "Friends"))
-        {
-            return;
-        }
-
-        if (MessageEquals(message, 2, "History"))
-        {
-            return;
-        }
-
-        if (MessageEquals(message, 80, "Downsize"))
-        {
-            await Downsize();
-            return;
-        }
-
-        if (MessageEquals(message, 39, "Kid"))
-        {
-            await Kid();
-            return;
-        }
-
-        //            #region My Data
-
-        //            // Term 31: Show my Data
-        //            case "show my data":
-        //            case "мої дані":
-        //            case "meine info":
-        //                SmallCircleActions.MyData(_bot, user);
-        //                return;
-
-        //            // Term 140: Friends
-        //            case "friends":
-        //            case "друзі":
-        //            case "freunde":
-        //                BaseActions.ShowFriends(_bot, user);
-        //                return;
-
-        //            // Term 2: History
-        //            case "history":
-        //            case "історія":
-        //            case "transaktionen":
-        //                SmallCircleActions.History(_bot, user);
-        //                return;
-
-        //                user.Person.Expenses.Children++;
-        //                user.History.Add(ActionType.Child, user.Person.Expenses.Children);
-
-        //                BaseActions.SmallCircleButtons(_bot, user,
-        //                    Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
-        //                        user, "{0}, you have {1} children expenses and {2} children.",
-        //                        user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
-        //                return;
-
-        //            // Term 79: Pay Check
-        //            case "pay check":
-        //            case "грошовий потік":
-        //            case "gehalt":
-        //                var amount = user.Person.BigCircle
-        //                    ? user.Person.CurrentCashFlow.AsCurrency()
-        //                    : user.Person.CashFlow.AsCurrency();
-        //                SmallCircleActions.GetMoney(_bot, user, amount);
-        //                return;
     }
 
     public override IStage NextStage() => nextStage ?? new SmallCircle(Users, User, Terms, Logger);
@@ -215,130 +183,33 @@ public class SmallCircle(IUsers users, IUser user,ITermsService termsService, IL
     }
 }
 
-//public class SmallCircle_1(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
-//{
-//    private IStage nextStage;
+public class ShowMyData(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//    public async override Task HandleMessage(string message)
-//    {
-//        if (MessageEquals(message, 31, "Show my Data"))
-//        {
-//            return;
-//        }
+public class Friends(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//        if (MessageEquals(message, 141, "Friends"))
-//        {
-//            return;
-//        }
+public class History(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//        if (MessageEquals(message, 2, "History"))
-//        {
-//            return;
-//        }
+public class SmallOpportunity(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//        if (MessageEquals(message, 80, "Downsize"))
-//        {
-//            var expenses = User.Person.Expenses.Total;
-//            var info = Terms.Get(87, User, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
-//            await User.Notify(info);
+public class BigOpportunity(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//            if (User.Person.Cash < expenses)
-//            {
-//                var delta = expenses - User.Person.Cash;
-//                var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+public class GetMoney(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
-//                User.GetCredit(credit);
-//                var loanInfo = Terms.Get(88, User, "You've taken {0} from bank.", credit.AsCurrency());
-//                await User.Notify(loanInfo);
-//            }
-
-//            User.Person.Cash -= expenses;
-//            User.History.Add(ActionType.Downsize, expenses);
-//            return;
-//        }
-
-//        if (MessageEquals(message, 39, "Kid"))
-//        {
-//            if (User.Person.Expenses.Children == 3)
-//            {
-//                await User.Notify(Terms.Get(57, User, "You're lucky parent of three children. You don't need one more."));
-//                return;
-//            }
-
-//            User.Person.Expenses.Children++;
-//            User.History.Add(ActionType.Child, User.Person.Expenses.Children);
-
-//            var termId = User.Person.Expenses.Children == 1 ? 20 : 25;
-//            var childrenExpenses = User.Person.Expenses.ChildrenExpenses.AsCurrency();
-//            var count = User.Person.Expenses.Children.ToString();
-
-//            await User.Notify(Terms.Get(termId, User, "{0}, you have {1} children expenses and {2} children.", childrenExpenses, count));
-//        }
-
-
-//        //            // Term 80: Downsize
-//        //            case "downsize":
-//        //            case "звільнення":
-//        //            case "entlassung":
-//        //                SmallCircleActions.Downsize(_bot, user);
-//        //                return;
-
-//        //            #region My Data
-
-//        //            // Term 31: Show my Data
-//        //            case "show my data":
-//        //            case "мої дані":
-//        //            case "meine info":
-//        //                SmallCircleActions.MyData(_bot, user);
-//        //                return;
-
-//        //            // Term 140: Friends
-//        //            case "friends":
-//        //            case "друзі":
-//        //            case "freunde":
-//        //                BaseActions.ShowFriends(_bot, user);
-//        //                return;
-
-//        //            // Term 2: History
-//        //            case "history":
-//        //            case "історія":
-//        //            case "transaktionen":
-//        //                SmallCircleActions.History(_bot, user);
-//        //                return;
-
-
-//        //            // Term 39: Baby
-//        //            case "baby":
-//        //            case "дитина":
-//        //            case "kind":
-//        //                if (user.Person.Expenses.Children == 3)
-//        //                {
-//        //                    _bot.SendMessage(user.Id, Terms.Get(57, user, "You're lucky parent of three children. You don't need one more."));
-//        //                    return;
-//        //                }
-
-//        //                user.Person.Expenses.Children++;
-//        //                user.History.Add(ActionType.Child, user.Person.Expenses.Children);
-
-//        //                BaseActions.SmallCircleButtons(_bot, user,
-//        //                    Terms.Get(user.Person.Expenses.Children == 1 ? 20 : 25,
-//        //                        user, "{0}, you have {1} children expenses and {2} children.",
-//        //                        user.Person.Profession, user.Person.Expenses.ChildrenExpenses.AsCurrency(), user.Person.Expenses.Children.ToString()));
-//        //                return;
-
-//        //            // Term 79: Pay Check
-//        //            case "pay check":
-//        //            case "грошовий потік":
-//        //            case "gehalt":
-//        //                var amount = user.Person.BigCircle
-//        //                    ? user.Person.CurrentCashFlow.AsCurrency()
-//        //                    : user.Person.CashFlow.AsCurrency();
-//        //                SmallCircleActions.GetMoney(_bot, user, amount);
-//        //                return;
-//    }
-
-//    public override IStage NextStage() => nextStage ?? new SmallCircle(Users, User, Terms, Logger);
-//}
+public class SendMoney(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+{
+}
 
 public class BigCircle(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
