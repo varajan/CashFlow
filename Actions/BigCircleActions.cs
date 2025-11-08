@@ -2,6 +2,7 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
+using CashFlowBot.Data.Users.UserData.PersonData;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
 using Telegram.Bot;

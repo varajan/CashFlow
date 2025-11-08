@@ -11,7 +11,7 @@ using CashFlowBot.Stages;
 
 namespace CashFlowBot.Data.Users;
 
-public class User(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
+public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
     public IHistory History => new History(DataBase, this);
     public IPerson Person => new Person(DataBase, this);
@@ -20,6 +20,7 @@ public class User(IDataBase dataBase, INotifyService notifyService, long id) : B
     public Stage Stage { get => throw new Exception(); set => throw new Exception(); }
     public string StageName { get => Get("Stage"); set => Set("Stage", value); }
     public string Name { get => Get("Name"); set => Set("Name", value); }
+    public bool IsActive => LastActive > DateTime.Now.AddMinutes(-15);
 
     public DateTime FirstLogin => Get("FirstLogin").ToDateTime();
 

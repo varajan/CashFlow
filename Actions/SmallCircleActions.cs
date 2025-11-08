@@ -4,7 +4,6 @@ using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,6 @@ public class SmallCircleActions : BaseActions
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static IUsers Users => new Users(dataBase, new TelegramBotNotifyService(null, 0));
     private static ITermsService Terms => new TermsService(dataBase);
     private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
 
@@ -299,11 +297,11 @@ public class SmallCircleActions : BaseActions
     {
         var cancel = Terms.Get(6, user, "Cancel");
         var bank = Terms.Get(149, user, "Bank");
-        var users = Users.GetActiveUsersNames(user, Circle.Small).ToList();
+        //var users = Users.GetActiveUsersNames(user, Circle.Small).ToList();
 
         user.Person.Assets.Transfer?.Delete();
         user.Stage = Stage.TransferMoneyTo;
-        bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(bank).Append(cancel));
+        //bot.SetButtons(user.Id, Terms.Get(147, user, "Whom?"), users.Append(bank).Append(cancel));
     }
 
     public static void SendMoney(TelegramBotClient bot, IUser user, string value)
@@ -313,12 +311,12 @@ public class SmallCircleActions : BaseActions
         switch (user.Stage)
         {
             case Stage.TransferMoneyTo:
-                if (value != bank && !Users.GetActiveUsersNames(user, Circle.Small).Contains(value))
-                {
-                    bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
-                    Cancel(bot, user);
-                    return;
-                }
+                //if (value != bank && !Users.GetActiveUsersNames(user, Circle.Small).Contains(value))
+                //{
+                //    bot.SendMessage(user.Id, Terms.Get(145, user, "Not found."));
+                //    Cancel(bot, user);
+                //    return;
+                //}
 
                 var cancel = Terms.Get(6, user, "Cancel");
                 var buttons = Enumerable.Range(1, 8)
@@ -355,19 +353,19 @@ public class SmallCircleActions : BaseActions
         {
             var to = user.Person.Assets.Transfer.Title;
             var amount = user.Person.Assets.Transfer.Qtty;
-            var friend = Users.GetActiveUsers(user).FirstOrDefault(x => x.Name == to);
-            var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+            //var friend = Users.GetActiveUsers(user).FirstOrDefault(x => x.Name == to);
+            //var message = Terms.Get(146, user, "{0} transferred {2} to {1}.", user.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
 
             user.Person.Cash -= amount;
             user.History.Add(ActionType.PayMoney, amount);
 
-            if (friend is not null)
-            {
-                friend.Person.Cash += amount;
-                friend.History.Add(ActionType.GetMoney, amount);
-            }
+            //if (friend is not null)
+            //{
+            //    friend.Person.Cash += amount;
+            //    friend.History.Add(ActionType.GetMoney, amount);
+            //}
 
-            Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
+            //Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, message));
 
             user.Person.Assets.Transfer.Delete();
             Cancel(bot, user);

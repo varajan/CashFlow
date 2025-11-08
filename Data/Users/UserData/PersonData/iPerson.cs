@@ -26,3 +26,10 @@ public interface IPerson
     void Clear();
     void Create(string profession);
 }
+
+public enum Circle
+{
+    Small,
+    Big,
+    Both
+}

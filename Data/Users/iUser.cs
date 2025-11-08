@@ -21,6 +21,7 @@ public interface IUser
     IHistory History { get; }
     DateTime FirstLogin { get; }
     DateTime LastActive { get; set; }
+    bool IsActive { get; }
 
     void Create();
     int PayCredit(int amount, bool regular);

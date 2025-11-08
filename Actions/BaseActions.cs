@@ -2,9 +2,9 @@
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.DataBase;
 using CashFlowBot.Data.Users;
+using CashFlowBot.Data.Users.UserData.PersonData;
 using CashFlowBot.Extensions;
 using CashFlowBot.Loggers;
-using MoreLinq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +20,6 @@ public class BaseActions
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static ITermsService Terms => new TermsService(dataBase);
-    private static IUsers Users => null;
 
     public static void StopGame(TelegramBotClient bot, IUser user, TelegramUser from)
     {
@@ -145,7 +144,7 @@ public class BaseActions
             bot.SendMessage(user.Id, user.Person.Description);
             bot.SetButtons(user.Id, youAreWinner, history, stopGame);
 
-            Users.GetActiveUsers(user).ForEach(u => bot.SendMessage(u.Id, Terms.Get(148, user, "{0} is the winner!", user.Name)));
+            //Users.GetActiveUsers(user).ForEach(u => bot.SendMessage(u.Id, Terms.Get(148, user, "{0} is the winner!", user.Name)));
             return;
         }
 
@@ -180,7 +179,7 @@ public class BaseActions
         {
             var notifyMessage = Terms.Get(68, user, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", user.Name);
 
-            Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, notifyMessage));
+            //Users.GetActiveUsers(user).Append(user).ForEach(u => bot.SendMessage(u.Id, notifyMessage));
         }
 
         var rkm = new ReplyKeyboardMarkup
@@ -210,27 +209,27 @@ public class BaseActions
 
     public static void ShowFriends(TelegramBotClient bot, IUser user)
     {
-        var users = Users.GetActiveUsers(user);
+        //var users = Users.GetActiveUsers(user);
 
-        if (users.Any())
-        {
-            var cancel = Terms.Get(6, user, "Cancel");
-            var onSmall = Terms.Get(142, user, "On Small circle:");
-            var onBig = Terms.Get(143, user, "On Big circle:");
+        //if (users.Any())
+        //{
+        //    var cancel = Terms.Get(6, user, "Cancel");
+        //    var onSmall = Terms.Get(142, user, "On Small circle:");
+        //    var onBig = Terms.Get(143, user, "On Big circle:");
 
-            var onSmallCircle = Users.GetActiveUsers(user, Circle.Small);
-            var onBigCircle = Users.GetActiveUsers(user, Circle.Big);
-            var message = string.Empty;
+        //    var onSmallCircle = Users.GetActiveUsers(user, Circle.Small);
+        //    var onBigCircle = Users.GetActiveUsers(user, Circle.Big);
+        //    var message = string.Empty;
 
-            if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
-            if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
+        //    if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
+        //    if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
 
-            user.Stage = Stage.ShowFriendData;
-            bot.SetButtons(user.Id, message.Trim(), users.Select(x => x.Name).Append(cancel));
-        }
-        else
-        {
-            bot.SendMessage(user.Id, Terms.Get(141, user, "There are no other players."));
-        }
+        //    user.Stage = Stage.ShowFriendData;
+        //    bot.SetButtons(user.Id, message.Trim(), users.Select(x => x.Name).Append(cancel));
+        //}
+        //else
+        //{
+        //    bot.SendMessage(user.Id, Terms.Get(141, user, "There are no other players."));
+        //}
     }
 }
