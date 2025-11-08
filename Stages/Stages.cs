@@ -1,4 +1,5 @@
-﻿using CashFlowBot.Data;
+﻿using CashFlowBot.Actions;
+using CashFlowBot.Data;
 using CashFlowBot.Data.Consts;
 using CashFlowBot.Data.Users;
 using CashFlowBot.Data.Users.UserData.HistoryData;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Telegram.Bot.Fabric;
 
 namespace CashFlowBot.Stages;
 
@@ -35,7 +37,7 @@ public abstract class BaseStage : IStage
     protected ITermsService Terms { get; }
     protected ILogger Logger { get; }
 
-    public BaseStage(IUsers users, IUser user,ITermsService termsService, ILogger logger)
+    public BaseStage(IUsers users, IUser user, ITermsService termsService, ILogger logger)
     {
         Terms = termsService;
         User = user;
@@ -60,14 +62,22 @@ public abstract class BaseStage : IStage
         message.Equals(Terms.Get(id, User, value), StringComparison.InvariantCultureIgnoreCase);
 }
 
-public class Start(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class Start(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
-    private IStage nextStage;
+    public override IStage NextStage()
+    {
+        if (User.Person.Exists)
+        {
+            return User.Person.Circle == Circle.Big
+                ? new BigCircle(Users, User, Terms, Logger)
+                : new SmallCircle(Users, User, Terms, Logger);
+        }
 
-    public override IStage NextStage() => nextStage ?? new ChooseLanguage(Users, User, Terms, Logger);
+        return new ChooseLanguage(Users, User, Terms, Logger);
+    }
 }
 
-public class SmallCircle(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class SmallCircle(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
     public override string Message => User.Person.Description;
     public override List<string> Buttons
@@ -113,7 +123,7 @@ public class SmallCircle(IUsers users, IUser user,ITermsService termsService, IL
                 return;
 
             case var m when MessageEquals(m, 2, "History"):
-                nextStage = new History(Users, User, Terms, Logger);
+                nextStage = new ShowHistory(Users, User, Terms, Logger);
                 return;
 
             case var m when MessageEquals(m, 81, "Small Opportunity"):
@@ -133,7 +143,7 @@ public class SmallCircle(IUsers users, IUser user,ITermsService termsService, IL
                 return;
 
             case var m when MessageEquals(m, 79, "Pay Check"):
-                nextStage = new GetMoney(Users, User, Terms, Logger);
+                await GetMoney();
                 return;
 
             case var m when MessageEquals(m, 33, "Give Money"):
@@ -181,41 +191,61 @@ public class SmallCircle(IUsers users, IUser user,ITermsService termsService, IL
 
         await User.Notify(Terms.Get(termId, User, "{0}, you have {1} children expenses and {2} children.", User.Person.Profession, childrenExpenses, count));
     }
+
+    private async Task GetMoney()
+    {
+        var amount = User.Person.CashFlow;
+        User.Person.Bankruptcy = User.Person.Cash + amount < 0;
+
+        if (User.Person.Bankruptcy)
+        {
+            User.History.Add(ActionType.Bankruptcy);
+            nextStage = new Bankruptcy(Users, User, Terms, Logger);
+        }
+
+        User.Person.Cash += amount;
+        User.History.Add(ActionType.GetMoney, amount);
+
+        await User.Notify(Terms.Get(22, User, "Ok, you've got *{0}*", amount.AsCurrency()));
+    }
 }
 
-public class ShowMyData(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class ShowMyData(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class Friends(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class Friends(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class History(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class ShowHistory(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class SmallOpportunity(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class SmallOpportunity(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class BigOpportunity(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class BigOpportunity(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class GetMoney(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class SendMoney(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class SendMoney(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+
+public class Bankruptcy(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class BigCircle(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+// ------------------------------------------------
+
+public class BigCircle(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
 }
 
-public class AskProfession(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class AskProfession(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
     public override string Message => Terms.Get(28, User, "Choose your *profession*");
     public override List<string> Buttons => Professions;
@@ -262,7 +292,7 @@ public class AskProfession(IUsers users, IUser user,ITermsService termsService, 
     //}
 }
 
-public class ChooseProfession(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class ChooseProfession(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
     private List<string> Professions => Persons.GetAll()
         .Select(x => x.Profession[User.Language])
@@ -288,7 +318,7 @@ public class ChooseProfession(IUsers users, IUser user,ITermsService termsServic
             : new Start(Users, User, Terms, Logger);
 }
 
-//public class AskLanguage(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+//public class AskLanguage(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 //{
 //    public override string Message => "Language/Мова";
 //    public override List<string> Buttons => Languages;
@@ -298,7 +328,7 @@ public class ChooseProfession(IUsers users, IUser user,ITermsService termsServic
 //    public override IStage NextStage() => new ChooseLanguage(Users, User, Terms, Logger);
 //}
 
-public class ChooseLanguage(IUsers users, IUser user,ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
+public class ChooseLanguage(IUsers users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
     public override string Message => "Language/Мова";
     public override List<string> Buttons => Languages;
