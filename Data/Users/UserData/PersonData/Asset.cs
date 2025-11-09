@@ -11,10 +11,10 @@ public class Asset(IDataBase dataBase, IUser user, int id)
     public long Id { get; } = id;
 
     private ITermsService Terms => new TermsService(DataBase);
-    private string Get(string column) => DataBase.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND User.Id = {User.Id}");
+    private string Get(string column) => DataBase.GetValue($"SELECT {column} FROM Assets WHERE AssetID = {Id} AND UserID = {User.Id}");
     private int GetInt(string column) => Get(column).ToInt();
-    private void Set(string column, int value) => DataBase.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND User.Id = {User.Id}");
-    private void Set(string column, string value) => DataBase.Execute($"UPDATE Assets SET {column} = '{value}' WHERE AssetID = {Id} AND User.Id = {User.Id}");
+    private void Set(string column, int value) => DataBase.Execute($"UPDATE Assets SET {column} = {value} WHERE AssetID = {Id} AND UserID = {User.Id}");
+    private void Set(string column, string value) => DataBase.Execute($"UPDATE Assets SET {column} = '{value}' WHERE AssetID = {Id} AND UserID = {User.Id}");
 
     public string Description
     {
