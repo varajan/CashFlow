@@ -16,7 +16,7 @@ public class BuyActions : BaseActions
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static ITermsService Terms => new TermsService(dataBase);
-    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+    private static AvailableAssets_OLD AvailableAssets => new AvailableAssets_OLD(dataBase);
 
     public static void BuyLand(TelegramBotClient bot, IUser user)
     {
@@ -418,8 +418,10 @@ public class BuyActions : BaseActions
         user.History.Add(ActionType.BuyBoat, boat.Price);
 
         var message = Terms.Get(117, user,
-        "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
-        boat.Price.AsCurrency(), firstPayment.AsCurrency(), boat.CashFlow.AsCurrency());
+            "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
+            boat.Price.AsCurrency(),
+            firstPayment.AsCurrency(),
+            boat.CashFlow.AsCurrency());
         bot.SendMessage(user.Id, message);
 
         Cancel(bot, user);

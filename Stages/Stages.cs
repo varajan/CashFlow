@@ -7,6 +7,7 @@ using CashFlowBot.Loggers;
 using MoreLinq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Telegram.Bot.Fabric;
@@ -34,15 +35,17 @@ public abstract class BaseStage : IStage
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
 
+    protected IAvailableAssets Assets { get; }
     protected ITermsService Terms { get; }
     protected ILogger Logger { get; }
 
-    public BaseStage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger)
+    public BaseStage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets)
     {
         Terms = termsService;
         CurrentUser = currentUser;
         OtherUsers = otherUsers;
         Logger = logger;
+        Assets = assets;
         CurrentUser.StageName = Name;
         NextStage = this;
     }
@@ -50,11 +53,11 @@ public abstract class BaseStage : IStage
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => CurrentUser.SetButtons(this);
 
-    public static IStage GetCurrentStage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger)
+    public static IStage GetCurrentStage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets)
     {
         var stage = Type.GetType($"CashFlowBot.Stages.{currentUser.StageName}");
         return stage is not null
-            ? (IStage)Activator.CreateInstance(stage, otherUsers, currentUser, termsService, logger)
+            ? (IStage)Activator.CreateInstance(stage, otherUsers, currentUser, termsService, logger, assets)
             : throw new Exception($"{stage} stage not found!");
     }
 
@@ -65,12 +68,14 @@ public abstract class BaseStage : IStage
     {
         var stage = Type.GetType($"CashFlowBot.Stages.{nameof(T)}");
         return stage is not null
-            ? (IStage)Activator.CreateInstance(stage, OtherUsers, CurrentUser, Terms, Logger)
+            ? (IStage)Activator.CreateInstance(stage, OtherUsers, CurrentUser, Terms, Logger, Assets)
             : throw new Exception($"{stage} stage not found!");
     }
+
+    protected string Cancel => Terms.Get(6, CurrentUser, "Cancel");
 }
 
-public class Start(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class Start(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override IStage NextStage
     {
@@ -88,7 +93,7 @@ public class Start(IList<IUser> otherUsers, IUser currentUser, ITermsService ter
     }
 }
 
-public class SmallCircle(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class SmallCircle(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => CurrentUser.Person.Description;
     public override List<string> Buttons
@@ -230,11 +235,11 @@ public class SmallCircle(IList<IUser> otherUsers, IUser currentUser, ITermsServi
     }
 }
 
-public class ShowMyData(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class ShowMyData(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
 }
 
-public class Friends(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class Friends(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message
     {
@@ -254,7 +259,7 @@ public class Friends(IList<IUser> otherUsers, IUser currentUser, ITermsService t
         }
     }
 
-    public override List<string> Buttons => OtherUsers.Where(x => x.IsActive).Select(x => x.Name).Append(Terms.Get(6, CurrentUser, "Cancel")).ToList();
+    public override List<string> Buttons => OtherUsers.Where(x => x.IsActive).Select(x => x.Name).Append(Cancel).ToList();
 
     public async override Task HandleMessage(string message)
     {
@@ -266,12 +271,11 @@ public class Friends(IList<IUser> otherUsers, IUser currentUser, ITermsService t
     }
 }
 
-public class ShowHistory(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class ShowHistory(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => CurrentUser.History.Description;
     public override IEnumerable<string> Buttons => CurrentUser.History.IsEmpty ? [Cancel] : [Rollback, Cancel];
 
-    private string Cancel => Terms.Get(6, CurrentUser, "Cancel");
     private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
 
     public override Task HandleMessage(string message)
@@ -291,22 +295,206 @@ public class ShowHistory(IList<IUser> otherUsers, IUser currentUser, ITermsServi
     }
 }
 
-public class SmallOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class SmallOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
-    public override string Message => base.Message;
-    public override IEnumerable<string> Buttons => base.Buttons;
+    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override IEnumerable<string> Buttons =>
+    [
+        Terms.Get(35, CurrentUser, "Buy Stocks"),
+        Terms.Get(36, CurrentUser, "Sell Stocks"),
+        Terms.Get(82, CurrentUser, "Stocks x2"),
+        Terms.Get(83, CurrentUser, "Stocks ÷2"),
+        Terms.Get(37, CurrentUser, "Buy Real Estate"),
+        Terms.Get(94, CurrentUser, "Buy Land"),
+        Terms.Get(119, CurrentUser, "Buy coins"),
+        Terms.Get(115, CurrentUser, "Start a company"),
+        Cancel
+    ];
 
     public override Task HandleMessage(string message)
     {
-        return base.HandleMessage(message);
+        CurrentUser.Person.Assets.CleanUp();
+
+        switch (message)
+        {
+            case var m when MessageEquals(m, 35, "Buy Stocks"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 36, "Sell Stocks"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 82, "Stocks x2"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 83, "Stocks ÷2"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 37, "Buy Real Estate"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 94, "Buy Land"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 119, "Buy coins"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 115, "Start a company"):
+                //NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 6, "Cancel"):
+                NextStage = New<Start>();
+                return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
     }
 }
 
-public class BigOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class BuyCoins(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+{
+    public override string Message => Terms.Get(7, CurrentUser, "Title:");
+
+    public override IEnumerable<string> Buttons
+    {
+        get
+        {
+            var cancel = Cancel;
+            var coins = Assets.GetAsText(AssetType.CoinTitle, CurrentUser.Language).Append(cancel);
+
+            return coins;
+        }
+    }
+
+    public override Task HandleMessage(string message)
+    {
+        var coinTitle = Assets
+            .GetAsText(AssetType.CoinTitle, CurrentUser.Language)
+            .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
+
+        if (coinTitle is not null)
+        {
+            CurrentUser.Person.Assets.Add(coinTitle, AssetType.Coin);
+            NextStage = New<BuyCoinsCount>();
+            return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
+    }
+}
+
+
+public class BuyCoinsCount(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+{
+    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+
+    public override IEnumerable<string> Buttons => Assets
+        .GetAsText(AssetType.CoinCount, CurrentUser.Language)
+        .Append(Cancel);
+
+    public async override Task HandleMessage(string message)
+    {
+        var number = message.AsCurrency();
+
+        if (number <= 0)
+        {
+            await CurrentUser.Notify(Terms.Get(18, CurrentUser, "Invalid quantity value. Try again."));
+            return;
+        }
+
+        CurrentUser.Person.Assets.Coins.First(a => a.IsDraft).Qtty = number;
+        NextStage = New<BuyCoinsPrice>();
+    }
+}
+
+public class BuyCoinsPrice(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+{
+    protected Asset Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
+    public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
+    public override IEnumerable<string> Buttons => Assets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
+
+    public override async Task HandleMessage(string message)
+    {
+        var number = message.AsCurrency();
+        var totalPrice = Asset.Price * Asset.Qtty;
+
+        if (number <= 0)
+        {
+            await CurrentUser.Notify(Terms.Get(9, CurrentUser, "Invalid price value. Try again."));
+            return;
+        }
+
+        Asset.Price = number;
+
+        if (CurrentUser.Person.Cash < totalPrice)
+        {
+            await CurrentUser.Notify(Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", totalPrice.AsCurrency(), CurrentUser.Person.Cash.AsCurrency()));
+
+            NextStage = New<BuyCoinsCredit>();
+            return;
+        }
+
+        await CompleteTransaction();
+        NextStage = New<Start>();
+    }
+
+    protected async Task CompleteTransaction()
+    {
+        Asset.IsDraft = false;
+        CurrentUser.Person.Cash -= Asset.Price * Asset.Qtty;
+        CurrentUser.History.Add(ActionType.BuyCoins, Asset.Id);
+        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+    }
+}
+
+public class BuyCoinsCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BuyCoinsPrice(otherUsers, currentUser, termsService, logger, assets)
+{
+    public override string Message
+    {
+        get
+        {
+            var value = CurrentUser.Person.Assets.Transfer.Qtty.AsCurrency();
+            var cash = CurrentUser.Person.Cash.AsCurrency();
+            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
+        }
+    }
+
+    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Cancel];
+
+    public override async Task HandleMessage(string message)
+    {
+        switch (message)
+        {
+            case var m when MessageEquals(m, 6, "Cancel"):
+                NextStage = New<Start>();
+                return;
+
+            case var m when MessageEquals(m, 34, "Get Credit"):
+                var delta = Asset.Price * Asset.Qtty - CurrentUser.Person.Cash;
+                var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+
+                CurrentUser.GetCredit(credit);
+                await CompleteTransaction();
+
+                NextStage = New<Start>();
+                return;
+        }
+    }
+}
+// ----------------------------------------
+
+public class BigOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
 }
 
-public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
@@ -316,7 +504,7 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
         {
             CurrentUser.Person.Assets.Transfer?.Delete();
 
-            var cancel = Terms.Get(6, CurrentUser, "Cancel");
+            var cancel = Cancel;
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).Select(x => x.Name).ToList();
 
@@ -339,7 +527,7 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
     }
 }
 
-public class SendMoneyTo(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class SendMoneyTo(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
@@ -347,7 +535,7 @@ public class SendMoneyTo(IList<IUser> otherUsers, IUser currentUser, ITermsServi
     {
         get
         {
-            var cancel = Terms.Get(6, CurrentUser, "Cancel");
+            var cancel = Cancel;
             return Enumerable.Range(1, 8)
                 .Select(x => (500 * x).AsCurrency())
                 .Append(cancel);
@@ -394,7 +582,7 @@ public class SendMoneyTo(IList<IUser> otherUsers, IUser currentUser, ITermsServi
     }
 }
 
-public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : SendMoneyTo(otherUsers, currentUser, termsService, logger)
+public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : SendMoneyTo(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message
     {
@@ -405,8 +593,8 @@ public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, I
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
     }
-    
-    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Terms.Get(6, CurrentUser, "Cancel")];
+
+    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Cancel];
 
     public override async Task HandleMessage(string message)
     {
@@ -428,18 +616,18 @@ public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, I
     }
 }
 
-public class Bankruptcy(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class Bankruptcy(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
 
 }
 
 // ------------------------------------------------
 
-public class BigCircle(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class BigCircle(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
 }
 
-public class AskProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class AskProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
     public override List<string> Buttons => Professions;
@@ -468,7 +656,7 @@ public class AskProfession(IList<IUser> otherUsers, IUser currentUser, ITermsSer
     }
 }
 
-public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     private List<string> Professions => Persons.GetAll()
         .Select(x => x.Profession[CurrentUser.Language])
@@ -494,7 +682,7 @@ public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITerms
             : New<Start>();
 }
 
-//public class AskLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+//public class AskLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 //{
 //    public override string Message => "Language/Мова";
 //    public override List<string> Buttons => Languages;
@@ -504,7 +692,7 @@ public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITerms
 //    public override IStage NextStage() => new ChooseLanguage(Users, User, Terms, Logger);
 //}
 
-public class ChooseLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
+public class ChooseLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => "Language/Мова";
     public override List<string> Buttons => Languages;

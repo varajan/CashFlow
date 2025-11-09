@@ -17,7 +17,7 @@ public class SellActions : BaseActions
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     //private static IUsers Users => new Users(dataBase);
     private static ITermsService Terms => new TermsService(dataBase);
-    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+    private static AvailableAssets_OLD AvailableAssets => new AvailableAssets_OLD(dataBase);
 
     public static void SellLand(TelegramBotClient bot, IUser user)
     {

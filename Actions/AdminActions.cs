@@ -17,7 +17,7 @@ public class AdminActions
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
     private static ITermsService Terms => new TermsService(dataBase);
-    private static AvailableAssets AvailableAssets => new AvailableAssets(dataBase);
+    private static AvailableAssets_OLD AvailableAssets => new AvailableAssets_OLD(dataBase);
 
     public static void AdminMenu(TelegramBotClient bot, IUser user)
     {

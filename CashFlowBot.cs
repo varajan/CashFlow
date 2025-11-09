@@ -24,6 +24,7 @@ public class CashFlowBot
     private static readonly FileLogger Logger = new();
     private static readonly SQLiteDataBase DataBase = new(Logger);
     private static readonly TermsService TermsService = new(DataBase);
+    private static readonly Assets Assets = new(DataBase);
 
     private static string BotToken
     {
@@ -93,7 +94,7 @@ public class CashFlowBot
             var user = new CashFlowUsersUser(DataBase, notifyService, message.Chat.Id);
             var users = GetOtherUsers(bot, user);
             var stage = user.Exists
-                ? BaseStage.GetCurrentStage(users, user, TermsService, Logger)
+                ? BaseStage.GetCurrentStage(users, user, TermsService, Logger, Assets)
                 : GetStartSage(message, user, users);
 
             await stage.HandleMessage(message.Text.Trim());
@@ -113,7 +114,7 @@ public class CashFlowBot
 
         user.Create();
         user.Name = userName;
-        return new Start(users, user, TermsService, Logger);
+        return new Start(users, user, TermsService, Logger, Assets);
     }
 
     private static List<IUser> GetOtherUsers(ITelegramBotClient bot, IUser currentUser) =>

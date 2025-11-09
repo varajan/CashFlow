@@ -20,12 +20,11 @@ public class TelegramBotNotifyService(ITelegramBotClient bot, long chatId) : INo
 {
     public async Task SetButtons(IStage stage)
     {
-        if (stage.Message is null || stage.Buttons.Count == 0) return;
+        if (stage.Message is null || stage.Buttons.Count() == 0) return;
 
         var buttonsInRow = stage.Buttons.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = GetButtons([.. stage.Buttons], buttonsInRow);
         await bot.SendMessage(chatId, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
-        //stage.HandleMessage(string.Empty);
     }
 
     public async Task Notify(string message) => await bot.SendMessage(chatId, message, parseMode: ParseMode.Markdown);
