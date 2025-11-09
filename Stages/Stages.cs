@@ -268,10 +268,38 @@ public class Friends(IList<IUser> otherUsers, IUser currentUser, ITermsService t
 
 public class ShowHistory(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
 {
+    public override string Message => CurrentUser.History.Description;
+    public override IEnumerable<string> Buttons => CurrentUser.History.IsEmpty ? [Cancel] : [Rollback, Cancel];
+
+    private string Cancel => Terms.Get(6, CurrentUser, "Cancel");
+    private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
+
+    public override Task HandleMessage(string message)
+    {
+        switch (message)
+        {
+            case var m when MessageEquals(m, 6, "Cancel"):
+                NextStage = New<Start>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 6, "Rollback last action"):
+                CurrentUser.History.Rollback();
+                return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
+    }
 }
 
 public class SmallOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
 {
+    public override string Message => base.Message;
+    public override IEnumerable<string> Buttons => base.Buttons;
+
+    public override Task HandleMessage(string message)
+    {
+        return base.HandleMessage(message);
+    }
 }
 
 public class BigOpportunity(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger) : BaseStage(otherUsers, currentUser, termsService, logger)
@@ -361,10 +389,8 @@ public class SendMoneyTo(IList<IUser> otherUsers, IUser currentUser, ITermsServi
 
         CurrentUser.Person.Assets.Transfer.Delete();
 
-        foreach (var user in users)
-        {
-            await user.Notify(message);
-        }
+        var notifyAll = users.Select(u => u.Notify(message));
+        await Task.WhenAll(notifyAll);
     }
 }
 
