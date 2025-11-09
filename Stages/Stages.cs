@@ -18,9 +18,9 @@ public interface IStage
     string Name { get; }
     string Message { get; }
     List<string> Buttons { get; }
+    IStage NextStage { get; }
 
     Task HandleMessage(string message);
-    IStage NextStage();
     Task SetButtons();
 }
 
@@ -31,6 +31,9 @@ public abstract class BaseStage : IStage
     public IList<IUser> Users { get; init; }
     public virtual string Message => default;
     public virtual List<string> Buttons => default;
+
+    protected IStage nextStage;
+    public virtual IStage NextStage { get => this; }
 
     protected ITermsService Terms { get; }
     protected ILogger Logger { get; }
@@ -45,7 +48,6 @@ public abstract class BaseStage : IStage
     }
 
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
-    public virtual IStage NextStage() => this;
     public Task SetButtons() => User.SetButtons(this);
 
     public static IStage GetCurrentStage(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger)
@@ -62,16 +64,19 @@ public abstract class BaseStage : IStage
 
 public class Start(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
-    public override IStage NextStage()
+    public override IStage NextStage
     {
-        if (User.Person.Exists)
+        get
         {
-            return User.Person.Circle == Circle.Big
-                ? new BigCircle(Users, User, Terms, Logger)
-                : new SmallCircle(Users, User, Terms, Logger);
-        }
+            if (User.Person.Exists)
+            {
+                return User.Person.Circle == Circle.Big
+                    ? new BigCircle(Users, User, Terms, Logger)
+                    : new SmallCircle(Users, User, Terms, Logger);
+            }
 
-        return new ChooseLanguage(Users, User, Terms, Logger);
+            return new ChooseLanguage(Users, User, Terms, Logger);
+        }
     }
 }
 
@@ -99,7 +104,7 @@ public class SmallCircle(IList<IUser> users, IUser user, ITermsService termsServ
         }
     }
 
-    private IStage nextStage;
+    public override IStage NextStage => nextStage ?? new SmallCircle(Users, User, Terms, Logger);
 
     public async override Task HandleMessage(string message)
     {
@@ -119,8 +124,17 @@ public class SmallCircle(IList<IUser> users, IUser user, ITermsService termsServ
                 return;
 
             case var m when MessageEquals(m, 141, "Friends"):
-                nextStage = new Friends(Users, User, Terms, Logger);
-                return;
+                var users = Users.Where(x => x.IsActive).ToList();
+                if (users.Any())
+                {
+                    nextStage = new Friends(Users, User, Terms, Logger);
+                    return;
+                }
+                else
+                {
+                    await User.Notify(Terms.Get(141, User, "There are no other players."));
+                    return;
+                }
 
             case var m when MessageEquals(m, 2, "History"):
                 nextStage = new ShowHistory(Users, User, Terms, Logger);
@@ -151,8 +165,6 @@ public class SmallCircle(IList<IUser> users, IUser user, ITermsService termsServ
                 return;
         }
     }
-
-    public override IStage NextStage() => nextStage ?? new SmallCircle(Users, User, Terms, Logger);
 
     private async Task Downsize()
     {
@@ -216,7 +228,34 @@ public class ShowMyData(IList<IUser> users, IUser user, ITermsService termsServi
 
 public class Friends(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
+    public override string Message
+    {
+        get
+        {
+            var message = string.Empty;
+            var onSmall = Terms.Get(142, User, "On Small circle:");
+            var onBig = Terms.Get(143, User, "On Big circle:");
 
+            var onSmallCircle = Users.Where(x => x.IsActive && x.Person.Circle == Circle.Small).ToList();
+            var onBigCircle = Users.Where(x => x.IsActive && x.Person.Circle == Circle.Big).ToList();
+
+            if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
+            if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
+
+            return message;
+        }
+    }
+
+    public override List<string> Buttons => Users.Where(x => x.IsActive).Select(x => x.Name).Append(Terms.Get(6, User, "Cancel")).ToList();
+
+    public async override Task HandleMessage(string message)
+    {
+        var friend = Users.FirstOrDefault(x => x.Name == message);
+        if (friend is null) return;
+
+        await User.Notify(friend.Person.BigCircle ? friend.Person.Description : friend.Description);
+        await User.Notify(friend.History.TopFive);
+    }
 }
 
 public class ShowHistory(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
@@ -233,8 +272,8 @@ public class BigOpportunity(IList<IUser> users, IUser user, ITermsService termsS
 
 public class SendMoney(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
-}
 
+}
 
 public class Bankruptcy(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
 {
@@ -257,8 +296,10 @@ public class AskProfession(IList<IUser> users, IUser user, ITermsService termsSe
         .Append(Terms.Get(139, User, "Random"))
         .ToList();
 
-    //public async override Task HandleMessage(string _) => new ChooseProfession(Users, User, Terms, ButtonsService, Logger);
-
+    public override IStage NextStage =>
+        User.Person.Exists
+            ? new SmallCircle(Users, User, Terms, Logger)
+            : new Start(Users, User, Terms, Logger);
 
     public override Task HandleMessage(string message)
     {
@@ -271,26 +312,6 @@ public class AskProfession(IList<IUser> users, IUser user, ITermsService termsSe
 
         return Task.CompletedTask;
     }
-
-    public override IStage NextStage() =>
-        User.Person.Exists
-            ? new SmallCircle(Users, User, Terms, Logger)
-            : new Start(Users, User, Terms, Logger);
-
-    //public override IStage NextStage() => new ChooseProfession(Users, User, Terms, Logger);
-
-    //await bot.SendTextMessageAsync(user.Id, Terms.Get(28, user, "Choose your *profession*"),
-    //        replyMarkup: rkm, parseMode: ParseMode.Markdown);
-
-    // while (professions.Any())
-    //{
-    //    var x = professions.Take(3).ToList();
-    //    professions = professions.Skip(3).ToList();
-
-    //    if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2]]); continue; }
-    //    if (x.Count == 2) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1]]); continue; }
-    //    if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append([x[0]]); }
-    //}
 }
 
 public class ChooseProfession(IList<IUser> users, IUser user, ITermsService termsService, ILogger logger) : BaseStage(users, user, termsService, logger)
@@ -313,7 +334,7 @@ public class ChooseProfession(IList<IUser> users, IUser user, ITermsService term
         return Task.CompletedTask;
     }
 
-    public override IStage NextStage() =>
+    public override IStage NextStage =>
         User.Person.Exists
             ? new SmallCircle(Users, User, Terms, Logger)
             : new Start(Users, User, Terms, Logger);
@@ -336,6 +357,34 @@ public class ChooseLanguage(IList<IUser> users, IUser user, ITermsService termsS
 
     private static List<string> Languages => Enum.GetValues<Language>().Select(l => l.ToString()).ToList();
 
+    public override IStage NextStage
+    {
+        get
+        {
+            if (!User.Person.Exists)
+            {
+                return new AskProfession(Users, User, Terms, Logger);
+            }
+
+            if (User.Person.Exists)
+            {
+                // overwrite profession after changing language
+                //user.Person.Profession = Persons.Get(user, user.Person.Profession).Profession;
+
+                if (User.Person.Bankruptcy)
+                {
+                    return new Bankruptcy(Users, User, Terms, Logger);
+                }
+
+                return User.Person.Circle == Circle.Big
+                    ? new BigCircle(Users, User, Terms, Logger)
+                    : new SmallCircle(Users, User, Terms, Logger);
+            }
+
+            return new Start(Users, User, Terms, Logger);
+        }
+    }
+
     public override Task HandleMessage(string message)
     {
         var language = message.Trim().ToUpper();
@@ -346,30 +395,5 @@ public class ChooseLanguage(IList<IUser> users, IUser user, ITermsService termsS
         }
 
         return Task.CompletedTask;
-    }
-
-    public override IStage NextStage()
-    {
-        if (!User.Person.Exists)
-        {
-            return new AskProfession(Users, User, Terms, Logger);
-        }
-
-        if (User.Person.Exists)
-        {
-            // overwrite profession after changing language
-            //user.Person.Profession = Persons.Get(user, user.Person.Profession).Profession;
-
-            if (user.Person.Bankruptcy)
-            {
-                return new Bankruptcy(Users, User, Terms, Logger);
-            }
-
-            return User.Person.Circle == Circle.Big
-                ? new BigCircle(Users, User, Terms, Logger)
-                : new SmallCircle(Users, User, Terms, Logger);
-        }
-
-        return new Start(Users, User, Terms, Logger);
     }
 }

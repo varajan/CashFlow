@@ -91,13 +91,13 @@ public class CashFlowBot
         {
             var notifyService = new TelegramBotNotifyService(bot, message.Chat.Id);
             var user = new CashFlowUsersUser(DataBase, notifyService, message.Chat.Id);
-            var users = GetAllUsers(bot);
+            var users = GetOtherUsers(bot, user);
             var stage = user.Exists
                 ? BaseStage.GetCurrentStage(users, user, TermsService, Logger)
                 : GetStartSage(message, user, users);
 
             await stage.HandleMessage(message.Text.Trim());
-            await stage.NextStage().SetButtons();
+            await stage.NextStage.SetButtons();
         }
         catch (Exception e)
         {
@@ -116,10 +116,11 @@ public class CashFlowBot
         return new Start(users, user, TermsService, Logger);
     }
 
-    private static List<IUser> GetAllUsers(ITelegramBotClient bot) =>
+    private static List<IUser> GetOtherUsers(ITelegramBotClient bot, IUser currentUser) =>
         DataBase
             .GetColumn("SELECT ID FROM Users")
             .ToLong()
+            .Where(x => x != currentUser.Id)
             .Select(x => (IUser)new CashFlowUsersUser(DataBase, new TelegramBotNotifyService(bot, x), x))
             .ToList();
 }
