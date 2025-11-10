@@ -1,0 +1,25 @@
+name: Build and Test (.NET 8)
+
+on: pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore WebSite.sln
+
+      - name: Build
+        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test CashFlowBot.sln --no-build --verbosity normal
