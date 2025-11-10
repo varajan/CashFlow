@@ -50,7 +50,7 @@ public class CashFlowBot
         }
     }
 
-    private static void Main()
+    private static void aMain()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 

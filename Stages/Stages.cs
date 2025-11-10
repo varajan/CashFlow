@@ -603,17 +603,16 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
-    public override List<string> Buttons
+    public override IEnumerable<string> Buttons
     {
         get
         {
-            CurrentUser.Person.Assets.Transfer?.Delete();
+            CurrentUser?.Person?.Assets?.Transfer?.Delete();
 
-            var cancel = Cancel;
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).Select(x => x.Name).ToList();
 
-            return users.Append(bank).Append(cancel).ToList();
+            return users.Append(bank).Append(Cancel);
         }
     }
 
