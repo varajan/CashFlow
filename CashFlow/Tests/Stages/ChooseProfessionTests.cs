@@ -1,4 +1,5 @@
-﻿using CashFlow.Stages;
+﻿using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Stages;
 using Moq;
 
 namespace CashFlow.Tests.Stages;
@@ -13,7 +14,7 @@ public class ChooseProfessionTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Cancel");
+        await testStage.HandleMessage("cancel");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ChooseProfession>());
@@ -37,13 +38,15 @@ public class ChooseProfessionTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var personMock = new Mock<IPerson>();
+        CurrentUserMock.SetupGet(u => u.Person).Returns(personMock.Object);
 
         // Act
-        await testStage.HandleMessage("Random");
+        await testStage.HandleMessage("random");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        CurrentUserMock.Verify(u => u.Person.Create("Random"), Times.Once);
+        personMock.Verify(p => p.Create(It.IsAny<string>()), Times.Once);
     }
 
     [Test]
@@ -53,7 +56,7 @@ public class ChooseProfessionTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Teacher");
+        await testStage.HandleMessage("TeaCher");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
@@ -92,5 +95,4 @@ public class ChooseProfessionTests : StagesBaseTest
     }
 
     private ChooseProfession GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
-
 }

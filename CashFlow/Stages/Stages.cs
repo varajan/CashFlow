@@ -747,7 +747,10 @@ public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITerms
             return Task.CompletedTask;
         }
 
-        var profession = Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));
+        var random = MessageEquals(message, 139, "Random");
+        var profession = random
+            ? Professions.Random()
+            : Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));
 
         if (profession is not null)
         {

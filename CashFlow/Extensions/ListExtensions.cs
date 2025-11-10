@@ -1,4 +1,6 @@
-﻿namespace CashFlow.Extensions;
+﻿using MoreLinq;
+
+namespace CashFlow.Extensions;
 
 public static class ListExtensions
 {
@@ -6,4 +8,6 @@ public static class ListExtensions
     public static IEnumerable<long> ToLong(this IEnumerable<string> list) => list.Select(x => x.ToLong());
     public static IEnumerable<string> AsCurrency(this IEnumerable<string> list) => list.ToInt().AsCurrency();
     public static IEnumerable<string> AsCurrency(this IEnumerable<int> list) => list.Select(x => x.AsCurrency());
+    public static T Random<T>(this IEnumerable<T> list) => list.Random(1).FirstOrDefault();
+    public static List<T> Random<T>(this IEnumerable<T> list, int count) => list.Shuffle().Take(count).ToList();
 }
