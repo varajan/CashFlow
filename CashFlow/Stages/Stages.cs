@@ -728,7 +728,7 @@ public class BigCircle(IList<IUser> otherUsers, IUser currentUser, ITermsService
 {
 }
 
-public class AskProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
     public override List<string> Buttons => Professions;
@@ -739,59 +739,27 @@ public class AskProfession(IList<IUser> otherUsers, IUser currentUser, ITermsSer
         .Append(Terms.Get(139, CurrentUser, "Random"))
         .ToList();
 
-    public override IStage NextStage =>
-        CurrentUser.Person.Exists
-            ? New<SmallCircle>()
-            : New<Start>();
-
     public override Task HandleMessage(string message)
     {
+        if (IsCanceled(message))
+        {
+            NextStage = this;
+            return Task.CompletedTask;
+        }
+
         var profession = Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));
 
         if (profession is not null)
         {
             CurrentUser.Person.Create(profession);
+            NextStage = New<SmallCircle>();
+            return Task.CompletedTask;
         }
 
+        NextStage = this;
         return Task.CompletedTask;
     }
 }
-
-public class ChooseProfession(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
-{
-    private List<string> Professions => Persons.GetAll()
-        .Select(x => x.Profession[CurrentUser.Language])
-        .OrderBy(x => x)
-        .Append(Terms.Get(139, CurrentUser, "Random"))
-        .ToList();
-
-    public override Task HandleMessage(string message)
-    {
-        var profession = Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        if (profession is not null)
-        {
-            CurrentUser.Person.Create(profession);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override IStage NextStage =>
-        CurrentUser.Person.Exists
-            ? New<SmallCircle>()
-            : New<Start>();
-}
-
-//public class AskLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
-//{
-//    public override string Message => "Language/Мова";
-//    public override List<string> Buttons => Languages;
-
-//    private static List<string> Languages => Enum.GetValues<Language>().Select(l => l.ToString()).ToList();
-
-//    public override IStage NextStage() => new ChooseLanguage(Users, User, Terms, Logger);
-//}
 
 public class ChooseLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
@@ -806,7 +774,7 @@ public class ChooseLanguage(IList<IUser> otherUsers, IUser currentUser, ITermsSe
         {
             if (!CurrentUser.Person.Exists)
             {
-                return New<AskProfession>();
+                return New<ChooseProfession>();
             }
 
             if (CurrentUser.Person.Exists)
