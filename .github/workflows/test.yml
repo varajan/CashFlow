@@ -16,7 +16,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore WebSite.sln
+        run: dotnet restore CashFlowBot.sln
 
       - name: Build
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
