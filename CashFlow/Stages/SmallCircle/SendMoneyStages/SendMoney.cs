@@ -64,8 +64,8 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             return;
         }
 
-        // TEMPORARY! Uncomment!
-        //CurrentUser.Person.Assets.Transfer.Qtty = amount;
+        // ISSUE
+        CurrentUser.Person.Assets.Transfer.Qtty = amount;
         if (CurrentUser.Person.Cash < amount)
         {
             NextStage = New<SendMoneyToWithCredit>();
@@ -78,8 +78,8 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
     protected async Task Transfer()
     {
         var bank = Terms.Get(149, CurrentUser, "Bank");
-        var to = "To-too";// CurrentUser.Person.Assets.Transfer.Title;
-        var amount = 1020; // CurrentUser.Person.Assets.Transfer.Qtty;
+        var to = CurrentUser.Person.Assets.Transfer.Title; // ISSUE
+        var amount = CurrentUser.Person.Assets.Transfer.Qtty; // ISSUE
         var friend = OtherUsers.FirstOrDefault(x => x.Name == to);
         var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
@@ -96,7 +96,7 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             friend.History.Add(ActionType.GetMoney, amount);
         }
 
-        //CurrentUser.Person.Assets.Transfer.Delete();
+        CurrentUser.Person.Assets.Transfer.Delete(); // ISSUE
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);
