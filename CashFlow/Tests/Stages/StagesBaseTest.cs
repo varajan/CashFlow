@@ -41,8 +41,8 @@ public class StagesBaseTest
     protected static Mock<IUser> GetUserMock(string name, bool isActive, Circle cirle)
     {
         var user = new Mock<IUser>();
-        var assets = new Mock<IAssets>();
         var person = new Mock<IPerson>();
+        var assets = new Mock<IAssets>();
 
         person.SetupGet(p => p.Circle).Returns(cirle);
         person.SetupGet(p => p.Assets).Returns(assets.Object);

@@ -149,6 +149,7 @@
 (147, 'EN', 'Whom?'),
 (148, 'EN', '{0} is the winner!'),
 (149, 'EN', 'Bank'),
+(150, 'EN', 'Invalid value. Try again.'),
 
 (1001, 'EN', 'Lawyer'),
 (1002, 'EN', 'Business manager'),

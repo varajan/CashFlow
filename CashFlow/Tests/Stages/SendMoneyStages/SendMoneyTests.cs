@@ -64,7 +64,7 @@ public class SendMoneyTests : StagesBaseTest
         await testStage.HandleMessage(testUser.Name);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyTo>());
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
         CurrentUserMock.Verify(u => u.Person.Assets.Add(testUser.Name, AssetType.Transfer, false), Times.Once);
     }
@@ -80,7 +80,7 @@ public class SendMoneyTests : StagesBaseTest
         await testStage.HandleMessage(bank);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyTo>());
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
         CurrentUserMock.Verify(u => u.Person.Assets.Add(bank, AssetType.Transfer, false), Times.Once);
     }

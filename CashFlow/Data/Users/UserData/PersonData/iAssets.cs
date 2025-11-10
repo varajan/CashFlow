@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
