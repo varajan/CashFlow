@@ -8,7 +8,7 @@ namespace CashFlow.Tests.Stages;
 public class ChooseProfessionTests : StagesBaseTest
 {
     [Test]
-    public async Task ChooseProfession_CannotCancel()
+    public override async Task Stage_CanBeCanceled()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -94,5 +94,5 @@ public class ChooseProfessionTests : StagesBaseTest
         });
     }
 
-    private ChooseProfession GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override ChooseProfession GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
 }

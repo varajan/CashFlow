@@ -5,6 +5,7 @@ using Moq;
 
 namespace CashFlow.Tests.Stages.SendMoneyStages;
 
+[TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
 {
     [Test]
@@ -51,7 +52,7 @@ public class SendMoneyAmountTests : StagesBaseTest
     }
 
     [Test]
-    public async Task SendMoneyAmount_AvailableAmount_Send()
+    public async Task SendMoneyAmount_AvailableAmount_TransferIsCompleted()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -87,8 +88,8 @@ public class SendMoneyAmountTests : StagesBaseTest
         await testStage.HandleMessage("101");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyToWithCredit>());
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyCredit>());
     }
 
-    private SendMoneyAmount GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override SendMoneyAmount GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
 }

@@ -370,7 +370,7 @@ public class SmallOpportunity(IList<IUser> otherUsers, IUser currentUser, ITerms
 
 public class StartCompany(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
-    protected Asset Asset => CurrentUser.Person.Assets.SmallBusinesses.First(a => a.IsDraft);
+    protected Asset_OLD Asset => CurrentUser.Person.Assets.SmallBusinesses.First(a => a.IsDraft);
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
     public override IEnumerable<string> Buttons => Assets.GetAsText(AssetType.SmallBusinessType, CurrentUser.Language).Append(Cancel);
@@ -515,7 +515,7 @@ public class BuyCoinsCount(IList<IUser> otherUsers, IUser currentUser, ITermsSer
 
 public class BuyCoinsPrice(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
 {
-    protected Asset Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
+    protected Asset_OLD Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => Assets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
 

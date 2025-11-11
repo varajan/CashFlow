@@ -4,7 +4,7 @@ using CashFlow.Extensions;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
-public class Asset(IDataBase dataBase, IUser user, int id)
+public class Asset_OLD(IDataBase dataBase, IUser user, int id)
 {
     private IDataBase DataBase { get; } = dataBase;
     private IUser User { get; } = user;
@@ -71,9 +71,6 @@ public class Asset(IDataBase dataBase, IUser user, int id)
         }
     }
 
-    public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value); }
-    public string Title { get => Get("Title"); set => Set("Title", value); }
-
     public int BancrupcySellPrice
     {
         get
@@ -101,6 +98,8 @@ public class Asset(IDataBase dataBase, IUser user, int id)
         }
     }
 
+    public AssetType Type { get => Get("Type").ParseEnum<AssetType>(); set => Set("Type", (int)value); }
+    public string Title { get => Get("Title"); set => Set("Title", value); }
     public int Price { get => GetInt("Price"); set => Set("Price", value); }
     public int SellPrice { get => GetInt("SellPrice"); set => Set("SellPrice", value); }
     public int Qtty { get => GetInt("Qtty"); set => Set("Qtty", value); }

@@ -15,7 +15,7 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
     {
         get
         {
-            CurrentUser?.Person?.Assets?.Transfer?.Delete();
+            CurrentUser.Person.Assets.Get(AssetType.Transfer)?.Delete();
 
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).Select(x => x.Name).ToList();
@@ -54,8 +54,16 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
         }
     }
 
+    protected Asset_OLD TransferAsset => CurrentUser.Person.Assets.Get(AssetType.Transfer);
+
     public override async Task HandleMessage(string message)
     {
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
+
         var amount = message.AsCurrency();
 
         if (amount <= 0)
@@ -64,11 +72,11 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             return;
         }
 
-        // ISSUE
-        CurrentUser.Person.Assets.Transfer.Qtty = amount;
+        TransferAsset.Qtty = amount;
+        //CurrentUser.Person.Assets.Transfer.Qtty = amount;
         if (CurrentUser.Person.Cash < amount)
         {
-            NextStage = New<SendMoneyToWithCredit>();
+            NextStage = New<SendMoneyCredit>();
             return;
         }
 
@@ -78,8 +86,10 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
     protected async Task Transfer()
     {
         var bank = Terms.Get(149, CurrentUser, "Bank");
-        var to = CurrentUser.Person.Assets.Transfer.Title; // ISSUE
-        var amount = CurrentUser.Person.Assets.Transfer.Qtty; // ISSUE
+        var to = TransferAsset.Title; // ISSUE
+        var amount = TransferAsset.Qtty; // ISSUE
+        //var to = CurrentUser.Person.Assets.Transfer.Title; // ISSUE
+        //var amount = CurrentUser.Person.Assets.Transfer.Qtty; // ISSUE
         var friend = OtherUsers.FirstOrDefault(x => x.Name == to);
         var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
@@ -96,7 +106,8 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             friend.History.Add(ActionType.GetMoney, amount);
         }
 
-        CurrentUser.Person.Assets.Transfer.Delete(); // ISSUE
+        TransferAsset?.Delete(); // ISSUE
+        //CurrentUser.Person.Assets.Transfer.Delete(); // ISSUE
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);
@@ -104,13 +115,14 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
     }
 }
 
-public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : SendMoneyAmount(otherUsers, currentUser, termsService, logger, assets)
+public class SendMoneyCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : SendMoneyAmount(otherUsers, currentUser, termsService, logger, assets)
 {
     public override string Message
     {
         get
         {
-            var value = CurrentUser.Person.Assets.Transfer.Qtty.AsCurrency();
+            //var value = CurrentUser.Person.Assets.Transfer.Qtty.AsCurrency();
+            var value = TransferAsset.Qtty.AsCurrency();
             var cash = CurrentUser.Person.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
@@ -127,7 +139,8 @@ public class SendMoneyToWithCredit(IList<IUser> otherUsers, IUser currentUser, I
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var delta = CurrentUser.Person.Assets.Transfer.Qtty - CurrentUser.Person.Cash;
+                var delta = TransferAsset.Qtty - CurrentUser.Person.Cash;
+                //var delta = CurrentUser.Person.Assets.Transfer.Qtty - CurrentUser.Person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 CurrentUser.GetCredit(credit);
                 await Transfer();

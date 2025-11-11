@@ -46,7 +46,7 @@ public class HistoryRecord(IDataBase dataBase)
 
     public void Delete() => DataBase.Execute($"DELETE FROM History WHERE ID = {Id}");
 
-    private Asset Asset => new(DataBase, User, (int)Value);
+    private Asset_OLD Asset => new(DataBase, User, (int)Value);
     private string Text
     {
         get

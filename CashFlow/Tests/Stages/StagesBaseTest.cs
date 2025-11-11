@@ -3,16 +3,19 @@ using CashFlow.Data;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using Moq;
+using CashFlow.Stages;
 
 namespace CashFlow.Tests.Stages;
 
-public class StagesBaseTest
+public abstract class StagesBaseTest
 {
     protected Mock<IUser> CurrentUserMock;
     protected List<IUser> OtherUsers;
     protected Mock<ITermsService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssets> AssetsMock;
+
+    protected abstract IStage GetTestStage();
 
     [SetUp]
     public void SetUp()
@@ -35,7 +38,20 @@ public class StagesBaseTest
 
         TermsServiceMock
             .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<IUser>(), It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns((int id, IUser user, string defaultValue, object[] args) => defaultValue);
+            .Returns((int id, IUser user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+    }
+
+    [Test]
+    public virtual async Task Stage_CanBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
     protected static Mock<IUser> GetUserMock(string name, bool isActive, Circle cirle)

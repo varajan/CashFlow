@@ -20,7 +20,7 @@ public class History(IDataBase dataBase, IUser user) : IHistory
         get
         {
             var result = new List<HistoryRecord>();
-            var records = DataBase.GetRows($"SELECT ID, UserID, ActionType, Value, Description FROM History WHERE UserID = {User.Id}");
+            var records = DataBase.GetRows_OLD($"SELECT ID, UserID, ActionType, Value, Description FROM History WHERE UserID = {User.Id}");
 
             foreach (var item in records)
             {
@@ -49,7 +49,7 @@ public class History(IDataBase dataBase, IUser user) : IHistory
         if (IsEmpty) return;
 
         var record = Records.Last();
-        var asset = new Asset(DataBase, User, (int)record.Value);
+        var asset = new Asset_OLD(DataBase, User, (int)record.Value);
         var amount = (int)record.Value;
         var person = Persons.Get(User.Person.Profession);
 

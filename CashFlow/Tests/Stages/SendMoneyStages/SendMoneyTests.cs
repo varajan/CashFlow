@@ -9,19 +9,6 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 public class SendMoneyTests : StagesBaseTest
 {
     [Test]
-    public async Task SendMoney_CanBeCanceled()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-        await testStage.HandleMessage("Cancel");
-
-        // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-    }
-
-    [Test]
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
     {
         // Arrange
@@ -158,5 +145,5 @@ public class SendMoneyTests : StagesBaseTest
         });
     }
 
-    private SendMoney GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override SendMoney GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
 }

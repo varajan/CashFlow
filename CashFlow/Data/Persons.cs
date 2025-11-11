@@ -49,7 +49,7 @@ public static class Persons
     public static List<DefaultPerson> GetAll()
     {
         var result = new List<DefaultPerson>();
-        var data = dataBase.GetRows("SELECT ID, Salary, Cash, ExpensesTaxes, ExpensesMortgage, ExpensesSchoolLoan, ExpensesCarLoan, ExpensesCreditCard, ExpensesOthers, ExpensesPerChild, ExpensesSmallCredits, LiabilitiesMortgage, LiabilitiesSchoolLoan, LiabilitiesCarLoan, LiabilitiesCreditCard, LiabilitiesSmallCredits FROM DefaultPersonData");
+        var data = dataBase.GetRows_OLD("SELECT ID, Salary, Cash, ExpensesTaxes, ExpensesMortgage, ExpensesSchoolLoan, ExpensesCarLoan, ExpensesCreditCard, ExpensesOthers, ExpensesPerChild, ExpensesSmallCredits, LiabilitiesMortgage, LiabilitiesSchoolLoan, LiabilitiesCarLoan, LiabilitiesCreditCard, LiabilitiesSmallCredits FROM DefaultPersonData");
         
         foreach (var profesion in data)
         {

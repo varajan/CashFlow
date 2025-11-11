@@ -9,5 +9,6 @@ public static class ListExtensions
     public static IEnumerable<string> AsCurrency(this IEnumerable<string> list) => list.ToInt().AsCurrency();
     public static IEnumerable<string> AsCurrency(this IEnumerable<int> list) => list.Select(x => x.AsCurrency());
     public static T Random<T>(this IEnumerable<T> list) => list.Random(1).FirstOrDefault();
+    public static IEnumerable<string> Trim(this IEnumerable<string> list) => list.Select(x => x.Trim());
     public static List<T> Random<T>(this IEnumerable<T> list, int count) => list.Shuffle().Take(count).ToList();
 }

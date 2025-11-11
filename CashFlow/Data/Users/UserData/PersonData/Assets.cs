@@ -17,23 +17,23 @@ public class Assets(IDataBase dataBase, IUser user) : IAssets
 
     private ITermsService Terms => new TermsService(DataBase);
 
-    public List<Asset> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
-    public List<Asset> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
-    public List<Asset> SmallBusinesses => Items.Where(x => x.Type == AssetType.SmallBusinessType).ToList();
-    public List<Asset> Coins => Items.Where(x => x.Type == AssetType.Coin).ToList();
-    public List<Asset> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == User.Person.BigCircle).ToList();
-    public List<Asset> Lands => Items.Where(x => x.Type == AssetType.LandTitle).ToList();
-    public Asset Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
+    public List<Asset_OLD> Stocks => Items.Where(x => x.Type == AssetType.Stock).ToList();
+    public List<Asset_OLD> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
+    public List<Asset_OLD> SmallBusinesses => Items.Where(x => x.Type == AssetType.SmallBusinessType).ToList();
+    public List<Asset_OLD> Coins => Items.Where(x => x.Type == AssetType.Coin).ToList();
+    public List<Asset_OLD> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == User.Person.BigCircle).ToList();
+    public List<Asset_OLD> Lands => Items.Where(x => x.Type == AssetType.LandTitle).ToList();
+    public Asset_OLD Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
 
-    public List<Asset> Items =>
+    public List<Asset_OLD> Items =>
         DataBase.GetColumn($"SELECT AssetID FROM Assets WHERE UserID = {User.Id}")
-            .Select(id => new Asset(DataBase, User, id: id.ToInt()))
+            .Select(id => new Asset_OLD(DataBase, User, id: id.ToInt()))
             .Where(x => !x.IsDeleted)
             .ToList();
 
     public void Clear() => Items.ForEach(x => x.Delete());
 
-    public Asset Transfer => Items.SingleOrDefault(x => x.Type == AssetType.Transfer);
+    public Asset_OLD Transfer => Items.SingleOrDefault(x => x.Type == AssetType.Transfer);
 
     public int Income => Items.Where(x => x.Type != AssetType.Boat).Sum(x => x.TotalCashFlow);
 
@@ -45,7 +45,9 @@ public class Assets(IDataBase dataBase, IUser user) : IAssets
         ? $"{Environment.NewLine}{Environment.NewLine}*{Terms.Get(56, User, "Assets")}:*{Environment.NewLine}{string.Join(Environment.NewLine, Items.OrderBy(x => x.Type).Select(x => $"• {x.Description}"))}"
         : string.Empty;
 
-    public Asset Add(string title, AssetType type, bool bigCircle = false)
+    public Asset_OLD Get(AssetType type) => Items.SingleOrDefault(x => x.Type == type);
+
+    public Asset_OLD Add(string title, AssetType type, bool bigCircle = false)
     {
         int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
         DataBase.Execute(@"

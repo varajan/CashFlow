@@ -24,7 +24,7 @@ public class Expenses(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, 
     public int PerChild { get => GetInt("PerChild"); set => Set("PerChild", value); }
     public int ChildrenExpenses => Children * PerChild;
 
-    private Asset Boat => User.Person.Assets.Boat;
+    private Asset_OLD Boat => User.Person.Assets.Boat;
     private int BoatLoan => Boat?.CashFlow ?? 0;
 
     public string Description

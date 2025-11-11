@@ -11,15 +11,24 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CashFlowBot;
 
+public static class ServiceLocator
+{
+    public static IServiceProvider Instance { get; private set; }
+
+    public static void Init(IServiceProvider provider) => Instance = provider;
+    public static T Get<T>() => Instance.GetRequiredService<T>();
+}
+
 public class CashFlowBot
 {
-    private static readonly FileLogger Logger = new();
-    private static readonly SQLiteDataBase DataBase = new(Logger);
-    private static readonly TermsService TermsService = new(DataBase);
-    private static readonly Assets Assets = new(DataBase);
+    private static ILogger Logger => ServiceLocator.Get<ILogger>();
+    private static IDataBase DataBase => ServiceLocator.Get<IDataBase>();
+    private static ITermsService TermsService => ServiceLocator.Get<ITermsService>();
+    private static IAvailableAssets Assets => ServiceLocator.Get<IAvailableAssets>();
 
     private static string BotToken
     {
@@ -48,6 +57,18 @@ public class CashFlowBot
     private static void Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+
+        // -- Dependencies injection --
+        var services = new ServiceCollection();
+
+        services.AddSingleton<ILogger, FileLogger>();
+        services.AddScoped<ITermsService, TermsService>();
+        services.AddScoped<IDataBase, SQLiteDataBase>();
+        services.AddScoped<IAvailableAssets, Assets>();
+
+        var provider = services.BuildServiceProvider();
+        ServiceLocator.Init(provider);
+        // -- Dependencies injection --
 
         var botClient = new TelegramBotClient(BotToken);
         using var cts = new CancellationTokenSource();

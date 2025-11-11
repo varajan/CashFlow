@@ -101,7 +101,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
         return result;
     }
 
-    public IList<IList<string>> GetRows(string sql)
+    public IList<IList<string>> GetRows_OLD(string sql)
     {
         var result = new List<IList<string>>();
         var cmd = new SQLiteCommand(sql, Connection);
@@ -111,7 +111,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                var values = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
+                var values = Columns(sql).Select(column => reader[column].ToString()).ToList();
                 result.Add(values);
             }
         }
@@ -127,9 +127,9 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
         return result;
     }
 
-    public IList<string> GetRow(string sql)
+    public IList<Dictionary<string, string>> GetRows(string sql)
     {
-        var result = new List<string>();
+        var result = new List<Dictionary<string, string>>();
         var cmd = new SQLiteCommand(sql, Connection);
 
         try
@@ -137,7 +137,8 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                result = Columns(sql).Select(column => reader[column.Trim()].ToString()).ToList();
+                var values = Columns(sql).ToDictionary(column => column, column => reader[column].ToString());
+                result.Add(values);
             }
         }
         catch (Exception e)
@@ -152,8 +153,43 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
         return result;
     }
 
-    private static string[] Columns(string sql) =>
-        sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",");
+    public Dictionary<string, string> GetRow(string sql)
+    {
+        var result = new Dictionary<string, string>();
+        var cmd = new SQLiteCommand(sql, Connection);
+
+        try
+        {
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                result = Columns(sql).ToDictionary(column => column, column => reader[column].ToString());
+            }
+        }
+        catch (Exception e)
+        {
+            Log(e, sql);
+        }
+        finally
+        {
+            cmd.Dispose();
+        }
+
+        return result;
+    }
+
+    private List<string> Columns(string sql)
+    {
+        var columns = sql.Replace("DISTINCT", string.Empty).SubString("select", "from").Trim().Split(",").Trim().ToList();
+
+        if (columns.Count == 1 && columns[0] == "*")
+        {
+            var table = sql.SubString("from").Trim();
+            columns = [.. GetColumn($"SELECT name FROM pragma_table_info('{table}')")];
+        }
+
+        return columns;
+    }
 
     private void Log(Exception ex, string sql)
     {
