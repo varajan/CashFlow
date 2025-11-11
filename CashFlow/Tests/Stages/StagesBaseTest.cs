@@ -10,7 +10,8 @@ namespace CashFlow.Tests.Stages;
 public abstract class StagesBaseTest
 {
     protected Mock<IUser> CurrentUserMock;
-    protected List<IUser> OtherUsers;
+    protected List<IUser> OtherUsersMock;
+    protected Mock<IAssetManager> AssetManagerMock;
     protected Mock<ITermsService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssets> AssetsMock;
@@ -20,11 +21,14 @@ public abstract class StagesBaseTest
     [SetUp]
     public void SetUp()
     {
+        ServicesProvider.Init();
+
         CurrentUserMock = GetUserMock("Myself", true, Circle.Small);
+        AssetManagerMock = new Mock<IAssetManager>();
         TermsServiceMock = new Mock<ITermsService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssets>();
-        OtherUsers =
+        OtherUsersMock =
             [
                 GetUserMock("1st Active on Small Circle", true, Circle.Small).Object,
                 GetUserMock("1st Active on Big Circle", true, Circle.Big).Object,
@@ -63,6 +67,7 @@ public abstract class StagesBaseTest
         person.SetupGet(p => p.Circle).Returns(cirle);
         person.SetupGet(p => p.Assets).Returns(assets.Object);
 
+        user.SetupGet(u => u.Id).Returns(123);
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);
         user.SetupGet(u => u.Person).Returns(person.Object);

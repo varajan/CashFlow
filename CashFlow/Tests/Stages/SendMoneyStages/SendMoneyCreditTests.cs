@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.HistoryData;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;
@@ -9,6 +10,18 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 [TestFixture]
 public class SendMoneyCreditTests : StagesBaseTest
 {
+    [SetUp]
+    public void Setup()
+    {
+        var transferAsset = new AssetDto
+        {
+            UserId = CurrentUserMock.Object.Id,
+            Qtty = 1000,
+            Type = AssetType.Transfer
+        };
+        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns(transferAsset);
+    }
+
     [Test]
     public void SendMoneyCredit_Question_and_Buttons()
     {
@@ -72,5 +85,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         //CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
     }
 
-    protected override SendMoneyCredit GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override IStage GetTestStage() => new SendMoneyCredit(AssetManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+        .SetCurrentUser(CurrentUserMock.Object)
+        .SetAllUsers(OtherUsersMock);
 }

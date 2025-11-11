@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.HistoryData;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;

@@ -15,6 +15,7 @@ public interface IPerson
     string Description { get; }
     bool SmallRealEstate { get; set; }
 
+    //IAssetManager AssetManager { get; }
     IAssets Assets { get; }
     IExpenses Expenses { get; }
     ILiabilities Liabilities { get; }

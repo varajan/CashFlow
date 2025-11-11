@@ -7,8 +7,11 @@ namespace CashFlow.Tests.Stages;
 [TestFixture]
 public class ChooseProfessionTests : StagesBaseTest
 {
+    [Test, Ignore("Not applicable")]
+    public override Task Stage_CanBeCanceled() => Task.CompletedTask;
+
     [Test]
-    public override async Task Stage_CanBeCanceled()
+    public async Task ChooseProfession_CanNotBeCanceled()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -94,5 +97,7 @@ public class ChooseProfessionTests : StagesBaseTest
         });
     }
 
-    protected override ChooseProfession GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override IStage GetTestStage() => new ChooseProfession(TermsServiceMock.Object, AssetsMock.Object)
+        .SetCurrentUser(CurrentUserMock.Object)
+        .SetAllUsers(OtherUsersMock);
 }

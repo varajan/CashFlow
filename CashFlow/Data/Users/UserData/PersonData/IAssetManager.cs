@@ -7,25 +7,51 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IAssetManager
 {
-    void Create(AssetDto asset);
-    void Write(AssetDto assetDto);
-    AssetDto Read(long id);
-    AssetDto Read(AssetType type);
-    string GetDescription(AssetDto asset);
+    AssetDto Write(AssetDto asset);
+    AssetDto Read(long id, long userId);
+    AssetDto Read(AssetType type, long userId);
+    string GetDescription(AssetDto asset, IUser user);
     int GetBancrupcySellPrice(AssetDto asset);
-    void Sell(AssetDto asset, ActionType action, int price);
+    void Sell(AssetDto asset, ActionType action, int price, IUser user);
     void Restore(AssetDto asset);
     void Delete(AssetDto asset);
 }
 
-public class AssetManager(IDataBase dataBase, ITermsService Terms, IUser user) : IAssetManager
+public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManager
 {
-    public void Create(AssetDto asset)
+    public AssetDto Write(AssetDto asset)
     {
-        throw new NotImplementedException();
+        var exists = dataBase.GetValue($"SELECT Id FROM Assets WHERE Id = {asset.Id}") is null;
+
+        return exists ? Update(asset) : Create(asset);
     }
 
-    public void Write(AssetDto asset)
+    private AssetDto Create(AssetDto asset)
+    {
+        int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+        var sql = $@"
+            INSERT INTO Assets ( Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
+            VALUES
+            (
+                {newId},
+                {asset.UserId},
+                {(int)asset.Type},
+                '{asset.Title.Replace("'", "''")}',
+                {asset.Price},
+                {asset.SellPrice},
+                {asset.Qtty},
+                {asset.Mortgage},
+                {asset.CashFlow},
+                {asset.BigCircle},
+                {(asset.IsDraft ? 1 : 0)},
+                {(asset.IsDeleted ? 1 : 0)}
+            );";
+        dataBase.Execute(sql);
+
+        return Read(newId, asset.UserId);
+    }
+
+    private AssetDto Update(AssetDto asset)
     {
         var sql = $"" +
             $"UPDATE Assets SET " +
@@ -40,20 +66,23 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms, IUser user) :
             $"CashFlow = {asset.CashFlow}," +
             $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
             $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
-            $"WHERE AssetID = {asset.Id} AND UserID = {user.Id}";
-
+            $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
         dataBase.Execute(sql);
+
+        return asset;
     }
 
-    public AssetDto Read(long id)
+    public AssetDto Read(long id, long userId)
     {
-        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
+        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {userId}";
         var data = dataBase.GetRow(sql);
 
         return new AssetDto
         {
             Type = data["Type"].ParseEnum<AssetType>(),
             Title = data["Title"],
+            Id = data["Id"].ToInt(),
+            UserId = data["UserId"].ToInt(),
             Price = data["Price"].ToInt(),
             SellPrice = data["SellPrice"].ToInt(),
             Qtty = data["Qtty"].ToInt(),
@@ -66,13 +95,13 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms, IUser user) :
         };
     }
 
-    public AssetDto Read(AssetType type)
+    public AssetDto Read(AssetType type, long userId)
     {
-        var id = dataBase.GetValue($"SELECT * FROM Assets WHERE Type = {type} AND UserID = {user.Id}").ToLong();
-        return Read(id);
+        var id = dataBase.GetValue($"SELECT * FROM Assets WHERE Type = {type} AND UserID = {userId}").ToLong();
+        return Read(id, userId);
     }
 
-    public string GetDescription(AssetDto asset)
+    public string GetDescription(AssetDto asset, IUser user)
     {
         var mortgage = Terms.Get(43, user, "Mortgage");
         var price = Terms.Get(64, user, "Price");
@@ -128,7 +157,7 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms, IUser user) :
         };
     }
 
-    public void Sell(AssetDto asset, ActionType action, int price)
+    public void Sell(AssetDto asset, ActionType action, int price, IUser user)
     {
         asset.SellPrice = price;
         Delete(asset);

@@ -4,6 +4,7 @@ namespace CashFlow.Data.DTOs;
 
 public class AssetDto
 {
+    public long UserId { get; set; }
     public long Id { get; set; }
     public AssetType Type { get; set; }
     public string Title { get; set; }

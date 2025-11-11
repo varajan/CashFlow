@@ -1,0 +1,38 @@
+﻿using CashFlow.Data.DataBase;
+using CashFlow.Data;
+using CashFlow.Loggers;
+using Microsoft.Extensions.DependencyInjection;
+using CashFlow.Stages;
+using CashFlow.Data.Users.UserData.PersonData;
+using Assets = CashFlow.Data.Assets;
+
+namespace CashFlow;
+
+public static class ServicesProvider
+{
+    public static IServiceProvider Instance { get; private set; }
+
+    public static void Init()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ILogger, FileLogger>();
+        services.AddSingleton<IDataBase, SQLiteDataBase>();
+        services.AddSingleton<ITermsService, TermsService>();
+        services.AddSingleton<IAvailableAssets, Assets>();
+        services.AddSingleton<IAssetManager, AssetManager>();
+
+        services.AddTransient<Start>();
+        services.AddTransient<SmallCircle>();
+        services.AddTransient<ChooseLanguage>();
+        services.AddTransient<ChooseProfession>();
+
+        services.AddTransient<SendMoney>();
+        services.AddTransient<SendMoneyAmount>();
+        services.AddTransient<SendMoneyCredit>();
+
+        Instance = services.BuildServiceProvider();
+    }
+
+    public static T Get<T>() => Instance.GetRequiredService<T>();
+    public static object Get(Type type) => Instance.GetRequiredService(type);
+}

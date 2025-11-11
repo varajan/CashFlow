@@ -1,13 +1,12 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.Consts;
-using CashFlow.Data.Users;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
-using CashFlow.Loggers;
 
 namespace CashFlow.Stages;
 
-public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+public class SendMoney(IAssetManager assetManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
@@ -30,7 +29,14 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
 
         if (MessageEquals(message, 149, "Bank") || OtherUsers.Any(x => x.IsActive && x.Person.Circle == Circle.Small && x.Name == message))
         {
-            CurrentUser.Person.Assets.Add(message, AssetType.Transfer);
+            var transfer = new AssetDto
+            {
+                Title = message,
+                UserId = CurrentUser.Id,
+                Type = AssetType.Transfer,
+            };
+
+            assetManager.Write(transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }
@@ -39,7 +45,7 @@ public class SendMoney(IList<IUser> otherUsers, IUser currentUser, ITermsService
     }
 }
 
-public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : BaseStage(otherUsers, currentUser, termsService, logger, assets)
+public class SendMoneyAmount(IAssetManager assetManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
@@ -54,12 +60,17 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
         }
     }
 
+    //protected AssetDto TransferDTO => CurrentUser.Person.AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+
     protected Asset_OLD TransferAsset => CurrentUser.Person.Assets.Get(AssetType.Transfer);
 
     public override async Task HandleMessage(string message)
     {
+        var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
+
         if (IsCanceled(message))
         {
+            assetManager.Delete(asset);
             NextStage = New<Start>();
             return;
         }
@@ -72,7 +83,9 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             return;
         }
 
-        TransferAsset.Qtty = amount;
+        asset.Qtty = amount;
+        assetManager.Write(asset);
+        //TransferAsset.Qtty = amount;
         //CurrentUser.Person.Assets.Transfer.Qtty = amount;
         if (CurrentUser.Person.Cash < amount)
         {
@@ -80,17 +93,17 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             return;
         }
 
-        await Transfer();
+        await Transfer(asset);
     }
 
-    protected async Task Transfer()
+    protected async Task Transfer(AssetDto asset)
     {
         var bank = Terms.Get(149, CurrentUser, "Bank");
-        var to = TransferAsset.Title; // ISSUE
-        var amount = TransferAsset.Qtty; // ISSUE
+        var amount = asset.Qtty;
+        
         //var to = CurrentUser.Person.Assets.Transfer.Title; // ISSUE
         //var amount = CurrentUser.Person.Assets.Transfer.Qtty; // ISSUE
-        var friend = OtherUsers.FirstOrDefault(x => x.Name == to);
+        var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
         var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(x => x.IsActive)
@@ -106,7 +119,8 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
             friend.History.Add(ActionType.GetMoney, amount);
         }
 
-        TransferAsset?.Delete(); // ISSUE
+        assetManager.Delete(asset);
+        //TransferAsset?.Delete(); // ISSUE
         //CurrentUser.Person.Assets.Transfer.Delete(); // ISSUE
 
         var notifyAll = users.Select(u => u.Notify(message));
@@ -115,14 +129,15 @@ public class SendMoneyAmount(IList<IUser> otherUsers, IUser currentUser, ITermsS
     }
 }
 
-public class SendMoneyCredit(IList<IUser> otherUsers, IUser currentUser, ITermsService termsService, ILogger logger, IAvailableAssets assets) : SendMoneyAmount(otherUsers, currentUser, termsService, logger, assets)
+public class SendMoneyCredit(IAssetManager assetManager, ITermsService termsService, IAvailableAssets assets) : SendMoneyAmount(assetManager, termsService, assets)
 {
     public override string Message
     {
         get
         {
+            var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
             //var value = CurrentUser.Person.Assets.Transfer.Qtty.AsCurrency();
-            var value = TransferAsset.Qtty.AsCurrency();
+            var value = asset.Qtty.AsCurrency();
             var cash = CurrentUser.Person.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
@@ -132,18 +147,21 @@ public class SendMoneyCredit(IList<IUser> otherUsers, IUser currentUser, ITermsS
 
     public override async Task HandleMessage(string message)
     {
+        var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
+
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
+                assetManager.Delete(asset);
                 NextStage = New<Start>();
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var delta = TransferAsset.Qtty - CurrentUser.Person.Cash;
+                var delta = asset.Qtty - CurrentUser.Person.Cash;
                 //var delta = CurrentUser.Person.Assets.Transfer.Qtty - CurrentUser.Person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 CurrentUser.GetCredit(credit);
-                await Transfer();
+                await Transfer(asset);
 
                 NextStage = New<Start>();
                 return;

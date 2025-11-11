@@ -1,4 +1,6 @@
-﻿using CashFlow.Data.Users.UserData.HistoryData;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlow.Data.Users.UserData.HistoryData;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;
 using Moq;
@@ -8,6 +10,36 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 [TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
 {
+    [SetUp]
+    public void Setup()
+    {
+        var transferAsset = new AssetDto
+        {
+            UserId = CurrentUserMock.Object.Id,
+            Type = AssetType.Transfer
+        };
+        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns(transferAsset);
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_CanBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        AssetManagerMock.Verify(a => a.Delete(
+            It.Is<AssetDto>(x =>
+                x.UserId == CurrentUserMock.Object.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+    }
+
     [Test]
     public void SendMoneyAmount_Question_and_Buttons()
     {
@@ -71,6 +103,14 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        AssetManagerMock.Verify(a => a.Write(
+            It.Is<AssetDto>(x =>
+                x.UserId == CurrentUserMock.Object.Id &&
+                x.Qtty == 100 &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
         //CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
     }
 
@@ -91,5 +131,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyCredit>());
     }
 
-    protected override SendMoneyAmount GetTestStage() => new(OtherUsers, CurrentUserMock.Object, TermsServiceMock.Object, LoggerMock.Object, AssetsMock.Object);
+    protected override IStage GetTestStage() => new SendMoneyAmount(AssetManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+        .SetCurrentUser(CurrentUserMock.Object)
+        .SetAllUsers(OtherUsersMock);
 }

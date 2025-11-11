@@ -11,24 +11,16 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.DependencyInjection;
+using CashFlow;
 
 namespace CashFlowBot;
 
-public static class ServiceLocator
-{
-    public static IServiceProvider Instance { get; private set; }
-
-    public static void Init(IServiceProvider provider) => Instance = provider;
-    public static T Get<T>() => Instance.GetRequiredService<T>();
-}
-
 public class CashFlowBot
 {
-    private static ILogger Logger => ServiceLocator.Get<ILogger>();
-    private static IDataBase DataBase => ServiceLocator.Get<IDataBase>();
-    private static ITermsService TermsService => ServiceLocator.Get<ITermsService>();
-    private static IAvailableAssets Assets => ServiceLocator.Get<IAvailableAssets>();
+    private static ILogger Logger => ServicesProvider.Get<ILogger>();
+    private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
+    private static ITermsService TermsService => ServicesProvider.Get<ITermsService>();
+    private static IAvailableAssets Assets => ServicesProvider.Get<IAvailableAssets>();
 
     private static string BotToken
     {
@@ -58,17 +50,7 @@ public class CashFlowBot
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 
-        // -- Dependencies injection --
-        var services = new ServiceCollection();
-
-        services.AddSingleton<ILogger, FileLogger>();
-        services.AddScoped<ITermsService, TermsService>();
-        services.AddScoped<IDataBase, SQLiteDataBase>();
-        services.AddScoped<IAvailableAssets, Assets>();
-
-        var provider = services.BuildServiceProvider();
-        ServiceLocator.Init(provider);
-        // -- Dependencies injection --
+        ServicesProvider.Init();
 
         var botClient = new TelegramBotClient(BotToken);
         using var cts = new CancellationTokenSource();
@@ -110,7 +92,7 @@ public class CashFlowBot
             var user = new CashFlowUsersUser(DataBase, notifyService, message.Chat.Id);
             var users = GetOtherUsers(bot, user);
             var stage = user.Exists
-                ? BaseStage.GetCurrentStage(users, user, TermsService, Logger, Assets)
+                ? BaseStage.GetCurrentStage(users, user)
                 : GetStartSage(message, user, users);
 
             await stage.HandleMessage(message.Text.Trim());
@@ -130,7 +112,12 @@ public class CashFlowBot
 
         user.Create();
         user.Name = userName;
-        return new Start(users, user, TermsService, Logger, Assets);
+
+        var start = ServicesProvider.Get<Start>()
+            .SetCurrentUser(user)
+            .SetAllUsers(users);
+
+        return start;
     }
 
     private static List<IUser> GetOtherUsers(ITelegramBotClient bot, IUser currentUser) =>

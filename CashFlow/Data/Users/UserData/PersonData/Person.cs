@@ -2,8 +2,6 @@
 using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.HistoryData;
 using CashFlow.Extensions;
-using System;
-using System.Linq;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
@@ -20,6 +18,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
     }
 
     private IUser User { get; } = user;
+
     public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
     public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
     public int CashFlow => Salary + Assets.Income - Expenses.Total;
