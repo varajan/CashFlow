@@ -13,7 +13,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsersMock.First(u => !u.IsActive && u.Person.Circle == Circle.Small);
+        var testUser = OtherUsers.First(u => !u.IsActive && u.Person.Circle == Circle.Small);
         var testStage = GetTestStage();
 
         // Act
@@ -23,13 +23,15 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
         CurrentUserMock.Verify(u => u.Notify("Not found."), Times.Once);
+        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        AssetManagerMock.Verify(x => x.Update(It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
     }
 
     [Test]
     public async Task SendMoney_SendToBigCircleUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsersMock.First(u => u.IsActive && u.Person.Circle == Circle.Big);
+        var testUser = OtherUsers.First(u => u.IsActive && u.Person.Circle == Circle.Big);
         var testStage = GetTestStage();
 
         // Act
@@ -39,13 +41,14 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
         CurrentUserMock.Verify(u => u.Notify("Not found."), Times.Once);
+        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
     public async Task SendMoney_MoveTo_SendMoneyTo_WhenSendToValidUser()
     {
         // Arrange
-        var testUser = OtherUsersMock.First(u => u.IsActive && u.Person.Circle == Circle.Small);
+        var testUser = OtherUsers.First(u => u.IsActive && u.Person.Circle == Circle.Small);
         var testStage = GetTestStage();
 
         // Act
@@ -54,12 +57,14 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
-        AssetManagerMock.Verify(a => a.Write(
+        AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
                 x.Title == testUser.Name &&
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
+
+        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
@@ -75,7 +80,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
-        AssetManagerMock.Verify(a => a.Write(
+        AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
                 x.Title == bank &&
                 x.UserId == CurrentUserMock.Object.Id &&
@@ -109,7 +114,7 @@ public class SendMoneyTests : StagesBaseTest
     public void SendMoney_NoOtherUsers_CanSendToBankOnly()
     {
         // Arrange
-        OtherUsersMock = [];
+        OtherUsers = [];
         var testStage = GetTestStage();
 
         // Act
@@ -126,7 +131,7 @@ public class SendMoneyTests : StagesBaseTest
     public void SendMoney_NoOtherActiveUsers_CanSendToBankOnly()
     {
         // Arrange
-        OtherUsersMock = OtherUsersMock.Where(x => !x.IsActive).ToList();
+        OtherUsers = OtherUsers.Where(x => !x.IsActive).ToList();
         var testStage = GetTestStage();
 
         // Act
@@ -143,7 +148,7 @@ public class SendMoneyTests : StagesBaseTest
     public void SendMoney_NoOthersOnSmallCircle_CanSendToBankOnly()
     {
         // Arrange
-        OtherUsersMock = OtherUsersMock.Where(x => x.Person.Circle == Circle.Big).ToList();
+        OtherUsers = OtherUsers.Where(x => x.Person.Circle == Circle.Big).ToList();
         var testStage = GetTestStage();
 
         // Act
@@ -156,7 +161,7 @@ public class SendMoneyTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new SendMoney(AssetManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+    protected override IStage GetTestStage() => new SendMoney(AssetManagerMock.Object, PersonManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsersMock);
+        .SetAllUsers(OtherUsers);
 }

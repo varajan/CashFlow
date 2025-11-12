@@ -30,7 +30,6 @@ public class SendMoneyCreditTests : StagesBaseTest
         var personMock = new Mock<IPerson>();
         var assetsMock = new Mock<IAssets>();
 
-        // protected Asset TransferAsset => CurrentUser.Person.Assets.Get(AssetType.Transfer);
         assetsMock.Setup(a => a.Get(AssetType.Transfer)).Returns(new Asset_OLD(default, default, default));
         personMock.Setup(p => p.Cash).Returns(100);
         personMock.Setup(p => p.Assets).Returns(assetsMock.Object);
@@ -85,7 +84,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         //CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SendMoneyCredit(AssetManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+    protected override IStage GetTestStage() => new SendMoneyCredit(AssetManagerMock.Object, PersonManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsersMock);
+        .SetAllUsers(OtherUsers);
 }

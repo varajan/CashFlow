@@ -20,6 +20,7 @@ public static class ServicesProvider
         services.AddSingleton<ITermsService, TermsService>();
         services.AddSingleton<IAvailableAssets, Assets>();
         services.AddSingleton<IAssetManager, AssetManager>();
+        services.AddSingleton<IPersonManager, PersonManager>();
 
         services.AddTransient<Start>();
         services.AddTransient<SmallCircle>();

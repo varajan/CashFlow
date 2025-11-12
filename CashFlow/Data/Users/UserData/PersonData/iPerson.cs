@@ -13,7 +13,7 @@ public interface IPerson
     Circle Circle { get; set; }
     bool BigCircle { get; set; }
     string Description { get; }
-    bool SmallRealEstate { get; set; }
+    //bool SmallRealEstate { get; set; }
 
     //IAssetManager AssetManager { get; }
     IAssets Assets { get; }

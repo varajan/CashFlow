@@ -27,7 +27,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
     public bool CreditsReduced { get => GetInt("CreditsReduced") == 1; set => Set("CreditsReduced", value ? 1 : 0); }
     public Circle Circle { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
-    public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
+    //public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
     public IExpenses Expenses => new Expenses(DataBase, User);
     public ILiabilities Liabilities => new Liabilities(DataBase, User);

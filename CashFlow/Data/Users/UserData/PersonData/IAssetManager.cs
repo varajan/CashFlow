@@ -7,7 +7,8 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IAssetManager
 {
-    AssetDto Write(AssetDto asset);
+    AssetDto Create(AssetDto asset);
+    void Update(AssetDto asset);
     AssetDto Read(long id, long userId);
     AssetDto Read(AssetType type, long userId);
     string GetDescription(AssetDto asset, IUser user);
@@ -17,16 +18,9 @@ public interface IAssetManager
     void Delete(AssetDto asset);
 }
 
-public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManager
+public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManager
 {
-    public AssetDto Write(AssetDto asset)
-    {
-        var exists = dataBase.GetValue($"SELECT Id FROM Assets WHERE Id = {asset.Id}") is null;
-
-        return exists ? Update(asset) : Create(asset);
-    }
-
-    private AssetDto Create(AssetDto asset)
+    public AssetDto Create(AssetDto asset)
     {
         int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
         var sql = $@"
@@ -51,7 +45,7 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManag
         return Read(newId, asset.UserId);
     }
 
-    private AssetDto Update(AssetDto asset)
+    public void Update(AssetDto asset)
     {
         var sql = $"" +
             $"UPDATE Assets SET " +
@@ -68,8 +62,6 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManag
             $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
             $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
         dataBase.Execute(sql);
-
-        return asset;
     }
 
     public AssetDto Read(long id, long userId)
@@ -103,9 +95,9 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManag
 
     public string GetDescription(AssetDto asset, IUser user)
     {
-        var mortgage = Terms.Get(43, user, "Mortgage");
-        var price = Terms.Get(64, user, "Price");
-        var cashFlow = Terms.Get(55, user, "Cash Flow");
+        var mortgage = terms.Get(43, user, "Mortgage");
+        var price = terms.Get(64, user, "Price");
+        var cashFlow = terms.Get(55, user, "Cash Flow");
 
         return asset.Type switch
         {
@@ -131,11 +123,11 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManag
 
             AssetType.Boat => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
-                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {(-asset.CashFlow).AsCurrency()}",
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {terms.Get(42, user, "monthly")}: {(-asset.CashFlow).AsCurrency()}",
 
             AssetType.SmallBusinessType => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
-                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.Coin => asset.IsDeleted
                                 ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
@@ -168,13 +160,13 @@ public class AssetManager(IDataBase dataBase, ITermsService Terms) : IAssetManag
     {
         asset.IsDeleted = false;
         asset.Title = asset.Title.SubStringTo("*");
-        Write(asset);
+        Update(asset);
     }
 
     public void Delete(AssetDto asset)
     {
         asset.IsDeleted = true;
         asset.Title = asset.Title.SubStringTo("*");
-        Write(asset);
+        Update(asset);
     }
 }
