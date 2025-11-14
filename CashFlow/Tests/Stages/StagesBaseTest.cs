@@ -13,6 +13,7 @@ public abstract class StagesBaseTest
     protected List<IUser> OtherUsers;
     protected Mock<IAssetManager> AssetManagerMock;
     protected Mock<IPersonManager> PersonManagerMock;
+    protected Mock<IHistoryManager> HistoryManagerMock;
     protected Mock<ITermsService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssets> AssetsMock;
@@ -27,6 +28,7 @@ public abstract class StagesBaseTest
         CurrentUserMock = GetUserMock(10, "Myself", true, Circle.Small);
         AssetManagerMock = new Mock<IAssetManager>();
         PersonManagerMock = new Mock<IPersonManager>();
+        HistoryManagerMock = new Mock<IHistoryManager>();
         TermsServiceMock = new Mock<ITermsService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssets>();

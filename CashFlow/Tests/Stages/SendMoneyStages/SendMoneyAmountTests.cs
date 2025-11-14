@@ -14,20 +14,14 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 public class SendMoneyAmountTests : StagesBaseTest
 {
     private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person.Circle == Circle.Small);
-    private PersonDto TestPerson => new PersonDto { Id = CurrentUserMock.Object.Id, Cash = 100 };
-    private PersonDto RecipientPerson => new PersonDto { Id = Recipient.Id, Cash = 200 };
+    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
+    private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
+    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer };
 
     [SetUp]
     public void Setup()
     {
-        var transferAsset = new AssetDto
-        {
-            UserId = CurrentUserMock.Object.Id,
-            Title = Recipient.Name,
-            Type = AssetType.Transfer
-        };
-
-        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(transferAsset);
+        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(TransferAsset);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
     }
@@ -99,7 +93,7 @@ public class SendMoneyAmountTests : StagesBaseTest
     }
 
     [Test]
-    public async Task SendMoneyAmount_AvailableAmount_TransferIsCompleted()
+    public async Task SendMoneyAmount_ToUser_AvailableAmount_TransferIsCompleted()
     {
         // Arrange
         var transferAmount = 100;
@@ -123,6 +117,12 @@ public class SendMoneyAmountTests : StagesBaseTest
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
+        AssetManagerMock.Verify(a => a.Delete(
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
@@ -135,8 +135,57 @@ public class SendMoneyAmountTests : StagesBaseTest
             x.Cash == RecipientPerson.Cash + transferAmount)
             ), Times.Once);
 
-        // history "manager"
-        // ??? 
+        HistoryManagerMock.Verify(x => x.Add(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
+        HistoryManagerMock.Verify(x => x.Add(ActionType.GetMoney, transferAmount, Recipient), Times.Once);
+
+        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_ToBank_AvailableAmount_TransferIsCompleted()
+    {
+        // Arrange
+        var transferAsset = TransferAsset;
+        transferAsset.Title = "Bank";
+        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(transferAsset);
+
+        var transferAmount = 100;
+        var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());
+        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+
+        var testStage = GetTestStage();
+        var historyMock = new Mock<IHistory>();
+        CurrentUserMock.SetupGet(u => u.History).Returns(historyMock.Object);
+
+        // Act
+        await testStage.HandleMessage($"{transferAmount}");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        AssetManagerMock.Verify(a => a.Update(
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Qtty == transferAmount &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        AssetManagerMock.Verify(a => a.Delete(
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonManagerMock.Verify(p => p.Update(
+            It.Is<PersonDto>(x =>
+            x.Id == TestPerson.Id &&
+            x.Cash == TestPerson.Cash - transferAmount)
+            ), Times.Once);
+
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x =>x.Id == RecipientPerson.Id)), Times.Never);
+
+        HistoryManagerMock.Verify(x => x.Add(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
+        HistoryManagerMock.Verify(x => x.Add(ActionType.GetMoney, transferAmount, Recipient), Times.Never);
 
         activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
     }
@@ -168,7 +217,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
-    protected override IStage GetTestStage() => new SendMoneyAmount(AssetManagerMock.Object, PersonManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+    protected override IStage GetTestStage() => new SendMoneyAmount(AssetManagerMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

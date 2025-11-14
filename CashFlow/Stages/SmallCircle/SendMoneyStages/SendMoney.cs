@@ -6,15 +6,18 @@ using CashFlow.Extensions;
 
 namespace CashFlow.Stages;
 
-public class SendMoney(IAssetManager assetManager, IPersonManager personManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class SendMoney(IAssetManager assetManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
 {
+    private IAssetManager AssetManager { get; init; } = assetManager;
+
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            CurrentUser.Person.Assets.Get(AssetType.Transfer)?.Delete();
+            var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+            AssetManager.Delete(asset);
 
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).Select(x => x.Name).ToList();
@@ -36,7 +39,7 @@ public class SendMoney(IAssetManager assetManager, IPersonManager personManager,
                 Type = AssetType.Transfer,
             };
 
-            assetManager.Create(transfer);
+            AssetManager.Create(transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }
@@ -45,8 +48,17 @@ public class SendMoney(IAssetManager assetManager, IPersonManager personManager,
     }
 }
 
-public class SendMoneyAmount(IAssetManager assetManager, IPersonManager personManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class SendMoneyAmount(
+    IAssetManager assetManager,
+    IPersonManager personManager,
+    IHistoryManager historyManager,
+    ITermsService termsService,
+    IAvailableAssets assets) : BaseStage(termsService, assets)
 {
+    protected IAssetManager AssetManager { get; init; } = assetManager;
+    protected IPersonManager PersonManager { get; init; } = personManager;
+    private IHistoryManager HistoryManager { get; init; } = historyManager;
+
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
     public override IEnumerable<string> Buttons => Enumerable
@@ -56,11 +68,11 @@ public class SendMoneyAmount(IAssetManager assetManager, IPersonManager personMa
 
     public override async Task HandleMessage(string message)
     {
-        var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
+        var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
 
         if (IsCanceled(message))
         {
-            assetManager.Delete(asset);
+            AssetManager.Delete(asset);
             NextStage = New<Start>();
             return;
         }
@@ -74,9 +86,9 @@ public class SendMoneyAmount(IAssetManager assetManager, IPersonManager personMa
         }
 
         asset.Qtty = amount;
-        assetManager.Update(asset);
+        AssetManager.Update(asset);
 
-        var currentUserPerson = personManager.Read(CurrentUser.Id);
+        var currentUserPerson = PersonManager.Read(CurrentUser.Id);
         if (currentUserPerson.Cash < amount)
         {
             NextStage = New<SendMoneyCredit>();
@@ -91,26 +103,29 @@ public class SendMoneyAmount(IAssetManager assetManager, IPersonManager personMa
         var bank = Terms.Get(149, CurrentUser, "Bank");
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.",
+            CurrentUser.Name,
+            friend?.Name ?? bank,
+            amount.AsCurrency());
         var users = OtherUsers
                 .Where(x => x.IsActive)
                 .Append(CurrentUser)
                 .ToList();
 
-        var currentUserPerson = personManager.Read(CurrentUser.Id);
+        var currentUserPerson = PersonManager.Read(CurrentUser.Id);
         currentUserPerson.Cash -= amount;
-        personManager.Update(currentUserPerson);
-        CurrentUser.History.Add(ActionType.PayMoney, amount);
+        PersonManager.Update(currentUserPerson);
+        HistoryManager.Add(ActionType.PayMoney, amount, CurrentUser);
 
         if (friend is not null)
         {
-            var friendPerson = personManager.Read(friend.Id);
+            var friendPerson = PersonManager.Read(friend.Id);
             friendPerson.Cash += amount;
-            personManager.Update(friendPerson);
-            //friend.History.Add(ActionType.GetMoney, amount);
+            PersonManager.Update(friendPerson);
+            HistoryManager.Add(ActionType.GetMoney, amount, friend);
         }
 
-        assetManager.Delete(asset);
+        AssetManager.Delete(asset);
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);
@@ -118,14 +133,19 @@ public class SendMoneyAmount(IAssetManager assetManager, IPersonManager personMa
     }
 }
 
-public class SendMoneyCredit(IAssetManager assetManager, IPersonManager personManager, ITermsService termsService, IAvailableAssets assets) : SendMoneyAmount(assetManager, personManager, termsService, assets)
+public class SendMoneyCredit(
+    IAssetManager assetManager,
+    IPersonManager personManager,
+    IHistoryManager historyManager,
+    ITermsService termsService,
+    IAvailableAssets assets) : SendMoneyAmount(assetManager, personManager, historyManager, termsService, assets)
 {
     public override string Message
     {
         get
         {
-            var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
-            var currentUserPerson = personManager.Read(CurrentUser.Id);
+            var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+            var currentUserPerson = PersonManager.Read(CurrentUser.Id);
             var value = asset.Qtty.AsCurrency();
             var cash = currentUserPerson.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
@@ -136,17 +156,17 @@ public class SendMoneyCredit(IAssetManager assetManager, IPersonManager personMa
 
     public override async Task HandleMessage(string message)
     {
-        var asset = assetManager.Read(AssetType.Transfer, CurrentUser.Id);
+        var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
 
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                assetManager.Delete(asset);
+                AssetManager.Delete(asset);
                 NextStage = New<Start>();
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var currentUserPerson = personManager.Read(CurrentUser.Id);
+                var currentUserPerson = PersonManager.Read(CurrentUser.Id);
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 CurrentUser.GetCredit(credit);

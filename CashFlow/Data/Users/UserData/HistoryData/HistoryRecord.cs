@@ -2,7 +2,6 @@
 using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
-using System.Collections.Generic;
 
 namespace CashFlow.Data.Users.UserData.HistoryData;
 

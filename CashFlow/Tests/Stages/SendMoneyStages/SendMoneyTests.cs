@@ -161,7 +161,7 @@ public class SendMoneyTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new SendMoney(AssetManagerMock.Object, PersonManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+    protected override IStage GetTestStage() => new SendMoney(AssetManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }
