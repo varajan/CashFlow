@@ -3,12 +3,18 @@ using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Data;
 using CashFlow.Extensions;
 using System.Text;
+using CashFlow.Data.DTOs;
 
 namespace CashFlow.Stages;
 
-public class BuyCoins(ITermsService termsService, IAvailableAssets availableAssets) : BaseStage(termsService)
+public class BuyCoins(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager)
+    : BaseStage(termsService)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
 
@@ -16,13 +22,28 @@ public class BuyCoins(ITermsService termsService, IAvailableAssets availableAsse
 
     public override Task HandleMessage(string message)
     {
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return Task.CompletedTask;
+        }
+
         var coinTitle = AvailableAssets
             .GetAsText(AssetType.CoinTitle, CurrentUser.Language)
             .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         if (coinTitle is not null)
         {
-            CurrentUser.Person.Assets.Add(coinTitle, AssetType.Coin);
+            var draftCoinAsset = new AssetDto
+            {
+                Title = coinTitle,
+                BigCircle = false,
+                Type = AssetType.Coin,
+                UserId = CurrentUser.Id,
+                IsDraft = true,
+            };
+
+            AssetManager.Create(draftCoinAsset);
             NextStage = New<BuyCoinsCount>();
             return Task.CompletedTask;
         }
@@ -31,7 +52,10 @@ public class BuyCoins(ITermsService termsService, IAvailableAssets availableAsse
     }
 }
 
-public class BuyCoinsCount(ITermsService termsService, IAvailableAssets availableAssets) : BuyCoins(termsService, availableAssets)
+public class BuyCoinsCount(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
@@ -54,7 +78,10 @@ public class BuyCoinsCount(ITermsService termsService, IAvailableAssets availabl
     }
 }
 
-public class BuyCoinsPrice(ITermsService termsService, IAvailableAssets availableAssets) : BuyCoins(termsService, availableAssets)
+public class BuyCoinsPrice(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager)
 {
     protected Asset_OLD Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
@@ -91,7 +118,10 @@ public class BuyCoinsPrice(ITermsService termsService, IAvailableAssets availabl
     }
 }
 
-public class BuyCoinsCredit(ITermsService termsService, IAvailableAssets assets) : BuyCoinsPrice(termsService, assets)
+public class BuyCoinsCredit(
+    ITermsService termsService,
+    IAvailableAssets assets,
+    IAssetManager assetManager) : BuyCoinsPrice(termsService, assets, assetManager)
 {
     public override string Message
     {

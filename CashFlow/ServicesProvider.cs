@@ -28,6 +28,11 @@ public static class ServicesProvider
         services.AddTransient<ChooseLanguage>();
         services.AddTransient<ChooseProfession>();
 
+        services.AddTransient<BuyCoins>();
+        services.AddTransient<BuyCoinsCount>();
+        services.AddTransient<BuyCoinsPrice>();
+        services.AddTransient<BuyCoinsCredit>();
+
         services.AddTransient<SendMoney>();
         services.AddTransient<SendMoneyAmount>();
         services.AddTransient<SendMoneyCredit>();
