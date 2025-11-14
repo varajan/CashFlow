@@ -107,7 +107,7 @@ public class Start(ITermsService termsService, IAvailableAssets assets) : BaseSt
                     : New<SmallCircle>();
             }
 
-            return New<ChooseLanguage>();
+            return New<ChooseProfession>();
         }
     }
 }
@@ -616,85 +616,4 @@ public class Bankruptcy(ITermsService termsService, IAvailableAssets assets) : B
 
 public class BigCircle(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
 {
-}
-
-public class ChooseProfession(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
-{
-    public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
-    public override List<string> Buttons => Professions;
-
-    private List<string> Professions => Persons.GetAll()
-        .Select(x => x.Profession[CurrentUser.Language])
-        .OrderBy(x => x)
-        .Append(Terms.Get(139, CurrentUser, "Random"))
-        .ToList();
-
-    public override Task HandleMessage(string message)
-    {
-        if (IsCanceled(message))
-        {
-            NextStage = this;
-            return Task.CompletedTask;
-        }
-
-        var random = MessageEquals(message, 139, "Random");
-        var profession = random
-            ? Professions.Random()
-            : Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        if (profession is not null)
-        {
-            CurrentUser.Person.Create(profession);
-            NextStage = New<SmallCircle>();
-            return Task.CompletedTask;
-        }
-
-        NextStage = this;
-        return Task.CompletedTask;
-    }
-}
-
-public class ChooseLanguage(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
-{
-    public override string Message => "Language/Мова";
-    public override List<string> Buttons => Languages;
-
-    private static List<string> Languages => Enum.GetValues<Language>().Select(l => l.ToString()).ToList();
-
-    public override IStage NextStage
-    {
-        get
-        {
-            if (!CurrentUser.Person.Exists)
-            {
-                return New<ChooseProfession>();
-            }
-
-            if (CurrentUser.Person.Exists)
-            {
-                if (CurrentUser.Person.Bankruptcy)
-                {
-                    return New<Bankruptcy>();
-                }
-
-                return CurrentUser.Person.Circle == Circle.Big
-                    ? New<BigCircle>()
-                    : New<SmallCircle>();
-            }
-
-            return New<Start>();
-        }
-    }
-
-    public override Task HandleMessage(string message)
-    {
-        var language = message.Trim().ToUpper();
-
-        if (Languages.Contains(language))
-        {
-            CurrentUser.Language = language.ParseEnum<Language>();
-        }
-
-        return Task.CompletedTask;
-    }
 }

@@ -25,7 +25,7 @@ public abstract class StagesBaseTest
     {
         ServicesProvider.Init();
 
-        CurrentUserMock = GetUserMock(10, "Myself", true, Circle.Small);
+        CurrentUserMock = GetUserMock(10, "Test User", true, Circle.Small);
         AssetManagerMock = new Mock<IAssetManager>();
         PersonManagerMock = new Mock<IPersonManager>();
         HistoryManagerMock = new Mock<IHistoryManager>();

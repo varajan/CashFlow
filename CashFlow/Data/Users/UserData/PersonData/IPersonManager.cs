@@ -6,6 +6,7 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IPersonManager
 {
+    bool Exists(long id);
     void Create(PersonDto person);
     void Update(PersonDto person);
     PersonDto Read(long id);
@@ -34,6 +35,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"CreditsReduced = {(person.CreditsReduced ? 1 : 0)}," +
             $"WHERE ID = {person.Id}";
         dataBase.Execute(sql);
+    }
+
+    public bool Exists(long id)
+    {
+        var sql = $"SELECT * FROM Persons WHERE ID = {id}";
+        var data = dataBase.GetRows(sql);
+
+        return data.Any();
     }
 
     public PersonDto Read(long id)
