@@ -29,13 +29,11 @@ public abstract class BaseStage : IStage
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
 
-    protected IAvailableAssets Assets { get; }
     protected ITermsService Terms { get; }
 
-    public BaseStage(ITermsService termsService, IAvailableAssets assets)
+    public BaseStage(ITermsService termsService)
     {
         Terms = termsService;
-        Assets = assets;
         NextStage = this;
     }
 
@@ -91,7 +89,7 @@ public abstract class BaseStage : IStage
     protected string Cancel => Terms.Get(6, CurrentUser, "Cancel");
 }
 
-public class Start(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class Start(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;
@@ -112,7 +110,7 @@ public class Start(ITermsService termsService, IAvailableAssets assets) : BaseSt
     }
 }
 
-public class SmallCircle(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => CurrentUser.Person.Description;
     public override List<string> Buttons
@@ -255,11 +253,11 @@ public class SmallCircle(ITermsService termsService, IAvailableAssets assets) : 
     }
 }
 
-public class ShowMyData(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class ShowMyData(ITermsService termsService) : BaseStage(termsService)
 {
 }
 
-public class Friends(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class Friends(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message
     {
@@ -291,7 +289,7 @@ public class Friends(ITermsService termsService, IAvailableAssets assets) : Base
     }
 }
 
-public class ShowHistory(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class ShowHistory(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => CurrentUser.History.Description;
     public override IEnumerable<string> Buttons => CurrentUser.History.IsEmpty ? [Cancel] : [Rollback, Cancel];
@@ -316,7 +314,7 @@ public class ShowHistory(ITermsService termsService, IAvailableAssets assets) : 
     }
 }
 
-public class SmallOpportunity(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class SmallOpportunity(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
     public override IEnumerable<string> Buttons =>
@@ -379,12 +377,14 @@ public class SmallOpportunity(ITermsService termsService, IAvailableAssets asset
     }
 }
 
-public class StartCompany(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class StartCompany(ITermsService termsService, IAvailableAssets availableAssets) : BaseStage(termsService)
 {
+    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+
     protected Asset_OLD Asset => CurrentUser.Person.Assets.SmallBusinesses.First(a => a.IsDraft);
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
-    public override IEnumerable<string> Buttons => Assets.GetAsText(AssetType.SmallBusinessType, CurrentUser.Language).Append(Cancel);
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessType, CurrentUser.Language).Append(Cancel);
 
     public override Task HandleMessage(string message)
     {
@@ -399,7 +399,7 @@ public class StartCompany(ITermsService termsService, IAvailableAssets assets) :
 public class StartCompanyPrice(ITermsService termsService, IAvailableAssets assets) : StartCompany(termsService, assets)
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
-    public override IEnumerable<string> Buttons => Assets.GetAsText(AssetType.SmallBusinessBuyPrice, CurrentUser.Language).Append(Cancel);
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessBuyPrice, CurrentUser.Language).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {
@@ -469,135 +469,9 @@ public class StartCompanyCredit(ITermsService termsService, IAvailableAssets ass
     }
 }
 
-public class BuyCoins(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
-{
-    public override string Message => Terms.Get(7, CurrentUser, "Title:");
-
-    public override IEnumerable<string> Buttons
-    {
-        get
-        {
-            var cancel = Cancel;
-            var coins = Assets.GetAsText(AssetType.CoinTitle, CurrentUser.Language).Append(cancel);
-
-            return coins;
-        }
-    }
-
-    public override Task HandleMessage(string message)
-    {
-        var coinTitle = Assets
-            .GetAsText(AssetType.CoinTitle, CurrentUser.Language)
-            .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
-
-        if (coinTitle is not null)
-        {
-            CurrentUser.Person.Assets.Add(coinTitle, AssetType.Coin);
-            NextStage = New<BuyCoinsCount>();
-            return Task.CompletedTask;
-        }
-
-        return Task.CompletedTask;
-    }
-}
-
-public class BuyCoinsCount(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
-{
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
-
-    public override IEnumerable<string> Buttons => Assets
-        .GetAsText(AssetType.CoinCount, CurrentUser.Language)
-        .Append(Cancel);
-
-    public async override Task HandleMessage(string message)
-    {
-        var number = message.AsCurrency();
-
-        if (number <= 0)
-        {
-            await CurrentUser.Notify(Terms.Get(18, CurrentUser, "Invalid quantity value. Try again."));
-            return;
-        }
-
-        CurrentUser.Person.Assets.Coins.First(a => a.IsDraft).Qtty = number;
-        NextStage = New<BuyCoinsPrice>();
-    }
-}
-
-public class BuyCoinsPrice(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
-{
-    protected Asset_OLD Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
-    public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
-    public override IEnumerable<string> Buttons => Assets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
-
-    public override async Task HandleMessage(string message)
-    {
-        var number = message.AsCurrency();
-
-        if (number <= 0)
-        {
-            await CurrentUser.Notify(Terms.Get(9, CurrentUser, "Invalid price value. Try again."));
-            return;
-        }
-
-        Asset.Price = number;
-
-        if (CurrentUser.Person.Cash < Asset.Price * Asset.Qtty)
-        {
-            NextStage = New<BuyCoinsCredit>();
-            return;
-        }
-
-        await CompleteTransaction();
-        NextStage = New<Start>();
-    }
-
-    protected async Task CompleteTransaction()
-    {
-        CurrentUser.Person.Cash -= Asset.Price * Asset.Qtty;
-        CurrentUser.History.Add(ActionType.BuyCoins, Asset.Id);
-        Asset.IsDraft = false;
-        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
-    }
-}
-
-public class BuyCoinsCredit(ITermsService termsService, IAvailableAssets assets) : BuyCoinsPrice(termsService, assets)
-{
-    public override string Message
-    {
-        get
-        {
-            var value = (Asset.Qtty * Asset.Price).AsCurrency();
-            var cash = CurrentUser.Person.Cash.AsCurrency();
-            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
-        }
-    }
-
-    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Cancel];
-
-    public override async Task HandleMessage(string message)
-    {
-        switch (message)
-        {
-            case var m when MessageEquals(m, 6, "Cancel"):
-                NextStage = New<Start>();
-                return;
-
-            case var m when MessageEquals(m, 34, "Get Credit"):
-                var delta = Asset.Price * Asset.Qtty - CurrentUser.Person.Cash;
-                var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
-
-                CurrentUser.GetCredit(credit);
-                await CompleteTransaction();
-
-                NextStage = New<Start>();
-                return;
-        }
-    }
-}
 // ----------------------------------------
 
-public class BigOpportunity(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class BigOpportunity(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => base.Message;
     public override IEnumerable<string> Buttons => base.Buttons;
@@ -607,13 +481,13 @@ public class BigOpportunity(ITermsService termsService, IAvailableAssets assets)
     }
 }
 
-public class Bankruptcy(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class Bankruptcy(ITermsService termsService) : BaseStage(termsService)
 {
 
 }
 
 // ------------------------------------------------
 
-public class BigCircle(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class BigCircle(ITermsService termsService) : BaseStage(termsService)
 {
 }

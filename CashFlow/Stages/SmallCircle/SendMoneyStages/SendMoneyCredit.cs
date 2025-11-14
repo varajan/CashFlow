@@ -9,8 +9,7 @@ public class SendMoneyCredit(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    ITermsService termsService,
-    IAvailableAssets assets) : SendMoneyAmount(assetManager, personManager, historyManager, termsService, assets)
+    ITermsService termsService) : SendMoneyAmount(assetManager, personManager, historyManager, termsService)
 {
     public override string Message
     {

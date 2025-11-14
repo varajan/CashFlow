@@ -5,7 +5,7 @@ using CashFlow.Extensions;
 
 namespace CashFlow.Stages;
 
-public class ChooseLanguage(ITermsService termsService, IPersonManager personManager, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class ChooseLanguage(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
 {
     private IPersonManager PersonManager { get; } = personManager;
 

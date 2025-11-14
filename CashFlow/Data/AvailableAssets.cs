@@ -10,7 +10,7 @@ public interface IAvailableAssets
     IEnumerable<string> GetAsCurrency(AssetType type);
 }
 
-public class Assets(IDataBase dataBase) : IAvailableAssets
+public class AvailableAssets(IDataBase dataBase) : IAvailableAssets
 {
     private IDataBase DataBase { get; } = dataBase;
 

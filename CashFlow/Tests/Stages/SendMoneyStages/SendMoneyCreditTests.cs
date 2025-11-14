@@ -157,7 +157,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
     }
 
-    protected override IStage GetTestStage() => new SendMoneyCredit(AssetManagerMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object, TermsServiceMock.Object, AssetsMock.Object)
+    protected override IStage GetTestStage() => new SendMoneyCredit(AssetManagerMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object, TermsServiceMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

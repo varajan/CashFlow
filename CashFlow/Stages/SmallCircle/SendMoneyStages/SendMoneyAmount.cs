@@ -10,8 +10,7 @@ public class SendMoneyAmount(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    ITermsService termsService,
-    IAvailableAssets assets) : BaseStage(termsService, assets)
+    ITermsService termsService) : BaseStage(termsService)
 {
     protected IAssetManager AssetManager { get; init; } = assetManager;
     protected IPersonManager PersonManager { get; init; } = personManager;

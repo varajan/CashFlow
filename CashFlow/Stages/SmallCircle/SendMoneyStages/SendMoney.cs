@@ -5,7 +5,7 @@ using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Stages;
 
-public class SendMoney(IAssetManager assetManager, ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class SendMoney(IAssetManager assetManager, ITermsService termsService) : BaseStage(termsService)
 {
     private IAssetManager AssetManager { get; init; } = assetManager;
 

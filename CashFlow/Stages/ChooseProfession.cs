@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CashFlow.Stages;
 
-public class ChooseProfession(ITermsService termsService, IAvailableAssets assets) : BaseStage(termsService, assets)
+public class ChooseProfession(ITermsService termsService) : BaseStage(termsService)
 {
     public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
     public override List<string> Buttons => Professions;

@@ -4,7 +4,7 @@ using CashFlow.Loggers;
 using Microsoft.Extensions.DependencyInjection;
 using CashFlow.Stages;
 using CashFlow.Data.Users.UserData.PersonData;
-using Assets = CashFlow.Data.Assets;
+using AvailableAssets = CashFlow.Data.AvailableAssets;
 
 namespace CashFlow;
 
@@ -18,7 +18,7 @@ public static class ServicesProvider
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITermsService, TermsService>();
-        services.AddSingleton<IAvailableAssets, Assets>();
+        services.AddSingleton<IAvailableAssets, AvailableAssets>();
         services.AddSingleton<IAssetManager, AssetManager>();
         services.AddSingleton<IPersonManager, PersonManager>();
         services.AddSingleton<IHistoryManager, HistoryManager>();
