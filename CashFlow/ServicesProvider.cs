@@ -27,6 +27,7 @@ public static class ServicesProvider
         services.AddTransient<SmallCircle>();
         services.AddTransient<ChooseLanguage>();
         services.AddTransient<ChooseProfession>();
+        services.AddTransient<History>();
 
         services.AddTransient<BuyCoins>();
         services.AddTransient<BuyCoinsCount>();

@@ -11,7 +11,7 @@ namespace CashFlow.Data.Users;
 
 public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
-    public IHistory History => new History(DataBase, this);
+    public IHistory History => new UserData.HistoryData.History(DataBase, this);
     public IPerson Person_OBSOLETE => new Person(DataBase, this);
 
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();

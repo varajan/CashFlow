@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
@@ -134,8 +135,6 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
         }
     }
 
-    //public override IStage NextStage => New<SmallCircle>();
-
     public async override Task HandleMessage(string message)
     {
         CurrentUser.Person_OBSOLETE.Assets.CleanUp();
@@ -168,7 +167,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
                 }
 
             case var m when MessageEquals(m, 2, "History"):
-                NextStage = New<ShowHistory>();
+                NextStage = New<History>();
                 return;
 
             case var m when MessageEquals(m, 81, "Small Opportunity"):
@@ -277,7 +276,7 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
         }
     }
 
-    public override List<string> Buttons => OtherUsers.Where(x => x.IsActive).Select(x => x.Name).Append(Cancel).ToList();
+    public override IEnumerable<string> Buttons => OtherUsers.Where(x => x.IsActive).Select(x => x.Name).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {
@@ -289,23 +288,34 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
     }
 }
 
-public class ShowHistory(ITermsService termsService) : BaseStage(termsService)
+public class History(ITermsService termsService, IHistoryManager historyManager) : BaseStage(termsService)
 {
-    public override string Message => CurrentUser.History.Description;
-    public override IEnumerable<string> Buttons => CurrentUser.History.IsEmpty ? [Cancel] : [Rollback, Cancel];
+    private IHistoryManager HistoryManager { get; } = historyManager;
 
+    public override string Message => Records.Any()
+        ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
+        : Terms.Get(111, CurrentUser, "No records found.");
+
+    public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, Cancel] : [Cancel];
+
+    private List<HistoryDto> Records => HistoryManager.Read(CurrentUser.Id).OrderByDescending(x => x.Id).ToList();
     private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
 
     public async override Task HandleMessage(string message)
     {
-        if (IsCanceled(message)) return;
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
 
         if (MessageEquals(message, 109, "Rollback last action"))
         {
-            CurrentUser.History.Rollback();
+            HistoryManager.Delete(Records.First().Id);
+            //CurrentUser.History.Rollback();
         }
 
-        if (CurrentUser.History.IsEmpty)
+        if (Records.Count == 0)
         {
             await CurrentUser.Notify(Message);
             NextStage = New<Start>();
