@@ -9,7 +9,7 @@ public interface IHistoryManager
 {
     List<HistoryDto> Read(long userId);
     void Add(ActionType type, long value, IUser user);
-    void Delete(long id);
+    void Rollback(HistoryDto record);
 }
 
 public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITermsService terms) : IHistoryManager
@@ -57,7 +57,11 @@ public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITer
         //};
     }
 
-    public void Delete(long id) => DataBase.Execute($"DELETE FROM History WHERE ID = {id}");
+    public void Rollback(HistoryDto record)
+    {
+        DataBase.Execute($"DELETE FROM History WHERE ID = {record.Id}");
+        throw new NotImplementedException();
+    }
 
     private string GetDescription(HistoryDto record, IUser user)
     {

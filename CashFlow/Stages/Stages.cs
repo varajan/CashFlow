@@ -311,8 +311,7 @@ public class History(ITermsService termsService, IHistoryManager historyManager)
 
         if (MessageEquals(message, 109, "Rollback last action"))
         {
-            HistoryManager.Delete(Records.First().Id);
-            //CurrentUser.History.Rollback();
+            HistoryManager.Rollback(Records.First());
         }
 
         if (Records.Count == 0)

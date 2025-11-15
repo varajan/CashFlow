@@ -71,8 +71,7 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        HistoryManagerMock.Verify(a => a.Delete(It.IsAny<long>()), Times.Never);
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Never);
     }
 
     [Test]
@@ -87,8 +86,8 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
-        HistoryManagerMock.Verify(a => a.Delete(It.IsAny<long>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Delete(It.Is<long>(x => x == Records.First().Id)), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.First().Id)), Times.Once);
 
         // NOT IMPLEMENTED!
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
@@ -107,11 +106,11 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
-        HistoryManagerMock.Verify(a => a.Delete(It.IsAny<long>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Delete(It.Is<long>(x => x == Records.Last().Id)), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.Last().Id)), Times.Once);
 
         // NOT IMPLEMENTED!
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        throw new NotImplementedException("Check next stage, check message");
     }
 
     protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object)
