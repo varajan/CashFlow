@@ -21,7 +21,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => !u.IsActive && u.Person.Circle == Circle.Small);
+        var testUser = OtherUsers.First(u => !u.IsActive && u.Person_OBSOLETE.Circle == Circle.Small);
         var testStage = GetTestStage();
 
         // Act
@@ -39,7 +39,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_SendToBigCircleUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => u.IsActive && u.Person.Circle == Circle.Big);
+        var testUser = OtherUsers.First(u => u.IsActive && u.Person_OBSOLETE.Circle == Circle.Big);
         var testStage = GetTestStage();
 
         // Act
@@ -56,7 +56,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_MoveTo_SendMoneyTo_WhenSendToValidUser()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => u.IsActive && u.Person.Circle == Circle.Small);
+        var testUser = OtherUsers.First(u => u.IsActive && u.Person_OBSOLETE.Circle == Circle.Small);
         var testStage = GetTestStage();
 
         // Act
@@ -156,7 +156,7 @@ public class SendMoneyTests : StagesBaseTest
     public void SendMoney_NoOthersOnSmallCircle_CanSendToBankOnly()
     {
         // Arrange
-        OtherUsers = OtherUsers.Where(x => x.Person.Circle == Circle.Big).ToList();
+        OtherUsers = OtherUsers.Where(x => x.Person_OBSOLETE.Circle == Circle.Big).ToList();
         var testStage = GetTestStage();
 
         // Act

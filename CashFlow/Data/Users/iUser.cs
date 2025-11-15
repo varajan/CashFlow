@@ -15,7 +15,7 @@ public interface IUser
     Language Language { get; set; }
     Stage Stage { get; set; }
     string StageName { get; set; }
-    IPerson Person { get; }
+    IPerson Person_OBSOLETE { get; }
     IHistory History { get; }
     DateTime FirstLogin { get; }
     DateTime LastActive { get; set; }

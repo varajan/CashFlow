@@ -42,7 +42,7 @@ public class ChooseProfessionTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var personMock = new Mock<IPerson>();
-        CurrentUserMock.SetupGet(u => u.Person).Returns(personMock.Object);
+        CurrentUserMock.SetupGet(u => u.Person_OBSOLETE).Returns(personMock.Object);
 
         // Act
         await testStage.HandleMessage("random");
@@ -63,7 +63,7 @@ public class ChooseProfessionTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        CurrentUserMock.Verify(u => u.Person.Create("Teacher"), Times.Once);
+        CurrentUserMock.Verify(u => u.Person_OBSOLETE.Create("Teacher"), Times.Once);
     }
 
     [Test]

@@ -21,7 +21,7 @@ public class Assets(IDataBase dataBase, IUser user) : IAssets
     public List<Asset_OLD> RealEstates => Items.Where(x => x.Type == AssetType.RealEstate).ToList();
     public List<Asset_OLD> SmallBusinesses => Items.Where(x => x.Type == AssetType.SmallBusinessType).ToList();
     public List<Asset_OLD> Coins => Items.Where(x => x.Type == AssetType.Coin).ToList();
-    public List<Asset_OLD> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == User.Person.BigCircle).ToList();
+    public List<Asset_OLD> Businesses => Items.Where(x => x.Type == AssetType.Business && x.BigCircle == User.Person_OBSOLETE.BigCircle).ToList();
     public List<Asset_OLD> Lands => Items.Where(x => x.Type == AssetType.LandTitle).ToList();
     public Asset_OLD Boat => Items.LastOrDefault(i => i.Type == AssetType.Boat);
 

@@ -98,9 +98,9 @@ public class Start(ITermsService termsService) : BaseStage(termsService)
     {
         get
         {
-            if (CurrentUser.Person.Exists)
+            if (CurrentUser.Person_OBSOLETE.Exists)
             {
-                return CurrentUser.Person.Circle == Circle.Big
+                return CurrentUser.Person_OBSOLETE.Circle == Circle.Big
                     ? New<BigCircle>()
                     : New<SmallCircle>();
             }
@@ -112,7 +112,7 @@ public class Start(ITermsService termsService) : BaseStage(termsService)
 
 public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 {
-    public override string Message => CurrentUser.Person.Description;
+    public override string Message => CurrentUser.Person_OBSOLETE.Description;
     public override List<string> Buttons
     {
         get
@@ -125,7 +125,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
             buttons.AddRange([Terms.Get(80, CurrentUser, "Downsize"), Terms.Get(39, CurrentUser, "Baby")]);
             buttons.AddRange([Terms.Get(79, CurrentUser, "Pay Check"), Terms.Get(33, CurrentUser, "Give Money")]);
 
-            if (CurrentUser.Person.ReadyForBigCircle)
+            if (CurrentUser.Person_OBSOLETE.ReadyForBigCircle)
             {
                 buttons.Add( Terms.Get(1, CurrentUser, "Go to Big Circle") );
             }
@@ -138,12 +138,12 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 
     public async override Task HandleMessage(string message)
     {
-        CurrentUser.Person.Assets.CleanUp();
-        if (CurrentUser.Person.ReadyForBigCircle)
+        CurrentUser.Person_OBSOLETE.Assets.CleanUp();
+        if (CurrentUser.Person_OBSOLETE.ReadyForBigCircle)
         {
             var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
             OtherUsers
-                .Where(x => x.Person.Exists && x.IsActive)
+                .Where(x => x.Person_OBSOLETE.Exists && x.IsActive)
                 .ToList()
                 .ForEach(u => u.Notify(notifyMessage));
         }
@@ -199,13 +199,13 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 
     private async Task Downsize()
     {
-        var expenses = CurrentUser.Person.Expenses.Total;
+        var expenses = CurrentUser.Person_OBSOLETE.Expenses.Total;
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
 
-        if (CurrentUser.Person.Cash < expenses)
+        if (CurrentUser.Person_OBSOLETE.Cash < expenses)
         {
-            var delta = expenses - CurrentUser.Person.Cash;
+            var delta = expenses - CurrentUser.Person_OBSOLETE.Cash;
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
             CurrentUser.GetCredit(credit);
@@ -213,40 +213,40 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
             await CurrentUser.Notify(loanInfo);
         }
 
-        CurrentUser.Person.Cash -= expenses;
+        CurrentUser.Person_OBSOLETE.Cash -= expenses;
         CurrentUser.History.Add(ActionType.Downsize, expenses);
     }
 
     private async Task Kid()
     {
-        if (CurrentUser.Person.Expenses.Children == 3)
+        if (CurrentUser.Person_OBSOLETE.Expenses.Children == 3)
         {
             await CurrentUser.Notify(Terms.Get(57, CurrentUser, "You're lucky parent of three children. You don't need one more."));
             return;
         }
 
-        CurrentUser.Person.Expenses.Children++;
-        CurrentUser.History.Add(ActionType.Child, CurrentUser.Person.Expenses.Children);
+        CurrentUser.Person_OBSOLETE.Expenses.Children++;
+        CurrentUser.History.Add(ActionType.Child, CurrentUser.Person_OBSOLETE.Expenses.Children);
 
-        var termId = CurrentUser.Person.Expenses.Children == 1 ? 20 : 25;
-        var childrenExpenses = CurrentUser.Person.Expenses.ChildrenExpenses.AsCurrency();
-        var count = CurrentUser.Person.Expenses.Children.ToString();
+        var termId = CurrentUser.Person_OBSOLETE.Expenses.Children == 1 ? 20 : 25;
+        var childrenExpenses = CurrentUser.Person_OBSOLETE.Expenses.ChildrenExpenses.AsCurrency();
+        var count = CurrentUser.Person_OBSOLETE.Expenses.Children.ToString();
 
-        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", CurrentUser.Person.Profession, childrenExpenses, count));
+        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", CurrentUser.Person_OBSOLETE.Profession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
     {
-        var amount = CurrentUser.Person.CashFlow;
-        CurrentUser.Person.Bankruptcy = CurrentUser.Person.Cash + amount < 0;
+        var amount = CurrentUser.Person_OBSOLETE.CashFlow;
+        CurrentUser.Person_OBSOLETE.Bankruptcy = CurrentUser.Person_OBSOLETE.Cash + amount < 0;
 
-        if (CurrentUser.Person.Bankruptcy)
+        if (CurrentUser.Person_OBSOLETE.Bankruptcy)
         {
             CurrentUser.History.Add(ActionType.Bankruptcy);
             NextStage = New<Bankruptcy>();
         }
 
-        CurrentUser.Person.Cash += amount;
+        CurrentUser.Person_OBSOLETE.Cash += amount;
         CurrentUser.History.Add(ActionType.GetMoney, amount);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
@@ -267,8 +267,8 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
             var onSmall = Terms.Get(142, CurrentUser, "On Small circle:");
             var onBig = Terms.Get(143, CurrentUser, "On Big circle:");
 
-            var onSmallCircle = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).ToList();
-            var onBigCircle = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Big).ToList();
+            var onSmallCircle = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).ToList();
+            var onBigCircle = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Big).ToList();
 
             if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
             if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
@@ -284,7 +284,7 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
         var friend = OtherUsers.FirstOrDefault(x => x.Name == message);
         if (friend is null) return;
 
-        await CurrentUser.Notify(friend.Person.BigCircle ? friend.Person.Description : friend.Description);
+        await CurrentUser.Notify(friend.Person_OBSOLETE.BigCircle ? friend.Person_OBSOLETE.Description : friend.Description);
         await CurrentUser.Notify(friend.History.TopFive);
     }
 }
@@ -332,7 +332,7 @@ public class SmallOpportunity(ITermsService termsService) : BaseStage(termsServi
 
     public override Task HandleMessage(string message)
     {
-        CurrentUser.Person.Assets.CleanUp();
+        CurrentUser.Person_OBSOLETE.Assets.CleanUp();
 
         switch (message)
         {
@@ -381,7 +381,7 @@ public class StartCompany(ITermsService termsService, IAvailableAssets available
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
 
-    protected Asset_OLD Asset => CurrentUser.Person.Assets.SmallBusinesses.First(a => a.IsDraft);
+    protected Asset_OLD Asset => CurrentUser.Person_OBSOLETE.Assets.SmallBusinesses.First(a => a.IsDraft);
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessType, CurrentUser.Language).Append(Cancel);
@@ -390,7 +390,7 @@ public class StartCompany(ITermsService termsService, IAvailableAssets available
     {
         if (IsCanceled(message)) return Task.CompletedTask;
 
-        CurrentUser.Person.Assets.Add(message, AssetType.SmallBusinessType);
+        CurrentUser.Person_OBSOLETE.Assets.Add(message, AssetType.SmallBusinessType);
         NextStage = New<StartCompanyPrice>();
         return Task.CompletedTask;
     }
@@ -414,7 +414,7 @@ public class StartCompanyPrice(ITermsService termsService, IAvailableAssets asse
 
         Asset.Price = number;
 
-        if (CurrentUser.Person.Cash < number)
+        if (CurrentUser.Person_OBSOLETE.Cash < number)
         {
             NextStage = New<StartCompanyCredit>();
             return;
@@ -426,7 +426,7 @@ public class StartCompanyPrice(ITermsService termsService, IAvailableAssets asse
 
     protected async Task CompleteTransaction()
     {
-        CurrentUser.Person.Cash -= Asset.Price;
+        CurrentUser.Person_OBSOLETE.Cash -= Asset.Price;
         CurrentUser.History.Add(ActionType.StartCompany, Asset.Id);
         Asset.IsDraft = false;
 
@@ -441,7 +441,7 @@ public class StartCompanyCredit(ITermsService termsService, IAvailableAssets ass
         get
         {
             var value = Asset.Price.AsCurrency();
-            var cash = CurrentUser.Person.Cash.AsCurrency();
+            var cash = CurrentUser.Person_OBSOLETE.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
     }
@@ -457,7 +457,7 @@ public class StartCompanyCredit(ITermsService termsService, IAvailableAssets ass
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var delta = Asset.Price - CurrentUser.Person.Cash;
+                var delta = Asset.Price - CurrentUser.Person_OBSOLETE.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 CurrentUser.GetCredit(credit);

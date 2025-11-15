@@ -30,7 +30,7 @@ public class ChooseProfession(ITermsService termsService) : BaseStage(termsServi
 
         if (profession is not null)
         {
-            CurrentUser.Person.Create(profession);
+            CurrentUser.Person_OBSOLETE.Create(profession);
             NextStage = New<SmallCircle>();
             return Task.CompletedTask;
         }

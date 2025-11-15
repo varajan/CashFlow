@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 [TestFixture]
 public class SendMoneyCreditTests : StagesBaseTest
 {
-    private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person.Circle == Circle.Small);
+    private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person_OBSOLETE.Circle == Circle.Small);
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 600 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
     private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Qtty = 1500, Type = AssetType.Transfer, IsDraft = true };
@@ -91,7 +91,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(1000), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
 
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>
@@ -131,7 +131,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(1000), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
 
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>

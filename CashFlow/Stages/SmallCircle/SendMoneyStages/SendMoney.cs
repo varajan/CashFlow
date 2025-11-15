@@ -19,7 +19,7 @@ public class SendMoney(IAssetManager assetManager, ITermsService termsService) :
             AssetManager.Delete(asset);
 
             var bank = Terms.Get(149, CurrentUser, "Bank");
-            var users = OtherUsers.Where(x => x.IsActive && x.Person.Circle == Circle.Small).Select(x => x.Name).ToList();
+            var users = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).Select(x => x.Name).ToList();
 
             return users.Append(bank).Append(Cancel);
         }
@@ -29,7 +29,7 @@ public class SendMoney(IAssetManager assetManager, ITermsService termsService) :
     {
         if (IsCanceled(message)) return;
 
-        if (MessageEquals(message, 149, "Bank") || OtherUsers.Any(x => x.IsActive && x.Person.Circle == Circle.Small && x.Name == message))
+        if (MessageEquals(message, 149, "Bank") || OtherUsers.Any(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small && x.Name == message))
         {
             var transfer = new AssetDto
             {

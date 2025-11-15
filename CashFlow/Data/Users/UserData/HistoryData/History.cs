@@ -48,7 +48,7 @@ public class History(IDataBase dataBase, IUser user) : IHistory
         var record = Records.Last();
         var asset = new Asset_OLD(DataBase, User, (int)record.Value);
         var amount = (int)record.Value;
-        var person = Persons.Get(User.Person.Profession);
+        var person = Persons.Get(User.Person_OBSOLETE.Profession);
 
         decimal percent;
         int expenses;
@@ -58,106 +58,106 @@ public class History(IDataBase dataBase, IUser user) : IHistory
             case ActionType.PayMoney:
             case ActionType.Downsize:
             case ActionType.Charity:
-                User.Person.Cash += amount;
+                User.Person_OBSOLETE.Cash += amount;
                 break;
 
             case ActionType.GetMoney:
-                User.Person.Cash -= amount;
+                User.Person_OBSOLETE.Cash -= amount;
                 break;
 
             case ActionType.Child:
-                User.Person.Expenses.Children--;
+                User.Person_OBSOLETE.Expenses.Children--;
                 break;
 
             case ActionType.Credit:
-                User.Person.Cash -= amount;
-                User.Person.Expenses.BankLoan -= amount / 10;
-                User.Person.Liabilities.BankLoan -= amount;
+                User.Person_OBSOLETE.Cash -= amount;
+                User.Person_OBSOLETE.Expenses.BankLoan -= amount / 10;
+                User.Person_OBSOLETE.Liabilities.BankLoan -= amount;
                 break;
 
             case ActionType.Mortgage:
-                User.Person.Cash += amount;
-                User.Person.Expenses.Mortgage = person.Expenses.Mortgage;
-                User.Person.Liabilities.Mortgage = person.Liabilities.Mortgage;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.Mortgage = person.Expenses.Mortgage;
+                User.Person_OBSOLETE.Liabilities.Mortgage = person.Liabilities.Mortgage;
                 break;
 
             case ActionType.SchoolLoan:
-                User.Person.Cash += amount;
-                User.Person.Expenses.SchoolLoan = person.Expenses.SchoolLoan;
-                User.Person.Liabilities.SchoolLoan = person.Liabilities.SchoolLoan;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.SchoolLoan = person.Expenses.SchoolLoan;
+                User.Person_OBSOLETE.Liabilities.SchoolLoan = person.Liabilities.SchoolLoan;
                 break;
 
             case ActionType.CarLoan:
-                User.Person.Cash += amount;
-                User.Person.Expenses.CarLoan = person.Expenses.CarLoan;
-                User.Person.Liabilities.CarLoan = person.Liabilities.CarLoan;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.CarLoan = person.Expenses.CarLoan;
+                User.Person_OBSOLETE.Liabilities.CarLoan = person.Liabilities.CarLoan;
                 break;
 
             case ActionType.CreditCard:
                 percent = (decimal)person.Expenses.CreditCard / person.Liabilities.CreditCard;
                 expenses = (int)(amount * percent);
 
-                User.Person.Cash += amount;
-                User.Person.Expenses.CreditCard += expenses;
-                User.Person.Liabilities.CreditCard += amount;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.CreditCard += expenses;
+                User.Person_OBSOLETE.Liabilities.CreditCard += amount;
                 break;
 
             case ActionType.SmallCredit:
                 percent = (decimal)person.Expenses.SmallCredits / person.Liabilities.SmallCredits;
                 expenses = (int)(amount * percent);
 
-                User.Person.Cash += amount;
-                User.Person.Expenses.SmallCredits += expenses;
-                User.Person.Liabilities.SmallCredits += amount;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.SmallCredits += expenses;
+                User.Person_OBSOLETE.Liabilities.SmallCredits += amount;
                 break;
 
             case ActionType.BankLoan:
                 percent = 0.1m;
                 expenses = (int)(amount * percent);
 
-                User.Person.Cash += amount;
-                User.Person.Expenses.BankLoan += expenses;
-                User.Person.Liabilities.BankLoan += amount;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.BankLoan += expenses;
+                User.Person_OBSOLETE.Liabilities.BankLoan += amount;
                 break;
 
             case ActionType.BankruptcyBankLoan:
                 percent = 0.1m;
                 expenses = (int)(amount * percent);
 
-                User.Person.Cash += amount;
-                User.Person.Expenses.BankLoan += expenses;
-                User.Person.Liabilities.BankLoan += amount;
-                User.Person.Bankruptcy = true;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Expenses.BankLoan += expenses;
+                User.Person_OBSOLETE.Liabilities.BankLoan += amount;
+                User.Person_OBSOLETE.Bankruptcy = true;
                 break;
 
             case ActionType.BuyRealEstate:
             case ActionType.BuyBusiness:
             case ActionType.BuyLand:
             case ActionType.StartCompany:
-                User.Person.Cash += asset.Price - asset.Mortgage;
+                User.Person_OBSOLETE.Cash += asset.Price - asset.Mortgage;
                 asset.Delete();
                 break;
 
             case ActionType.IncreaseCashFlow:
-                User.Person.Assets.SmallBusinesses.ForEach(x => x.CashFlow -= (int)record.Value);
+                User.Person_OBSOLETE.Assets.SmallBusinesses.ForEach(x => x.CashFlow -= (int)record.Value);
                 break;
 
             case ActionType.SellRealEstate:
             case ActionType.SellBusiness:
             case ActionType.SellLand:
-                User.Person.Cash -= asset.SellPrice - asset.Mortgage;
+                User.Person_OBSOLETE.Cash -= asset.SellPrice - asset.Mortgage;
                 asset.Restore();
                 break;
 
             case ActionType.BuyStocks:
             case ActionType.BuyCoins:
-                User.Person.Cash += asset.Price * asset.Qtty;
+                User.Person_OBSOLETE.Cash += asset.Price * asset.Qtty;
                 asset.Delete();
                 break;
 
             case ActionType.SellStocks:
             case ActionType.SellCoins:
-                User.Person.Cash -= asset.Qtty * asset.SellPrice;
+                User.Person_OBSOLETE.Cash -= asset.Qtty * asset.SellPrice;
                 asset.Restore();
                 break;
 
@@ -170,44 +170,44 @@ public class History(IDataBase dataBase, IUser user) : IHistory
                 break;
 
             case ActionType.MicroCredit:
-                User.Person.Liabilities.CreditCard -= amount;
-                User.Person.Expenses.CreditCard -= (int)(amount * 0.03);
+                User.Person_OBSOLETE.Liabilities.CreditCard -= amount;
+                User.Person_OBSOLETE.Expenses.CreditCard -= (int)(amount * 0.03);
                 break;
 
             case ActionType.BuyBoat:
-                User.Person.Cash += 1_000;
-                User.Person.Assets.Boat.Delete();
+                User.Person_OBSOLETE.Cash += 1_000;
+                User.Person_OBSOLETE.Assets.Boat.Delete();
                 break;
 
             case ActionType.PayOffBoat:
-                User.Person.Cash += amount;
-                User.Person.Assets.Boat.CashFlow = 340;
+                User.Person_OBSOLETE.Cash += amount;
+                User.Person_OBSOLETE.Assets.Boat.CashFlow = 340;
                 break;
 
             case ActionType.Bankruptcy:
-                User.Person.Bankruptcy = false;
+                User.Person_OBSOLETE.Bankruptcy = false;
                 break;
 
             case ActionType.BankruptcySellAsset:
-                User.Person.Cash -= asset.BancrupcySellPrice;
-                User.Person.Bankruptcy = true;
+                User.Person_OBSOLETE.Cash -= asset.BancrupcySellPrice;
+                User.Person_OBSOLETE.Bankruptcy = true;
                 asset.Restore();
                 break;
 
             case ActionType.BankruptcyDebtRestructuring:
-                User.Person.ReduceCreditsRollback();
+                User.Person_OBSOLETE.ReduceCreditsRollback();
                 break;
 
             case ActionType.GoToBigCircle:
-                User.Person.Cash -= User.Person.InitialCashFlow;
-                User.Person.InitialCashFlow = 0;
-                User.Person.Circle = Circle.Small;
+                User.Person_OBSOLETE.Cash -= User.Person_OBSOLETE.InitialCashFlow;
+                User.Person_OBSOLETE.InitialCashFlow = 0;
+                User.Person_OBSOLETE.Circle = Circle.Small;
                 break;
 
             case ActionType.Divorce:
             case ActionType.TaxAudit:
             case ActionType.Lawsuit:
-                User.Person.Cash += amount;
+                User.Person_OBSOLETE.Cash += amount;
                 break;
 
             default:

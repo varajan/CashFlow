@@ -76,7 +76,7 @@ public abstract class StagesBaseTest
         user.SetupGet(u => u.Id).Returns(id);
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);
-        user.SetupGet(u => u.Person).Returns(person.Object);
+        user.SetupGet(u => u.Person_OBSOLETE).Returns(person.Object);
 
         return user;
     }
