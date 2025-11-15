@@ -16,12 +16,12 @@ public class SendMoneyAmountTests : StagesBaseTest
     private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person.Circle == Circle.Small);
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
-    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer };
+    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(TransferAsset);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
     }
@@ -147,7 +147,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(transferAsset);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
 
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());

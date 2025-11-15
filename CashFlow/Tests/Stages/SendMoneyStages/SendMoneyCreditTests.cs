@@ -15,12 +15,12 @@ public class SendMoneyCreditTests : StagesBaseTest
     private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person.Circle == Circle.Small);
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 600 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
-    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Qtty = 1500, Type = AssetType.Transfer };
+    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Qtty = 1500, Type = AssetType.Transfer, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(TransferAsset);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
     }
@@ -117,7 +117,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = Recipient.Name;
-        AssetManagerMock.Setup(a => a.Read(AssetType.Transfer, TestPerson.Id)).Returns(transferAsset);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
 
         var transferAmount = transferAsset.Qtty;
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;

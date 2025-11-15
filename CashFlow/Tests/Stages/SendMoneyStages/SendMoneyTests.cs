@@ -9,6 +9,14 @@ namespace CashFlow.Tests.Stages.SendMoneyStages;
 [TestFixture]
 public class SendMoneyTests : StagesBaseTest
 {
+    private AssetDto Asset => new() { UserId = CurrentUserMock.Object.Id, Type = AssetType.Transfer, IsDraft = true };
+
+    [SetUp]
+    public void Setup()
+    {
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns([Asset]);
+    }
+
     [Test]
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
     {

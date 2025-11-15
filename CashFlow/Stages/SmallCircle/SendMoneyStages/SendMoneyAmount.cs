@@ -25,7 +25,7 @@ public class SendMoneyAmount(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+        var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {

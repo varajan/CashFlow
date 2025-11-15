@@ -15,7 +15,7 @@ public class SendMoneyCredit(
     {
         get
         {
-            var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+            var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
             var currentUserPerson = PersonManager.Read(CurrentUser.Id);
             var value = asset.Qtty.AsCurrency();
             var cash = currentUserPerson.Cash.AsCurrency();
@@ -27,7 +27,7 @@ public class SendMoneyCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+        var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
 
         switch (message)
         {

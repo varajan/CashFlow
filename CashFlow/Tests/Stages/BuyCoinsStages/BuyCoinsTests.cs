@@ -14,6 +14,7 @@ public class BuyCoinsTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinTitle, It.IsAny<Language>())).Returns(CoinNames);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]
@@ -21,6 +22,7 @@ public class BuyCoinsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var buttons = CoinNames.Append("Cancel");
 
         // Act
 
@@ -28,7 +30,7 @@ public class BuyCoinsTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.Message, Is.EqualTo("Title:"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Coin Uno", "Coin Dos", "Cancel" }));
+            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
     }
 
@@ -46,7 +48,7 @@ public class BuyCoinsTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(CoinNames))]
-    public async Task BuyCoins_SelectInvalidCoin_MoveForward(string coinName)
+    public async Task BuyCoins_SelectValidCoin_MoveForward(string coinName)
     {
         // Arrange
         var testStage = GetTestStage();

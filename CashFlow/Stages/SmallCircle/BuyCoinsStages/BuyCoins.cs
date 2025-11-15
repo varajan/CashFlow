@@ -22,6 +22,9 @@ public class BuyCoins(
 
     public override Task HandleMessage(string message)
     {
+        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
+        AssetManager.Delete(asset);
+
         if (IsCanceled(message))
         {
             NextStage = New<Start>();
@@ -65,6 +68,12 @@ public class BuyCoinsCount(
 
     public async override Task HandleMessage(string message)
     {
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
+
         var number = message.AsCurrency();
 
         if (number <= 0)
@@ -73,7 +82,10 @@ public class BuyCoinsCount(
             return;
         }
 
-        CurrentUser.Person.Assets.Coins.First(a => a.IsDraft).Qtty = number;
+        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        asset.Qtty = number;
+        AssetManager.Update(asset);
+
         NextStage = New<BuyCoinsPrice>();
     }
 }
@@ -81,14 +93,24 @@ public class BuyCoinsCount(
 public class BuyCoinsPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
+    IHistoryManager historyManager,
+    IPersonManager personManager,
     IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager)
 {
-    protected Asset_OLD Asset => CurrentUser.Person.Assets.Coins.First(a => a.IsDraft);
+    protected IHistoryManager HistoryManager { get; } = historyManager;
+    protected IPersonManager PersonManager { get; } = personManager;
+
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
+
         var number = message.AsCurrency();
 
         if (number <= 0)
@@ -97,9 +119,12 @@ public class BuyCoinsPrice(
             return;
         }
 
-        Asset.Price = number;
+        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).Single(x => x.IsDraft);
+        asset.Price = number;
+        AssetManager.Update(asset);
 
-        if (CurrentUser.Person.Cash < Asset.Price * Asset.Qtty)
+        var person = PersonManager.Read(CurrentUser.Id);
+        if (person.Cash < asset.Price * asset.Qtty)
         {
             NextStage = New<BuyCoinsCredit>();
             return;
@@ -111,9 +136,17 @@ public class BuyCoinsPrice(
 
     protected async Task CompleteTransaction()
     {
-        CurrentUser.Person.Cash -= Asset.Price * Asset.Qtty;
-        CurrentUser.History.Add(ActionType.BuyCoins, Asset.Id);
-        Asset.IsDraft = false;
+        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        var person = PersonManager.Read(CurrentUser.Id);
+
+        person.Cash -= asset.Price * asset.Qtty;
+        PersonManager.Update(person);
+        
+        asset.IsDraft = false;
+        AssetManager.Update(asset);
+        
+        HistoryManager.Add(ActionType.BuyCoins, asset.Id, CurrentUser);
+
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }
 }
@@ -121,13 +154,16 @@ public class BuyCoinsPrice(
 public class BuyCoinsCredit(
     ITermsService termsService,
     IAvailableAssets assets,
-    IAssetManager assetManager) : BuyCoinsPrice(termsService, assets, assetManager)
+    IHistoryManager historyManager,
+    IPersonManager personManager,
+    IAssetManager assetManager) : BuyCoinsPrice(termsService, assets, historyManager, personManager, assetManager)
 {
     public override string Message
     {
         get
         {
-            var value = (Asset.Qtty * Asset.Price).AsCurrency();
+            var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+            var value = (asset.Qtty * asset.Price).AsCurrency();
             var cash = CurrentUser.Person.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
@@ -144,7 +180,8 @@ public class BuyCoinsCredit(
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var delta = Asset.Price * Asset.Qtty - CurrentUser.Person.Cash;
+                var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+                var delta = asset.Price * asset.Qtty - CurrentUser.Person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 CurrentUser.GetCredit(credit);

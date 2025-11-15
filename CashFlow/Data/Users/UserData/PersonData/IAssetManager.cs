@@ -10,7 +10,7 @@ public interface IAssetManager
     AssetDto Create(AssetDto asset);
     void Update(AssetDto asset);
     AssetDto Read(long id, long userId);
-    AssetDto Read(AssetType type, long userId);
+    List<AssetDto> ReadAll(AssetType type, long userId);
     string GetDescription(AssetDto asset, IUser user);
     int GetBancrupcySellPrice(AssetDto asset);
     void Sell(AssetDto asset, ActionType action, int price, IUser user);
@@ -87,10 +87,10 @@ public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManag
         };
     }
 
-    public AssetDto Read(AssetType type, long userId)
+    public List<AssetDto> ReadAll(AssetType type, long userId)
     {
-        var id = dataBase.GetValue($"SELECT * FROM Assets WHERE Type = {type} AND UserID = {userId}").ToLong();
-        return Read(id, userId);
+        var ids = dataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {userId}");
+        return ids.Select(id => Read(id.ToLong(), userId)).ToList();
     }
 
     public string GetDescription(AssetDto asset, IUser user)

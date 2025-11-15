@@ -15,7 +15,7 @@ public class SendMoney(IAssetManager assetManager, ITermsService termsService) :
     {
         get
         {
-            var asset = AssetManager.Read(AssetType.Transfer, CurrentUser.Id);
+            var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
             AssetManager.Delete(asset);
 
             var bank = Terms.Get(149, CurrentUser, "Bank");
