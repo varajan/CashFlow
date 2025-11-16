@@ -8,6 +8,10 @@ using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow;
 
@@ -31,6 +35,15 @@ public static class ServicesProvider
         services.AddTransient<ChooseLanguage>();
         services.AddTransient<ChooseProfession>();
         services.AddTransient<History>();
+
+        services.AddTransient<SmallOpportunity>();
+
+        services.AddTransient<BuyStocks>();
+        services.AddTransient<SellStocks>();
+        services.AddTransient<StocksMultiply>();
+        services.AddTransient<StocksReduce>();
+        services.AddTransient<BuyRealEstate>();
+        services.AddTransient<BuyLand>();
 
         services.AddTransient<BuyCoins>();
         services.AddTransient<BuyCoinsCount>();

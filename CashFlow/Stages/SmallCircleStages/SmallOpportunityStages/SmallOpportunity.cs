@@ -1,6 +1,9 @@
 ﻿using CashFlow.Data;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
@@ -27,27 +30,27 @@ public class SmallOpportunity(ITermsService termsService) : BaseStage(termsServi
         switch (message)
         {
             case var m when MessageEquals(m, 35, "Buy Stocks"):
-                //NextStage = New<Start>();
+                NextStage = New<BuyStocks>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 36, "Sell Stocks"):
-                //NextStage = New<Start>();
+                NextStage = New<SellStocks>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 82, "Stocks x2"):
-                //NextStage = New<Start>();
+                NextStage = New<StocksMultiply>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 83, "Stocks ÷2"):
-                //NextStage = New<Start>();
+                NextStage = New<StocksReduce>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 37, "Buy Real Estate"):
-                //NextStage = New<Start>();
+                NextStage = New<BuyRealEstate>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 94, "Buy Land"):
-                //NextStage = New<Start>();
+                NextStage = New<BuyLand>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 119, "Buy coins"):

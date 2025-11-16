@@ -1,7 +1,10 @@
 ﻿using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Tests.Stages.SmallOpportunityStages;
 
@@ -36,12 +39,12 @@ public class SmallOpportunityTests : StagesBaseTest
         });
     }
 
-    [TestCase("Buy Stocks", typeof(Start))]
-    [TestCase("Sell Stocks", typeof(Start))]
-    [TestCase("Stocks x2", typeof(Start))]
-    [TestCase("Stocks ÷2", typeof(Start))]
-    [TestCase("Buy Real Estate", typeof(Start))]
-    [TestCase("Buy Land", typeof(Start))]
+    [TestCase("Buy Stocks", typeof(BuyStocks))]
+    [TestCase("Sell Stocks", typeof(SellStocks))]
+    [TestCase("Stocks x2", typeof(StocksMultiply))]
+    [TestCase("Stocks ÷2", typeof(StocksReduce))]
+    [TestCase("Buy Real Estate", typeof(BuyRealEstate))]
+    [TestCase("Buy Land", typeof(BuyLand))]
     [TestCase("Buy coins", typeof(BuyCoins))]
     [TestCase("Start a company", typeof(StartCompany))]
     [TestCase("Cancel", typeof(Start))]
