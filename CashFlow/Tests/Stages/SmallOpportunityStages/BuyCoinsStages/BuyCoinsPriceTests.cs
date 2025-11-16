@@ -3,9 +3,10 @@ using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.BuyCoinsStages;
+namespace CashFlow.Tests.Stages.SmallOpportunityStages.BuyCoinsStages;
 
 [TestFixture]
 public class BuyCoinsPriceTests : StagesBaseTest
@@ -87,7 +88,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
             Assert.That(AssetsList[1].Price, Is.EqualTo(price.AsCurrency()));
             Assert.That(AssetsList[1].IsDraft, Is.False);
 
-            PersonManagerMock.Verify(m => m.Update( It.Is<PersonDto>(x => x.Cash == personCash) ), Times.Once);
+            PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
             HistoryManagerMock.Verify(m => m.Add(
                 ActionType.BuyCoins,
@@ -100,7 +101,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
     [TestCase(100, 1, 100, false)]
     [TestCase(101, 2, 50, false)]
     [TestCase(100, 1, 101, true)]
-    [TestCase(101, 2, 51,  true)]
+    [TestCase(101, 2, 51, true)]
     public async Task BuyCoinsPrice_SelectValidCount_MoveForward(int cash, int qtty, int price, bool creditIsNeeded)
     {
         // Arrange

@@ -4,7 +4,7 @@ using CashFlow.Data;
 using System.Text;
 using CashFlow.Data.DTOs;
 
-namespace CashFlow.Stages;
+namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoins(
     ITermsService termsService,

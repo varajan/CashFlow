@@ -1,9 +1,10 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.BuyCoinsStages;
+namespace CashFlow.Tests.Stages.SmallOpportunityStages.BuyCoinsStages;
 
 [TestFixture]
 public class BuyCoinsTests : StagesBaseTest

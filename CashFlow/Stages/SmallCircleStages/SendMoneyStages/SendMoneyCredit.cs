@@ -3,7 +3,7 @@ using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Data;
 using CashFlow.Extensions;
 
-namespace CashFlow.Stages;
+namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyCredit(
     IAssetManager assetManager,

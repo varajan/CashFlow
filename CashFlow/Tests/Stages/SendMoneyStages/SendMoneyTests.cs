@@ -3,6 +3,7 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using Moq;
 using CashFlow.Data.DTOs;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 namespace CashFlow.Tests.Stages.SendMoneyStages;
 

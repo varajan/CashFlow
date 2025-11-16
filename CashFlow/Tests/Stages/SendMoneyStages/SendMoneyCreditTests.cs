@@ -4,6 +4,7 @@ using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using Moq;
 using MoreLinq;
 

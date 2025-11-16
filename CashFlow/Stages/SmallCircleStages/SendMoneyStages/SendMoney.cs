@@ -3,7 +3,7 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 
-namespace CashFlow.Stages;
+namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoney(IAssetManager assetManager, ITermsService termsService) : BaseStage(termsService)
 {
@@ -27,7 +27,11 @@ public class SendMoney(IAssetManager assetManager, ITermsService termsService) :
 
     public async override Task HandleMessage(string message)
     {
-        if (IsCanceled(message)) return;
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
 
         if (MessageEquals(message, 149, "Bank") || OtherUsers.Any(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small && x.Name == message))
         {

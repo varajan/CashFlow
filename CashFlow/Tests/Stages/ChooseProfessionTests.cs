@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages;

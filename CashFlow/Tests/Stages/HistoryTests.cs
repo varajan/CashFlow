@@ -109,8 +109,10 @@ public class HistoryTests : StagesBaseTest
         HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
         HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.Last().Id)), Times.Once);
 
-        // NOT IMPLEMENTED!
+#if DEBUG
+#else
         throw new NotImplementedException("Check next stage, check message");
+#endif
     }
 
     protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object)

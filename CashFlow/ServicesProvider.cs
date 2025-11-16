@@ -1,10 +1,13 @@
-﻿using CashFlow.Data.DataBase;
-using CashFlow.Data;
+﻿using CashFlow.Data;
+using CashFlow.Data.DataBase;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Loggers;
 using Microsoft.Extensions.DependencyInjection;
 using CashFlow.Stages;
-using CashFlow.Data.Users.UserData.PersonData;
-using AvailableAssets = CashFlow.Data.AvailableAssets;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 
 namespace CashFlow;
 
@@ -33,6 +36,10 @@ public static class ServicesProvider
         services.AddTransient<BuyCoinsCount>();
         services.AddTransient<BuyCoinsPrice>();
         services.AddTransient<BuyCoinsCredit>();
+
+        services.AddTransient<StartCompany>();
+        services.AddTransient<StartCompanyPrice>();
+        services.AddTransient<StartCompanyCredit>();
 
         services.AddTransient<SendMoney>();
         services.AddTransient<SendMoneyAmount>();

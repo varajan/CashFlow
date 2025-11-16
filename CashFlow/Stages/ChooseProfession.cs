@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data;
 using CashFlow.Extensions;
+using CashFlow.Stages.SmallCircleStages;
 using System.Text;
 
 namespace CashFlow.Stages;
