@@ -1,5 +1,5 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Users;
+﻿using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
@@ -60,6 +60,3 @@ public abstract class BaseStage : IStage
 
     protected string Cancel => Terms.Get(6, CurrentUser, "Cancel");
 }
-
-// ----------------------------------------
-

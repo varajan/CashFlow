@@ -1,20 +1,22 @@
 ﻿using CashFlow.Data;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages;
 using System.Text;
 
 namespace CashFlow.Stages;
 
-public class ChooseProfession(ITermsService termsService) : BaseStage(termsService)
+public class ChooseProfession(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
 {
-    public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
-    public override List<string> Buttons => Professions;
+    private IPersonManager PersonManager { get; } = personManager;
 
-    private List<string> Professions => Persons.GetAll()
+    public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
+    public override IEnumerable<string> Buttons => Professions.Append(Terms.Get(139, CurrentUser, "Random"));
+
+    private IEnumerable<string> Professions => Persons.GetAll()
         .Select(x => x.Profession[CurrentUser.Language])
-        .OrderBy(x => x)
-        .Append(Terms.Get(139, CurrentUser, "Random"))
-        .ToList();
+        .OrderBy(x => x);
 
     public override Task HandleMessage(string message)
     {
@@ -31,7 +33,7 @@ public class ChooseProfession(ITermsService termsService) : BaseStage(termsServi
 
         if (profession is not null)
         {
-            CurrentUser.Person_OBSOLETE.Create(profession);
+            PersonManager.Create(profession, CurrentUser.Id);
             NextStage = New<SmallCircle>();
             return Task.CompletedTask;
         }

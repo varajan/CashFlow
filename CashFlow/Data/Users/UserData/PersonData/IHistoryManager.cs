@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.DataBase;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 

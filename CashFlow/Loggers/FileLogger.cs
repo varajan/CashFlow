@@ -1,4 +1,6 @@
-﻿namespace CashFlow.Loggers;
+﻿using CashFlow.Interfaces;
+
+namespace CashFlow.Loggers;
 
 public class FileLogger : ILogger
 {

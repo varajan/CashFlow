@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Data.Users.UserData.HistoryData;
 

@@ -1,9 +1,9 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data;
 using CashFlow.Extensions;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages;
 

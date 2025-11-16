@@ -1,4 +1,4 @@
-﻿using CashFlow.Data;
+﻿using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;

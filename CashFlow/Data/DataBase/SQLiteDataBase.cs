@@ -1,5 +1,5 @@
 ﻿using CashFlow.Extensions;
-using CashFlow.Loggers;
+using CashFlow.Interfaces;
 using System.Data.SQLite;
 
 namespace CashFlow.Data.DataBase;

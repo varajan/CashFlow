@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.Users;
 
-namespace CashFlow.Data;
+namespace CashFlow.Interfaces;
 
 public interface ITermsService
 {

@@ -1,5 +1,5 @@
-﻿using CashFlow.Data.DataBase;
-using CashFlow.Extensions;
+﻿using CashFlow.Extensions;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Data;
 

@@ -2,6 +2,7 @@
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Data;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 

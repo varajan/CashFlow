@@ -1,13 +1,13 @@
-﻿using CashFlow.Data.DataBase;
-using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IPersonManager
 {
     bool Exists(long id);
-    void Create(PersonDto person);
+    void Create(string profession, long userId);
     void Update(PersonDto person);
     PersonDto Read(long id);
     string GetDescription(PersonDto person);
@@ -16,9 +16,27 @@ public interface IPersonManager
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
 {
-    public void Create(PersonDto person)
+    public void Create(string profession, long userId)
     {
         throw new NotImplementedException();
+
+        var defaultProfessionData = Persons.Get(profession);
+
+        //Clear();
+        dataBase.Execute($"INSERT INTO Persons " +
+                   "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
+                   $"VALUES ({userId}, '', '', '', '', '', '', '', 0, 0)");
+
+        //Assets.Clear();
+        //Profession = defaultProfessionData.Profession[User.Language];
+        //Cash = defaultProfessionData.Cash;
+        //Salary = defaultProfessionData.Salary;
+
+        //Expenses.Clear();
+        //Expenses.Create(defaultProfessionData.Expenses);
+
+        //Liabilities.Clear();
+        //Liabilities.Create(defaultProfessionData.Liabilities);
     }
 
     public void Update(PersonDto person)

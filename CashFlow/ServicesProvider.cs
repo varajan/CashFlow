@@ -12,6 +12,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlow.Interfaces;
 
 namespace CashFlow;
 

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace CashFlow.Loggers;
+﻿namespace CashFlow.Interfaces;
 
 public interface ILogger
 {

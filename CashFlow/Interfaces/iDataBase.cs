@@ -1,4 +1,4 @@
-﻿namespace CashFlow.Data.DataBase;
+﻿namespace CashFlow.Interfaces;
 
 public interface IDataBase
 {

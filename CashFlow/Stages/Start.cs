@@ -1,12 +1,14 @@
 ﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Data;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Start(ITermsService termsService) : BaseStage(termsService)
+public class Start(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
 {
+    private IPersonManager PersonManager { get; } = personManager;
+
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;
 
@@ -14,9 +16,11 @@ public class Start(ITermsService termsService) : BaseStage(termsService)
     {
         get
         {
-            if (CurrentUser.Person_OBSOLETE.Exists)
+            if (PersonManager.Exists(CurrentUser.Id))
             {
-                return CurrentUser.Person_OBSOLETE.Circle == Circle.Big
+                var circle = PersonManager.Read(CurrentUser.Id).Circle;
+
+                return circle == Circle.Big
                     ? New<BigCircle>()
                     : New<SmallCircle>();
             }

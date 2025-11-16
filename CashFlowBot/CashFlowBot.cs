@@ -1,10 +1,6 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.DataBase;
-using CashFlow.Extensions;
-using CashFlow.Loggers;
+﻿using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Data.Users;
-using CashFlowBot.Extensions;
 using System.Diagnostics;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -12,6 +8,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using System.Text.RegularExpressions;
 using CashFlow;
+using CashFlow.Interfaces;
 
 namespace CashFlowBot;
 
@@ -19,8 +16,8 @@ public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
-    private static ITermsService TermsService => ServicesProvider.Get<ITermsService>();
-    private static IAvailableAssets Assets => ServicesProvider.Get<IAvailableAssets>();
+    //private static ITermsService TermsService => ServicesProvider.Get<ITermsService>();
+    //private static IAvailableAssets Assets => ServicesProvider.Get<IAvailableAssets>();
 
     private static string BotToken
     {
@@ -113,7 +110,7 @@ public class CashFlowBot
         user.Create();
         user.Name = userName;
 
-        var start = ServicesProvider.Get<Start>()
+        var start = ServicesProvider.Get<ChooseLanguage>()
             .SetCurrentUser(user)
             .SetAllUsers(users);
 
