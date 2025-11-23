@@ -1,10 +1,12 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlow.Stages.BigCircleStages;
 using CashFlow.Interfaces;
-using CashFlow.Data.Users.UserData.PersonData;
+using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
@@ -41,16 +43,13 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
     public async override Task HandleMessage(string message)
     {
+        var person = PersonManager.Read(CurrentUser.Id);
         var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
 
-        CurrentUser.Person_OBSOLETE.Assets.CleanUp();
-        if (CurrentUser.Person_OBSOLETE.ReadyForBigCircle)
+        if (person.ReadyForBigCircle)
         {
             var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
-            OtherUsers
-                .Where(x => x.Person_OBSOLETE.Exists && x.IsActive)
-                .ToList()
-                .ForEach(u => u.Notify(notifyMessage));
+            OtherUsers.Where(x => x.IsActive).ForEach(u => u.Notify(notifyMessage));
         }
 
         switch (message)
@@ -88,8 +87,8 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
                 await Downsize();
                 return;
 
-            case var m when MessageEquals(m, 39, "Kid"):
-                await Kid();
+            case var m when MessageEquals(m, 39, "Baby"):
+                await Baby();
                 return;
 
             case var m when MessageEquals(m, 79, "Pay Check"):
@@ -99,18 +98,23 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
             case var m when MessageEquals(m, 33, "Give Money"):
                 NextStage = New<SendMoney>();
                 return;
+
+            case var m when person.ReadyForBigCircle && MessageEquals(m, 1, "Go to Big Circle"):
+                NextStage = New<BigCircle>();
+                return;
         }
     }
 
     private async Task Downsize()
     {
-        var expenses = CurrentUser.Person_OBSOLETE.Expenses.Total;
+        var person = PersonManager.Read(CurrentUser.Id);
+        var expenses = person.Expenses.Total;
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
 
-        if (CurrentUser.Person_OBSOLETE.Cash < expenses)
+        if (person.Cash < expenses)
         {
-            var delta = expenses - CurrentUser.Person_OBSOLETE.Cash;
+            var delta = expenses - person.Cash;
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
             CurrentUser.GetCredit(credit);
@@ -118,41 +122,47 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
             await CurrentUser.Notify(loanInfo);
         }
 
-        CurrentUser.Person_OBSOLETE.Cash -= expenses;
-        CurrentUser.History_OBSOLETE.Add(ActionType.Downsize, expenses);
+        person.Cash -= expenses;
+        PersonManager.Update(person);
+        HistoryManager.Add(ActionType.Downsize, expenses, CurrentUser);
     }
 
-    private async Task Kid()
+    private async Task Baby()
     {
-        if (CurrentUser.Person_OBSOLETE.Expenses.Children == 3)
+        var person = PersonManager.Read(CurrentUser.Id);
+
+        if (person.Expenses.Children == 3)
         {
             await CurrentUser.Notify(Terms.Get(57, CurrentUser, "You're lucky parent of three children. You don't need one more."));
             return;
         }
 
-        CurrentUser.Person_OBSOLETE.Expenses.Children++;
-        CurrentUser.History_OBSOLETE.Add(ActionType.Child, CurrentUser.Person_OBSOLETE.Expenses.Children);
+        person.Expenses.Children++;
+        PersonManager.Update(person);
+        HistoryManager.Add(ActionType.Child, person.Expenses.Children, CurrentUser);
 
-        var termId = CurrentUser.Person_OBSOLETE.Expenses.Children == 1 ? 20 : 25;
-        var childrenExpenses = CurrentUser.Person_OBSOLETE.Expenses.ChildrenExpenses.AsCurrency();
-        var count = CurrentUser.Person_OBSOLETE.Expenses.Children.ToString();
+        var termId = person.Expenses.Children == 1 ? 20 : 25;
+        var childrenExpenses = person.Expenses.ChildrenExpenses.AsCurrency();
+        var count = person.Expenses.Children.ToString();
 
-        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", CurrentUser.Person_OBSOLETE.Profession, childrenExpenses, count));
+        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", person.Profession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
     {
-        var amount = CurrentUser.Person_OBSOLETE.CashFlow;
-        CurrentUser.Person_OBSOLETE.Bankruptcy = CurrentUser.Person_OBSOLETE.Cash + amount < 0;
+        var person = PersonManager.Read(CurrentUser.Id);
+        var amount = person.CashFlow;
+        person.Bankruptcy = amount < 0 && person.Cash + amount < 0;
 
-        if (CurrentUser.Person_OBSOLETE.Bankruptcy)
+        if (person.Bankruptcy)
         {
-            CurrentUser.History_OBSOLETE.Add(ActionType.Bankruptcy);
+            HistoryManager.Add(ActionType.Bankruptcy, 0, CurrentUser);
             NextStage = New<Bankruptcy>();
         }
 
-        CurrentUser.Person_OBSOLETE.Cash += amount;
-        CurrentUser.History_OBSOLETE.Add(ActionType.GetMoney, amount);
+        person.Cash += amount;
+        PersonManager.Update(person);
+        HistoryManager.Add(ActionType.GetMoney, amount, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
     }

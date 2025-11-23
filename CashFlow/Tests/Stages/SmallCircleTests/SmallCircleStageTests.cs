@@ -1,8 +1,11 @@
-﻿using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
+using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
@@ -17,7 +20,6 @@ public class SmallCircleStageTests : StagesBaseTest
     public void Setup()
     {
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        //HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Records);
     }
 
     [Test, Ignore("Not applicable")]
@@ -130,21 +132,191 @@ public class SmallCircleStageTests : StagesBaseTest
     }
 
     [Test]
-    public async Task SmallCircle_Downsize()
+    public async Task SmallCircle_Downsize_EnoughCash()
     {
         // Arrange
         var testStage = GetTestStage();
+
+        var downsizeAmount = 100;
+        var testPerson = TestPerson.Clone();
+        var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
+
+        testPerson.Expenses = new() { Taxes = downsizeAmount };
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Downsize");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BigOpportunity>());
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+
+        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit(It.IsAny<int>()), Times.Never);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
+        HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }
 
+    [Test]
+    public async Task SmallCircle_Downsize_NotEnoughCash()
+    {
+        // Arrange
+        var testStage = GetTestStage();
 
-    //buttons.AddRange "Downsize", "Baby", "Pay Check", "Give Money"]);
-    //if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
+        var downsizeAmount = 101;
+        var testPerson = TestPerson.Clone();
+        var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
+
+        testPerson.Expenses = new() { Taxes = downsizeAmount };
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Downsize");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+
+        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify($"You've taken {1000.AsCurrency()} from bank."), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit(1000), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
+        HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
+    }
+
+    [TestCase(0)]
+    [TestCase(1)]
+    [TestCase(2)]
+    public async Task SmallCircle_Baby(int children)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        var testPerson = TestPerson.Clone();
+        testPerson.Profession = "Parent";
+        testPerson.Expenses = new() { Children = children, PerChild = 50 };
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        var expenses = testPerson.Expenses.PerChild * (children + 1);
+        var message = $"{testPerson.Profession}, you have {expenses.AsCurrency()} children expenses and {children+1} children.";
+
+        // Act
+        await testStage.HandleMessage("baby");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+
+        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Expenses.Children == children + 1)), Times.Once);
+        HistoryManagerMock.Verify(h => h.Add(ActionType.Child, children + 1, CurrentUserMock.Object), Times.Once);
+    }
+
+    [TestCase(3)]
+    public async Task SmallCircle_Baby_LimitReached(int children)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var message = "You're lucky parent of three children. You don't need one more.";
+
+        var testPerson = TestPerson.Clone();
+        testPerson.Profession = "Parent";
+        testPerson.Expenses = new() { Children = children, PerChild = 50 };
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("baby");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+
+        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        HistoryManagerMock.Verify(h => h.Add(It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+    }
+
+    [TestCase(0, 0)]
+    [TestCase(1, 1)]
+    [TestCase(1, -1)]
+    [TestCase(1, -2)]
+    [TestCase(-1, 1)]
+    public async Task SmallCircle_PayCheck_CanPay(int cashFlow, int cashAmount)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var testPerson = TestPerson.Clone();
+        testPerson.CashFlow = cashFlow;
+        testPerson.Cash = cashAmount;
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Pay check");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+            pr.Id == TestPerson.Id &&
+            pr.Bankruptcy == false &&
+            pr.Cash == cashAmount + cashFlow)),
+            Times.Once);
+
+        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{cashFlow.AsCurrency()}*"), Times.Once);
+    }
+
+    [TestCase(-2, 1)]
+    [TestCase(-1, 0)]
+    public async Task SmallCircle_PayCheck_CannotPay(int cashFlow, int cashAmount)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var testPerson = TestPerson.Clone();
+        testPerson.CashFlow = cashFlow;
+        testPerson.Cash = cashAmount;
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Pay check");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
+
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+            pr.Id == TestPerson.Id &&
+            pr.Bankruptcy == true &&
+            pr.Cash == cashAmount + cashFlow)),
+            Times.Once);
+
+        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{cashFlow.AsCurrency()}*"), Times.Once);
+    }
+
+    [Test]
+    public async Task SmallCircle_GiveMoney()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Give money");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
+    }
+
+    [Test]
+    public async Task SmallCircle_GoToBigCircle([Values] bool isReadyForBigCircle)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var nextStage = isReadyForBigCircle ? typeof(BigCircle) : typeof(SmallCircle);
+        var testPerson = TestPerson.Clone();
+        testPerson.ReadyForBigCircle = isReadyForBigCircle;
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Go to Big Circle");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+    }
 
     [Test]
     public async Task SmallCircle_CanNotBeCanceled()

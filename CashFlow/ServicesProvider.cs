@@ -1,19 +1,20 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Interfaces;
 using CashFlow.Loggers;
-using Microsoft.Extensions.DependencyInjection;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CashFlow;
 
@@ -37,6 +38,7 @@ public static class ServicesProvider
         services.AddTransient<ChooseLanguage>();
         services.AddTransient<ChooseProfession>();
         services.AddTransient<History>();
+        services.AddTransient<Bankruptcy>();
 
         services.AddTransient<ShowMyData>();
         services.AddTransient<Friends>();
@@ -62,6 +64,8 @@ public static class ServicesProvider
         services.AddTransient<SendMoney>();
         services.AddTransient<SendMoneyAmount>();
         services.AddTransient<SendMoneyCredit>();
+
+        services.AddTransient<BigCircle>();
 
         Instance = services.BuildServiceProvider();
     }

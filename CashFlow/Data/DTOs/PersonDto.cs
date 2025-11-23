@@ -13,4 +13,8 @@ public class PersonDto
     public int InitialCashFlow { get; set; }
     public bool Bankruptcy { get; set; }
     public bool CreditsReduced { get; set; }
+
+    public int CashFlow { get; set; }
+
+    public ExpensesDto Expenses { get; set; } = new();
 }
