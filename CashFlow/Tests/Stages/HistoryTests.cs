@@ -1,6 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 
 namespace CashFlow.Tests.Stages;
@@ -98,21 +99,21 @@ public class HistoryTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns([Records.Last()]);
+        HistoryManagerMock
+            .SetupSequence(x => x.Read(CurrentUserMock.Object.Id))
+            .Returns([Records.Last()])
+            .Returns([])
+            .Returns([]);
 
         // Act
         await testStage.HandleMessage("Rollback last action");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<History>());
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
         HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.Last().Id)), Times.Once);
-
-#if DEBUG
-#else
-        throw new NotImplementedException("Check next stage, check message");
-#endif
+        CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
     }
 
     protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object)
