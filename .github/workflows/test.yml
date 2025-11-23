@@ -22,4 +22,4 @@ jobs:
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test CashFlowBot.sln --configuration Release --no-build --logger "console;verbosity=quiet"
+        run: dotnet test CashFlowBot.sln --configuration Release --no-build --logger --verbosity=minimal
