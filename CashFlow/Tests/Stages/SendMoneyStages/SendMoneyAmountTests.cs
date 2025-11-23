@@ -103,7 +103,7 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var historyMock = new Mock<IHistory>();
-        CurrentUserMock.SetupGet(u => u.History).Returns(historyMock.Object);
+        CurrentUserMock.SetupGet(u => u.History_OBSOLETE).Returns(historyMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
@@ -156,7 +156,7 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var historyMock = new Mock<IHistory>();
-        CurrentUserMock.SetupGet(u => u.History).Returns(historyMock.Object);
+        CurrentUserMock.SetupGet(u => u.History_OBSOLETE).Returns(historyMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");

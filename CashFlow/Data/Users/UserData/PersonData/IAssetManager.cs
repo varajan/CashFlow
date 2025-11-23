@@ -153,7 +153,7 @@ public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManag
     {
         asset.SellPrice = price;
         Delete(asset);
-        user.History.Add(action, asset.Id);
+        user.History_OBSOLETE.Add(action, asset.Id);
     }
 
     public void Restore(AssetDto asset)

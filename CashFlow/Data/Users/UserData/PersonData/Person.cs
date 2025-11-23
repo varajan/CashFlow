@@ -99,7 +99,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
     public void ReduceCreditsRollback()
     {
         var person = Persons.Get(User.Person_OBSOLETE.Profession);
-        var count = User.History.Count(ActionType.BankruptcyDebtRestructuring);
+        var count = User.History_OBSOLETE.Count(ActionType.BankruptcyDebtRestructuring);
 
         Expenses.CarLoan = person.Expenses.CarLoan;
         Expenses.CreditCard = person.Expenses.CreditCard;

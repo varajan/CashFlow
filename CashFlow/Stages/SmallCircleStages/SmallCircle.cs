@@ -4,17 +4,25 @@ using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Interfaces;
+using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
+public class SmallCircle(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager) : BaseStage(termsService)
 {
-    public override string Message => CurrentUser.Person_OBSOLETE.Description;
+    private IHistoryManager HistoryManager { get; init; } = historyManager;
+    private IPersonManager PersonManager { get; init; } = personManager;
+
+    public override string Message => PersonManager.GetDescription(CurrentUser.Id);
+
     public override List<string> Buttons
     {
         get
         {
-            List<string> buttons = CurrentUser.History.IsEmpty
+            var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
+            var isReadyForBigCircle = PersonManager.Read(CurrentUser.Id).ReadyForBigCircle;
+
+            List<string> buttons = isHistoryEmpty
                 ? [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends")]
                 : [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends"), Terms.Get(2, CurrentUser, "History")];
 
@@ -22,7 +30,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
             buttons.AddRange([Terms.Get(80, CurrentUser, "Downsize"), Terms.Get(39, CurrentUser, "Baby")]);
             buttons.AddRange([Terms.Get(79, CurrentUser, "Pay Check"), Terms.Get(33, CurrentUser, "Give Money")]);
 
-            if (CurrentUser.Person_OBSOLETE.ReadyForBigCircle)
+            if (isReadyForBigCircle)
             {
                 buttons.Add(Terms.Get(1, CurrentUser, "Go to Big Circle"));
             }
@@ -33,6 +41,8 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 
     public async override Task HandleMessage(string message)
     {
+        var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
+
         CurrentUser.Person_OBSOLETE.Assets.CleanUp();
         if (CurrentUser.Person_OBSOLETE.ReadyForBigCircle)
         {
@@ -62,7 +72,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
                     return;
                 }
 
-            case var m when MessageEquals(m, 2, "History"):
+            case var m when !isHistoryEmpty && MessageEquals(m, 2, "History"):
                 NextStage = New<History>();
                 return;
 
@@ -109,7 +119,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
         }
 
         CurrentUser.Person_OBSOLETE.Cash -= expenses;
-        CurrentUser.History.Add(ActionType.Downsize, expenses);
+        CurrentUser.History_OBSOLETE.Add(ActionType.Downsize, expenses);
     }
 
     private async Task Kid()
@@ -121,7 +131,7 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
         }
 
         CurrentUser.Person_OBSOLETE.Expenses.Children++;
-        CurrentUser.History.Add(ActionType.Child, CurrentUser.Person_OBSOLETE.Expenses.Children);
+        CurrentUser.History_OBSOLETE.Add(ActionType.Child, CurrentUser.Person_OBSOLETE.Expenses.Children);
 
         var termId = CurrentUser.Person_OBSOLETE.Expenses.Children == 1 ? 20 : 25;
         var childrenExpenses = CurrentUser.Person_OBSOLETE.Expenses.ChildrenExpenses.AsCurrency();
@@ -137,12 +147,12 @@ public class SmallCircle(ITermsService termsService) : BaseStage(termsService)
 
         if (CurrentUser.Person_OBSOLETE.Bankruptcy)
         {
-            CurrentUser.History.Add(ActionType.Bankruptcy);
+            CurrentUser.History_OBSOLETE.Add(ActionType.Bankruptcy);
             NextStage = New<Bankruptcy>();
         }
 
         CurrentUser.Person_OBSOLETE.Cash += amount;
-        CurrentUser.History.Add(ActionType.GetMoney, amount);
+        CurrentUser.History_OBSOLETE.Add(ActionType.GetMoney, amount);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
     }

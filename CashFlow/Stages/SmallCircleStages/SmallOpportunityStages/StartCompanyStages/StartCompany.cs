@@ -56,7 +56,7 @@ public class StartCompanyPrice(ITermsService termsService, IAvailableAssets asse
     protected async Task CompleteTransaction()
     {
         CurrentUser.Person_OBSOLETE.Cash -= Asset.Price;
-        CurrentUser.History.Add(ActionType.StartCompany, Asset.Id);
+        CurrentUser.History_OBSOLETE.Add(ActionType.StartCompany, Asset.Id);
         Asset.IsDraft = false;
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));

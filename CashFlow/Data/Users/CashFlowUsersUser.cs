@@ -10,7 +10,7 @@ namespace CashFlow.Data.Users;
 
 public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
-    public IHistory History => new UserData.HistoryData.History(DataBase, this);
+    public IHistory History_OBSOLETE => new UserData.HistoryData.History(DataBase, this);
     public IPerson Person_OBSOLETE => new Person(DataBase, this);
 
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
@@ -40,7 +40,7 @@ public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService,
         Person_OBSOLETE.Cash += amount;
         Person_OBSOLETE.Expenses.BankLoan += amount / 10;
         Person_OBSOLETE.Liabilities.BankLoan += amount;
-        History.Add(ActionType.Credit, amount);
+        History_OBSOLETE.Add(ActionType.Credit, amount);
     }
 
     public int PayCredit(int amount, bool regular)
@@ -53,7 +53,7 @@ public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService,
         Person_OBSOLETE.Cash -= amount;
         Person_OBSOLETE.Expenses.BankLoan -= expenses;
         Person_OBSOLETE.Liabilities.BankLoan -= amount;
-        History.Add(regular ? ActionType.BankLoan : ActionType.BankruptcyBankLoan, amount);
+        History_OBSOLETE.Add(regular ? ActionType.BankLoan : ActionType.BankruptcyBankLoan, amount);
 
         return amount;
     }

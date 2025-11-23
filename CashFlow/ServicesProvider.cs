@@ -13,6 +13,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStag
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
 namespace CashFlow;
 
@@ -37,7 +38,10 @@ public static class ServicesProvider
         services.AddTransient<ChooseProfession>();
         services.AddTransient<History>();
 
+        services.AddTransient<ShowMyData>();
+        services.AddTransient<Friends>();
         services.AddTransient<SmallOpportunity>();
+        services.AddTransient<BigOpportunity>();
 
         services.AddTransient<BuyStocks>();
         services.AddTransient<SellStocks>();

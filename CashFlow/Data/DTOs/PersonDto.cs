@@ -1,6 +1,4 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-
-namespace CashFlow.Data.DTOs;
+﻿namespace CashFlow.Data.DTOs;
 
 public class PersonDto
 {
@@ -10,7 +8,7 @@ public class PersonDto
     public int Cash { get; set; }
     //public bool SmallRealEstate { get; set; }
     public bool ReadyForBigCircle { get; set; }
-    public Circle Circle { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
+    //public Circle Circle { get; set; } // { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get; set; }
     public int InitialCashFlow { get; set; }
     public bool Bankruptcy { get; set; }

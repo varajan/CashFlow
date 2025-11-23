@@ -32,6 +32,6 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
         if (friend is null) return;
 
         await CurrentUser.Notify(friend.Person_OBSOLETE.BigCircle ? friend.Person_OBSOLETE.Description : friend.Description);
-        await CurrentUser.Notify(friend.History.TopFive);
+        await CurrentUser.Notify(friend.History_OBSOLETE.TopFive);
     }
 }

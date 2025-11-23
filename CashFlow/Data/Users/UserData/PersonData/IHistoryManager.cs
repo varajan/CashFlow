@@ -7,6 +7,7 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IHistoryManager
 {
+    bool IsEmpty(long userId);
     List<HistoryDto> Read(long userId);
     void Add(ActionType type, long value, IUser user);
     void Rollback(HistoryDto record);
@@ -23,6 +24,8 @@ public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITer
     //public ActionType Action { get; set; }
     //public int Value { get; set; }
     //public string Description { get; set; }
+
+    public bool IsEmpty(long userId) => DataBase.GetValue($"SELECT COUNT(*) FROM History WHERE UserID = {userId}").ToInt() == 0;
 
     public void Add(ActionType type, long value, IUser user)
     {

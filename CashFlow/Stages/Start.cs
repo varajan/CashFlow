@@ -18,9 +18,9 @@ public class Start(ITermsService termsService, IPersonManager personManager) : B
         {
             if (PersonManager.Exists(CurrentUser.Id))
             {
-                var circle = PersonManager.Read(CurrentUser.Id).Circle;
+                var isBigCircle = PersonManager.Read(CurrentUser.Id).BigCircle;
 
-                return circle == Circle.Big
+                return isBigCircle
                     ? New<BigCircle>()
                     : New<SmallCircle>();
             }

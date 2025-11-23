@@ -10,7 +10,7 @@ public interface IPersonManager
     void Create(string profession, long userId);
     void Update(PersonDto person);
     PersonDto Read(long id);
-    string GetDescription(PersonDto person);
+    string GetDescription(long id);
     void Delete(long id);
 }
 
@@ -82,7 +82,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         };
     }
 
-    public string GetDescription(PersonDto person) => throw new NotImplementedException();
+    public string GetDescription(long id) => throw new NotImplementedException();
 
     public void Delete(long id) => throw new NotImplementedException();
 }

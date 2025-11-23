@@ -114,7 +114,7 @@ public class Asset_OLD(IDataBase dataBase, IUser user, int id)
     {
         SellPrice = price;
         Delete();
-        User.History.Add(action, Id);
+        User.History_OBSOLETE.Add(action, Id);
     }
 
     public void Restore()
