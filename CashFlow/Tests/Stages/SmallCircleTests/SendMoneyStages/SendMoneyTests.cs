@@ -5,7 +5,7 @@ using Moq;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-namespace CashFlow.Tests.Stages.SendMoneyStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
 
 [TestFixture]
 public class SendMoneyTests : StagesBaseTest

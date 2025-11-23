@@ -6,7 +6,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStag
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-namespace CashFlow.Tests.Stages.SmallOpportunityStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages;
 
 [TestFixture]
 public class SmallOpportunityTests : StagesBaseTest

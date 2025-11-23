@@ -50,7 +50,7 @@ public class ChooseProfessionTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        personMock.Verify(p => p.Create(It.IsAny<string>()), Times.Once);
+        PersonManagerMock.Verify(p => p.Create(It.IsAny<string>(), CurrentUserMock.Object.Id));
     }
 
     [Test]
@@ -64,7 +64,7 @@ public class ChooseProfessionTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        CurrentUserMock.Verify(u => u.Person_OBSOLETE.Create("Teacher"), Times.Once);
+        PersonManagerMock.Verify(p => p.Create("Teacher", CurrentUserMock.Object.Id));
     }
 
     [Test]

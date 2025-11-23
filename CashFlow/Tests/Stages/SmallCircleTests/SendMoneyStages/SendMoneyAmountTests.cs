@@ -9,7 +9,7 @@ using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SendMoneyStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
 
 [TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
