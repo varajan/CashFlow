@@ -7,11 +7,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
-public class BuyCoins(
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IAssetManager assetManager)
-    : BaseStage(termsService)
+public class BuyCoins(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager) : BaseStage(termsService)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
