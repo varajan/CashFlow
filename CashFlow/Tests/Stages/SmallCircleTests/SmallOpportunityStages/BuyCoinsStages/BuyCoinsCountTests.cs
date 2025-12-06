@@ -10,13 +10,13 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoins
 [TestFixture]
 public class BuyCoinsCountTests : StagesBaseTest
 {
-    private static readonly string[] CoinCounts = ["1", "2", "5"];
+    private static readonly string[] Counts = ["1", "2", "5"];
     private AssetDto Asset => new() { UserId = CurrentUserMock.Object.Id, Type = AssetType.Coin, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(CoinCounts);
+        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(Counts);
         AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
@@ -25,7 +25,7 @@ public class BuyCoinsCountTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = CoinCounts.Append("Cancel");
+        var buttons = Counts.Append("Cancel");
 
         // Act
 
@@ -53,7 +53,7 @@ public class BuyCoinsCountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsCount>());
     }
 
-    [TestCaseSource(nameof(CoinCounts))]
+    [TestCaseSource(nameof(Counts))]
     [TestCase("10")]
     public async Task BuyCoinsCount_SelectValidCount_MoveForward(string count)
     {

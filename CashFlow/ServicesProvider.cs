@@ -50,7 +50,10 @@ public static class ServicesProvider
         services.AddTransient<StocksMultiply>();
         services.AddTransient<StocksReduce>();
         services.AddTransient<BuyRealEstate>();
+
         services.AddTransient<BuyLand>();
+        services.AddTransient<BuyLandPrice>();
+        services.AddTransient<BuyLandCredit>();
 
         services.AddTransient<BuyCoins>();
         services.AddTransient<BuyCoinsCount>();

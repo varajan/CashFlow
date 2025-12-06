@@ -3,16 +3,16 @@ using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoinsStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandStages;
 
 [TestFixture]
-public class BuyCoinsPriceTests : StagesBaseTest
+public class BuyLandPriceTests : StagesBaseTest
 {
     private static readonly string[] Prices = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.Coin, Qtty = 5, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.LandTitle, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -20,8 +20,8 @@ public class BuyCoinsPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.CoinBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
+        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.LandBuyPrice)).Returns(Prices);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([Asset]);
         AssetManagerMock
             .Setup(a => a.Update(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
@@ -30,7 +30,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
     }
 
     [Test]
-    public void BuyCoinsPrice_Question_and_Buttons()
+    public void BuyLandPrice_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -51,7 +51,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
     [TestCase("0")]
     [TestCase(" ")]
     [TestCase("$")]
-    public async Task BuyCoinsPrice_SelectInvalidPrice_StayOnStage(string count)
+    public async Task BuyLandPrice_SelectInvalidPrice_StayOnStage(string count)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -60,17 +60,17 @@ public class BuyCoinsPriceTests : StagesBaseTest
         await testStage.HandleMessage(count);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuyLandPrice>());
     }
 
     [TestCaseSource(nameof(Prices))]
     [TestCase("1000")]
-    public async Task BuyCoinsPrice_SelectValidCount_MoveForward(string price)
+    public async Task BuyLandPrice_SelectValidCount_MoveForward(string price)
     {
         // Arrange
         var testStage = GetTestStage();
         var person = new PersonDto { Cash = 10_000 };
-        var personCash = person.Cash - price.AsCurrency() * Asset.Qtty;
+        var personCash = person.Cash - price.AsCurrency();
 
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
@@ -91,29 +91,25 @@ public class BuyCoinsPriceTests : StagesBaseTest
             PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
             HistoryManagerMock.Verify(m => m.Add(
-                ActionType.BuyCoins,
+                ActionType.BuyLand,
                 Asset.Id,
                 It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
             ), Times.Once);
         });
     }
 
-    [TestCase(100, 1, 100, false)]
-    [TestCase(101, 2, 50, false)]
-    [TestCase(100, 1, 101, true)]
-    [TestCase(101, 2, 51, true)]
-    public async Task BuyCoinsPrice_SelectValidCount_MoveForward(int cash, int qtty, int price, bool creditIsNeeded)
+    [TestCase(100, 100, false)]
+    [TestCase(100, 101, true)]
+    public async Task BuyLandPrice_SelectValidCount_MoveForward(int cash, int price, bool creditIsNeeded)
     {
         // Arrange
         var testStage = GetTestStage();
         var person = new PersonDto { Cash = cash };
-        var nextStage = creditIsNeeded ? typeof(BuyCoinsCredit) : typeof(Start);
+        var nextStage = creditIsNeeded ? typeof(BuyLandCredit) : typeof(Start);
         var asset = Asset.Clone();
-
-        asset.Qtty = qtty;
         asset.Price = price;
 
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([asset]);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([asset]);
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
         // Act
@@ -129,13 +125,13 @@ public class BuyCoinsPriceTests : StagesBaseTest
             Assert.That(AssetsList[0].IsDraft, Is.True);
 
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
-            HistoryManagerMock.Verify(m => m.Add(ActionType.BuyCoins,
+            HistoryManagerMock.Verify(m => m.Add(ActionType.BuyLand,
                 asset.Id,
                 It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
     }
 
-    protected override IStage GetTestStage() => new BuyCoinsPrice(
+    protected override IStage GetTestStage() => new BuyLandPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             HistoryManagerMock.Object,
