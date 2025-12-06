@@ -7,15 +7,27 @@ using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 
-public class StartCompanyPrice(ITermsService termsService, IAvailableAssets assets, IAssetManager assetManager)
+public class StartCompanyPrice(
+    ITermsService termsService,
+    IAvailableAssets assets,
+    IAssetManager assetManager,
+    IPersonManager personManager,
+    IHistoryManager historyManager)
     : StartCompany(termsService, assets, assetManager)
 {
+    protected IPersonManager PersonManager { get; } = personManager;
+    protected IHistoryManager HistoryManager { get; } = historyManager;
+
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessBuyPrice, CurrentUser.Language).Append(Cancel);
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.SmallBusinessBuyPrice).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {
-        if (IsCanceled(message)) return;
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
 
         var number = message.AsCurrency();
         if (number <= 0)
@@ -24,9 +36,12 @@ public class StartCompanyPrice(ITermsService termsService, IAvailableAssets asse
             return;
         }
 
-        Asset.Price = number;
+        var person = PersonManager.Read(CurrentUser.Id);
+        var asset = AssetManager.ReadAll(AssetType.SmallBusinessType, CurrentUser.Id).Single(x => x.IsDraft);
+        asset.Price = number;
+        AssetManager.Update(asset);
 
-        if (CurrentUser.Person_OBSOLETE.Cash < number)
+        if (person.Cash < number)
         {
             NextStage = New<StartCompanyCredit>();
             return;
@@ -38,9 +53,16 @@ public class StartCompanyPrice(ITermsService termsService, IAvailableAssets asse
 
     protected async Task CompleteTransaction()
     {
-        CurrentUser.Person_OBSOLETE.Cash -= Asset.Price;
-        CurrentUser.History_OBSOLETE.Add(ActionType.StartCompany, Asset.Id);
-        Asset.IsDraft = false;
+        var asset = AssetManager.ReadAll(AssetType.SmallBusinessType, CurrentUser.Id).Single(x => x.IsDraft);
+        var person = PersonManager.Read(CurrentUser.Id);
+
+        person.Cash -= asset.Price;
+        PersonManager.Update(person);
+        
+        asset.IsDraft = false;
+        AssetManager.Update(asset);
+        
+        HistoryManager.Add(ActionType.StartCompany, asset.Id, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

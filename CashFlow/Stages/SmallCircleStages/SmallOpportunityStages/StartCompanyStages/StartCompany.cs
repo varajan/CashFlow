@@ -11,8 +11,6 @@ public class StartCompany(ITermsService termsService, IAvailableAssets available
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
 
-    protected Asset_OLD Asset => CurrentUser.Person_OBSOLETE.Assets.SmallBusinesses.First(a => a.IsDraft);
-
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessType, CurrentUser.Language).Append(Cancel);
 
