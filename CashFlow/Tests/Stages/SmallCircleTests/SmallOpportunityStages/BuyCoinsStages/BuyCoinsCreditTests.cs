@@ -92,7 +92,7 @@ public class BuyCoinsCreditTests : StagesBaseTest
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Coin &&
-                !x.IsDraft)
+                x.IsDraft == false)
         ), Times.Once);
 
         PersonManagerMock.Verify(p => p.Update(

@@ -11,7 +11,6 @@ using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using Microsoft.Extensions.DependencyInjection;
@@ -49,7 +48,11 @@ public static class ServicesProvider
         services.AddTransient<SellStocks>();
         services.AddTransient<StocksMultiply>();
         services.AddTransient<StocksReduce>();
-        services.AddTransient<BuyRealEstate>();
+
+        services.AddTransient<BuySmallRealEstate>();
+        services.AddTransient<BuySmallRealEstatePrice>();
+        services.AddTransient<BuySmallRealEstateFirstPayment>();
+        services.AddTransient<BuySmallRealEstateCredit>();
 
         services.AddTransient<BuyLand>();
         services.AddTransient<BuyLandPrice>();

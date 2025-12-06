@@ -1,25 +1,25 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoinsStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealEstateStages;
 
 [TestFixture]
-public class BuyCoinsTests : StagesBaseTest
+public class BuyRealEstateTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Uno", "Dos"];
+    private static readonly string[] Names = ["2/1", "3/2"];
 
     [SetUp]
     public void Setup()
     {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinTitle, It.IsAny<Language>())).Returns(Names);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([]);
+        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.RealEstateSmallType, It.IsAny<Language>())).Returns(Names);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstateSmallType, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]
-    public void BuyCoins_Question_and_Buttons()
+    public void BuyRealEstate_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -36,20 +36,20 @@ public class BuyCoinsTests : StagesBaseTest
     }
 
     [Test]
-    public async Task BuyCoins_SelectInvalidName_StayOnStage()
+    public async Task BuyRealEstate_SelectInvalidName_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Coin Tres");
+        await testStage.HandleMessage("4/3");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BuyCoins>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstate>());
     }
 
     [TestCaseSource(nameof(Names))]
-    public async Task BuyCoins_SelectValidName_MoveForward(string title)
+    public async Task BuyRealEstate_SelectValidName_MoveForward(string title)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -58,18 +58,18 @@ public class BuyCoinsTests : StagesBaseTest
         await testStage.HandleMessage(title.ToLower());
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsCount>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstatePrice>());
 
         AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
                 x.Title == title &&
                 x.UserId == CurrentUserMock.Object.Id &&
-                x.Type == AssetType.Coin &&
+                x.Type == AssetType.RealEstate &&
                 x.IsDraft)
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyCoins(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new BuySmallRealEstate(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

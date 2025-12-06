@@ -25,7 +25,7 @@ public class StartCompanyCredit(
         }
     }
 
-    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Cancel];
+    public override IEnumerable<string> Buttons => [GetCredit, Cancel];
 
     public override async Task HandleMessage(string message)
     {

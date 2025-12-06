@@ -1,7 +1,6 @@
 ﻿using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyRealEstateStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
@@ -46,7 +45,7 @@ public class SmallOpportunity(ITermsService termsService) : BaseStage(termsServi
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 37, "Buy Real Estate"):
-                NextStage = New<BuyRealEstate>();
+                NextStage = New<BuySmallRealEstate>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 94, "Buy Land"):

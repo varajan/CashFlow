@@ -92,7 +92,7 @@ public class BuyLandCreditTests : StagesBaseTest
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.LandTitle &&
-                !x.IsDraft)
+                x.IsDraft == false)
         ), Times.Once);
 
         PersonManagerMock.Verify(p => p.Update(

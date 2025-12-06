@@ -25,7 +25,7 @@ public class BuyCoinsCredit(
         }
     }
 
-    public override IEnumerable<string> Buttons => [Terms.Get(34, CurrentUser, "Get Credit"), Cancel];
+    public override IEnumerable<string> Buttons => [GetCredit, Cancel];
 
     public override async Task HandleMessage(string message)
     {
@@ -39,9 +39,10 @@ public class BuyCoinsCredit(
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var currentUserPerson = PersonManager.Read(CurrentUser.Id);
-                var delta = asset.Price * asset.Qtty - currentUserPerson.Cash;
+                var person = PersonManager.Read(CurrentUser.Id);
+                var delta = asset.Price * asset.Qtty - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
+
                 CurrentUser.GetCredit(credit);
                 await CompleteTransaction(asset);
 
