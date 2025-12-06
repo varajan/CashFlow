@@ -1,13 +1,15 @@
-﻿using CashFlow.Data.Consts;
+﻿using CashFlow.Data;
+using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Data;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 
-public class StartCompany(ITermsService termsService, IAvailableAssets availableAssets) : BaseStage(termsService)
+public class StartCompany(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager) : BaseStage(termsService)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAssetManager AssetManager { get; } = assetManager;
 
     protected Asset_OLD Asset => CurrentUser.Person_OBSOLETE.Assets.SmallBusinesses.First(a => a.IsDraft);
 
@@ -16,10 +18,32 @@ public class StartCompany(ITermsService termsService, IAvailableAssets available
 
     public override Task HandleMessage(string message)
     {
-        if (IsCanceled(message)) return Task.CompletedTask;
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return Task.CompletedTask;
+        }
 
-        CurrentUser.Person_OBSOLETE.Assets.Add(message, AssetType.SmallBusinessType);
-        NextStage = New<StartCompanyPrice>();
+        var companyName = AvailableAssets
+            .GetAsText(AssetType.SmallBusinessType, CurrentUser.Language)
+            .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
+
+        if (companyName is not null)
+        {
+            var draftCompany = new AssetDto
+            {
+                Title = companyName,
+                BigCircle = false,
+                Type = AssetType.SmallBusinessType,
+                UserId = CurrentUser.Id,
+                IsDraft = true,
+            };
+
+            AssetManager.Create(draftCompany);
+            NextStage = New<StartCompanyPrice>();
+            return Task.CompletedTask;
+        }
+
         return Task.CompletedTask;
     }
 }

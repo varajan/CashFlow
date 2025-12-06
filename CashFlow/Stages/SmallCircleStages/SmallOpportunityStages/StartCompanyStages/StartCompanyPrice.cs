@@ -1,12 +1,14 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 
-public class StartCompanyPrice(ITermsService termsService, IAvailableAssets assets) : StartCompany(termsService, assets)
+public class StartCompanyPrice(ITermsService termsService, IAvailableAssets assets, IAssetManager assetManager)
+    : StartCompany(termsService, assets, assetManager)
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.SmallBusinessBuyPrice, CurrentUser.Language).Append(Cancel);

@@ -1,10 +1,12 @@
 ﻿using CashFlow.Data;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 
-public class StartCompanyCredit(ITermsService termsService, IAvailableAssets assets) : StartCompanyPrice(termsService, assets)
+public class StartCompanyCredit(ITermsService termsService, IAvailableAssets assets, IAssetManager assetManager)
+    : StartCompanyPrice(termsService, assets, assetManager)
 {
     public override string Message
     {
