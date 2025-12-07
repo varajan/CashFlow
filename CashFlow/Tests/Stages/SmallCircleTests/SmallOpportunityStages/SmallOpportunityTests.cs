@@ -1,13 +1,22 @@
-﻿using CashFlow.Stages;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
+using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages;
 
 [TestFixture]
 public class SmallOpportunityTests : StagesBaseTest
 {
+    [SetUp]
+    public void Setup()
+    {
+        AssetManagerMock.Setup(a => a.ReadAll(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([]);
+    }
+
     [Test]
     public void SmallOpportunity_Question_and_Buttons()
     {
@@ -37,9 +46,6 @@ public class SmallOpportunityTests : StagesBaseTest
     }
 
     [TestCase("Buy Stocks", typeof(BuyStocks))]
-    [TestCase("Sell Stocks", typeof(SellStocks))]
-    [TestCase("Stocks x2", typeof(StocksMultiply))]
-    [TestCase("Stocks ÷2", typeof(StocksReduce))]
     [TestCase("Buy Real Estate", typeof(BuySmallRealEstate))]
     [TestCase("Buy Land", typeof(BuyLand))]
     [TestCase("Buy coins", typeof(BuyCoins))]
@@ -57,6 +63,31 @@ public class SmallOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
     }
 
+    [TestCase(false, "Sell Stocks", typeof(SmallOpportunity))]
+    [TestCase(false, "Stocks x2", typeof(SmallOpportunity))]
+    [TestCase(false, "Stocks ÷2", typeof(SmallOpportunity))]
+    [TestCase(true, "Sell Stocks", typeof(SellStocks))]
+    [TestCase(true, "Stocks x2", typeof(StocksMultiply))]
+    [TestCase(true, "Stocks ÷2", typeof(StocksReduce))]
+    public async Task SmallOpportunity_SelectValidOption(bool hasStocks, string message, Type nextStage)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        if (hasStocks)
+        {
+            AssetManagerMock.Setup(a => a.ReadAll(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([new AssetDto()]);
+        }
+
+        // Act
+        await testStage.HandleMessage(message);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+
+        CurrentUserMock.Verify(u => u.Notify("You have no stocks."), Times.Exactly(hasStocks ? 0 : 1));
+    }
+
     [Test]
     public async Task SmallOpportunity_SelectInValidOption()
     {
@@ -70,7 +101,7 @@ public class SmallOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallOpportunity>());
     }
 
-    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object)
+    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object, AssetManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

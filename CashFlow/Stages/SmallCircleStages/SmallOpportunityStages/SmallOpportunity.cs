@@ -1,11 +1,15 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class SmallOpportunity(ITermsService termsService) : BaseStage(termsService)
+public class SmallOpportunity(ITermsService termsService, IAssetManager assetManager) : BaseStage(termsService)
 {
+    IAssetManager AssetManager { get; set; } = assetManager;
+
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
     public override IEnumerable<string> Buttons =>
     [
@@ -20,49 +24,67 @@ public class SmallOpportunity(ITermsService termsService) : BaseStage(termsServi
         Cancel
     ];
 
-    public override Task HandleMessage(string message)
+    public override async Task HandleMessage(string message)
     {
-        CurrentUser.Person_OBSOLETE.Assets.CleanUp();
+        var hasStocks = AssetManager.ReadAll(AssetType.Stock, CurrentUser.Id).Count > 0;
 
         switch (message)
         {
             case var m when MessageEquals(m, 35, "Buy Stocks"):
                 NextStage = New<BuyStocks>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 36, "Sell Stocks"):
-                NextStage = New<SellStocks>();
-                return Task.CompletedTask;
+                if (hasStocks)
+                {
+                    NextStage = New<SellStocks>();
+                    return;
+                }
+
+                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                return;
 
             case var m when MessageEquals(m, 82, "Stocks x2"):
-                NextStage = New<StocksMultiply>();
-                return Task.CompletedTask;
+                if (hasStocks)
+                {
+                    NextStage = New<StocksMultiply>();
+                    return;
+                }
+
+                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                return;
 
             case var m when MessageEquals(m, 83, "Stocks ÷2"):
-                NextStage = New<StocksReduce>();
-                return Task.CompletedTask;
+                if (hasStocks)
+                {
+                    NextStage = New<StocksReduce>();
+                    return;
+                }
+
+                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                return;
 
             case var m when MessageEquals(m, 37, "Buy Real Estate"):
                 NextStage = New<BuySmallRealEstate>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 94, "Buy Land"):
                 NextStage = New<BuyLand>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 119, "Buy coins"):
                 NextStage = New<BuyCoins>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 115, "Start a company"):
                 NextStage = New<StartCompany>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 6, "Cancel"):
                 NextStage = New<Start>();
-                return Task.CompletedTask;
+                return;
         }
 
-        return Task.CompletedTask;
+        return;
     }
 }
