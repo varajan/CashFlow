@@ -43,6 +43,10 @@ public static class ServicesProvider
         services.AddTransient<BigOpportunity>();
 
         services.AddTransient<BuyStocks>();
+        services.AddTransient<BuyStocksPrice>();
+        services.AddTransient<BuyStocksCount>();
+        services.AddTransient<BuyStocksCredit>();
+
         services.AddTransient<SellStocks>();
         services.AddTransient<StocksMultiply>();
         services.AddTransient<StocksReduce>();

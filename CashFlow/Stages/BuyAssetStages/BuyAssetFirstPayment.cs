@@ -61,9 +61,9 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     protected async Task CompleteTransaction(AssetDto asset)
     {
         var person = PersonManager.Read(CurrentUser.Id);
-        var firstPayment = asset.Price - asset.Mortgage;
+        var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
-        person.Cash -= firstPayment;
+        person.Cash -= amount;
         PersonManager.Update(person);
 
         asset.IsDraft = false;

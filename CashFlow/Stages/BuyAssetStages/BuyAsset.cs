@@ -45,6 +45,7 @@ public abstract class BuyAsset<TNextStage>(
             {
                 Title = title,
                 BigCircle = false,
+                Qtty = 1,
                 Type = AssetType,
                 UserId = CurrentUser.Id,
                 IsDraft = true,

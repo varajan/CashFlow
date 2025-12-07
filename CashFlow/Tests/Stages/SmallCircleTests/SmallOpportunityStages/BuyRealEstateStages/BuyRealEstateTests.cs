@@ -63,6 +63,7 @@ public class BuyRealEstateTests : StagesBaseTest
         AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
                 x.Title == title &&
+                x.Qtty == 1 &&
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.RealEstate &&
                 x.IsDraft)

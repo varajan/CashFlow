@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealE
 public class BuyRealEstateFirstPaymentTests : StagesBaseTest
 {
     private static readonly string[] FirstPayments = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.RealEstate, Price = 10_000, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.RealEstate, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 10_000 };
 
     private List<AssetDto> AssetsList = [];

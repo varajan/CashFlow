@@ -5,23 +5,23 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealEstateStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandStages;
 
 [TestFixture]
-public class BuyRealEstateCreditTests : StagesBaseTest
+public class BuyLandCreditTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 10_000, Mortgage = 8_500, Qtty = 1, Type = AssetType.RealEstate, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 500, Qtty = 1, Type = AssetType.LandTitle, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstate, TestPerson.Id)).Returns([Asset]);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, TestPerson.Id)).Returns([Asset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
     }
 
     [Test]
-    public async Task BuyRealEstateCredit_CanBeCanceled()
+    public async Task BuyLandCredit_CanBeCanceled()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -35,17 +35,17 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
-                x.Type == AssetType.RealEstate)
+                x.Type == AssetType.LandTitle)
         ), Times.Once);
 
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
-    public void BuyRealEstateCredit_Question_and_Buttons()
+    public void BuyLandCredit_Question_and_Buttons()
     {
         // Arrange
-        var firstPayment = Asset.Price - Asset.Mortgage;
+        var price = Asset.Price;
         var testStage = GetTestStage();
 
         // Act
@@ -53,13 +53,13 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(testStage.Message, Is.EqualTo($"You don''t have {firstPayment.AsCurrency()}, but only {TestPerson.Cash.AsCurrency()}"));
+            Assert.That(testStage.Message, Is.EqualTo($"You don''t have {price.AsCurrency()}, but only {TestPerson.Cash.AsCurrency()}"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
         });
     }
 
     [Test]
-    public async Task BuyRealEstateCredit_InvalidInput_IsIgnored()
+    public async Task BuyLandCredit_InvalidInput_IsIgnored()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -68,15 +68,15 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         await testStage.HandleMessage("hello-world");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCredit>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuyLandCredit>());
     }
 
     [Test]
-    public async Task BuyRealEstateCredit_Confirmed_IsCompleted()
+    public async Task BuyLandCredit_ToBank_Confirmed_IsCompleted()
     {
         // Arrange
-        var firstPayment = Asset.Price - Asset.Mortgage;
-        var creditAmount = (int)Math.Ceiling((firstPayment - TestPerson.Cash) / 1_000d) * 1_000;
+        var amount = Asset.Price;
+        var creditAmount = (int)Math.Ceiling((amount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
 
         // Act
@@ -86,23 +86,23 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
-        HistoryManagerMock.Verify(x => x.Add(ActionType.BuyRealEstate, Asset.Id, CurrentUserMock.Object), Times.Once);
+        HistoryManagerMock.Verify(x => x.Add(ActionType.BuyLand, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         AssetManagerMock.Verify(a => a.Update(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
-                x.Type == AssetType.RealEstate &&
+                x.Type == AssetType.LandTitle &&
                 x.IsDraft == false)
         ), Times.Once);
 
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
-            x.Cash == TestPerson.Cash - firstPayment)
+            x.Cash == TestPerson.Cash - amount)
             ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuySmallRealEstateCredit(
+    protected override IStage GetTestStage() => new BuyLandCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             AssetManagerMock.Object,

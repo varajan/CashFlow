@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
@@ -12,7 +11,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCom
 public class StartCompanyCreditTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 500, Type = AssetType.SmallBusinessType, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 500, Qtty = 1, Type = AssetType.SmallBusinessType, IsDraft = true };
 
     [SetUp]
     public void Setup()

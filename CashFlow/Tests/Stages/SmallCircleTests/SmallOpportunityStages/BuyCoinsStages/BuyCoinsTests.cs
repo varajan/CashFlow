@@ -42,7 +42,7 @@ public class BuyCoinsTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Coin Tres");
+        await testStage.HandleMessage("Tres");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoins>());

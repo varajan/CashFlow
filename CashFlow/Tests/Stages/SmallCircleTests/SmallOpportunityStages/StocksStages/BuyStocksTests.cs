@@ -1,25 +1,26 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
+using System.Text;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages;
 
 [TestFixture]
-public class StartCompanyTests : StagesBaseTest
+public class BuyStocksTests : StagesBaseTest
 {
     private static readonly string[] Names = ["Uno", "Dos"];
 
     [SetUp]
     public void Setup()
     {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.SmallBusinessType, It.IsAny<Language>())).Returns(Names);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.SmallBusinessType, CurrentUserMock.Object.Id)).Returns([]);
+        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.Stock, It.IsAny<Language>())).Returns(Names);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]
-    public void StartCompany_Question_and_Buttons()
+    public void BuyStocks_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -36,7 +37,7 @@ public class StartCompanyTests : StagesBaseTest
     }
 
     [Test]
-    public async Task StartCompany_SelectInvalidName_StayOnStage()
+    public async Task BuyStocks_SelectInvalidName_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -45,32 +46,31 @@ public class StartCompanyTests : StagesBaseTest
         await testStage.HandleMessage("Tres");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<StartCompany>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuyStocks>());
     }
 
     [TestCaseSource(nameof(Names))]
-    public async Task StartCompany_SelectValidName_MoveForward(string companyName)
+    public async Task BuyStocks_SelectValidName_MoveForward(string name)
     {
         // Arrange
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage(companyName.ToLower());
+        await testStage.HandleMessage(name.ToLower());
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<StartCompanyPrice>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksPrice>());
 
         AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
-                x.Title == companyName &&
-                x.Qtty == 1 &&
+                x.Title == name &&
                 x.UserId == CurrentUserMock.Object.Id &&
-                x.Type == AssetType.SmallBusinessType &&
+                x.Type == AssetType.Stock &&
                 x.IsDraft)
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new StartCompany(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new BuyStocks(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

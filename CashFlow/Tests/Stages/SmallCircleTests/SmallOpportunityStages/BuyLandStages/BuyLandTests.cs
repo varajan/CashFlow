@@ -42,7 +42,7 @@ public class BuyLandTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Coin Tres");
+        await testStage.HandleMessage("Tres");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyLand>());
@@ -63,6 +63,7 @@ public class BuyLandTests : StagesBaseTest
         AssetManagerMock.Verify(a => a.Create(
             It.Is<AssetDto>(x =>
                 x.Title == name &&
+                x.Qtty == 1 &&
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.LandTitle &&
                 x.IsDraft)

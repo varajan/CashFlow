@@ -23,9 +23,9 @@ public abstract class BuyAssetCredit<TNextStage>(
         {
             var person = PersonManager.Read(CurrentUser.Id);
             var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
-            var firstPayment = asset.Price - asset.Mortgage;
+            var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
-            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", firstPayment.AsCurrency(), person.Cash.AsCurrency());
+            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
         }
     }
 
@@ -44,7 +44,7 @@ public abstract class BuyAssetCredit<TNextStage>(
 
             case var m when MessageEquals(m, 34, "Get Credit"):
                 var person = PersonManager.Read(CurrentUser.Id);
-                var delta = asset.Price - asset.Mortgage - person.Cash;
+                var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 CurrentUser.GetCredit(credit);
