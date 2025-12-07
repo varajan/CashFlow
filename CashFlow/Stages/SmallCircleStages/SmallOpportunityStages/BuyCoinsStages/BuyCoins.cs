@@ -1,52 +1,11 @@
-﻿using CashFlow.Data.Consts;
+﻿using CashFlow.Data;
+using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Data;
-using System.Text;
-using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
+using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
-public class BuyCoins(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager) : BaseStage(termsService)
-{
-    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
-
-    public override string Message => Terms.Get(7, CurrentUser, "Title:");
-
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetType.CoinTitle, CurrentUser.Language).Append(Cancel);
-
-    public override Task HandleMessage(string message)
-    {
-        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
-        AssetManager.Delete(asset);
-
-        if (IsCanceled(message))
-        {
-            NextStage = New<Start>();
-            return Task.CompletedTask;
-        }
-
-        var title = AvailableAssets
-            .GetAsText(AssetType.CoinTitle, CurrentUser.Language)
-            .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
-
-        if (title is not null)
-        {
-            var draftAsset = new AssetDto
-            {
-                Title = title,
-                BigCircle = false,
-                Type = AssetType.Coin,
-                UserId = CurrentUser.Id,
-                IsDraft = true,
-            };
-
-            AssetManager.Create(draftAsset);
-            NextStage = New<BuyCoinsCount>();
-            return Task.CompletedTask;
-        }
-
-        return Task.CompletedTask;
-    }
-}
+public class BuyCoins(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
+    : BuyAsset<BuyCoinsCount>(AssetType.CoinTitle, AssetType.Coin, termsService, availableAssets, assetManager)
+{ }

@@ -4,7 +4,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow.Stages.BuyAssetStages;
 

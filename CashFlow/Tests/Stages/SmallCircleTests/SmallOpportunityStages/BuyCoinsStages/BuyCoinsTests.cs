@@ -23,7 +23,7 @@ public class BuyCoinsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.Append("Cancel");
+        var buttons = Names.OrderBy(x => x).Append("Cancel");
 
         // Act
 
