@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandStages;
@@ -23,7 +23,7 @@ public class BuyLandTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.Append("Cancel");
+        var buttons = Names.OrderBy(x => x).Append("Cancel");
 
         // Act
 

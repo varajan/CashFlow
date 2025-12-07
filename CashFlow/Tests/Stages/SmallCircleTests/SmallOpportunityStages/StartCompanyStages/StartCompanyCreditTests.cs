@@ -2,8 +2,8 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
@@ -108,8 +108,8 @@ public class StartCompanyCreditTests : StagesBaseTest
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             AssetManagerMock.Object,
-            PersonManagerMock.Object,
-            HistoryManagerMock.Object)
+            HistoryManagerMock.Object,
+            PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

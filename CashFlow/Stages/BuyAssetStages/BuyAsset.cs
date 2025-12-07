@@ -3,20 +3,26 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using System.Text;
 
-namespace CashFlow.Stages.BuyRealEstateStages;
+namespace CashFlow.Stages.BuyAssetStages;
 
-public abstract class BuyRealEstate(bool small, ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager) : BaseStage(termsService)
+public abstract class BuyAsset<TNextStage>(
+    AssetType assetName,
+    AssetType assetType,
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager) : BaseStage(termsService) where TNextStage : BaseStage
 {
-    protected bool IsSmall { get; } = small;
+    protected AssetType AssetName { get; } = assetName;
+    protected AssetType AssetType { get; } = assetType;
+
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
     public override IEnumerable<string> Buttons => AvailableAssets
-        .GetAsText(IsSmall ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType, CurrentUser.Language)
+        .GetAsText(AssetName, CurrentUser.Language)
         .OrderBy(x => x.Length)
         .ThenBy(x => x)
         .Append(Cancel);
@@ -30,7 +36,7 @@ public abstract class BuyRealEstate(bool small, ITermsService termsService, IAva
         }
 
         var title = AvailableAssets
-            .GetAsText(IsSmall ? AssetType.RealEstateSmallType : AssetType.RealEstateBigType, CurrentUser.Language)
+            .GetAsText(AssetName, CurrentUser.Language)
             .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         if (title is not null)
@@ -39,13 +45,13 @@ public abstract class BuyRealEstate(bool small, ITermsService termsService, IAva
             {
                 Title = title,
                 BigCircle = false,
-                Type = AssetType.RealEstate,
+                Type = AssetType,
                 UserId = CurrentUser.Id,
                 IsDraft = true,
             };
 
             AssetManager.Create(draftAsset);
-            NextStage = IsSmall ? New<BuySmallRealEstatePrice>() : throw new NotImplementedException();
+            NextStage = New<TNextStage>();
             return Task.CompletedTask;
         }
 

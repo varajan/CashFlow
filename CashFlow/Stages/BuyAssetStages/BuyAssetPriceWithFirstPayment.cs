@@ -3,22 +3,23 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-namespace CashFlow.Stages.BuyRealEstateStages;
+namespace CashFlow.Stages.BuyAssetStages;
 
-public abstract class BuyRealEstatePrice(
-    bool small,
+public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
+    AssetType assetName,
+    AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager) : BuyRealEstate(small, termsService, availableAssets, assetManager)
+    IAssetManager assetManager)
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.RealEstateSmallBuyPrice).Append(Cancel);
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -36,6 +37,6 @@ public abstract class BuyRealEstatePrice(
 
         asset.Price = number;
         AssetManager.Update(asset);
-        NextStage = IsSmall ? New<BuySmallRealEstateFirstPayment>() : throw new NotImplementedException();
+        NextStage = New<TNextStage>();
     }
 }

@@ -1,8 +1,6 @@
 ﻿using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages;

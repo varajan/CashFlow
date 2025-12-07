@@ -4,23 +4,25 @@ using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Stages.BuyRealEstateStages;
+namespace CashFlow.Stages.BuyAssetStages;
 
-public abstract class BuyRealEstateCredit(
-    bool small,
+public abstract class BuyAssetCredit<TNextStage>(
+    AssetType assetName,
+    AssetType assetType,
+    ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyRealEstateFirstPayment(small, termsService, availableAssets, assetManager, historyManager, personManager)
+    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, assetManager, historyManager, personManager) where TNextStage : BaseStage
 {
     public override string Message
     {
         get
         {
             var person = PersonManager.Read(CurrentUser.Id);
-            var asset = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).Single(x => x.IsDraft);
+            var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
             var firstPayment = asset.Price - asset.Mortgage;
 
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", firstPayment.AsCurrency(), person.Cash.AsCurrency());
@@ -31,7 +33,7 @@ public abstract class BuyRealEstateCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         switch (message)
         {

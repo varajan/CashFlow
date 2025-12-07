@@ -1,8 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StartCompanyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
@@ -10,12 +9,12 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCom
 [TestFixture]
 public class StartCompanyTests : StagesBaseTest
 {
-    private static readonly string[] CompanyNames = ["Company Uno", "Company Dos"];
+    private static readonly string[] Names = ["Uno", "Dos"];
 
     [SetUp]
     public void Setup()
     {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.SmallBusinessType, It.IsAny<Language>())).Returns(CompanyNames);
+        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.SmallBusinessType, It.IsAny<Language>())).Returns(Names);
         AssetManagerMock.Setup(a => a.ReadAll(AssetType.SmallBusinessType, CurrentUserMock.Object.Id)).Returns([]);
     }
 
@@ -24,7 +23,7 @@ public class StartCompanyTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = CompanyNames.Append("Cancel");
+        var buttons = Names.OrderBy(x => x).Append("Cancel");
 
         // Act
 
@@ -49,7 +48,7 @@ public class StartCompanyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<StartCompany>());
     }
 
-    [TestCaseSource(nameof(CompanyNames))]
+    [TestCaseSource(nameof(Names))]
     public async Task StartCompany_SelectValidName_MoveForward(string companyName)
     {
         // Arrange

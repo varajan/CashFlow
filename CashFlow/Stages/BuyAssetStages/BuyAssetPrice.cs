@@ -6,25 +6,29 @@ using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-namespace CashFlow.Stages.BuyRealEstateStages;
+namespace CashFlow.Stages.BuyAssetStages;
 
-public abstract class BuyRealEstateFirstPayment(
-    bool small,
+public abstract class BuyAssetPrice<TNextStage>(
+    AssetType assetName,
+    AssetType assetType,
+    ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IHistoryManager historyManager,
-    IPersonManager personManager) : BuyRealEstate(small, termsService, availableAssets, assetManager)
+    IPersonManager personManager)
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
 {
+    protected ActionType ActionType { get; } = actionType;
     protected IHistoryManager HistoryManager { get; } = historyManager;
     protected IPersonManager PersonManager { get; } = personManager;
 
-    public override string Message => Terms.Get(10, CurrentUser, "What is the first payment?");
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.RealEstateSmallFirstPayment).Append(Cancel);
+    public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -34,20 +38,19 @@ public abstract class BuyRealEstateFirstPayment(
         }
 
         var number = message.AsCurrency();
-        if (number < 0)
+        if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(11, CurrentUser, "Invalid first payment value. Try again."));
-            NextStage = this;
+            await CurrentUser.Notify(Terms.Get(9, CurrentUser, "Invalid price value. Try again."));
             return;
         }
 
-        asset.Mortgage = asset.Price - number;
+        asset.Price = number;
         AssetManager.Update(asset);
 
         var person = PersonManager.Read(CurrentUser.Id);
-        if (person.Cash < number)
+        if (person.Cash < asset.Price)
         {
-            NextStage = IsSmall ? New<BuySmallRealEstateCredit>() : throw new NotImplementedException();
+            NextStage = New<TNextStage>();
             return;
         }
 
@@ -58,15 +61,14 @@ public abstract class BuyRealEstateFirstPayment(
     protected async Task CompleteTransaction(AssetDto asset)
     {
         var person = PersonManager.Read(CurrentUser.Id);
-        var firstPayment = asset.Price - asset.Mortgage;
 
-        person.Cash -= firstPayment;
+        person.Cash -= asset.Price;
         PersonManager.Update(person);
 
         asset.IsDraft = false;
         AssetManager.Update(asset);
 
-        HistoryManager.Add(ActionType.BuyRealEstate, asset.Id, CurrentUser);
+        HistoryManager.Add(ActionType, asset.Id, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

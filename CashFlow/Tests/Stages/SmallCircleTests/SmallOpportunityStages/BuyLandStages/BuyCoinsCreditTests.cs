@@ -2,7 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyLandStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandStages;
@@ -105,9 +105,9 @@ public class BuyLandCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyLandCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
+            AssetManagerMock.Object,
             HistoryManagerMock.Object,
-            PersonManagerMock.Object,
-            AssetManagerMock.Object)
+            PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

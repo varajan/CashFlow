@@ -1,15 +1,16 @@
 ﻿using CashFlow.Data;
 using CashFlow.Interfaces;
 using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Stages.BuyRealEstateStages;
+using CashFlow.Stages.BuyAssetStages;
+using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 public class BuySmallRealEstate(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
-    : BuyRealEstate(true, termsService, availableAssets, assetManager) { }
+    : BuyAsset<BuySmallRealEstatePrice>(AssetType.RealEstateSmallType, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
 
 public class BuySmallRealEstatePrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
-    : BuyRealEstatePrice(true, termsService, availableAssets, assetManager) { }
+    : BuyAssetPriceWithFirstPayment<BuySmallRealEstateFirstPayment>(AssetType.RealEstateSmallBuyPrice, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
 
 public class BuySmallRealEstateFirstPayment(
     ITermsService termsService,
@@ -17,11 +18,12 @@ public class BuySmallRealEstateFirstPayment(
     IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyRealEstateFirstPayment(true, termsService, availableAssets, assetManager, historyManager, personManager) { }
+    : BuyAssetFirstPayment<BuySmallRealEstateCredit>(
+        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
 
 public class BuySmallRealEstateCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IHistoryManager historyManager,
-    IPersonManager personManager) : BuyRealEstateCredit(true, termsService, availableAssets, assetManager, historyManager, personManager) { }
+    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
