@@ -48,6 +48,8 @@ public static class ServicesProvider
         services.AddTransient<BuyStocksCredit>();
 
         services.AddTransient<SellStocks>();
+        services.AddTransient<SellStocksPrice>();
+
         services.AddTransient<StocksMultiply>();
         services.AddTransient<StocksReduce>();
 

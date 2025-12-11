@@ -5,7 +5,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using System.Text;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages;
+namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.BuyStocksStages;
 
 [TestFixture]
 public class BuyStocksTests : StagesBaseTest

@@ -16,5 +16,6 @@ public class AssetDto
     public int CashFlow { get; set; }
     public bool BigCircle { get; set; }
     public bool IsDraft { get; set; }
+    public bool MarkedToSell { get; set; }
     public bool IsDeleted { get; set; }
 }
