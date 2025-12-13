@@ -1,7 +1,7 @@
-﻿namespace CashFlow.Tests.Stages.SmallCircleTests.FriendsStages;
+﻿namespace CashFlow.Tests.Stages.BigCircleTests.LostMoneyStages;
 
 [TestFixture]
-public class FriendsTests
+public class LostMoneyTests
 {
     [Test]
     public void NotImplemented()

@@ -1,7 +1,7 @@
-﻿namespace CashFlow.Tests.Stages.SmallCircleTests.PayCheckStages;
+﻿namespace CashFlow.Tests.Stages.BigCircleTests.GetMoneyStages;
 
 [TestFixture]
-public class PayCheckTests
+public class GetMoneyTests
 {
     [Test]
     public void NotImplemented()
