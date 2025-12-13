@@ -7,6 +7,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Interfaces;
 using MoreLinq;
+using CashFlow.Stages.ShowMyDataStages;
 
 namespace CashFlow.Stages.SmallCircleStages;
 

@@ -5,6 +5,7 @@ using CashFlow.Interfaces;
 using CashFlow.Loggers;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
+using CashFlow.Stages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
