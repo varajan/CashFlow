@@ -11,8 +11,9 @@ public class SellStocksTests: StagesBaseTest
 {
     private static readonly List<AssetDto> Assets =
     [
-        new AssetDto { Title = "Uno", Type = AssetType.Stock },
-        new AssetDto { Title = "Dos", Type = AssetType.Stock },
+        new AssetDto { Title = "Uno", Type = AssetType.Stock, Qtty = 25 },
+        new AssetDto { Title = "Uno", Type = AssetType.Stock, Qtty = 50 },
+        new AssetDto { Title = "Dos", Type = AssetType.Stock, Qtty = 75 },
     ];
 
     [SetUp]
@@ -26,7 +27,7 @@ public class SellStocksTests: StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Assets.Select(x => x.Title).Append("Cancel");
+        var buttons = Assets.Select(x => x.Title).Distinct().Append("Cancel");
 
         // Act
 
@@ -56,6 +57,7 @@ public class SellStocksTests: StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var assetsCount = Assets.Count(x => x.Title == asset.Title);
 
         // Act
         await testStage.HandleMessage(asset.Title.ToLower());
@@ -68,7 +70,7 @@ public class SellStocksTests: StagesBaseTest
                 x.Title == asset.Title &&
                 x.Type == AssetType.Stock &&
                 x.MarkedToSell)
-        ), Times.Once);
+        ), Times.Exactly(assetsCount));
     }
 
     protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, AssetManagerMock.Object)
