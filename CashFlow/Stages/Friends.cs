@@ -1,11 +1,17 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Users;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITermsService termsService) : BaseStage(termsService)
+public class Friends(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager) : BaseStage(termsService)
 {
+    protected IPersonManager PersonManager { get; } = personManager;
+    protected IHistoryManager HistoryManager {get; } = historyManager;
+
+    private IList<IUser> ActiveUsers => OtherUsers.Where(x => x.IsActive).ToList();
+
     public override string Message
     {
         get
@@ -14,8 +20,8 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
             var onSmall = Terms.Get(142, CurrentUser, "On Small circle:");
             var onBig = Terms.Get(143, CurrentUser, "On Big circle:");
 
-            var onSmallCircle = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).ToList();
-            var onBigCircle = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Big).ToList();
+            var onSmallCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == false).ToList();
+            var onBigCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == true).ToList();
 
             if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
             if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
@@ -24,14 +30,23 @@ public class Friends(ITermsService termsService) : BaseStage(termsService)
         }
     }
 
-    public override IEnumerable<string> Buttons => OtherUsers.Where(x => x.IsActive).Select(x => x.Name).Append(Cancel);
+    public override IEnumerable<string> Buttons => ActiveUsers.Select(x => x.Name).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {
-        var friend = OtherUsers.FirstOrDefault(x => x.Name == message);
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
+
+        var friend = ActiveUsers.FirstOrDefault(x => x.Name.Equals(message, StringComparison.InvariantCultureIgnoreCase));
         if (friend is null) return;
 
-        await CurrentUser.Notify(friend.Person_OBSOLETE.BigCircle ? friend.Person_OBSOLETE.Description : friend.Description);
-        await CurrentUser.Notify(friend.History_OBSOLETE.TopFive);
+        var description = PersonManager.GetDescription(friend.Id);
+        var topFive = HistoryManager.TopFive(friend.Id, CurrentUser);
+
+        await CurrentUser.Notify(description);
+        await CurrentUser.Notify(topFive);
     }
 }

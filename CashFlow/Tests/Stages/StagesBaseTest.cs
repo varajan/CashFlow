@@ -1,9 +1,10 @@
 ﻿using CashFlow.Data;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
-using Moq;
-using CashFlow.Stages;
 using CashFlow.Interfaces;
+using CashFlow.Stages;
+using Moq;
 
 namespace CashFlow.Tests.Stages;
 
@@ -26,7 +27,6 @@ public abstract class StagesBaseTest
     {
         ServicesProvider.Init();
 
-        CurrentUserMock = GetUserMock(10, "Test User", true, Circle.Small);
         AssetManagerMock = new Mock<IAssetManager>();
         AvailableAssetsMock = new Mock<IAvailableAssets>();
         PersonManagerMock = new Mock<IPersonManager>();
@@ -34,16 +34,18 @@ public abstract class StagesBaseTest
         TermsServiceMock = new Mock<ITermsService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssets>();
+
+        CurrentUserMock = GetUserMock(10, "Test User", true, Circle.Small, PersonManagerMock);
         OtherUsers =
             [
-                GetUserMock(1, "1st Active on Small Circle", true, Circle.Small).Object,
-                GetUserMock(2, "1st Active on Big Circle", true, Circle.Big).Object,
-                GetUserMock(3, "1st Inactive on Small Circle", false, Circle.Small).Object,
-                GetUserMock(4, "1st Inactive on Big Circle", false, Circle.Big).Object,
-                GetUserMock(5, "2nd Active on Small Circle", true, Circle.Small).Object,
-                GetUserMock(6, "2nd Active on Big Circle", true, Circle.Big).Object,
-                GetUserMock(7, "2nd Inactive on Small Circle", false, Circle.Small).Object,
-                GetUserMock(8, "2nd Inactive on Big Circle", false, Circle.Big).Object,
+                GetUserMock(1, "1st Active on Small Circle", true, Circle.Small, PersonManagerMock).Object,
+                GetUserMock(2, "1st Active on Big Circle", true, Circle.Big, PersonManagerMock).Object,
+                GetUserMock(3, "1st Inactive on Small Circle", false, Circle.Small, PersonManagerMock).Object,
+                GetUserMock(4, "1st Inactive on Big Circle", false, Circle.Big, PersonManagerMock).Object,
+                GetUserMock(5, "2nd Active on Small Circle", true, Circle.Small, PersonManagerMock).Object,
+                GetUserMock(6, "2nd Active on Big Circle", true, Circle.Big, PersonManagerMock).Object,
+                GetUserMock(7, "2nd Inactive on Small Circle", false, Circle.Small, PersonManagerMock).Object,
+                GetUserMock(8, "2nd Inactive on Big Circle", false, Circle.Big, PersonManagerMock).Object,
             ];
 
         TermsServiceMock
@@ -64,7 +66,7 @@ public abstract class StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
-    protected static Mock<IUser> GetUserMock(long id, string name, bool isActive, Circle cirle)
+    protected static Mock<IUser> GetUserMock(long id, string name, bool isActive, Circle cirle, Mock<IPersonManager> personManagerMock)
     {
         var user = new Mock<IUser>();
         var person = new Mock<IPerson>();
@@ -77,6 +79,9 @@ public abstract class StagesBaseTest
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);
         user.SetupGet(u => u.Person_OBSOLETE).Returns(person.Object);
+
+        var TestPerson = new PersonDto { Id = id, Cash = 100, BigCircle = cirle == Circle.Big };
+        personManagerMock.Setup(p => p.Read(user.Object.Id)).Returns(TestPerson);
 
         return user;
     }

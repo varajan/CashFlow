@@ -8,6 +8,7 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 public interface IHistoryManager
 {
     bool IsEmpty(long userId);
+    string TopFive(long userId, IUser currentUser);
     List<HistoryDto> Read(long userId);
     void Add(ActionType type, long value, IUser user);
     void Rollback(HistoryDto record);
@@ -33,6 +34,16 @@ public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITer
         long newId = DataBase.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
         var text = GetDescription(record, user);
         DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
+    }
+
+    public string TopFive(long userId, IUser currentUser)
+    {
+        var records = Read(userId);
+        records.Reverse();
+
+        return records.Any() ?
+            TermsService.Get(111, currentUser, "No records found.") :
+            string.Join(Environment.NewLine, records.Take(5).Select(x => x.Description));
     }
 
     public List<HistoryDto> Read(long userId)
