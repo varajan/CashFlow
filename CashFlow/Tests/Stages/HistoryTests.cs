@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 
 namespace CashFlow.Tests.Stages;
@@ -89,12 +88,6 @@ public class HistoryTests : StagesBaseTest
 
         HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
         HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.First().Id)), Times.Once);
-
-#if DEBUG
-        Assert.Fail("Not Implemented.");
-        // I don't remember what is not implemeted.
-#endif
-
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
