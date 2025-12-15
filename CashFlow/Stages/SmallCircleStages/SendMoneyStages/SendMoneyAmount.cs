@@ -12,9 +12,9 @@ public class SendMoneyAmount(
     IHistoryManager historyManager,
     ITermsService termsService) : BaseStage(termsService)
 {
-    protected IAssetManager AssetManager { get; init; } = assetManager;
-    protected IPersonManager PersonManager { get; init; } = personManager;
-    private IHistoryManager HistoryManager { get; init; } = historyManager;
+    protected IAssetManager AssetManager { get; } = assetManager;
+    protected IPersonManager PersonManager { get; } = personManager;
+    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

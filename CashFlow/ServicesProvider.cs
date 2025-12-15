@@ -8,6 +8,8 @@ using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.DoodadsStages;
+using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
@@ -42,6 +44,11 @@ public static class ServicesProvider
         services.AddTransient<Friends>();
         services.AddTransient<SmallOpportunity>();
         services.AddTransient<BigOpportunity>();
+        services.AddTransient<Doodads>();
+        services.AddTransient<PayWithCash>();
+        services.AddTransient<PayWithCreditCard>();
+
+        services.AddTransient<Market>();
 
         services.AddTransient<BuyStocks>();
         services.AddTransient<BuyStocksPrice>();

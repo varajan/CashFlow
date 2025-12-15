@@ -6,6 +6,8 @@ using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.DoodadsStages;
+using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
@@ -35,7 +37,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var description = $"{testPerson.Id} has {testPerson.Cash}";
 
         List<string> buttons = isHistoryEmpty ? ["Show my Data", "Friends"] : ["Show my Data", "Friends", "History"];
-        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Downsize", "Baby", "Pay Check", "Give Money"]);
+        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Pay Check", "Give Money"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
         HistoryManagerMock.Setup(x => x.IsEmpty(CurrentUserMock.Object.Id)).Returns(isHistoryEmpty);
@@ -130,6 +132,32 @@ public class SmallCircleStageTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigOpportunity>());
+    }
+
+    [Test]
+    public async Task SmallCircle_Doodads()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Doodads");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Doodads>());
+    }
+
+    [Test]
+    public async Task SmallCircle_Market()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Market");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Market>());
     }
 
     [Test]

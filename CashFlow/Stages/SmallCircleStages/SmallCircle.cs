@@ -1,13 +1,15 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
-using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
-using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
-using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using CashFlow.Stages.BigCircleStages;
 using CashFlow.Interfaces;
-using MoreLinq;
+using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.ShowMyDataStages;
+using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.SmallCircleStages.DoodadsStages;
+using CashFlow.Stages.SmallCircleStages.MarketStages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
@@ -30,6 +32,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
                 : [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends"), Terms.Get(2, CurrentUser, "History")];
 
             buttons.AddRange([Terms.Get(81, CurrentUser, "Small Opportunity"), Terms.Get(84, CurrentUser, "Big Opportunity")]);
+            buttons.AddRange([Terms.Get(86, CurrentUser, "Doodads"), Terms.Get(85, CurrentUser, "Market")]);
             buttons.AddRange([Terms.Get(80, CurrentUser, "Downsize"), Terms.Get(39, CurrentUser, "Baby")]);
             buttons.AddRange([Terms.Get(79, CurrentUser, "Pay Check"), Terms.Get(33, CurrentUser, "Give Money")]);
 
@@ -86,6 +89,14 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
             case var m when MessageEquals(m, 80, "Downsize"):
                 await Downsize();
+                return;
+
+            case var m when MessageEquals(m, 86, "Doodads"):
+                NextStage = New<Doodads>();
+                return;
+
+            case var m when MessageEquals(m, 85, "Market"):
+                NextStage = New<Market>();
                 return;
 
             case var m when MessageEquals(m, 39, "Baby"):
