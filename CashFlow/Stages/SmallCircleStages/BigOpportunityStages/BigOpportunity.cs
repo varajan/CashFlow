@@ -1,13 +1,40 @@
 ﻿using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
 public class BigOpportunity(ITermsService termsService) : BaseStage(termsService)
 {
-    public override string Message => base.Message;
-    public override IEnumerable<string> Buttons => base.Buttons;
+    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override IEnumerable<string> Buttons =>
+    [
+        Terms.Get(37, CurrentUser, "Buy Real Estate"),
+        Terms.Get(94, CurrentUser, "Buy Business"),
+        Terms.Get(94, CurrentUser, "Buy Land"),
+        Cancel
+    ];
+
     public override Task HandleMessage(string message)
     {
-        return base.HandleMessage(message);
+        switch (message)
+        {
+            case var m when MessageEquals(m, 37, "Buy Real Estate"):
+                //NextStage = New<BuyRealEstate>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 94, "Buy Business"):
+                //NextStage = New<BuyBusiness>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 94, "Buy Land"):
+                NextStage = New<BuyLand>();
+                return Task.CompletedTask;
+
+            case var m when MessageEquals(m, 6, "Cancel"):
+                NextStage = New<Start>();
+                return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
     }
 }

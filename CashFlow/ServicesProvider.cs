@@ -42,13 +42,11 @@ public static class ServicesProvider
 
         services.AddTransient<ShowMyData>();
         services.AddTransient<Friends>();
-        services.AddTransient<SmallOpportunity>();
-        services.AddTransient<BigOpportunity>();
         services.AddTransient<Doodads>();
         services.AddTransient<PayWithCash>();
         services.AddTransient<PayWithCreditCard>();
 
-        services.AddTransient<Market>();
+        services.AddTransient<SmallOpportunity>();
 
         services.AddTransient<BuyStocks>();
         services.AddTransient<BuyStocksPrice>();
@@ -82,6 +80,10 @@ public static class ServicesProvider
         services.AddTransient<SendMoney>();
         services.AddTransient<SendMoneyAmount>();
         services.AddTransient<SendMoneyCredit>();
+
+        services.AddTransient<BigOpportunity>();
+
+        services.AddTransient<Market>();
 
         services.AddTransient<BigCircle>();
 
