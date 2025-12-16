@@ -11,19 +11,6 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.DoodadsStages;
 [TestFixture]
 public class DoodadsTests : StagesBaseTest
 {
-    //private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person_OBSOLETE.Circle == Circle.Small);
-    //private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
-    //private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
-    //private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
-
-    //[SetUp]
-    //public void Setup()
-    //{
-    //    AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
-    //    PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-    //    PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
-    //}
-
     [Test]
     public void Doodads_Question_and_Buttons()
     {
@@ -109,11 +96,7 @@ public class DoodadsTests : StagesBaseTest
             person.Cash == cash - firstPayment
         )), Times.Once);
 
-        HistoryManagerMock.Verify(h => h.Add(
-            ActionType.BuyBoat,
-            18_000,
-            CurrentUserMock.Object), Times.Once);
-
+        HistoryManagerMock.Verify(h => h.Add(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(botMessage), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
         CurrentUserMock.Verify(u => u.GetCredit(firstPayment), Times.Exactly(cash < firstPayment ? 1 : 0));
