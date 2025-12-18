@@ -141,7 +141,6 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             AssetManagerMock.Object,
-            HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

@@ -3,21 +3,20 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using System.Threading.Channels;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
-public abstract class BuyAssetCredit<TNextStage>(
+public abstract class BuyAssetWithCashflowCredit<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
-    IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, assetManager, historyManager, personManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
 {
+    protected IPersonManager PersonManager { get; } = personManager;
+
     public override string Message
     {
         get
@@ -32,7 +31,7 @@ public abstract class BuyAssetCredit<TNextStage>(
 
     public override IEnumerable<string> Buttons => [GetCredit, Cancel];
 
-    public override async Task HandleMessage(string message)
+    public override Task HandleMessage(string message)
     {
         var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
@@ -41,7 +40,7 @@ public abstract class BuyAssetCredit<TNextStage>(
             case var m when MessageEquals(m, 6, "Cancel"):
                 AssetManager.Delete(asset);
                 NextStage = New<Start>();
-                return;
+                return Task.CompletedTask;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
                 var person = PersonManager.Read(CurrentUser.Id);
@@ -49,10 +48,11 @@ public abstract class BuyAssetCredit<TNextStage>(
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 CurrentUser.GetCredit(credit);
-                await CompleteTransaction(asset);
+                NextStage = New<TNextStage>();
+                return Task.CompletedTask;
 
-                NextStage = New<Start>();
-                return;
+            default:
+                return Task.CompletedTask;
         }
     }
 }

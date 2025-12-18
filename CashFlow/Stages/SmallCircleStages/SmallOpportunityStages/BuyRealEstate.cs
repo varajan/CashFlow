@@ -10,20 +10,30 @@ public class BuySmallRealEstate(ITermsService termsService, IAvailableAssets ava
     : BuyAsset<BuySmallRealEstatePrice>(AssetType.RealEstateSmallType, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
 
 public class BuySmallRealEstatePrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
-    : BuyAssetPriceWithFirstPayment<BuySmallRealEstateFirstPayment>(AssetType.RealEstateSmallBuyPrice, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
+    : BuyAssetPriceWithFirstPayment<BuySmallRealEstateFirstPayment>(
+        AssetType.RealEstateSmallBuyPrice, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
 
 public class BuySmallRealEstateFirstPayment(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
-    IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetFirstPayment<BuySmallRealEstateCredit>(
-        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
+    : BuyAssetWithCashflowFirstPayment<BuySmallRealEstateCashFlow, BuySmallRealEstateCredit>(
+        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, termsService, availableAssets, assetManager, personManager) { }
 
 public class BuySmallRealEstateCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
+    IPersonManager personManager)
+    : BuyAssetWithCashflowCredit<BuySmallRealEstateCashFlow>(
+        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, termsService, availableAssets, assetManager, personManager) { }
+
+public class BuySmallRealEstateCashFlow(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager,
     IHistoryManager historyManager,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
+    IPersonManager personManager)
+    : BuyAssetCashFlow<Start>(
+        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
