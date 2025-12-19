@@ -84,6 +84,18 @@ public static class ServicesProvider
 
         services.AddTransient<BigOpportunity>();
 
+        services.AddTransient<BuyBigRealEstate>();
+        services.AddTransient<BuyBigRealEstatePrice>();
+        services.AddTransient<BuyBigRealEstateFirstPayment>();
+        services.AddTransient<BuyBigRealEstateCredit>();
+        services.AddTransient<BuyBigRealEstateCashFlow>();
+
+        services.AddTransient<BuyBusiness>();
+        services.AddTransient<BuyBusinessPrice>();
+        services.AddTransient<BuyBusinessFirstPayment>();
+        services.AddTransient<BuyBusinessCredit>();
+        services.AddTransient<BuyBusinessCashFlow>();
+
         services.AddTransient<Market>();
 
         services.AddTransient<BigCircle>();

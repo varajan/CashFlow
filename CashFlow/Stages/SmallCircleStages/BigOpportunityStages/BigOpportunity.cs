@@ -19,11 +19,11 @@ public class BigOpportunity(ITermsService termsService) : BaseStage(termsService
         switch (message)
         {
             case var m when MessageEquals(m, 37, "Buy Real Estate"):
-                //NextStage = New<BuyRealEstate>();
+                NextStage = New<BuyBigRealEstate>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 94, "Buy Business"):
-                //NextStage = New<BuyBusiness>();
+                NextStage = New<BuyBusiness>();
                 return Task.CompletedTask;
 
             case var m when MessageEquals(m, 94, "Buy Land"):
