@@ -11,12 +11,12 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandS
 public class BuyLandCreditTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 500, Qtty = 1, Type = AssetType.LandTitle, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 500, Qtty = 1, Type = AssetType.Land, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, TestPerson.Id)).Returns([Asset]);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Land, TestPerson.Id)).Returns([Asset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
     }
 
@@ -35,7 +35,7 @@ public class BuyLandCreditTests : StagesBaseTest
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
-                x.Type == AssetType.LandTitle)
+                x.Type == AssetType.Land)
         ), Times.Once);
 
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
@@ -91,7 +91,7 @@ public class BuyLandCreditTests : StagesBaseTest
         AssetManagerMock.Verify(a => a.Update(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
-                x.Type == AssetType.LandTitle &&
+                x.Type == AssetType.Land &&
                 x.IsDraft == false)
         ), Times.Once);
 

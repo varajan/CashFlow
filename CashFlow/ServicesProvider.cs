@@ -97,6 +97,11 @@ public static class ServicesProvider
         services.AddTransient<BuyBusinessCashFlow>();
 
         services.AddTransient<Market>();
+        services.AddTransient<SellRealEstate>();
+        services.AddTransient<SellLand>();
+        services.AddTransient<SellBusiness>();
+        services.AddTransient<SellCoins>();
+        services.AddTransient<IncreaseCashflow>();
 
         services.AddTransient<BigCircle>();
 

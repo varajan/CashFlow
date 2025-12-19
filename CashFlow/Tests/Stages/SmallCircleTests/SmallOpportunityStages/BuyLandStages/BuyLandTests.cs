@@ -65,7 +65,7 @@ public class BuyLandTests : StagesBaseTest
                 x.Title == name &&
                 x.Qtty == 1 &&
                 x.UserId == CurrentUserMock.Object.Id &&
-                x.Type == AssetType.LandTitle &&
+                x.Type == AssetType.Land &&
                 x.IsDraft)
         ), Times.Once);
     }

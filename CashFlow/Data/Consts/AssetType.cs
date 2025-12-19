@@ -8,11 +8,13 @@ public enum AssetType
     SmallGiveMoney = 3,
     BigGiveMoney = 4,
 
+    Land = 555,
     LandTitle = 5,
     LandBuyPrice = 6,
     LandSellPrice = 7,
 
     MicroCreditAmount = 8,
+    SmallBusiness = 999,
     Business = 9,
 
     SmallBusinessType = 28,

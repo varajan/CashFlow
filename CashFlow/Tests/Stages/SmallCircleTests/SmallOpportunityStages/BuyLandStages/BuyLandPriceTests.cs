@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandS
 public class BuyLandPriceTests : StagesBaseTest
 {
     private static readonly string[] Prices = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.LandTitle, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.Land, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -21,7 +21,7 @@ public class BuyLandPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.LandBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([Asset]);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Land, CurrentUserMock.Object.Id)).Returns([Asset]);
         AssetManagerMock
             .Setup(a => a.Update(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
