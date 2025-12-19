@@ -36,4 +36,4 @@ public class BuySmallRealEstateCashFlow(
     IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(
-        AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }
+        AssetType.RealEstateSmallCashFlow, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, assetManager, historyManager, personManager) { }

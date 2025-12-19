@@ -63,6 +63,7 @@ public static class ServicesProvider
         services.AddTransient<BuySmallRealEstatePrice>();
         services.AddTransient<BuySmallRealEstateFirstPayment>();
         services.AddTransient<BuySmallRealEstateCredit>();
+        services.AddTransient<BuySmallRealEstateCashFlow>();
 
         services.AddTransient<BuyLand>();
         services.AddTransient<BuyLandPrice>();

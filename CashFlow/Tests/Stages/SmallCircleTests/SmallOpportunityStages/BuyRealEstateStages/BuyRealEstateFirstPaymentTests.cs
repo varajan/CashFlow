@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
@@ -15,20 +14,12 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.RealEstate, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 10_000 };
 
-    private List<AssetDto> AssetsList = [];
-
     [SetUp]
     public void Setup()
     {
-        AssetsList = [];
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateSmallFirstPayment)).Returns(FirstPayments);
         AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([Asset]);
-        AssetManagerMock
-            .Setup(a => a.Update(It.IsAny<AssetDto>()))
-            .Callback<AssetDto>(dto =>
-                AssetsList.Add(dto.Clone())
-            );
     }
 
     [Test]
@@ -81,24 +72,13 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-
-            Assert.That(AssetsList, Has.Count.EqualTo(2));
-            Assert.That(AssetsList[0].Price, Is.EqualTo(price));
-            Assert.That(AssetsList[0].Mortgage, Is.EqualTo(mortgage));
-            Assert.That(AssetsList[0].IsDraft, Is.True);
-
-            Assert.That(AssetsList[1].Price, Is.EqualTo(price));
-            Assert.That(AssetsList[1].Mortgage, Is.EqualTo(mortgage));
-            Assert.That(AssetsList[1].IsDraft, Is.False);
-
-            PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
-
-            HistoryManagerMock.Verify(m => m.Add(
-                ActionType.BuyRealEstate,
-                Asset.Id,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
-            ), Times.Once);
+            Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCashFlow>());
+            AssetManagerMock.Verify(a => a.Update(
+                It.Is<AssetDto>(x =>
+                    x.Price == price &&
+                    x.Mortgage == mortgage &&
+                    x.IsDraft)),
+                Times.Once);
         });
     }
 
@@ -109,10 +89,8 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var person = new PersonDto { Cash = cash };
-        var nextStage = creditIsNeeded ? typeof(BuySmallRealEstateCredit) : typeof(Start);
+        var nextStage = creditIsNeeded ? typeof(BuySmallRealEstateCredit) : typeof(BuySmallRealEstateCashFlow);
         var asset = Asset.Clone();
-
-        //asset.Qtty = qtty;
         asset.Price = firstPayment;
 
         AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([asset]);
@@ -125,15 +103,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
-
-            Assert.That(AssetsList, Has.Count.EqualTo(creditIsNeeded ? 1 : 2), "Asset update count");
-            Assert.That(AssetsList[0].Price, Is.EqualTo(firstPayment));
-            Assert.That(AssetsList[0].IsDraft, Is.True);
-
-            PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
-            HistoryManagerMock.Verify(m => m.Add(ActionType.BuyRealEstate,
-                asset.Id,
-                It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
+            AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
         });
     }
 

@@ -72,7 +72,7 @@ public class BuyRealEstateCreditTests : StagesBaseTest
     }
 
     [Test]
-    public async Task BuyRealEstateCredit_Confirmed_IsCompleted()
+    public async Task BuyRealEstateCredit_Confirmed_MoveNext()
     {
         // Arrange
         var firstPayment = Asset.Price - Asset.Mortgage;
@@ -83,23 +83,10 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         await testStage.HandleMessage("Get credit");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCashFlow>());
 
         CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
-        HistoryManagerMock.Verify(x => x.Add(ActionType.BuyRealEstate, Asset.Id, CurrentUserMock.Object), Times.Once);
-
-        AssetManagerMock.Verify(a => a.Update(
-            It.Is<AssetDto>(x =>
-                x.UserId == TestPerson.Id &&
-                x.Type == AssetType.RealEstate &&
-                x.IsDraft == false)
-        ), Times.Once);
-
-        PersonManagerMock.Verify(p => p.Update(
-            It.Is<PersonDto>(x =>
-            x.Id == TestPerson.Id &&
-            x.Cash == TestPerson.Cash - firstPayment)
-            ), Times.Once);
+        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
     }
 
     protected override IStage GetTestStage() => new BuySmallRealEstateCredit(
