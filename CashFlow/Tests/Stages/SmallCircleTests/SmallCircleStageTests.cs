@@ -3,12 +3,12 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
-using CashFlow.Stages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
 

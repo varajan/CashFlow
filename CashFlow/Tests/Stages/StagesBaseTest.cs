@@ -80,6 +80,7 @@ public abstract class StagesBaseTest
         user.SetupGet(u => u.Id).Returns(id);
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);
+        user.SetupGet(u => u.Description).Returns($"{name} at {cirle} circle");
         user.SetupGet(u => u.Person_OBSOLETE).Returns(person.Object);
 
         var TestPerson = new PersonDto { Id = id, Cash = 100, BigCircle = cirle == Circle.Big };

@@ -3,11 +3,11 @@ using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.BigCircleStages;
-using CashFlow.Stages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using MoreLinq;
 
