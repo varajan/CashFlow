@@ -26,12 +26,13 @@ public abstract class SellAssetBaseTest : StagesBaseTest
         AssetManagerMock.Setup(a => a.GetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))
             .Returns((AssetDto asset, IUser user) => $"{asset.Title} Text");
 
+        int id = 0;
         foreach (var type in assetTypes)
         {
             List<AssetDto> assetsOfType = [
-                new AssetDto { Type = type, Id = 1, Qtty = 1, Title = $"{type} No1", MarkedToSell = true },
-                new AssetDto { Type = type, Id = 2, Qtty = 1, Title = $"{type} No2", MarkedToSell = false },
-                new AssetDto { Type = type, Id = 3, Qtty = 1, Title = $"{type} No3", MarkedToSell = true },
+                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No1", MarkedToSell = true },
+                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No2", MarkedToSell = false },
+                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No3", MarkedToSell = true },
             ];
 
             AssetManagerMock.Setup(a => a.ReadAll(type, CurrentUserMock.Object.Id)).Returns(assetsOfType);

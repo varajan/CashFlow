@@ -12,4 +12,5 @@ public static class ListExtensions
     public static IEnumerable<string> Trim(this IEnumerable<string> list) => list.Select(x => x.Trim());
     public static List<T> Random<T>(this IEnumerable<T> list, int count) => list.Shuffle().Take(count).ToList();
     public static string Join(this IEnumerable<string> list, string separator) => string.Join(separator, list);
+    public static bool ContainsAny<T>(this IEnumerable<T> source, params T[] values) => source.Any(values.Contains);
 }

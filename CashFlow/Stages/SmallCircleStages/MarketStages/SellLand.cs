@@ -7,37 +7,38 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class SellLand(ITermsService termsService, IAssetManager assetManager) : SellAsset<SellLandPrice>(AssetType.Land, termsService, assetManager) { }
+public class SellLand(ITermsService termsService, IAssetManager assetManager) : SellAsset<SellLandPrice>(termsService, assetManager, AssetType.Land) { }
 
 public class SellLandPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(AssetType.Land, termsService, availableAssets, assetManager, personManager, historyManager) { }
+    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, assetManager, personManager, historyManager, AssetType.Land) { }
 
 public class SellRealEstate(ITermsService termsService) : BaseStage(termsService)
 {
 }
 
-public class SellBusiness(ITermsService termsService, IAssetManager assetManager) : SellAsset<SellBusinessPrice>(AssetType.Business, termsService, assetManager) { }
+public class SellBusiness(ITermsService termsService, IAssetManager assetManager) :
+    SellAsset<SellBusinessPrice>(termsService, assetManager, AssetType.Business, AssetType.SmallBusiness) { }
 
 public class SellBusinessPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(AssetType.Business, termsService, availableAssets, assetManager, personManager, historyManager)
+    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, assetManager, personManager, historyManager, AssetType.Business, AssetType.SmallBusiness)
 { }
 
-public class SellCoins(ITermsService termsService, IAssetManager assetManager) : SellAsset<SellCoinsPrice>(AssetType.Coin, termsService, assetManager) { }
+public class SellCoins(ITermsService termsService, IAssetManager assetManager) : SellAsset<SellCoinsPrice>(termsService, assetManager, AssetType.Coin) { }
 
 public class SellCoinsPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(AssetType.Coin, termsService, availableAssets, assetManager, personManager, historyManager)
+    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, assetManager, personManager, historyManager, AssetType.Coin)
 { }
 
 public class IncreaseCashflow(ITermsService termsService) : BaseStage(termsService)
@@ -45,12 +46,12 @@ public class IncreaseCashflow(ITermsService termsService) : BaseStage(termsServi
 }
 
 public class SellAsset<TNextStage>(
-    AssetType assetType,
     ITermsService termsService,
-    IAssetManager assetManager)
+    IAssetManager assetManager,
+    params AssetType[] assetTypes)
     : BaseStage(termsService) where TNextStage : BaseStage
 {
-    protected AssetType AssetType { get; } = assetType;
+    protected AssetType[] AssetTypes { get; } = assetTypes;
     protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message
@@ -59,26 +60,44 @@ public class SellAsset<TNextStage>(
         {
             var assetNames = Assets.Select((a, i) => $"*#{i+1}* {AssetManager.GetDescription(a, CurrentUser)}").Join(Environment.NewLine);
 
-            return AssetType switch
+            if (AssetTypes.Contains(AssetType.Land))
             {
-                AssetType.Land => Terms.Get(99, CurrentUser, "What Land do you want to sell?{0}{1}", Environment.NewLine, assetNames),
-                AssetType.Coin => Terms.Get(122, CurrentUser, "What coins do you want to sell?"),
-                AssetType.Stock => Terms.Get(27, CurrentUser, "What stocks do you want to sell?"),
-                _ => throw new NotImplementedException(),
-            };
+                return Terms.Get(99, CurrentUser, "What Land do you want to sell?{0}{1}", Environment.NewLine, assetNames);
+            }
+
+            if (AssetTypes.ContainsAny(AssetType.Business, AssetType.SmallBusiness))
+            {
+                return Terms.Get(99, CurrentUser, "What Business do you want to sell?{0}{1}", Environment.NewLine, assetNames);
+            }
+
+            if (AssetTypes.Contains(AssetType.Coin))
+            {
+                return Terms.Get(122, CurrentUser, "What coins do you want to sell?", Environment.NewLine, assetNames);
+            }
+
+            if (AssetTypes.Contains(AssetType.Stock))
+            {
+                return Terms.Get(27, CurrentUser, "What stocks do you want to sell?", Environment.NewLine, assetNames);
+            }
+
+            throw new NotImplementedException();
         }
     }
 
-    public override IEnumerable<string> Buttons =>
-        AssetType switch
+    public override IEnumerable<string> Buttons
+    {
+        get
         {
-            AssetType.Stock => Assets.Select(a => a.Title).Distinct().Append(Cancel),
-            AssetType.Coin => Assets.Select(a => a.Title).Distinct().Append(Cancel),
+            if (AssetTypes.ContainsAny(AssetType.Stock, AssetType.Coin))
+            {
+                return Assets.Select(a => a.Title).Distinct().Append(Cancel);
+            }
 
-            _ => Assets.Select((l, i) => $"#{i + 1}").Append(Cancel),
-        };
+            return Assets.Select((l, i) => $"#{i + 1}").Append(Cancel);
+        }
+    }
 
-    private List<AssetDto> Assets => AssetManager.ReadAll(AssetType, CurrentUser.Id);
+    private List<AssetDto> Assets => AssetTypes.SelectMany(type => AssetManager.ReadAll(type, CurrentUser.Id)).ToList();
 
     public override async Task HandleMessage(string message)
     {
@@ -88,7 +107,7 @@ public class SellAsset<TNextStage>(
             return;
         }
 
-        var moveNext = AssetType == AssetType.Land || AssetType == AssetType.Business
+        var moveNext = AssetTypes.ContainsAny(AssetType.Land, AssetType.Business, AssetType.SmallBusiness)
             ? await HandleByIndex(message)
             : await HandleByTitle(message);
 
@@ -103,19 +122,19 @@ public class SellAsset<TNextStage>(
         var index = message.Replace("#", "").ToInt();
         if (index < 1 || index > Assets.Count)
         {
-            switch (AssetType)
+            if (AssetTypes.Contains(AssetType.Land))
             {
-                case AssetType.Land:
-                    await CurrentUser.Notify(Terms.Get(101, CurrentUser, "Invalid land number."));
-                    return false;
-
-                //case AssetType.Coin:
-                //    await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
-                //    return false;
-
-                default:
-                    throw new NotImplementedException();
+                await CurrentUser.Notify(Terms.Get(101, CurrentUser, "Invalid land number."));
+                return false;
             }
+
+            if (AssetTypes.Contains(AssetType.Land) || AssetTypes.Contains(AssetType.SmallBusiness))
+            {
+                await CurrentUser.Notify(Terms.Get(76, CurrentUser, "Invalid business number."));
+                return false;
+            }
+
+            throw new NotImplementedException();
         }
 
         var asset = Assets[index - 1];
@@ -132,19 +151,19 @@ public class SellAsset<TNextStage>(
 
         if (assets.Count == 0)
         {
-            switch (AssetType)
+            if (AssetTypes.Contains(AssetType.Coin))
             {
-                case AssetType.Coin:
-                    await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
-                    return false;
-
-                case AssetType.Stock:
-                    await CurrentUser.Notify(Terms.Get(124, CurrentUser, "Invalid stocks name."));
-                    return false;
-
-                default:
-                    throw new NotImplementedException();
+                await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
+                return false;
             }
+
+            if (AssetTypes.Contains(AssetType.Stock))
+            {
+                await CurrentUser.Notify(Terms.Get(124, CurrentUser, "Invalid stocks name."));
+                return false;
+            }
+
+            throw new NotImplementedException();
         }
 
         assets.ForEach(asset =>
@@ -158,28 +177,32 @@ public class SellAsset<TNextStage>(
 }
 
 public class SellAssetPrice(
-    AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager) : BaseStage(termsService)
+    IHistoryManager historyManager,
+    params AssetType[] assetTypes) : BaseStage(termsService)
 {
-    protected AssetType AssetType { get; } = assetType;
+    protected AssetType[] AssetTypes { get; } = assetTypes;
 
-    protected ActionType ActionType => AssetType switch
+    protected ActionType ActionType => AssetTypes.First() switch
     {
         AssetType.Land => ActionType.SellLand,
+        AssetType.Coin => ActionType.SellCoins,
         AssetType.Business => ActionType.SellBusiness,
+        AssetType.SmallBusiness => ActionType.SellBusiness,
         AssetType.Stock => ActionType.SellStocks,
 
         _ => throw new NotImplementedException(),
     };
 
-    protected AssetType SellPrice => AssetType switch
+    protected AssetType SellPrice => AssetTypes.First() switch
     {
         AssetType.Land => AssetType.LandSellPrice,
+        AssetType.Coin => AssetType.CoinSellPrice,
         AssetType.Business => AssetType.BusinessSellPrice,
+        AssetType.SmallBusiness => AssetType.BusinessSellPrice,
         AssetType.Stock => AssetType.StockPrice,
 
         _ => throw new NotImplementedException(),
@@ -196,7 +219,7 @@ public class SellAssetPrice(
 
     public override async Task HandleMessage(string message)
     {
-        var assets = AssetManager.ReadAll(AssetType, CurrentUser.Id).Where(a => a.MarkedToSell).ToList();
+        var assets = AssetTypes.SelectMany(type => AssetManager.ReadAll(type, CurrentUser.Id)).Where(a => a.MarkedToSell).ToList();
 
         if (IsCanceled(message))
         {
