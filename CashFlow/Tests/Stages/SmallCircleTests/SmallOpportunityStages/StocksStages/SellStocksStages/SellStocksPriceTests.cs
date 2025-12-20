@@ -115,8 +115,8 @@ public class SellStocksPriceTests : StagesBaseTest
 
     protected override IStage GetTestStage() => new SellStocksPrice(
         TermsServiceMock.Object,
-        AssetManagerMock.Object,
         AvailableAssetsMock.Object,
+        AssetManagerMock.Object,
         PersonManagerMock.Object,
         HistoryManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

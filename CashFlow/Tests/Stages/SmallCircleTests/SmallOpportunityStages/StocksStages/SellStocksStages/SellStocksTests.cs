@@ -2,6 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
+using CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.SellStocksStages;
@@ -27,7 +28,7 @@ public class SellStocksTests: StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Assets.Select(x => x.Title).Distinct().Append("Cancel");
+        var buttons = Assets.Where(a => a.Type == AssetType.Stock).Select(x => x.Title).Distinct().Append("Cancel");
 
         // Act
 
@@ -50,6 +51,7 @@ public class SellStocksTests: StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocks>());
+        CurrentUserMock.Verify(c => c.Notify("Invalid stocks name."), Times.Once);
     }
 
     [TestCaseSource(nameof(Assets))]

@@ -63,6 +63,7 @@ public class SellAsset<TNextStage>(
             {
                 AssetType.Land => Terms.Get(99, CurrentUser, "What Land do you want to sell?{0}{1}", Environment.NewLine, assetNames),
                 AssetType.Coin => Terms.Get(122, CurrentUser, "What coins do you want to sell?"),
+                AssetType.Stock => Terms.Get(27, CurrentUser, "What stocks do you want to sell?"),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -97,10 +98,6 @@ public class SellAsset<TNextStage>(
 
                 case AssetType.Coin:
                     await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
-                    break;
-
-                case AssetType.Stock:
-                    await CurrentUser.Notify(Terms.Get(27, CurrentUser, "What stocks do you want to sell?"));
                     break;
 
                 default:
