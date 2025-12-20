@@ -4,26 +4,6 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class SellRealEstate(ITermsService termsService) : BaseStage(termsService)
-{
-}
-
-public class SellLand(ITermsService termsService) : BaseStage(termsService)
-{
-}
-
-public class SellBusiness(ITermsService termsService) : BaseStage(termsService)
-{
-}
-
-public class SellCoins(ITermsService termsService) : BaseStage(termsService)
-{
-}
-
-public class IncreaseCashflow(ITermsService termsService) : BaseStage(termsService)
-{
-}
-
 public class Market(ITermsService termsService, IAssetManager assetManager) : BaseStage(termsService)
 {
     protected IAssetManager AssetManager { get; }  = assetManager;

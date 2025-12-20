@@ -157,7 +157,7 @@ public class MarketTests : StagesBaseTest
     }
 
     [Test]
-    public async Task Market_Select_IncreaseCashflow_WithoutAny()
+    public async Task Market_Select_IncreaseCashflow_WithoutSmallBusiness()
     {
         // Arrange
         var testStage = GetTestStage();

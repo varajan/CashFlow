@@ -57,4 +57,9 @@ public class Assets(IDataBase dataBase, IUser user) : IAssets
 
         return Items.First(i => i.IsDraft);
     }
+
+    internal static int Count(Func<object, bool> value)
+    {
+        throw new NotImplementedException();
+    }
 }

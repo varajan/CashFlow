@@ -51,11 +51,13 @@ public class SellStocksPrice(
     ITermsService termsService,
     IAssetManager assetManager,
     IAvailableAssets availableAssets,
-    IPersonManager personManager)
+    IPersonManager personManager,
+    IHistoryManager historyManager)
     : SellStocks(termsService, assetManager)
 {
     protected IPersonManager PersonManager { get; } = personManager;
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
 
@@ -87,8 +89,13 @@ public class SellStocksPrice(
         var qtty = stocks.Sum(s => s.Qtty);
         person.Cash += qtty * price;
         PersonManager.Update(person);
-        stocks.ForEach(stock => AssetManager.Sell(stock, ActionType.SellStocks, price, CurrentUser));
+        stocks.ForEach(stock =>
+        {
+            AssetManager.Sell(stock, ActionType.SellStocks, price, CurrentUser);
+            HistoryManager.Add(ActionType.SellStocks, stock.Id, CurrentUser);
+        });
 
+        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
         NextStage = New<Start>();
     }
 }
