@@ -81,7 +81,7 @@ public class SellBusinessPriceTests : SellAssetBaseTest
 
     [TestCase("1")]
     [TestCaseSource(nameof(AvailablePrices))]
-    public async Task SellBusinessPrice_SelectValidName_Completed(string price)
+    public async Task SellBusinessPrice_SelectValidValue_Completed(string price)
     {
         // Arrange
         var testStage = GetTestStage();

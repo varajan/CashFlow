@@ -41,8 +41,46 @@ public class SellCoinsPrice(
     IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, assetManager, personManager, historyManager, AssetType.Coin)
 { }
 
-public class IncreaseCashflow(ITermsService termsService) : BaseStage(termsService)
+public class IncreaseCashflow(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IAssetManager assetManager,
+    IHistoryManager historyManager) : BaseStage(termsService)
 {
+    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAssetManager AssetManager { get; } = assetManager;
+    protected IHistoryManager HistoryManager { get; } = historyManager;
+
+    public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
+
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.IncreaseCashFlow).Append(Cancel);
+
+    public override async Task HandleMessage(string message)
+    {
+        if (IsCanceled(message))
+        {
+            NextStage = New<Start>();
+            return;
+        }
+
+        var cashflow = message.AsCurrency();
+        if (cashflow <= 0)
+        {
+            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            return;
+        }
+
+        var assets = AssetManager.ReadAll(AssetType.SmallBusiness, CurrentUser.Id);
+        assets.ForEach(asset =>
+        {
+            asset.CashFlow += cashflow;
+            AssetManager.Update(asset);
+            HistoryManager.Add(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
+        });
+
+        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+        NextStage = New<Start>();
+    }
 }
 
 public class SellAsset<TNextStage>(

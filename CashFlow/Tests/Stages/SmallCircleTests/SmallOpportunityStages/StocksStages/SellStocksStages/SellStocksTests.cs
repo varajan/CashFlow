@@ -41,7 +41,7 @@ public class SellStocksTests: StagesBaseTest
     }
 
     [Test]
-    public async Task SellStocks_SelectInvalidName_StayOnStage()
+    public async Task SellStocks_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -55,7 +55,7 @@ public class SellStocksTests: StagesBaseTest
     }
 
     [TestCaseSource(nameof(Assets))]
-    public async Task SellStocks_SelectValidName_MoveForward(AssetDto asset)
+    public async Task SellStocks_SelectValidValue_MoveForward(AssetDto asset)
     {
         // Arrange
         var testStage = GetTestStage();

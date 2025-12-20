@@ -36,7 +36,7 @@ public class BuyLandTests : StagesBaseTest
     }
 
     [Test]
-    public async Task BuyLand_SelectInvalidName_StayOnStage()
+    public async Task BuyLand_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -49,7 +49,7 @@ public class BuyLandTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(Names))]
-    public async Task BuyLand_SelectValidName_MoveForward(string name)
+    public async Task BuyLand_SelectValidValue_MoveForward(string name)
     {
         // Arrange
         var testStage = GetTestStage();

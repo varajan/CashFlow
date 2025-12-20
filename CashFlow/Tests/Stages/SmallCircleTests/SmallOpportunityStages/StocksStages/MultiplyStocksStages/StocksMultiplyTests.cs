@@ -41,7 +41,7 @@ public class StocksMultiplyTests : StagesBaseTest
     }
 
     [Test]
-    public async Task StocksMultiply_SelectInvalidName_StayOnStage()
+    public async Task StocksMultiply_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -54,7 +54,7 @@ public class StocksMultiplyTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(StockNames))]
-    public async Task StocksMultiply_SelectValidName_MoveForward(string stockName)
+    public async Task StocksMultiply_SelectValidValue_MoveForward(string stockName)
     {
         // Arrange
         var testStage = GetTestStage();

@@ -29,7 +29,7 @@ public class FriendsTests : StagesBaseTest
     }
 
     [Test]
-    public async Task Friends_SelectValidName()
+    public async Task Friends_SelectValidValue()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -49,7 +49,7 @@ public class FriendsTests : StagesBaseTest
     }
 
     [Test]
-    public async Task Friends_SelectInValidName()
+    public async Task Friends_SelectInvalidValue()
     {
         // Arrange
         var testStage = GetTestStage();

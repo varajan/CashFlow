@@ -36,7 +36,7 @@ public class BuyBusinessTests : StagesBaseTest
     }
 
     [Test]
-    public async Task BuyBusiness_SelectInvalidName_StayOnStage()
+    public async Task BuyBusiness_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -49,7 +49,7 @@ public class BuyBusinessTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(Names))]
-    public async Task BuyBusiness_SelectValidName_MoveForward(string title)
+    public async Task BuyBusiness_SelectValidValue_MoveForward(string title)
     {
         // Arrange
         var testStage = GetTestStage();

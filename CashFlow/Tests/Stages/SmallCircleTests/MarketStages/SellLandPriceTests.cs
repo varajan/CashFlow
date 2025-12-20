@@ -81,7 +81,7 @@ public class SellLandPriceTests : SellAssetBaseTest
 
     [TestCase("1")]
     [TestCaseSource(nameof(AvailablePrices))]
-    public async Task SellLandPrice_SelectValidName_Completed(string price)
+    public async Task SellLandPrice_SelectValidValue_Completed(string price)
     {
         // Arrange
         var testStage = GetTestStage();

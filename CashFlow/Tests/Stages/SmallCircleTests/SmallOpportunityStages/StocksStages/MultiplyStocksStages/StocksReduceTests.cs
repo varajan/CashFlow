@@ -41,7 +41,7 @@ public class StocksReduceTests : StagesBaseTest
     }
 
     [Test]
-    public async Task StocksReduce_SelectInvalidName_StayOnStage()
+    public async Task StocksReduce_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -54,7 +54,7 @@ public class StocksReduceTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(StockNames))]
-    public async Task StocksReduce_SelectValidName_MoveForward(string stockName)
+    public async Task StocksReduce_SelectValidValue_MoveForward(string stockName)
     {
         // Arrange
         var testStage = GetTestStage();

@@ -36,7 +36,7 @@ public class BuyCoinsTests : StagesBaseTest
     }
 
     [Test]
-    public async Task BuyCoins_SelectInvalidName_StayOnStage()
+    public async Task BuyCoins_SelectInvalidValue_StayOnStage()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -49,7 +49,7 @@ public class BuyCoinsTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(Names))]
-    public async Task BuyCoins_SelectValidName_MoveForward(string title)
+    public async Task BuyCoins_SelectValidValue_MoveForward(string title)
     {
         // Arrange
         var testStage = GetTestStage();
