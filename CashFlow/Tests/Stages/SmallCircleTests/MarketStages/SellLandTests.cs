@@ -42,7 +42,7 @@ public class SellLandTests : SellAssetBaseTest
     }
 
     [Test]
-    public async Task SellStocks_SelectValidOption_MoveForward([Values(" 1", "#2", "3")] string option)
+    public async Task SellLand_SelectValidOption_MoveForward([Values(" 1", "#2", "3")] string option)
     {
         // Arrange
         var testStage = GetTestStage();

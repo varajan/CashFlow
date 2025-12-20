@@ -31,7 +31,7 @@ public enum AssetType
     BigBusinessBuyPrice = 15,
     BigBusinessCashFlow = 17,
 
-    RealEstate = 17,
+    RealEstate = 1700,
     RealEstateSmallType = 18,
     RealEstateSmallBuyPrice = 19,
     RealEstateSellPrice = 20,

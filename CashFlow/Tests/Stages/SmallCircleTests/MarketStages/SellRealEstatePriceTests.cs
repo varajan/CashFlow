@@ -1,0 +1,124 @@
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
+using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.MarketStages;
+using Moq;
+using MoreLinq;
+
+namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
+
+[TestFixture]
+public class SellRealEstatePriceTests : SellAssetBaseTest
+{
+    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
+    private static readonly List<string> AvailablePrices = ["$100", "$500", "$1,000",];
+
+    [SetUp]
+    public void PricesSetup()
+    {
+        AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.RealEstateSellPrice)).Returns(AvailablePrices);
+        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+    }
+
+    [TestCase("2/1", "What is the price?")]
+    [TestCase("3/2", "What is the price?")]
+    [TestCase("2-plex", "You have *2* apartments. What is the price per one appartment?")]
+    [TestCase("8-plex", "You have *8* apartments. What is the price per one appartment?")]
+    public void SellRealEstatePrice_Question_and_Buttons(string apparment, string message)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var buttons = AvailablePrices.Append("Cancel");
+        Assets.Where(a => a.MarkedToSell).ForEach(a => a.Title = apparment);
+
+        // Act
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(testStage.Message, Is.EqualTo(message));
+            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+        });
+    }
+
+    [Test]
+    public async Task SellRealEstatePrice_CanBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        Assets
+            .Where(a => a.Type == AssetType.RealEstate && a.MarkedToSell)
+            .ForEach(asset =>
+            {
+                AssetManagerMock.Verify(a => a.Update(
+                    It.Is<AssetDto>(x =>
+                        x.Title == asset.Title &&
+                        x.Type == AssetType.RealEstate &&
+                        x.MarkedToSell == false)
+                ), Times.Once);
+            });
+    }
+
+    [Test]
+    public async Task SellRealEstatePrice_SelectInvalidPrice_StayOnStage([Values("-1", "0", "$0", "test")] string price)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage(price);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstatePrice>());
+        CurrentUserMock.Verify(u => u.Notify("Invalid price value. Try again."), Times.Once);
+        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
+        AssetManagerMock.Verify(a => a.Sell(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+    }
+
+    [TestCase("2/1", 1, "$100")]
+    [TestCase("3/2", 1, "500")]
+    [TestCase("2-plex", 2, "$1,000")]
+    [TestCase("8-plex", 8, "$5,000")]
+    public async Task SellRealEstatePrice_SelectValidValue_Completed(string apparment, int count, string price)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var payedAmmount = 0;
+        Assets.Where(a => a.MarkedToSell).ForEach(a => a.Title = apparment);
+
+        // Act
+        await testStage.HandleMessage(price);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        Assets
+            .Where(a => a.Type == AssetType.RealEstate && a.MarkedToSell)
+            .ForEach(asset =>
+            {
+                payedAmmount += count * price.AsCurrency();
+                AssetManagerMock.Verify(a => a.Sell(asset, ActionType.SellRealEstate, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
+                HistoryManagerMock.Verify(h => h.Add(ActionType.SellRealEstate, asset.Id, CurrentUserMock.Object), Times.Once);
+            });
+
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
+    }
+
+    protected override IStage GetTestStage() => new SellRealEstatePrice(
+        TermsServiceMock.Object,
+        AvailableAssetsMock.Object,
+        AssetManagerMock.Object,
+        PersonManagerMock.Object,
+        HistoryManagerMock.Object)
+        .SetCurrentUser(CurrentUserMock.Object)
+        .SetAllUsers(OtherUsers);
+}

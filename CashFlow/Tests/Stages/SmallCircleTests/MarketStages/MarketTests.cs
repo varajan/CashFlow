@@ -22,7 +22,7 @@ public class MarketTests : StagesBaseTest
             AssetType.SmallBusiness
         };
 
-        assetTypes.ForEach(t => AssetManagerMock.Setup(a => a.ReadAll(t, CurrentUserMock.Object.Id)) .Returns([ new AssetDto() ]));
+        assetTypes.ForEach(t => AssetManagerMock.Setup(a => a.ReadAll(t, CurrentUserMock.Object.Id)).Returns([new AssetDto()]));
     }
 
     [Test]
@@ -187,12 +187,4 @@ public class MarketTests : StagesBaseTest
     protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, AssetManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
-
-    [Test]
-    public void NotImplemented()
-    {
-#if DEBUG
-        Assert.Fail("Not Implemented.");
-#endif
-    }
 }

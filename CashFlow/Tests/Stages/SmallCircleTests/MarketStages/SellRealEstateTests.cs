@@ -6,17 +6,15 @@ using Moq;
 namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
 
 [TestFixture]
-public class SellBusinessTests : SellAssetBaseTest
+public class SellRealEstateTests : SellAssetBaseTest
 {
     [Test]
-    public void SellBusiness_Question_and_Buttons()
+    public void SellRealEstate_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new List<string> { "#1", "#2", "#3", "#4", "#5", "#6", "Cancel" };
-        var message = "What Business do you want to sell?";
-        message += "\r\n*#1* Business No1 Text\r\n*#2* Business No2 Text\r\n*#3* Business No3 Text";
-        message += "\r\n*#4* SmallBusiness No1 Text\r\n*#5* SmallBusiness No2 Text\r\n*#6* SmallBusiness No3 Text";
+        var buttons = new List<string> { "#1", "#2", "#3", "Cancel" };
+        var message = "What RealEstate do you want to sell?\r\n*#1* RealEstate No1 Text\r\n*#2* RealEstate No2 Text\r\n*#3* RealEstate No3 Text";
 
         // Act
 
@@ -29,7 +27,7 @@ public class SellBusinessTests : SellAssetBaseTest
     }
 
     [Test]
-    public async Task SellBusiness_SelectInvalidOption_StayOnStage([Values("0", "#7")] string option)
+    public async Task SellRealEstate_SelectInvalidOption_StayOnStage([Values("0", "#4")] string option)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -38,13 +36,13 @@ public class SellBusinessTests : SellAssetBaseTest
         await testStage.HandleMessage(option);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SellBusiness>());
-        CurrentUserMock.Verify(c => c.Notify("Invalid business number."), Times.Once);
+        Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstate>());
+        CurrentUserMock.Verify(c => c.Notify("Invalid Real Estate number."), Times.Once);
         CurrentUserMock.Verify(c => c.Notify(It.IsAny<string>()), Times.Once);
     }
 
     [Test]
-    public async Task SellBusiness_SelectValidOption_MoveForward([Values(" 1", "#2", "3")] string option)
+    public async Task SellRealEstate_SelectValidOption_MoveForward([Values(" 1", "#2", "3")] string option)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -54,13 +52,13 @@ public class SellBusinessTests : SellAssetBaseTest
         await testStage.HandleMessage(option);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SellBusinessPrice>());
+        Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstatePrice>());
 
         AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Once);
         AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellBusiness(TermsServiceMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new SellRealEstate(TermsServiceMock.Object, AssetManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }
