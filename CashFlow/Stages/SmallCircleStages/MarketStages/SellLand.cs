@@ -73,6 +73,7 @@ public class SellAsset<TNextStage>(
         AssetType switch
         {
             AssetType.Stock => Assets.Select(a => a.Title).Distinct().Append(Cancel),
+            AssetType.Coin => Assets.Select(a => a.Title).Distinct().Append(Cancel),
 
             _ => Assets.Select((l, i) => $"#{i + 1}").Append(Cancel),
         };
@@ -87,6 +88,18 @@ public class SellAsset<TNextStage>(
             return;
         }
 
+        var moveNext = AssetType == AssetType.Land || AssetType == AssetType.Business
+            ? await HandleByIndex(message)
+            : await HandleByTitle(message);
+
+        if (moveNext)
+        {
+            NextStage = New<TNextStage>();
+        }
+    }
+
+    private async Task<bool> HandleByIndex(string message)
+    {
         var index = message.Replace("#", "").ToInt();
         if (index < 1 || index > Assets.Count)
         {
@@ -94,22 +107,53 @@ public class SellAsset<TNextStage>(
             {
                 case AssetType.Land:
                     await CurrentUser.Notify(Terms.Get(101, CurrentUser, "Invalid land number."));
-                    break;
+                    return false;
 
-                case AssetType.Coin:
-                    await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
-                    break;
+                //case AssetType.Coin:
+                //    await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
+                //    return false;
 
                 default:
                     throw new NotImplementedException();
             }
-            return;
         }
 
-        var asset = Assets[index-1];
+        var asset = Assets[index - 1];
         asset.MarkedToSell = true;
         AssetManager.Update(asset);
-        NextStage = New<TNextStage>();
+        return true;
+    }
+
+    private async Task<bool> HandleByTitle(string message)
+    {
+        var assets = Assets
+            .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase))
+            .ToList();
+
+        if (assets.Count == 0)
+        {
+            switch (AssetType)
+            {
+                case AssetType.Coin:
+                    await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
+                    return false;
+
+                case AssetType.Stock:
+                    await CurrentUser.Notify(Terms.Get(124, CurrentUser, "Invalid stocks name."));
+                    return false;
+
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        assets.ForEach(asset =>
+        {
+            asset.MarkedToSell = true;
+            AssetManager.Update(asset);
+        });
+
+        return true;
     }
 }
 
