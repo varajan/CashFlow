@@ -22,6 +22,8 @@ public abstract class StagesBaseTest
 
     protected abstract IStage GetTestStage();
 
+    protected string NL => Environment.NewLine;
+
     [SetUp]
     public void SetUp()
     {

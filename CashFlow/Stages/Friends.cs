@@ -16,6 +16,7 @@ public class Friends(ITermsService termsService, IPersonManager personManager, I
     {
         get
         {
+            var NL = Environment.NewLine;
             var message = string.Empty;
             var onSmall = Terms.Get(142, CurrentUser, "On Small circle:");
             var onBig = Terms.Get(143, CurrentUser, "On Big circle:");
@@ -23,8 +24,8 @@ public class Friends(ITermsService termsService, IPersonManager personManager, I
             var onSmallCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == false).ToList();
             var onBigCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == true).ToList();
 
-            if (onSmallCircle.Any()) message += $"*{onSmall}*\r\n{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}\r\n";
-            if (onBigCircle.Any()) message += $"*{onBig}* \r\n{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}\r\n"))}";
+            if (onSmallCircle.Any()) message += $"*{onSmall}*{NL}{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}{NL}";
+            if (onBigCircle.Any()) message += $"*{onBig}* {NL}{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}";
 
             return message;
         }

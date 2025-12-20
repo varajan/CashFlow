@@ -14,7 +14,7 @@ public class SellLandTests : SellAssetBaseTest
         // Arrange
         var testStage = GetTestStage();
         var buttons = new List<string> { "#1", "#2", "#3", "Cancel" };
-        var message = "What Land do you want to sell?\r\n*#1* Land No1 Text\r\n*#2* Land No2 Text\r\n*#3* Land No3 Text";
+        var message = $"What Land do you want to sell?{NL}*#1* Land No1 Text{NL}*#2* Land No2 Text{NL}*#3* Land No3 Text";
 
         // Act
 

@@ -15,8 +15,8 @@ public class SellBusinessTests : SellAssetBaseTest
         var testStage = GetTestStage();
         var buttons = new List<string> { "#1", "#2", "#3", "#4", "#5", "#6", "Cancel" };
         var message = "What Business do you want to sell?";
-        message += "\r\n*#1* Business No1 Text\r\n*#2* Business No2 Text\r\n*#3* Business No3 Text";
-        message += "\r\n*#4* SmallBusiness No1 Text\r\n*#5* SmallBusiness No2 Text\r\n*#6* SmallBusiness No3 Text";
+        message += $"{NL}*#1* Business No1 Text{NL}*#2* Business No2 Text{NL}*#3* Business No3 Text";
+        message += $"{NL}*#4* SmallBusiness No1 Text{NL}*#5* SmallBusiness No2 Text{NL}*#6* SmallBusiness No3 Text";
 
         // Act
 
