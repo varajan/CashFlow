@@ -170,6 +170,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
         {
             HistoryManager.Add(ActionType.Bankruptcy, 0, CurrentUser);
             NextStage = New<Bankruptcy>();
+            return;
         }
 
         person.Cash += amount;

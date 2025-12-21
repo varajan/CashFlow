@@ -308,13 +308,9 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
-            pr.Id == TestPerson.Id &&
-            pr.Bankruptcy == true &&
-            pr.Cash == cashAmount + cashFlow)),
-            Times.Once);
-
-        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{cashFlow.AsCurrency()}*"), Times.Once);
+        HistoryManagerMock.Verify(h => h.Add(ActionType.Bankruptcy, 0, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
     }
 
     [Test]
