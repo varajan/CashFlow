@@ -16,6 +16,7 @@ public interface IAssetManager
     void Sell(AssetDto asset, ActionType action, int price, IUser user);
     void Restore(AssetDto asset);
     void Delete(AssetDto asset);
+    void DeleteAll(long userId);
 }
 
 public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManager
@@ -169,4 +170,6 @@ public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManag
         asset.Title = asset.Title.SubStringTo("*");
         Update(asset);
     }
+
+    public void DeleteAll(long userId) => dataBase.Execute($"DELETE FROM Assets WHERE UserID = {userId}");
 }
