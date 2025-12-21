@@ -2,6 +2,6 @@
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITermsService termsService) : BaseStage(termsService)
+public class GetMoney(ITermsService termsService) : BaseStage(termsService)
 {
 }

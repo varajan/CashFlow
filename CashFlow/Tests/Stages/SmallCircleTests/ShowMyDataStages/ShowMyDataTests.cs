@@ -38,14 +38,6 @@ public class ShowMyDataTests : StagesBaseTest
         });
     }
 
-    [Test]
-    public void NotImplemented()
-    {
-#if DEBUG
-        Assert.Fail("Not Implemented.");
-#endif
-    }
-
     [TestCase("Cancel", typeof(ShowMyData))]
     [TestCase("Stop", typeof(ShowMyData))]
     public async Task ShowMyData_SelectInvalidOption(string message, Type nextStage)
