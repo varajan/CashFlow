@@ -58,6 +58,8 @@ public abstract class BaseStage : IStage
 
     protected bool IsCanceled(string message) => MessageEquals(message, 6, "Cancel");
 
+    protected string Yes => Terms.Get(4, CurrentUser, "Yes");
+    protected string No => Terms.Get(138, CurrentUser, "No");
     protected string Cancel => Terms.Get(6, CurrentUser, "Cancel");
     protected string GetCredit => Terms.Get(34, CurrentUser, "Get Credit");
 }

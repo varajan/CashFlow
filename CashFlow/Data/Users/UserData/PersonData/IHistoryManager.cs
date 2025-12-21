@@ -12,6 +12,7 @@ public interface IHistoryManager
     List<HistoryDto> Read(long userId);
     void Add(ActionType type, long value, IUser user);
     void Rollback(HistoryDto record);
+    void Clear(long userId);
 }
 
 public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITermsService terms) : IHistoryManager
@@ -69,6 +70,11 @@ public class HistoryManager(IDataBase dataBase, IAssetManager assetManager, ITer
         //    IsDraft = data["IsDraft"].ToInt() == 1,
         //    IsDeleted = data["IsDeleted"].ToInt() == 1,
         //};
+    }
+
+    public void Clear(long userId)
+    {
+        DataBase.Execute($"DELETE FROM History WHERE UserID = {userId}");
     }
 
     public void Rollback(HistoryDto record)

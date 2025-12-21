@@ -16,6 +16,7 @@ public class PersonDto
 
     public int CashFlow { get; set; }
 
+    public List<AssetDto> Assets { get; set; } = [];
     public ExpensesDto Expenses { get; set; } = new();
     public LiabilitiesDto Liabilities { get; set; } = new();
 }
