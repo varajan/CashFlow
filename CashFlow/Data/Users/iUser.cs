@@ -22,8 +22,7 @@ public interface IUser
     bool IsActive { get; }
 
     void Create();
-    int PayCredit(int amount, bool regular);
-    void GetCredit(int amount);
+    void GetCredit_OBSOLETE(int amount);
 
     Task SetButtons(IStage stage);
     Task Notify(string message);

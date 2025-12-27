@@ -181,7 +181,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
-        CurrentUserMock.Verify(u => u.GetCredit(It.IsAny<int>()), Times.Never);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(It.IsAny<int>()), Times.Never);
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
         HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }
@@ -207,7 +207,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
         CurrentUserMock.Verify(u => u.Notify($"You've taken {1000.AsCurrency()} from bank."), Times.Once);
-        CurrentUserMock.Verify(u => u.GetCredit(1000), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(1000), Times.Once);
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
         HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }

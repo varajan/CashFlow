@@ -47,7 +47,7 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
                 var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
-                CurrentUser.GetCredit(credit);
+                CurrentUser.GetCredit_OBSOLETE(credit);
                 NextStage = New<TNextStage>();
                 return Task.CompletedTask;
 

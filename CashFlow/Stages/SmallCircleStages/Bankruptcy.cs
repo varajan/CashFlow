@@ -18,7 +18,7 @@ public class Bankruptcy(ITermsService termsService, IPersonManager personManager
             var bankLoan = Terms.Get(47, CurrentUser, "Bank Loan");
 
             var message = $"*{Terms.Get(126, CurrentUser, "You're out of money.")}*";
-            message += Environment.NewLine + $"{bankLoan}: *{person.Liabilities.BankLoan.AsCurrency()}*";
+            message += Environment.NewLine + $"{bankLoan}: *{person.Liabilities_OBSOLETE.BankLoan.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{person.CashFlow.AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{person.Cash.AsCurrency()}*";
 

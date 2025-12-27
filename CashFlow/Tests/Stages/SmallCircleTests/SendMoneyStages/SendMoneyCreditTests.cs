@@ -92,7 +92,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
 
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>
@@ -132,7 +132,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
 
         AssetManagerMock.Verify(a => a.Delete(
             It.Is<AssetDto>(x =>

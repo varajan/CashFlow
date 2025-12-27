@@ -64,7 +64,7 @@ public class PayWithCreditCardTests : StagesBaseTest
         {
             Id = CurrentUserMock.Object.Id,
             Cash = 5000,
-            Liabilities = new LiabilitiesDto { CreditCard = initialCredit, },
+            Liabilities_OBSOLETE = new LiabilitiesDto { CreditCard = initialCredit, },
             Expenses = new ExpensesDto { CreditCard = initialExpenses, }
         };
 
@@ -78,7 +78,7 @@ public class PayWithCreditCardTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUserMock.Object.Id &&
-            person.Liabilities.CreditCard == initialCredit + amount.AsCurrency() &&
+            person.Liabilities_OBSOLETE.CreditCard == initialCredit + amount.AsCurrency() &&
             person.Expenses.CreditCard == initialExpenses + 0.03 * amount.AsCurrency()
         )), Times.Once);
 

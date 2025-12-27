@@ -85,7 +85,7 @@ public class BuyBusinessCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessCashFlow>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
         AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
     }
 

@@ -18,5 +18,6 @@ public class PersonDto
 
     public List<AssetDto> Assets { get; set; } = [];
     public ExpensesDto Expenses { get; set; } = new();
-    public LiabilitiesDto Liabilities { get; set; } = new();
+    public LiabilitiesDto Liabilities_OBSOLETE { get; set; } = new();
+    public List<LiabilityDto> Liabilities { get; set; } = [];
 }

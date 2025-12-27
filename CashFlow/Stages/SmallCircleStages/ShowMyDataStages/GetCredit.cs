@@ -23,7 +23,7 @@ public class GetCredit(ITermsService termsService) : BaseStage(termsService)
             return;
         }
 
-        CurrentUser.GetCredit(number);
+        CurrentUser.GetCredit_OBSOLETE(number);
         NextStage = New<Start>();
     }
 }

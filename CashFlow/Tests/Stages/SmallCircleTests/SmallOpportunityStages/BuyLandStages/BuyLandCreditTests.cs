@@ -85,7 +85,7 @@ public class BuyLandCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
         HistoryManagerMock.Verify(x => x.Add(ActionType.BuyLand, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         AssetManagerMock.Verify(a => a.Update(

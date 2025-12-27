@@ -99,7 +99,7 @@ public class DoodadsTests : StagesBaseTest
         HistoryManagerMock.Verify(h => h.Add(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(botMessage), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
-        CurrentUserMock.Verify(u => u.GetCredit(firstPayment), Times.Exactly(cash < firstPayment ? 1 : 0));
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(firstPayment), Times.Exactly(cash < firstPayment ? 1 : 0));
     }
 
     [Test]

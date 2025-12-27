@@ -53,7 +53,7 @@ public class GetCreditTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(u => u.GetCredit(amount.AsCurrency()), Times.Once);
+        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(amount.AsCurrency()), Times.Once);
     }
 
     protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object)

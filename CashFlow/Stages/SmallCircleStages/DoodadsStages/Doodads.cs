@@ -63,7 +63,7 @@ public class Doodads(ITermsService termsService, IAssetManager assetManager, IPe
 
         if (person.Cash < firstPayment)
         {
-            CurrentUser.GetCredit(firstPayment);
+            CurrentUser.GetCredit_OBSOLETE(firstPayment);
             await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", firstPayment.AsCurrency()));
         }
 

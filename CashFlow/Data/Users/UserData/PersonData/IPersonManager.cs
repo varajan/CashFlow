@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -12,6 +13,10 @@ public interface IPersonManager
     PersonDto Read(long id);
     string GetDescription(long id);
     void Delete(long id);
+
+    void UpdateLiability(long id, LiabilityDto liability);
+
+    void AddHistory(ActionType type, long value, IUser user);
 }
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
@@ -85,4 +90,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public string GetDescription(long id) => throw new NotImplementedException();
 
     public void Delete(long id) => throw new NotImplementedException();
+
+    public void UpdateLiability(long id, LiabilityDto liability) => throw new NotImplementedException();
+
+    public void AddHistory(ActionType type, long value, IUser user)
+    {
+        //var record = new HistoryDto { UserId = user.Id, Action = type, Value = value };
+        //long newId = DataBase.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
+        //var text = GetDescription(record, user);
+        //DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
+    }
 }

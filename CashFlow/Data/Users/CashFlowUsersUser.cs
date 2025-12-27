@@ -35,27 +35,12 @@ public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService,
                                  Person_OBSOLETE.Assets.Description +
                                  Person_OBSOLETE.Expenses.Description;
 
-    public void GetCredit(int amount)
+    public void GetCredit_OBSOLETE(int amount)
     {
         Person_OBSOLETE.Cash += amount;
         Person_OBSOLETE.Expenses.BankLoan += amount / 10;
         Person_OBSOLETE.Liabilities.BankLoan += amount;
         History_OBSOLETE.Add(ActionType.Credit, amount);
-    }
-
-    public int PayCredit(int amount, bool regular)
-    {
-        amount = amount / 1000 * 1000;
-        amount = Math.Min(amount, Person_OBSOLETE.Liabilities.BankLoan);
-        var percent = (decimal)1 / 10;
-        var expenses = (int)(amount * percent);
-
-        Person_OBSOLETE.Cash -= amount;
-        Person_OBSOLETE.Expenses.BankLoan -= expenses;
-        Person_OBSOLETE.Liabilities.BankLoan -= amount;
-        History_OBSOLETE.Add(regular ? ActionType.BankLoan : ActionType.BankruptcyBankLoan, amount);
-
-        return amount;
     }
 
     public void Create()

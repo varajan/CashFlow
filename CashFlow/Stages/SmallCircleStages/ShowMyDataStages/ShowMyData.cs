@@ -40,7 +40,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
                 return;
 
             case var m when MessageEquals(m, 40, "Reduce Liabilities"):
-                NextStage = New<ReduceLiabilities>();
+                await ReduceLiabilities();
                 return;
 
             case var m when MessageEquals(m, 40, "Stop Game"):
@@ -51,6 +51,19 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
                 NextStage = New<Start>();
                 return;
         }
+    }
+
+    private async Task ReduceLiabilities()
+    {
+        var person = PersonManager.Read(CurrentUser.Id);
+        if (person.Liabilities.Any())
+        {
+            NextStage = New<ReduceLiabilities>();
+            return;
+        }
+
+        await CurrentUser.Notify(Terms.Get(93, CurrentUser, "You have no liabilities."));
+        NextStage = New<Start>();
     }
 
     private async Task Charity()

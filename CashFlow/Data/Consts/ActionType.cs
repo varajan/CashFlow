@@ -7,6 +7,7 @@ public enum ActionType
     Child,
     Downsize,
     Credit,
+    ReduceLiability,
     Charity,
     Mortgage = 43,
     SchoolLoan = 44,

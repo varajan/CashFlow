@@ -40,7 +40,7 @@ public class ShowMyDataTests : StagesBaseTest
 
     [TestCase("Cancel", typeof(ShowMyData))]
     [TestCase("Stop", typeof(ShowMyData))]
-    public async Task ShowMyData_SelectInvalidOption(string message, Type nextStage)
+    public async Task ShowMyData_Select_InvalidOption(string message, Type nextStage)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -54,16 +54,33 @@ public class ShowMyDataTests : StagesBaseTest
 
     [TestCase("Get Money", typeof(GetMoney))]
     [TestCase("Get Credit", typeof(GetCredit))]
-    [TestCase("Reduce Liabilities", typeof(ReduceLiabilities))]
     [TestCase("Stop Game", typeof(StopGame))]
     [TestCase("Main menu", typeof(Start))]
-    public async Task ShowMyData_SelectValidOption(string message, Type nextStage)
+    public async Task ShowMyData_Select_ValidOption(string message, Type nextStage)
     {
         // Arrange
         var testStage = GetTestStage();
 
         // Act
         await testStage.HandleMessage(message);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+    }
+
+    [Test]
+    public async Task ShowMyData_Select_ReduceLiabilities([Values] bool haveLiabilities)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var nextStage = haveLiabilities ? typeof(ReduceLiabilities) : typeof(Start);
+        var liabilities = new List<LiabilityDto> { new() };
+        var testPerson = new PersonDto { Liabilities = haveLiabilities ? liabilities : [] };
+
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<long>())).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Reduce Liabilities");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
@@ -78,7 +95,7 @@ public class ShowMyDataTests : StagesBaseTest
     [TestCase(0, 10, 1, "You've payed $1, now you can use two dice in next 3 turns.")]
     [TestCase(90, 10, 10, "You've payed $10, now you can use two dice in next 3 turns.")]
     [TestCase(99, 1, 15, "You've payed $10, now you can use two dice in next 3 turns.")]
-    public async Task Charity_Notification_Test(int cashFlow, int salary, int cash, string message)
+    public async Task ShowMyData_Select_Charity(int cashFlow, int salary, int cash, string message)
     {
         // Arrange
         var testStage = GetTestStage();

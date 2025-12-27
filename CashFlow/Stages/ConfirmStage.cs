@@ -2,9 +2,9 @@
 
 namespace CashFlow.Stages;
 
-public abstract class ConfirmStage(ITermsService termsService, int id, string question) : BaseStage(termsService)
+public abstract class ConfirmStage(ITermsService termsService, int? id = null, string question = null) : BaseStage(termsService)
 {
-    public override string Message => Terms.Get(id, CurrentUser, question);
+    public override string Message => Terms.Get(id.Value, CurrentUser, question);
     public override List<string> Buttons => [ Yes, Cancel ];
 
     public async override Task HandleMessage(string message)
