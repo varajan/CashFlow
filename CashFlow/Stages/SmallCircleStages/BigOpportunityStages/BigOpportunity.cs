@@ -1,9 +1,10 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BigOpportunity(ITermsService termsService) : BaseStage(termsService)
+public class BigOpportunity(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
     public override IEnumerable<string> Buttons =>

@@ -12,10 +12,9 @@ public class BuyCoinsPrice(
     IAvailableAssets availableAssets,
     IHistoryManager historyManager,
     IPersonManager personManager,
-    IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager)
+    IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager, personManager)
 {
     protected IHistoryManager HistoryManager { get; } = historyManager;
-    protected IPersonManager PersonManager { get; } = personManager;
 
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);

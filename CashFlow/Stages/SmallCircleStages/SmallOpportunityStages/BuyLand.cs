@@ -6,8 +6,8 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class BuyLand(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
-    : BuyAsset<BuyLandPrice>(AssetType.LandTitle, AssetType.Land, termsService, availableAssets, assetManager)
+public class BuyLand(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
+    : BuyAsset<BuyLandPrice>(AssetType.LandTitle, AssetType.Land, termsService, availableAssets, assetManager, personManager)
 { }
 
 public class BuyLandPrice(

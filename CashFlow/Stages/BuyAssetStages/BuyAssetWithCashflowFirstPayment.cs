@@ -13,7 +13,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager)
-     : BaseStage(termsService)
+     : BaseStage(termsService, personManager)
         where TNextStage : BaseStage
         where TCreditStage : BaseStage
 {
@@ -21,8 +21,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     protected AssetType AssetType { get; } = assetType;
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
-    protected IPersonManager PersonManager { get; } = personManager;
-
+    
     public override string Message => Terms.Get(10, CurrentUser, "What is the first payment?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 

@@ -2,6 +2,7 @@
 
 public class LiabilityDto
 {
+    public bool IsBankruptcyDivisible { get; set; }
     public bool AllowsPartialPayment { get; set; }
     public bool MarkedForReduction { get; set; }
     public bool Deleted { get; set; }

@@ -8,9 +8,8 @@ using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
+public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    protected IPersonManager PersonManager { get; } = personManager;
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
     public override IEnumerable<string> Buttons

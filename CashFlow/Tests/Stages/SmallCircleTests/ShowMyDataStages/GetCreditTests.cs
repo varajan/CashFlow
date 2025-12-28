@@ -56,7 +56,7 @@ public class GetCreditTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(amount.AsCurrency()), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object)
+    protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

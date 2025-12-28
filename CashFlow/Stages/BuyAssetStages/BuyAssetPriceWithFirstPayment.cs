@@ -11,8 +11,9 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
     AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
+    IAssetManager assetManager,
+    IPersonManager personManager)
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);

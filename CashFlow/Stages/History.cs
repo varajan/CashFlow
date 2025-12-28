@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class History(ITermsService termsService, IHistoryManager historyManager) : BaseStage(termsService)
+public class History(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     private IHistoryManager HistoryManager { get; } = historyManager;
 

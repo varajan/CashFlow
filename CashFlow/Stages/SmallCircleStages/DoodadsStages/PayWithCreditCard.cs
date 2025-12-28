@@ -7,10 +7,9 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
 public class PayWithCreditCard(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager, IHistoryManager historyManager)
-    : BaseStage(termsService)
+    : BaseStage(termsService, personManager)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IPersonManager PersonManager { get; } = personManager;
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");

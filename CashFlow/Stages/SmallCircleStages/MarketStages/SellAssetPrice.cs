@@ -12,7 +12,7 @@ public class SellAssetPrice(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    params AssetType[] assetTypes) : BaseStage(termsService)
+    params AssetType[] assetTypes) : BaseStage(termsService, personManager)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 
@@ -42,7 +42,6 @@ public class SellAssetPrice(
 
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
-    private IPersonManager PersonManager { get; } = personManager;
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message

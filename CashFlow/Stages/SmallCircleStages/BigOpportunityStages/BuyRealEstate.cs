@@ -6,12 +6,12 @@ using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BuyBigRealEstate(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
-    : BuyAsset<BuyBigRealEstatePrice>(AssetType.RealEstateBigType, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
+public class BuyBigRealEstate(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
+    : BuyAsset<BuyBigRealEstatePrice>(AssetType.RealEstateBigType, AssetType.RealEstate, termsService, availableAssets, assetManager, personManager) { }
 
-public class BuyBigRealEstatePrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager)
+public class BuyBigRealEstatePrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
     : BuyAssetPriceWithFirstPayment<BuyBigRealEstateFirstPayment>(
-        AssetType.RealEstateBigBuyPrice, AssetType.RealEstate, termsService, availableAssets, assetManager) { }
+        AssetType.RealEstateBigBuyPrice, AssetType.RealEstate, termsService, availableAssets, assetManager, personManager) { }
 
 public class BuyBigRealEstateFirstPayment(
     ITermsService termsService,

@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(IAssetManager assetManager, ITermsService termsService) : BaseStage(termsService)
+public class SendMoney(IAssetManager assetManager, ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     private IAssetManager AssetManager { get; init; } = assetManager;
 

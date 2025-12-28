@@ -5,10 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Start(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
+public class Start(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private IPersonManager PersonManager { get; } = personManager;
-
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;
 

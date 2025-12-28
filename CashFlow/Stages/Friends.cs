@@ -5,9 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager) : BaseStage(termsService)
+public class Friends(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager) : BaseStage(termsService, personManager)
 {
-    protected IPersonManager PersonManager { get; } = personManager;
     protected IHistoryManager HistoryManager {get; } = historyManager;
 
     private IList<IUser> ActiveUsers => OtherUsers.Where(x => x.IsActive).ToList();

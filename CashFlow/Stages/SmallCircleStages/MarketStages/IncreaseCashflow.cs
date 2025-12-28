@@ -10,7 +10,8 @@ public class IncreaseCashflow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
-    IHistoryManager historyManager) : BaseStage(termsService)
+    IHistoryManager historyManager,
+    IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;

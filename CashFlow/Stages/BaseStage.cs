@@ -1,5 +1,8 @@
-﻿using CashFlow.Data.Users;
+﻿using CashFlow.Data.DTOs;
+using CashFlow.Data.Users;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages;
 
 namespace CashFlow.Stages;
 
@@ -12,10 +15,12 @@ public abstract class BaseStage : IStage
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
     protected ITermsService Terms { get; }
+    protected IPersonManager PersonManager { get; }
 
-    public BaseStage(ITermsService termsService)
+    public BaseStage(ITermsService termsService, IPersonManager personManager)
     {
         Terms = termsService;
+        PersonManager = personManager;
         NextStage = this;
     }
 
@@ -51,6 +56,39 @@ public abstract class BaseStage : IStage
     {
         var stage = (IStage)ServicesProvider.Get<T>();
         return stage.SetCurrentUser(CurrentUser).SetAllUsers(OtherUsers);
+    }
+
+    protected async Task<bool> IsBankruptcy(PersonDto person, int amount)
+    {
+        var bankruptcy = amount < 0 && person.Cash + amount < 0;
+        if (!bankruptcy) return false;
+
+        if (person.Assets.Any(a => !a.IsDeleted))
+        {
+            NextStage = New<BankruptcySellAssets>();
+            return true;
+        }
+
+        // divide Car Loan, Credit cards, retail debt by 2
+        foreach (var liability in person.Liabilities.Where(l => l.IsBankruptcyDivisible))
+        {
+            liability.FullAmount /= 2;
+            liability.Cashflow /= 2;
+            PersonManager.UpdateLiability(person.Id, liability);
+        }
+        await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
+
+        // person = PersonManager.Read(CurrentUser.Id);
+        if (person.CashFlow > 0)
+        {
+            await CurrentUser.Notify(Terms.Get(130, CurrentUser, "You have paid off your debts, you can continue."));
+            // LOSE 3 turns!
+            return false;
+        }
+
+        //HistoryManager.Add(ActionType.Bankruptcy, 0, CurrentUser);
+        NextStage = New<Bankruptcy>();
+        return true;
     }
 
     protected bool MessageEquals(string message, int id, string value) =>

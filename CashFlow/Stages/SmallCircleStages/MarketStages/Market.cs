@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class Market(ITermsService termsService, IAssetManager assetManager) : BaseStage(termsService)
+public class Market(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     protected IAssetManager AssetManager { get; }  = assetManager;
 

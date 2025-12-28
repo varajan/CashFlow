@@ -83,7 +83,8 @@ public class BuyBusinessPriceTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyBusinessPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        AssetManagerMock.Object)
+        AssetManagerMock.Object,
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

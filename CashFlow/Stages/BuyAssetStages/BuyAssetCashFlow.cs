@@ -16,11 +16,10 @@ public abstract class BuyAssetCashFlow<TNextStage>(
     IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     protected IHistoryManager HistoryManager { get; } = historyManager;
-    protected IPersonManager PersonManager { get; } = personManager;
 
     public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);

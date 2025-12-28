@@ -113,7 +113,7 @@ public class HistoryTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object)
+    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

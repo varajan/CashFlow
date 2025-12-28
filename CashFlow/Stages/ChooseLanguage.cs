@@ -5,10 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class ChooseLanguage(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
+public class ChooseLanguage(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private IPersonManager PersonManager { get; } = personManager;
-
     public override string Message => "Language/Мова";
     public override IEnumerable<string> Buttons => PersonManager.Exists(CurrentUser.Id) ? Languages.Append(Cancel) : Languages;
 

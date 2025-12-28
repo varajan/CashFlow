@@ -7,10 +7,8 @@ using System.Text;
 
 namespace CashFlow.Stages;
 
-public class ChooseProfession(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
+public class ChooseProfession(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private IPersonManager PersonManager { get; } = personManager;
-
     public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
     public override IEnumerable<string> Buttons => Professions.Append(Terms.Get(139, CurrentUser, "Random"));
 

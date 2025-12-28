@@ -6,7 +6,7 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class SmallOpportunity(ITermsService termsService, IAssetManager assetManager) : BaseStage(termsService)
+public class SmallOpportunity(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     IAssetManager AssetManager { get; set; } = assetManager;
 

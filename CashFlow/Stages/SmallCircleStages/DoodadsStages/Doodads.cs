@@ -7,10 +7,9 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
 public class Doodads(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager, IHistoryManager historyManager)
-    : BaseStage(termsService)
+    : BaseStage(termsService, personManager)
 {
     protected IAssetManager AssetManager { get; init; } = assetManager;
-    protected IPersonManager PersonManager { get; init; } = personManager;
     protected IHistoryManager HistoryManager { get; init; } = historyManager;
 
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");

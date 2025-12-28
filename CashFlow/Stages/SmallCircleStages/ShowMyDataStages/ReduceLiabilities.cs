@@ -5,10 +5,8 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService)
+public class ReduceLiabilities(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    protected IPersonManager PersonManager { get; } = personManager;
-
     public override string Message
     {
         get

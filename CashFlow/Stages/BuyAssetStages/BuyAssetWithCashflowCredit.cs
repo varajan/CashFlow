@@ -13,10 +13,8 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
 {
-    protected IPersonManager PersonManager { get; } = personManager;
-
     public override string Message
     {
         get

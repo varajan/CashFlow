@@ -1,8 +1,10 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public abstract class ConfirmStage(ITermsService termsService, int? id = null, string question = null) : BaseStage(termsService)
+public abstract class ConfirmStage(ITermsService termsService, IPersonManager personManager, int? id = null, string question = null)
+    : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(id.Value, CurrentUser, question);
     public override List<string> Buttons => [ Yes, Cancel ];

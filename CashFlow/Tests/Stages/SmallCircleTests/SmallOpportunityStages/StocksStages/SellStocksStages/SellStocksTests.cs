@@ -75,7 +75,7 @@ public class SellStocksTests: StagesBaseTest
         ), Times.Exactly(assetsCount));
     }
 
-    protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

@@ -12,7 +12,8 @@ public abstract class BuyAsset<TNextStage>(
     AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager) : BaseStage(termsService) where TNextStage : BaseStage
+    IAssetManager assetManager,
+    IPersonManager personManager) : BaseStage(termsService, personManager) where TNextStage : BaseStage
 {
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;

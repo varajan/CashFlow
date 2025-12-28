@@ -59,7 +59,7 @@ public class SellCoinsTests : SellAssetBaseTest
             x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellCoins(TermsServiceMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new SellCoins(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

@@ -101,7 +101,7 @@ public class SmallOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallOpportunity>());
     }
 
-    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object, AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

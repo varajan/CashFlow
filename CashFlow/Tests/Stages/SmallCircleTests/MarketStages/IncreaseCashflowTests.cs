@@ -85,7 +85,8 @@ public class IncreaseCashflowTests : SellAssetBaseTest
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
         AssetManagerMock.Object,
-        HistoryManagerMock.Object)
+        HistoryManagerMock.Object,
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

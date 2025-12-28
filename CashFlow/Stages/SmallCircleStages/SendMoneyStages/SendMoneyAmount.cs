@@ -10,10 +10,9 @@ public class SendMoneyAmount(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    ITermsService termsService) : BaseStage(termsService)
+    ITermsService termsService) : BaseStage(termsService, personManager)
 {
     protected IAssetManager AssetManager { get; } = assetManager;
-    protected IPersonManager PersonManager { get; } = personManager;
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");

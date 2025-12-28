@@ -13,10 +13,9 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager) : BaseStage(termsService)
+public class SmallCircle(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     private IHistoryManager HistoryManager { get; init; } = historyManager;
-    private IPersonManager PersonManager { get; init; } = personManager;
 
     public override string Message => PersonManager.GetDescription(CurrentUser.Id);
 

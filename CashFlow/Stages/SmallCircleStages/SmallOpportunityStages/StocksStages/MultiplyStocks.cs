@@ -4,13 +4,14 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class StocksMultiply(ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager)
-    : MultiplyStocks(ActionType.Stocks1To2, termsService, assetManager, historyManager) { }
+public class StocksMultiply(ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager, IPersonManager personManager)
+    : MultiplyStocks(ActionType.Stocks1To2, termsService, assetManager, historyManager, personManager) { }
 
-public class StocksReduce(ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager)
-    : MultiplyStocks(ActionType.Stocks2To1, termsService, assetManager, historyManager) { }
+public class StocksReduce(ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager, IPersonManager personManager)
+    : MultiplyStocks(ActionType.Stocks2To1, termsService, assetManager, historyManager, personManager) { }
 
-public abstract class MultiplyStocks(ActionType actionType, ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager) : BaseStage(termsService)
+public abstract class MultiplyStocks(ActionType actionType, ITermsService termsService, IAssetManager assetManager, IHistoryManager historyManager, IPersonManager personManager)
+    : BaseStage(termsService, personManager)
 {
     protected ActionType ActionType { get; } = actionType;
     protected IAssetManager AssetManager { get; } = assetManager;
