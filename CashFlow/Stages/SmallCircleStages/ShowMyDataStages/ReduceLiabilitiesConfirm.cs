@@ -28,7 +28,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
             .ForEach(liability =>
             {
                 liability.MarkedForReduction = false;
-                PersonManager.UpdateLiability(CurrentUser.Id, liability);
+                PersonManager.Update(CurrentUser.Id, liability);
             });
 
         NextStage = New<ReduceLiabilities>();
@@ -49,7 +49,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
         person.Cash -= liability.FullAmount;
         
         PersonManager.Update(person);
-        PersonManager.UpdateLiability(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser.Id, liability);
         PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
 
         NextStage = PersonManager.Read(CurrentUser.Id).Liabilities.All(l => l.Deleted)

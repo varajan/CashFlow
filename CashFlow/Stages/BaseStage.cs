@@ -3,7 +3,7 @@ using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 namespace CashFlow.Stages;
 
@@ -59,15 +59,12 @@ public abstract class BaseStage : IStage
         return stage.SetCurrentUser(CurrentUser).SetAllUsers(OtherUsers);
     }
 
-    protected async Task<bool> IsBankruptcy(PersonDto person, int amount)
+    protected async Task ProcessBankruptcy(PersonDto person)
     {
-        var bankruptcy = amount < 0 && person.Cash + amount < 0;
-        if (!bankruptcy) return false;
-
         if (person.Assets.Any(a => !a.IsDeleted))
         {
             NextStage = New<BankruptcySellAssets>();
-            return true;
+            return;
         }
 
         // divide Car Loan, Credit cards, retail debt by 2
@@ -75,21 +72,21 @@ public abstract class BaseStage : IStage
         {
             liability.FullAmount /= 2;
             liability.Cashflow /= 2;
-            PersonManager.UpdateLiability(person.Id, liability);
+            PersonManager.Update(person.Id, liability);
         }
         await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
 
-        // person = PersonManager.Read(CurrentUser.Id);
-        if (person.CashFlow > 0)
+        if (person.CashFlow >= 0)
         {
             await CurrentUser.Notify(Terms.Get(130, CurrentUser, "You have paid off your debts, you can continue."));
-            // LOSE 3 turns!
-            return false;
+            await CurrentUser.Notify(Terms.Get(-1, CurrentUser, "You have to skip three turns now."));
+
+            NextStage = New<Start>();
+            return;
         }
 
         PersonManager.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
         NextStage = New<Bankruptcy>();
-        return true;
     }
 
     protected bool MessageEquals(string message, int id, string value) =>

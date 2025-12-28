@@ -18,4 +18,31 @@ public class AssetDto
     public bool IsDraft { get; set; }
     public bool MarkedToSell { get; set; }
     public bool IsDeleted { get; set; }
+
+    public int BancrupcySellPrice
+    {
+        get
+        {
+            switch (Type)
+            {
+                case AssetType.Coin:
+                case AssetType.Stock:
+                    return Qtty * Price / 2;
+
+                case AssetType.LandTitle:
+                case AssetType.SmallBusinessType:
+                    return Price / 2;
+
+                case AssetType.RealEstate:
+                case AssetType.Business:
+                    return (Price - Mortgage) / 2;
+
+                case AssetType.Boat:
+                    return CashFlow == 0 ? Price / 2 : (Price - Mortgage) / 2;
+
+                default:
+                    return 0;
+            }
+        }
+    }
 }

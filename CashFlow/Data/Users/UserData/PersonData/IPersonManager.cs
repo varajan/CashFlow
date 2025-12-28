@@ -14,7 +14,8 @@ public interface IPersonManager
     string GetDescription(long id);
     void Delete(long id);
 
-    void UpdateLiability(long id, LiabilityDto liability);
+    void Update(long id, LiabilityDto liability);
+    void Update(AssetDto asset);
 
     void AddHistory(ActionType type, long value, IUser user);
 }
@@ -91,7 +92,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void Delete(long id) => throw new NotImplementedException();
 
-    public void UpdateLiability(long id, LiabilityDto liability) => throw new NotImplementedException();
+    public void Update(long id, LiabilityDto liability) => throw new NotImplementedException();
+    public void Update(AssetDto asset) => throw new NotImplementedException();
 
     public void AddHistory(ActionType type, long value, IUser user)
     {

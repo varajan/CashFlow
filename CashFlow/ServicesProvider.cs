@@ -6,6 +6,7 @@ using CashFlow.Loggers;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;

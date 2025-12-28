@@ -39,7 +39,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
                 .ForEach(liability =>
                 {
                     liability.MarkedForReduction = false;
-                    PersonManager.UpdateLiability(CurrentUser.Id, liability);
+                    PersonManager.Update(CurrentUser.Id, liability);
                 });
 
             NextStage = New<Start>();
@@ -81,7 +81,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
         liability.Deleted = liability.FullAmount == 0;
 
         PersonManager.Update(person);
-        PersonManager.UpdateLiability(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser.Id, liability);
         PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
     }
 }

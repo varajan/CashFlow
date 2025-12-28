@@ -54,14 +54,14 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
             l.Name == "Liability No1" &&
             l.MarkedForReduction == false)),
         Times.Once);
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
             l.Name == "Liability No2" &&
             l.MarkedForReduction == false)),
         Times.Once);
@@ -90,7 +90,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 
@@ -117,7 +117,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 

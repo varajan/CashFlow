@@ -40,8 +40,13 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager, 
 
         var person = PersonManager.Read(CurrentUser.Id);
         var amount = message.AsCurrency();
-        var isBankruptcy = await IsBankruptcy(person, amount);
-        if (isBankruptcy) return;
+
+        var bankruptcy = amount < 0 && person.Cash + amount < 0;
+        if (bankruptcy)
+        {
+            await ProcessBankruptcy(person);
+            return;
+        }
 
         person.Cash += amount;
         PersonManager.Update(person);

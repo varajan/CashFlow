@@ -59,14 +59,14 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
             l.Name == "Loan No2" &&
             l.MarkedForReduction == false)),
         Times.Once);
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
             l.Name == "Loan No3" &&
             l.MarkedForReduction == false)),
         Times.Once);
@@ -121,7 +121,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l =>
                 l.Name == "Bank loan" &&
                 l.Deleted == false &&
@@ -156,7 +156,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 
@@ -183,7 +183,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 

@@ -63,7 +63,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
         }
 
         liability.MarkedForReduction = true;
-        PersonManager.UpdateLiability(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser.Id, liability);
 
         NextStage = liability.AllowsPartialPayment ? New<ReduceLiabilitiesAmount>() : New<ReduceLiabilitiesAmount>();
     }

@@ -2,7 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages;
+using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
 
@@ -63,7 +63,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var amount = message.AsCurrency();
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Cash = cashAmount });
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Cash = cashAmount, CashFlow = -cashAmount });
 
         // Act
         await testStage.HandleMessage(message);

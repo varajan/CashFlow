@@ -62,7 +62,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilitiesAmount>());
 
-        PersonManagerMock.Verify(p => p.UpdateLiability(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
             It.Is<LiabilityDto>(l => l.Name == liability && l.MarkedForReduction == true)),
             Times.Once);
     }
@@ -86,7 +86,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Never);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Never);
         CurrentUserMock.Verify(u => u.Notify($"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
     }
 
@@ -102,7 +102,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.UpdateLiability(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Never);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Never);
         CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
     }
 
