@@ -38,7 +38,7 @@ public class HistoryTests : StagesBaseTest
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
     }
-    
+
     [Test]
     public void History_NoRecords_Question_and_Buttons()
     {
