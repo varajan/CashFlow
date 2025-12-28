@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
@@ -86,7 +87,7 @@ public abstract class BaseStage : IStage
             return false;
         }
 
-        //HistoryManager.Add(ActionType.Bankruptcy, 0, CurrentUser);
+        PersonManager.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
         NextStage = New<Bankruptcy>();
         return true;
     }

@@ -71,9 +71,10 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
 
-        HistoryManagerMock.Verify(h => h.Add(ActionType.Bankruptcy, 0, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
+        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify("Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
     }
 
     protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object)

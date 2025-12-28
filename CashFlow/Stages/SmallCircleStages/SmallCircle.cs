@@ -163,14 +163,8 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
     {
         var person = PersonManager.Read(CurrentUser.Id);
         var amount = person.CashFlow;
-        person.Bankruptcy = amount < 0 && person.Cash + amount < 0;
-
-        if (person.Bankruptcy)
-        {
-            HistoryManager.Add(ActionType.Bankruptcy, 0, CurrentUser);
-            NextStage = New<Bankruptcy>();
-            return;
-        }
+        var isBankruptcy = await IsBankruptcy(person, amount);
+        if (isBankruptcy) return;
 
         person.Cash += amount;
         PersonManager.Update(person);

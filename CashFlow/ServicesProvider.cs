@@ -39,6 +39,7 @@ public static class ServicesProvider
         services.AddTransient<ChooseProfession>();
         services.AddTransient<History>();
         services.AddTransient<Bankruptcy>();
+        services.AddTransient<BankruptcySellAssets>();
 
         services.AddTransient<ShowMyData>();
         services.AddTransient<GetMoney>();
