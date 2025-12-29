@@ -9,6 +9,19 @@ namespace CashFlow.Tests.Stages.BigCircleTests;
 [TestFixture]
 public class BigCircleTests : StagesBaseTest
 {
+    private const int cash = 1_000_000;
+    private const int paycheck = 500_000;
+    private PersonDto Person => new()
+    {
+        Cash = cash,
+        CashFlow = 5_000,
+        CurrentCashFlow = paycheck,
+        TargetCashFlow = 1_000_000,
+    };
+
+    [SetUp]
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Person);
+
     [Test]
     public void BigCircle_Question_and_Buttons()
     {
@@ -47,11 +60,6 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var cash = 1_000_000;
-        var paycheck = 500_000;
-        var person = new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash, CashFlow = paycheck };
-
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
         // Act
         await testStage.HandleMessage("Pay Check");
@@ -70,11 +78,7 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var cash = 1_000_000;
         var lostMoney = (int)(cash * muliplier);
-        var person = new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash };
-
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
         // Act
         await testStage.HandleMessage(message);
@@ -86,20 +90,23 @@ public class BigCircleTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.AddHistory(action, lostMoney, CurrentUserMock.Object), Times.Once);
     }
 
-    [Test]
-    public async Task BigCircle_GetMoney() => throw new NotImplementedException();
+    [TestCase("Get Money", typeof(GetBigMoney))]
+    [TestCase("Give Money", typeof(GiveMoney))]
+    [TestCase("Buy Business", typeof(BuyBigBusiness))]
+    [TestCase("Friends", typeof(Friends))]
+    [TestCase("History", typeof(History))]
+    [TestCase("Stop Game", typeof(StopGame))]
+    public async Task BigCircle_ValidOption(string message, Type nextStage)
+    {
+        // Arrange
+        var testStage = GetTestStage();
 
-    [Test]
-    public async Task BigCircle_BuyBusiness() => throw new NotImplementedException();
+        // Act
+        await testStage.HandleMessage(message);
 
-    [Test]
-    public async Task BigCircle_Friends() => throw new NotImplementedException();
-
-    [Test]
-    public async Task BigCircle_History() => throw new NotImplementedException();
-
-    [Test]
-    public async Task BigCircle_StopGame() => throw new NotImplementedException();
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+    }
 
     [TestCase("Cancel")]
     [TestCase("Win game")]

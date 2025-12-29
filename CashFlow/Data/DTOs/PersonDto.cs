@@ -15,6 +15,8 @@ public class PersonDto
     public bool CreditsReduced { get; set; }
 
     public int CashFlow { get; set; }
+    public int CurrentCashFlow { get; set; }
+    public int TargetCashFlow { get; set; }
 
     public List<AssetDto> Assets { get; set; } = [];
     public ExpensesDto Expenses { get; set; } = new();

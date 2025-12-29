@@ -1,7 +1,7 @@
 ﻿namespace CashFlow.Tests.Stages.BigCircleTests;
 
 [TestFixture]
-public class StopGameTests
+public class WinGameTests
 {
     [Test]
     public void NotImplemented()

@@ -1,52 +1,105 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using System;
 
 namespace CashFlow.Stages.BigCircleStages;
 
 public class BigCircle(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    public override string Message => PersonManager.GetDescription(CurrentUser.Id);
+    public override string Message
+    {
+        get
+        {
+            var person = PersonManager.Read(CurrentUser.Id);
 
-    public override List<string> Buttons =>
-    [
-        Terms.Get(79, CurrentUser, "Pay Check"),
-        Terms.Get(32, CurrentUser, "Get Money"),
-        Terms.Get(33, CurrentUser, "Give Money"),
-        Terms.Get(69, CurrentUser, "Divorce"),
-        Terms.Get(70, CurrentUser, "Tax Audit"),
-        Terms.Get(71, CurrentUser, "Lawsuit"),
-        Terms.Get(74, CurrentUser, "Buy Business"),
-        Terms.Get(140, CurrentUser, "Friends"),
-        Terms.Get(2, CurrentUser, "History"),
-        Terms.Get(41, CurrentUser, "Stop Game"),
-    ];
+            return person.CurrentCashFlow >= person.TargetCashFlow
+                ? Terms.Get(73, CurrentUser, "You are the winner!")
+                : PersonManager.GetDescription(CurrentUser.Id);
+        }
+    }
+
+    public override List<string> Buttons
+    {
+        get
+        {
+            var person = PersonManager.Read(CurrentUser.Id);
+
+            return person.CurrentCashFlow >= person.TargetCashFlow
+            ? [
+                Terms.Get(2, CurrentUser, "History"),
+                Terms.Get(41, CurrentUser, "Stop Game"),
+            ]
+            : [
+                Terms.Get(79, CurrentUser, "Pay Check"),
+                Terms.Get(32, CurrentUser, "Get Money"),
+                Terms.Get(33, CurrentUser, "Give Money"),
+                Terms.Get(69, CurrentUser, "Divorce"),
+                Terms.Get(70, CurrentUser, "Tax Audit"),
+                Terms.Get(71, CurrentUser, "Lawsuit"),
+                Terms.Get(74, CurrentUser, "Buy Business"),
+                Terms.Get(140, CurrentUser, "Friends"),
+                Terms.Get(2, CurrentUser, "History"),
+                Terms.Get(41, CurrentUser, "Stop Game"),
+            ];
+        }
+    }
 
     public override async Task HandleMessage(string message)
     {
         var person = PersonManager.Read(CurrentUser.Id);
 
+        if (person.CurrentCashFlow >= person.TargetCashFlow)
+        {
+            await HandleWinGame(message);
+            return;
+        }
+        else
+        {
+            await HandleBigCircleMessage(message);
+            return;
+        }
+    }
+
+    private Task HandleWinGame(string message)
+    {
+        if (MessageEquals(message, 2, "History"))
+        {
+            NextStage = New<History>();
+            return Task.CompletedTask;
+        }
+
+        if (MessageEquals(message, 41, "Stop Game"))
+        {
+            NextStage = New<StopGame>();
+            return Task.CompletedTask;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private async Task HandleBigCircleMessage(string message)
+    {
+        var person = PersonManager.Read(CurrentUser.Id);
+
         if (MessageEquals(message, 79, "Pay Check"))
         {
-            person.Cash += person.CashFlow;
+            person.Cash += person.CurrentCashFlow;
             PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.GetMoney, person.CashFlow, CurrentUser);
-            NextStage = New< BigCircle>();
+            PersonManager.AddHistory(ActionType.GetMoney, person.CurrentCashFlow, CurrentUser);
+            NextStage = New<BigCircle>();
             return;
         }
 
         if (MessageEquals(message, 32, "Get Money"))
         {
-            throw new NotImplementedException();
+            NextStage = New<GetBigMoney>();
             return;
         }
 
         if (MessageEquals(message, 33, "Give Money"))
         {
-            throw new NotImplementedException();
+            NextStage = New<GiveMoney>();
             return;
         }
 
@@ -82,25 +135,25 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
         if (MessageEquals(message, 74, "Buy Business"))
         {
-            throw new NotImplementedException();
+            NextStage = New<BuyBigBusiness>();
             return;
         }
 
         if (MessageEquals(message, 140, "Friends"))
         {
-            throw new NotImplementedException();
+            NextStage = New< Friends>();
             return;
         }
 
         if (MessageEquals(message, 2, "History"))
         {
-            throw new NotImplementedException();
+            NextStage = New<History>();
             return;
         }
 
         if (MessageEquals(message, 41, "Stop Game"))
         {
-            throw new NotImplementedException();
+            NextStage = New<StopGame>();
             return;
         }
     }
