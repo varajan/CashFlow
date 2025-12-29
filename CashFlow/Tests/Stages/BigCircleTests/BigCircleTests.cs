@@ -2,6 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
+using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.BigCircleTests;
@@ -13,6 +14,7 @@ public class BigCircleTests : StagesBaseTest
     private const int paycheck = 500_000;
     private PersonDto Person => new()
     {
+        BigCircle = true,
         Cash = cash,
         CashFlow = 5_000,
         CurrentCashFlow = paycheck,
@@ -90,7 +92,7 @@ public class BigCircleTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.AddHistory(action, lostMoney, CurrentUserMock.Object), Times.Once);
     }
 
-    [TestCase("Get Money", typeof(GetBigMoney))]
+    [TestCase("Get Money", typeof(GetMoney))]
     [TestCase("Give Money", typeof(GiveMoney))]
     [TestCase("Buy Business", typeof(BuyBigBusiness))]
     [TestCase("Friends", typeof(Friends))]

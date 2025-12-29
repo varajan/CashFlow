@@ -46,4 +46,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tests\Stages\BigCircleTests\GetMoneyStages\" />
+  </ItemGroup>
+
 </Project>

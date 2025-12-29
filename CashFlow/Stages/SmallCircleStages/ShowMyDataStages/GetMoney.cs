@@ -2,6 +2,7 @@
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
+using Castle.Components.DictionaryAdapter.Xml;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
@@ -10,22 +11,35 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager, 
 {
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
-    public override string Message => Terms.Get(0, CurrentUser,
-        "Your Cash Flow is *{0}*. How much should you get?",
-        PersonManager.Read(CurrentUser.Id).CashFlow);
+    public override string Message
+    {
+        get
+        {
+            var person = PersonManager.Read(CurrentUser.Id);
+            return Terms.Get(0, CurrentUser, "Your Cash Flow is *{0}*. How much should you get?",
+                person.BigCircle ? person.CurrentCashFlow.AsCurrency() : person.CashFlow.AsCurrency());
+        }
+    }
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            var buttons = new List<string>
-            {
-                1000.AsCurrency(),
-                2000.AsCurrency(),
-                5000.AsCurrency(),
-                PersonManager.Read(CurrentUser.Id).CashFlow.AsCurrency()
-            };
- 
+            var person = PersonManager.Read(CurrentUser.Id);
+            List<string> buttons = person.BigCircle
+            ? [
+                50_000.AsCurrency(),
+                100_000.AsCurrency(),
+                200_000.AsCurrency(),
+                person.CurrentCashFlow.AsCurrency()
+            ]
+            : [
+                1_000.AsCurrency(),
+                2_000.AsCurrency(),
+                5_000.AsCurrency(),
+                person.CashFlow.AsCurrency()
+            ];
+
             return buttons.Distinct().Append(Cancel);
         }
     }
@@ -40,6 +54,12 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager, 
 
         var person = PersonManager.Read(CurrentUser.Id);
         var amount = message.AsCurrency();
+
+        if (person.BigCircle && amount <=0)
+        {
+            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            return;
+        }
 
         var bankruptcy = amount < 0 && person.Cash + amount < 0;
         if (bankruptcy)
