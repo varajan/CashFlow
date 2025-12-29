@@ -8,6 +8,7 @@ public interface IAvailableAssets
 {
     IEnumerable<string> GetAsText(AssetType type, Language language);
     IEnumerable<string> GetAsCurrency(AssetType type);
+    void Add(int value, AssetType type);
 }
 
 public class AvailableAssets(IDataBase dataBase) : IAvailableAssets
@@ -30,6 +31,16 @@ public class AvailableAssets(IDataBase dataBase) : IAvailableAssets
         var assetsDefault = DataBase.GetColumn(string.Format(select, (int)type, DefaultLanguage)).Distinct();
 
         return assetsByLanguage.Any() ? assetsByLanguage : assetsDefault;
+    }
+
+    public void Add(int value, AssetType type) => Add(value.ToString(), type, DefaultLanguage);
+    public void Add(string value, AssetType type, string language)
+    {
+        if (Get(type).Contains(value)) return;
+
+        DataBase.Execute(@"
+            INSERT INTO AvailableAssets (Type, Language, Value) " +
+            $"VALUES ({(int)type}, '{language}', '{value}')");
     }
 }
 

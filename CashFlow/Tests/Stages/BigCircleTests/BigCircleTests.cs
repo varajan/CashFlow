@@ -2,6 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
 
@@ -93,7 +94,6 @@ public class BigCircleTests : StagesBaseTest
     }
 
     [TestCase("Get Money", typeof(GetMoney))]
-    [TestCase("Give Money", typeof(GiveMoney))]
     [TestCase("Buy Business", typeof(BuyBigBusiness))]
     [TestCase("Friends", typeof(Friends))]
     [TestCase("History", typeof(History))]
@@ -108,6 +108,27 @@ public class BigCircleTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+    }
+
+    [Test]
+    public async Task BigCircle_GiveMoney()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Give Money");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
+
+        AssetManagerMock.Verify(a => a.Create(
+            It.Is<AssetDto>(x =>
+                x.UserId == CurrentUserMock.Object.Id &&
+                x.Type == AssetType.Transfer &&
+                x.IsDraft &&
+                x.Title == "Bank")
+        ), Times.Once);
     }
 
     [TestCase("Cancel")]

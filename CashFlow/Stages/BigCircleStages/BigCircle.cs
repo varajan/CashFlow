@@ -2,6 +2,7 @@
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 namespace CashFlow.Stages.BigCircleStages;
@@ -100,7 +101,8 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
         if (MessageEquals(message, 33, "Give Money"))
         {
-            NextStage = New<GiveMoney>();
+            // create draft asset!
+            NextStage = New<SendMoneyAmount>();
             return;
         }
 

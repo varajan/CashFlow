@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.Consts;
+﻿using CashFlow.Data;
+using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
@@ -9,7 +10,8 @@ public class SendMoneyCredit(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    ITermsService termsService) : SendMoneyAmount(assetManager, personManager, historyManager, termsService)
+    ITermsService termsService,
+    IAvailableAssets availableAssets) : SendMoneyAmount(assetManager, personManager, historyManager, termsService, availableAssets)
 {
     public override string Message
     {

@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.Consts;
+﻿using CashFlow.Data;
+using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
@@ -10,21 +11,32 @@ public class SendMoneyAmount(
     IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
-    ITermsService termsService) : BaseStage(termsService, personManager)
+    ITermsService termsService,
+    IAvailableAssets availableAssets) : BaseStage(termsService, personManager)
 {
+    private IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
-    public override IEnumerable<string> Buttons => Enumerable
-        .Range(1, 8)
-        .Select(x => (500 * x).AsCurrency())
-        .Append(Cancel);
+    public override IEnumerable<string> Buttons
+    {
+        get
+        {
+            var person = PersonManager.Read(CurrentUser.Id);
+
+            return
+                person.BigCircle
+                ? AvailableAssets.GetAsCurrency(AssetType.BigGiveMoney).Append(Cancel)
+                : Enumerable.Range(1, 8).Select(x => (500 * x).AsCurrency()).Append(Cancel);
+        }
+    }
 
     public override async Task HandleMessage(string message)
     {
         var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
+        var person = PersonManager.Read(CurrentUser.Id);
 
         if (IsCanceled(message))
         {
@@ -44,11 +56,23 @@ public class SendMoneyAmount(
         asset.Qtty = amount;
         AssetManager.Update(asset);
 
-        var currentUserPerson = PersonManager.Read(CurrentUser.Id);
-        if (currentUserPerson.Cash < amount)
+        if (!person.BigCircle && person.Cash < amount)
         {
             NextStage = New<SendMoneyCredit>();
             return;
+        }
+
+        if (!person.BigCircle && person.Cash < amount)
+        {
+            AssetManager.Delete(asset);
+            NextStage = New<Start>();
+            await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
+            return;
+        }
+
+        if (person.BigCircle)
+        {
+            AvailableAssets.Add(amount, AssetType.BigGiveMoney);
         }
 
         await Transfer(asset);
