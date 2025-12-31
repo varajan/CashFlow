@@ -23,6 +23,7 @@ public class SendMoneyTests : StagesBaseTest
     {
         AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.BigGiveMoney)).Returns(["$100,000", "$200,000"]);
     }
 
     [Test]
@@ -60,14 +61,8 @@ public class SendMoneyTests : StagesBaseTest
             Assert.That(testStage.Message, Is.EqualTo("How much?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
             {
-                "$500",
-                "$1,000",
-                "$1,500",
-                "$2,000",
-                "$2,500",
-                "$3,000",
-                "$3,500",
-                "$4,000",
+                "$100,000",
+                "$200,000",
                 "Cancel"
             }));
         });
@@ -105,7 +100,6 @@ public class SendMoneyTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var historyMock = new Mock<IHistory>();
-        CurrentUserMock.SetupGet(u => u.History_OBSOLETE).Returns(historyMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
@@ -113,7 +107,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
+        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Once);
 
         AssetManagerMock.Verify(a => a.Update(
             It.Is<AssetDto>(x =>
@@ -160,6 +154,7 @@ public class SendMoneyTests : StagesBaseTest
             ), Times.Once);
 
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        CurrentUserMock.Verify(x => x.Notify("You don't have enough money."), Times.Once);
     }
 
     protected override IStage GetTestStage() => new SendMoneyAmount(

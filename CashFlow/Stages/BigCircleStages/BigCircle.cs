@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
@@ -101,7 +102,15 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
         if (MessageEquals(message, 33, "Give Money"))
         {
-            // create draft asset!
+            var transfer = new AssetDto
+            {
+                UserId = CurrentUser.Id,
+                Type = AssetType.Transfer,
+                Title = "Bank",
+                IsDraft = true,
+            };
+
+            PersonManager.CreateAsset(transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }

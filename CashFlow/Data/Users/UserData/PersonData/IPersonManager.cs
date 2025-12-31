@@ -18,6 +18,8 @@ public interface IPersonManager
     void Update(AssetDto asset);
 
     void AddHistory(ActionType type, long value, IUser user);
+
+    void CreateAsset(AssetDto asset);
 }
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
@@ -101,5 +103,30 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //long newId = DataBase.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
         //var text = GetDescription(record, user);
         //DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
+    }
+
+    public void CreateAsset(AssetDto asset)
+    {
+        int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+        var sql = $@"
+            INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
+            VALUES
+            (
+                {newId},
+                {asset.UserId},
+                {(int)asset.Type},
+                '{asset.Title.Replace("'", "''")}',
+                {asset.Price},
+                {asset.SellPrice},
+                {asset.Qtty},
+                {asset.Mortgage},
+                {asset.CashFlow},
+                {asset.BigCircle},
+                {(asset.IsDraft ? 1 : 0)},
+                {(asset.IsDeleted ? 1 : 0)}
+            );";
+        dataBase.Execute(sql);
+
+        //return Read(newId, asset.UserId);
     }
 }

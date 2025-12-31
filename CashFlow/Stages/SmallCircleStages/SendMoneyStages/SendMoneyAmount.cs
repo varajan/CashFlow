@@ -62,7 +62,7 @@ public class SendMoneyAmount(
             return;
         }
 
-        if (!person.BigCircle && person.Cash < amount)
+        if (person.BigCircle && person.Cash < amount)
         {
             AssetManager.Delete(asset);
             NextStage = New<Start>();

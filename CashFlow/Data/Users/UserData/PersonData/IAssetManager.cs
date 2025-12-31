@@ -25,7 +25,7 @@ public class AssetManager(IDataBase dataBase, ITermsService terms) : IAssetManag
     {
         int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
         var sql = $@"
-            INSERT INTO Assets ( Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
+            INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
             VALUES
             (
                 {newId},
