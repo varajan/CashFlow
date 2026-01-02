@@ -20,7 +20,7 @@ public class StocksReduceTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
     }
 
     [Test]
@@ -74,11 +74,11 @@ public class StocksReduceTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Exactly(updatedAssets.Count));
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Exactly(updatedAssets.Count));
 
         updatedAssets.ForEach(updatedAsset =>
         {
-            AssetManagerMock.Verify(a => a.Update(
+            PersonManagerMock.Verify(a => a.UpdateAsset(
                 It.Is<AssetDto>(x =>
                     x.Title == updatedAsset.Title &&
                     x.Type == AssetType.Stock &&

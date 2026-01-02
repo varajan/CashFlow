@@ -16,7 +16,7 @@ public class StartCompanyCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.SmallBusinessType, TestPerson.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, TestPerson.Id)).Returns([Asset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
     }
 
@@ -32,7 +32,7 @@ public class StartCompanyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.SmallBusinessType &&
@@ -89,7 +89,7 @@ public class StartCompanyCreditTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
         HistoryManagerMock.Verify(x => x.Add(ActionType.StartCompany, Asset.Id, CurrentUserMock.Object), Times.Once);
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.SmallBusinessType &&

@@ -21,7 +21,7 @@ public class SendMoneyCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
     }
@@ -38,7 +38,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer)
@@ -94,7 +94,7 @@ public class SendMoneyCreditTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -118,7 +118,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = Recipient.Name;
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
 
         var transferAmount = transferAsset.Qtty;
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
@@ -134,7 +134,7 @@ public class SendMoneyCreditTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)

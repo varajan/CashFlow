@@ -53,8 +53,8 @@ public class SellCoinsTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellCoinsPrice>());
 
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Once);
-        AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(x =>
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Once);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(x =>
             x.Title.Contains(option, StringComparison.InvariantCultureIgnoreCase) &&
             x.MarkedToSell)), Times.Once);
     }

@@ -16,7 +16,7 @@ public class BuyBusinessCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Business, TestPerson.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, TestPerson.Id)).Returns([Asset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
     }
 
@@ -32,7 +32,7 @@ public class BuyBusinessCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Business)
@@ -86,7 +86,7 @@ public class BuyBusinessCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessCashFlow>());
 
         CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Never);
     }
 
     protected override IStage GetTestStage() => new BuyBusinessCredit(

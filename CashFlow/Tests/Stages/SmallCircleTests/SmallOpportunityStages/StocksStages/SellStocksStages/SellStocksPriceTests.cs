@@ -25,7 +25,7 @@ public class SellStocksPriceTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.StockPrice)).Returns(AvailablePrices);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
     }
@@ -61,7 +61,7 @@ public class SellStocksPriceTests : StagesBaseTest
 
         Assets.Where(a => a.MarkedToSell).ForEach(asset =>
         {
-            AssetManagerMock.Verify(a => a.Update(
+            PersonManagerMock.Verify(a => a.UpdateAsset(
                 It.Is<AssetDto>(x =>
                     x.Title == asset.Title &&
                     x.Type == AssetType.Stock &&
@@ -82,8 +82,8 @@ public class SellStocksPriceTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
         CurrentUserMock.Verify(u => u.Notify("Invalid price value. Try again."), Times.Once);
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
-        AssetManagerMock.Verify(a => a.Sell(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Never);
+        PersonManagerMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
     }
 
     [TestCase("1")]
@@ -105,7 +105,7 @@ public class SellStocksPriceTests : StagesBaseTest
             .ForEach(asset =>
             {
                 payedAmmount += asset.Qtty * price.AsCurrency();
-                AssetManagerMock.Verify(a => a.Sell(asset, ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
                 HistoryManagerMock.Verify(h => h.Add(ActionType.SellStocks, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 

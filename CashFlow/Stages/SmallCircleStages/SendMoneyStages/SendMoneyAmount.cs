@@ -35,12 +35,12 @@ public class SendMoneyAmount(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
         var person = PersonManager.Read(CurrentUser.Id);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
@@ -54,7 +54,7 @@ public class SendMoneyAmount(
         }
 
         asset.Qtty = amount;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         if (!person.BigCircle && person.Cash < amount)
         {
@@ -64,7 +64,7 @@ public class SendMoneyAmount(
 
         if (person.BigCircle && person.Cash < amount)
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
             return;
@@ -105,7 +105,7 @@ public class SendMoneyAmount(
             HistoryManager.Add(ActionType.GetMoney, amount, friend);
         }
 
-        AssetManager.Delete(asset);
+        PersonManager.DeleteAsset(asset);
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);

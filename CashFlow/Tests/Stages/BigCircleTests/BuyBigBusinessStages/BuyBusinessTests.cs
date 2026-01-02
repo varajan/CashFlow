@@ -15,7 +15,7 @@ public class BuyBigBusinessTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.BigBusinessType, It.IsAny<Language>())).Returns(Names);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]

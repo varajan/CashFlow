@@ -15,7 +15,7 @@ public class BuyRealEstateTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.RealEstateSmallType, It.IsAny<Language>())).Returns(Names);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstateSmallType, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstateSmallType, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]

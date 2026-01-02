@@ -64,7 +64,7 @@ public class SellAsset<TNextStage>(
         }
     }
 
-    private List<AssetDto> Assets => AssetTypes.SelectMany(type => AssetManager.ReadAll(type, CurrentUser.Id)).ToList();
+    private List<AssetDto> Assets => AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser.Id)).ToList();
 
     public override async Task HandleMessage(string message)
     {
@@ -112,7 +112,7 @@ public class SellAsset<TNextStage>(
 
         var asset = Assets[index - 1];
         asset.MarkedToSell = true;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
         return true;
     }
 
@@ -142,7 +142,7 @@ public class SellAsset<TNextStage>(
         assets.ForEach(asset =>
         {
             asset.MarkedToSell = true;
-            AssetManager.Update(asset);
+            PersonManager.UpdateAsset(asset);
         });
 
         return true;

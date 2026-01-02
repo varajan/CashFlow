@@ -17,7 +17,7 @@ public class BuyStocksPriceTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.StockPrice, CurrentUserMock.Object.Language)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class BuyStocksPriceTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCount>());
 
-            AssetManagerMock.Verify(m => m.Update(
+            PersonManagerMock.Verify(m => m.UpdateAsset(
                 It.Is<AssetDto>(x => x.Id == Asset.Id && x.Price == price.AsCurrency() && x.Qtty == 0)
             ), Times.Once);
         });

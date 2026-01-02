@@ -15,7 +15,7 @@ public class SendMoneyTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
-        AssetManagerMock.Verify(a => a.Create(
+        PersonManagerMock.Verify(a => a.CreateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == testUser.Name &&
                 x.UserId == CurrentUserMock.Object.Id &&
@@ -89,7 +89,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
-        AssetManagerMock.Verify(a => a.Create(
+        PersonManagerMock.Verify(a => a.CreateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == bank &&
                 x.UserId == CurrentUserMock.Object.Id &&

@@ -1,5 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
@@ -8,16 +7,14 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoney(IAssetManager assetManager, ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private IAssetManager AssetManager { get; init; } = assetManager;
-
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            var asset = AssetManager.ReadAll(AssetType.Transfer, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
-            AssetManager.Delete(asset);
+            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
+            PersonManager.DeleteAsset(asset);
 
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).Select(x => x.Name).ToList();
@@ -43,7 +40,7 @@ public class SendMoney(IAssetManager assetManager, ITermsService termsService, I
                 Type = AssetType.Transfer,
             };
 
-            AssetManager.Create(transfer);
+            PersonManager.CreateAsset(transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }

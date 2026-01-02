@@ -20,7 +20,7 @@ public class BuyBusinessPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BusinessBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Business, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object.Id)).Returns([Asset]);
         AssetManagerMock
             .Setup(a => a.Update(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
@@ -76,7 +76,7 @@ public class BuyBusinessPriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessFirstPayment>());
-            AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 

@@ -17,7 +17,7 @@ public class BuyCoinsCountTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(Counts);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class BuyCoinsCountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
                 x.Qtty == count.ToInt() &&
                 x.Type == AssetType.Coin &&

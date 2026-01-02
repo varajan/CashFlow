@@ -20,7 +20,7 @@ public class BuyRealEstatePriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateBigBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([Asset]);
         AssetManagerMock
             .Setup(a => a.Update(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
@@ -76,7 +76,7 @@ public class BuyRealEstatePriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigRealEstateFirstPayment>());
-            AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 

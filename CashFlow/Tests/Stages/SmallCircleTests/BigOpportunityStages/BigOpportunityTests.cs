@@ -12,7 +12,7 @@ public class BigOpportunityTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]

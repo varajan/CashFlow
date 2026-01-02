@@ -12,7 +12,7 @@ public class StopGame(ITermsService termsService, IPersonManager personManager, 
     protected override Task OnConfirmed()
     {
         HistoryManager.Clear(CurrentUser.Id);
-        AssetManager.DeleteAll(CurrentUser.Id);
+        PersonManager.DeleteAllAssets(CurrentUser.Id);
         PersonManager.Delete(CurrentUser.Id);
         NextStage = New<Start>();
 

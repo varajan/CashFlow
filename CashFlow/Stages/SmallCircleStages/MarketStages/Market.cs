@@ -22,12 +22,12 @@ public class Market(ITermsService termsService, IAssetManager assetManager, IPer
 
     public override async Task HandleMessage(string message)
     {
-        var noSmallBusiness = AssetManager.ReadAll(AssetType.SmallBusiness, CurrentUser.Id).Count == 0;
+        var noSmallBusiness = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser.Id).Count == 0;
 
         switch (message)
         {
             case var m when MessageEquals(m, 38, "Sell Real Estate"):
-                var noRealEstate = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).Count == 0;
+                var noRealEstate = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser.Id).Count == 0;
                 if (noRealEstate)
                 {
                     await CurrentUser.Notify(Terms.Get(15, CurrentUser, "You have no properties."));
@@ -39,7 +39,7 @@ public class Market(ITermsService termsService, IAssetManager assetManager, IPer
                 return;
 
             case var m when MessageEquals(m, 98, "Sell Land"):
-                var noLand = AssetManager.ReadAll(AssetType.Land, CurrentUser.Id).Count == 0;
+                var noLand = PersonManager.ReadAllAssets(AssetType.Land, CurrentUser.Id).Count == 0;
                 if (noLand)
                 {
                     await CurrentUser.Notify(Terms.Get(100, CurrentUser, "You have no Land."));
@@ -51,7 +51,7 @@ public class Market(ITermsService termsService, IAssetManager assetManager, IPer
                 return;
 
             case var m when MessageEquals(m, 75, "Sell Business"):
-                var noBusiness = AssetManager.ReadAll(AssetType.Business, CurrentUser.Id).Count == 0;
+                var noBusiness = PersonManager.ReadAllAssets(AssetType.Business, CurrentUser.Id).Count == 0;
                 if (noBusiness && noSmallBusiness)
                 {
                     await CurrentUser.Notify(Terms.Get(77, CurrentUser, "You have no Business."));
@@ -63,7 +63,7 @@ public class Market(ITermsService termsService, IAssetManager assetManager, IPer
                 return;
 
             case var m when MessageEquals(m, 120, "Sell Coins"):
-                var noCoins = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).Count == 0;
+                var noCoins = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).Count == 0;
                 if (noCoins)
                 {
                     await CurrentUser.Notify(Terms.Get(121, CurrentUser, "You have no coins."));

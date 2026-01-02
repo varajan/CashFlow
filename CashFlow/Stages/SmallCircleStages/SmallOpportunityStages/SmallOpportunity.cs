@@ -8,8 +8,6 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 public class SmallOpportunity(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    IAssetManager AssetManager { get; set; } = assetManager;
-
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
     public override IEnumerable<string> Buttons =>
     [
@@ -26,7 +24,7 @@ public class SmallOpportunity(ITermsService termsService, IAssetManager assetMan
 
     public override async Task HandleMessage(string message)
     {
-        var hasStocks = AssetManager.ReadAll(AssetType.Stock, CurrentUser.Id).Count > 0;
+        var hasStocks = PersonManager.ReadAllAssets(AssetType.Stock, CurrentUser.Id).Count > 0;
 
         switch (message)
         {

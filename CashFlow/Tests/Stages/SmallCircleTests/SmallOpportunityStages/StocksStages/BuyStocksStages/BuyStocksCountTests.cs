@@ -19,12 +19,12 @@ public class BuyStocksCountTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, TestPerson.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, TestPerson.Id)).Returns([Asset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
 
         AssetsList = [];
-        AssetManagerMock
-        .Setup(a => a.Update(It.IsAny<AssetDto>()))
+        PersonManagerMock
+        .Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
         .Callback<AssetDto>(dto =>
             AssetsList.Add(dto.Clone())
         );
@@ -52,7 +52,7 @@ public class BuyStocksCountTests : StagesBaseTest
             Price = price,
             IsDraft = true
         };
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([asset]);
 
         var person = new PersonDto() { Id = CurrentUserMock.Object.Id, Cash = cash };
         PersonManagerMock.Setup(p => p.Read(person.Id)).Returns(person);
@@ -125,7 +125,7 @@ public class BuyStocksCountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCredit>());
 
-        AssetManagerMock.Verify(m => m.Update(It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
+        PersonManagerMock.Verify(m => m.UpdateAsset(It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new BuyStocksCount(

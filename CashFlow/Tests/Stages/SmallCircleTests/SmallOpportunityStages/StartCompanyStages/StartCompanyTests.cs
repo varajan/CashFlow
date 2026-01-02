@@ -15,7 +15,7 @@ public class StartCompanyTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.SmallBusinessType, It.IsAny<Language>())).Returns(Names);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.SmallBusinessType, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object.Id)).Returns([]);
     }
 
     [Test]

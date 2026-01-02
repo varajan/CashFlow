@@ -36,11 +36,11 @@ public class IncreaseCashflow(
             return;
         }
 
-        var assets = AssetManager.ReadAll(AssetType.SmallBusiness, CurrentUser.Id);
+        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser.Id);
         assets.ForEach(asset =>
         {
             asset.CashFlow += cashflow;
-            AssetManager.Update(asset);
+            PersonManager.UpdateAsset(asset);
             HistoryManager.Add(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
         });
 

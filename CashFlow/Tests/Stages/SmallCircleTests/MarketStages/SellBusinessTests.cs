@@ -56,8 +56,8 @@ public class SellBusinessTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellBusinessPrice>());
 
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Once);
-        AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Once);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new SellBusiness(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)

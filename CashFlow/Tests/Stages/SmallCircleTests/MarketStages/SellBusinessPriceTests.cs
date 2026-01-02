@@ -54,7 +54,7 @@ public class SellBusinessPriceTests : SellAssetBaseTest
             .Where(a => a.MarkedToSell && (a.Type == AssetType.Business || a.Type == AssetType.SmallBusiness))
             .ForEach(asset =>
             {
-                AssetManagerMock.Verify(a => a.Update(
+                PersonManagerMock.Verify(a => a.UpdateAsset(
                     It.Is<AssetDto>(x =>
                         x.Title == asset.Title &&
                         (x.Type == AssetType.Business || x.Type == AssetType.SmallBusiness) &&
@@ -75,8 +75,8 @@ public class SellBusinessPriceTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellBusinessPrice>());
         CurrentUserMock.Verify(u => u.Notify("Invalid price value. Try again."), Times.Once);
-        AssetManagerMock.Verify(a => a.Update(It.IsAny<AssetDto>()), Times.Never);
-        AssetManagerMock.Verify(a => a.Sell(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Never);
+        PersonManagerMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
     }
 
     [TestCase("1")]
@@ -98,7 +98,7 @@ public class SellBusinessPriceTests : SellAssetBaseTest
             .ForEach(asset =>
             {
                 payedAmmount += price.AsCurrency();
-                AssetManagerMock.Verify(a => a.Sell(asset, ActionType.SellBusiness, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellBusiness, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
                 HistoryManagerMock.Verify(h => h.Add(ActionType.SellBusiness, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 

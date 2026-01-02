@@ -41,7 +41,6 @@ public class SellAssetPrice(
     };
 
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message
@@ -50,7 +49,7 @@ public class SellAssetPrice(
         {
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                var count = AssetManager.ReadAll(AssetType.RealEstate, CurrentUser.Id).First(a => a.MarkedToSell)
+                var count = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser.Id).First(a => a.MarkedToSell)
                     .Title
                     .GetApartmentsCount();
 
@@ -67,14 +66,14 @@ public class SellAssetPrice(
 
     public override async Task HandleMessage(string message)
     {
-        var assets = AssetTypes.SelectMany(type => AssetManager.ReadAll(type, CurrentUser.Id)).Where(a => a.MarkedToSell).ToList();
+        var assets = AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser.Id)).Where(a => a.MarkedToSell).ToList();
 
         if (IsCanceled(message))
         {
             assets.ForEach(a =>
             {
                 a.MarkedToSell = false;
-                AssetManager.Update(a);
+                PersonManager.UpdateAsset(a);
             });
 
             NextStage = New<Start>();
@@ -93,7 +92,7 @@ public class SellAssetPrice(
         {
             var count = asset.Title.GetApartmentsCount();
             person.Cash += price * count;
-            AssetManager.Sell(asset, ActionType, price, CurrentUser);
+            PersonManager.SellAsset(asset, ActionType, price, CurrentUser);
             HistoryManager.Add(ActionType, asset.Id, CurrentUser);
         });
         PersonManager.Update(person);

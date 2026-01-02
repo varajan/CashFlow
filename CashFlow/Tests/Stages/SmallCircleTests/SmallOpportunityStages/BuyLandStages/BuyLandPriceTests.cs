@@ -21,9 +21,9 @@ public class BuyLandPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.LandBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Land, CurrentUserMock.Object.Id)).Returns([Asset]);
-        AssetManagerMock
-            .Setup(a => a.Update(It.IsAny<AssetDto>()))
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock
+            .Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
                 AssetsList.Add(dto.Clone())
             );
@@ -109,7 +109,7 @@ public class BuyLandPriceTests : StagesBaseTest
         var asset = Asset.Clone();
         asset.Price = price;
 
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([asset]);
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
         // Act

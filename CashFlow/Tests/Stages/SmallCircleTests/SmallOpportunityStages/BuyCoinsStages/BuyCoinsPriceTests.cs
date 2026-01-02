@@ -21,9 +21,9 @@ public class BuyCoinsPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.CoinBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
-        AssetManagerMock
-            .Setup(a => a.Update(It.IsAny<AssetDto>()))
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock
+            .Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
                 AssetsList.Add(dto.Clone())
             );
@@ -113,7 +113,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
         asset.Qtty = qtty;
         asset.Price = price;
 
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([asset]);
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
 
         // Act

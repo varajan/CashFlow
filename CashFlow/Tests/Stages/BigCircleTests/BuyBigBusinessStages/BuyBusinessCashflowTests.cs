@@ -20,7 +20,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
     {
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(CashFlows);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
@@ -59,7 +59,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-            AssetManagerMock.Verify(a => a.Update(
+            PersonManagerMock.Verify(a => a.UpdateAsset(
                 It.Is<AssetDto>(x =>
                     x.CashFlow == cashflow.AsCurrency() &&
                     x.IsDraft == false)),

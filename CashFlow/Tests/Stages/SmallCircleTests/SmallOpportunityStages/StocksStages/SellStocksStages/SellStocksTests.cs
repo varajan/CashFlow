@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
-using CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.SellStocksStages;
@@ -20,7 +19,7 @@ public class SellStocksTests: StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
     }
 
     [Test]
@@ -67,7 +66,7 @@ public class SellStocksTests: StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == asset.Title &&
                 x.Type == AssetType.Stock &&

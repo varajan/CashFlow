@@ -22,8 +22,9 @@ public interface IPersonManager
     List<AssetDto> ReadAllAssets(AssetType type, long userId);
     void CreateAsset(AssetDto asset);
     void DeleteAsset(AssetDto asset);
+    void DeleteAllAssets(long userId);
     void UpdateAsset(AssetDto asset);
-
+    void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
 }
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
@@ -170,6 +171,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         UpdateAsset(asset);
     }
 
+    public void DeleteAllAssets(long userId) => dataBase.Execute($"DELETE FROM Assets WHERE UserID = {userId}");
+
     public void UpdateAsset(AssetDto asset)
     {
         var sql = $"" +
@@ -187,5 +190,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
             $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
         dataBase.Execute(sql);
+    }
+
+    public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)
+    {
+        asset.SellPrice = price;
+        DeleteAsset(asset);
+        AddHistory(action, asset.Id, user);
     }
 }

@@ -22,7 +22,7 @@ public class SendMoneyAmountTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
         PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
     }
@@ -39,7 +39,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer)
@@ -113,14 +113,14 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -150,7 +150,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
 
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());
@@ -168,14 +168,14 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        AssetManagerMock.Verify(a => a.Delete(
+        PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -212,7 +212,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyCredit>());
 
-        AssetManagerMock.Verify(a => a.Update(
+        PersonManagerMock.Verify(a => a.UpdateAsset(
         It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
