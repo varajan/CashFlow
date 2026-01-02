@@ -13,10 +13,9 @@ public class BuyAssetCount<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     protected IHistoryManager HistoryManager { get; } = historyManager;
@@ -25,7 +24,7 @@ public class BuyAssetCount<TNextStage>(
     {
         get
         {
-            var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).First(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
             var person = PersonManager.Read(CurrentUser.Id);
             int upToQtty = person.Cash / asset.Price;
 
@@ -39,7 +38,7 @@ public class BuyAssetCount<TNextStage>(
     {
         get
         {
-            var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).First(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
             var person = PersonManager.Read(CurrentUser.Id);
             int upToQtty = person.Cash / asset.Price;
             int upTo50 = upToQtty / 50 * 50;
@@ -71,11 +70,11 @@ public class BuyAssetCount<TNextStage>(
 
     public async override Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
@@ -88,7 +87,7 @@ public class BuyAssetCount<TNextStage>(
         }
 
         asset.Qtty = number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         var person = PersonManager.Read(CurrentUser.Id);
         if (person.Cash < asset.Qtty * asset.Price)
@@ -109,7 +108,7 @@ public class BuyAssetCount<TNextStage>(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         HistoryManager.Add(ActionType, asset.Id, CurrentUser);
 

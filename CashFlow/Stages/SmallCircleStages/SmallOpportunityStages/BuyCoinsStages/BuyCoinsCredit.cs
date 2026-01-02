@@ -10,14 +10,13 @@ public class BuyCoinsCredit(
     ITermsService termsService,
     IAvailableAssets assets,
     IHistoryManager historyManager,
-    IPersonManager personManager,
-    IAssetManager assetManager) : BuyCoinsPrice(termsService, assets, historyManager, personManager, assetManager)
+    IPersonManager personManager) : BuyCoinsPrice(termsService, assets, historyManager, personManager)
 {
     public override string Message
     {
         get
         {
-            var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
             var value = (asset.Qtty * asset.Price).AsCurrency();
             var cash = PersonManager.Read(CurrentUser.Id).Cash.AsCurrency();
 
@@ -29,12 +28,12 @@ public class BuyCoinsCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
 
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                AssetManager.Delete(asset);
+                PersonManager.DeleteAsset(asset);
                 NextStage = New<Start>();
                 return;
 

@@ -19,7 +19,11 @@ public interface IPersonManager
 
     void AddHistory(ActionType type, long value, IUser user);
 
+    List<AssetDto> ReadAllAssets(AssetType type, long userId);
     void CreateAsset(AssetDto asset);
+    void DeleteAsset(AssetDto asset);
+    void UpdateAsset(AssetDto asset);
+
 }
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
@@ -105,6 +109,35 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
     }
 
+    public List<AssetDto> ReadAllAssets(AssetType type, long userId)
+    {
+        var ids = dataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {userId}");
+        return ids.Select(id => ReadAsset(id.ToLong(), userId)).ToList();
+    }
+
+    public AssetDto ReadAsset(long id, long userId)
+    {
+        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {userId}";
+        var data = dataBase.GetRow(sql);
+
+        return new AssetDto
+        {
+            Type = data["Type"].ParseEnum<AssetType>(),
+            Title = data["Title"],
+            Id = data["Id"].ToInt(),
+            UserId = data["UserId"].ToInt(),
+            Price = data["Price"].ToInt(),
+            SellPrice = data["SellPrice"].ToInt(),
+            Qtty = data["Qtty"].ToInt(),
+            Mortgage = data["Mortgage"].ToInt(),
+            TotalCashFlow = data["TotalCashFlow"].ToInt(),
+            CashFlow = data["CashFlow"].ToInt(),
+            BigCircle = data["BigCircle"].ToInt() == 1,
+            IsDraft = data["IsDraft"].ToInt() == 1,
+            IsDeleted = data["IsDeleted"].ToInt() == 1,
+        };
+    }
+
     public void CreateAsset(AssetDto asset)
     {
         int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
@@ -128,5 +161,31 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         dataBase.Execute(sql);
 
         //return Read(newId, asset.UserId);
+    }
+
+    public void DeleteAsset(AssetDto asset)
+    {
+        asset.IsDeleted = true;
+        asset.Title = asset.Title.SubStringTo("*");
+        UpdateAsset(asset);
+    }
+
+    public void UpdateAsset(AssetDto asset)
+    {
+        var sql = $"" +
+            $"UPDATE Assets SET " +
+            $"Type = {(int)asset.Type}," +
+            $"Title = '{asset.Title}'," +
+            $"Price = {asset.Price}," +
+            $"SellPrice = {asset.SellPrice}," +
+            $"Qtty = {asset.Qtty}," +
+            $"Mortgage = {asset.Mortgage}," +
+            $"CashFlow = {asset.CashFlow}," +
+            $"BigCircle = {asset.BigCircle}," +
+            $"CashFlow = {asset.CashFlow}," +
+            $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
+            $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
+            $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
+        dataBase.Execute(sql);
     }
 }

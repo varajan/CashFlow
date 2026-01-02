@@ -60,7 +60,7 @@ public class BuyLandTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyLandPrice>());
 
-        AssetManagerMock.Verify(a => a.Create(
+        PersonManagerMock.Verify(a => a.CreateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == name &&
                 x.Qtty == 1 &&
@@ -70,7 +70,7 @@ public class BuyLandTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyLand(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new BuyLand(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

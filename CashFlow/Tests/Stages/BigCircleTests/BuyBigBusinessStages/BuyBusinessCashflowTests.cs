@@ -3,28 +3,28 @@ using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.BigCircleStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.BigOpportunityStages.BuyBusinessStages;
+namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
 
 [TestFixture]
-public class BuyBusinessCashflowTests : StagesBaseTest
+public class BuyBigBusinessCashflowTests : StagesBaseTest
 {
-    private static readonly string[] CashFlows = ["-$100", "$0", "$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.Business, Price = 10_000, Qtty = 1, IsDraft = true };
+    private static readonly string[] CashFlows = ["$1,000", "$5,000"];
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.BigBusinessType, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 10_000 };
 
     [SetUp]
     public void Setup()
     {
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BusinessCashFlow)).Returns(CashFlows);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Business, CurrentUserMock.Object.Id)).Returns([Asset]);
+        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(CashFlows);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
-    public void BuyBusinessCashflow_Question_and_Buttons()
+    public void BuyBigBusinessCashflow_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -42,8 +42,7 @@ public class BuyBusinessCashflowTests : StagesBaseTest
 
     [TestCaseSource(nameof(CashFlows))]
     [TestCase("1000")]
-    [TestCase("0")]
-    public async Task BuyBusinessCashflow_SelectValidCount_Done(string cashflow)
+    public async Task BuyBigBusinessCashflow_SelectValidValue_Done(string cashflow)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -75,7 +74,7 @@ public class BuyBusinessCashflowTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBusinessCashFlow(
+    protected override IStage GetTestStage() => new BuyBigBusinessCashFlow(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             HistoryManagerMock.Object,

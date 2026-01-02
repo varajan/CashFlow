@@ -60,7 +60,7 @@ public class StartCompanyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<StartCompanyPrice>());
 
-        AssetManagerMock.Verify(a => a.Create(
+        PersonManagerMock.Verify(a => a.CreateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == companyName &&
                 x.Qtty == 1 &&
@@ -70,7 +70,7 @@ public class StartCompanyTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new StartCompany(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new StartCompany(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

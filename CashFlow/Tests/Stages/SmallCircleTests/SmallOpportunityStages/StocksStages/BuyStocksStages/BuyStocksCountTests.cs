@@ -131,7 +131,6 @@ public class BuyStocksCountTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyStocksCount(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        AssetManagerMock.Object,
         HistoryManagerMock.Object,
         PersonManagerMock.Object)
     .SetCurrentUser(CurrentUserMock.Object)

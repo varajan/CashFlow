@@ -135,7 +135,6 @@ public class StartCompanyPriceTests: StagesBaseTest
     protected override IStage GetTestStage() => new StartCompanyPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

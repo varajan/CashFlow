@@ -9,8 +9,7 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStage
 public class BuyCoinsCount(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
-    IPersonManager personManager) : BuyCoins(termsService, availableAssets, assetManager, personManager)
+    IPersonManager personManager) : BuyCoins(termsService, availableAssets, personManager)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
@@ -34,9 +33,9 @@ public class BuyCoinsCount(
             return;
         }
 
-        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
         asset.Qtty = number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         NextStage = New<BuyCoinsPrice>();
     }

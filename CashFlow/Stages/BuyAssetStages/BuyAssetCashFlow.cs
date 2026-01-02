@@ -13,10 +13,9 @@ public abstract class BuyAssetCashFlow<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     protected IHistoryManager HistoryManager { get; } = historyManager;
@@ -26,18 +25,18 @@ public abstract class BuyAssetCashFlow<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
 
         asset.CashFlow = message.AsCurrency();
         asset.IsDraft = false;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
         
         var person = PersonManager.Read(CurrentUser.Id);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;

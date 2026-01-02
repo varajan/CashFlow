@@ -106,7 +106,6 @@ public class StartCompanyCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new StartCompanyCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

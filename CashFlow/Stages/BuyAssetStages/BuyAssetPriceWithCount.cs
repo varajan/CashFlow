@@ -11,19 +11,18 @@ public class BuyAssetPriceWithCount<TNextStage>(
     AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
-    IPersonManager personManager) : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
+    IPersonManager personManager) : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetName, CurrentUser.Language).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
@@ -37,7 +36,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
         }
 
         asset.Price = number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         NextStage = New<TNextStage>();
     }

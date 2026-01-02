@@ -92,7 +92,6 @@ public class BuyRealEstateCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyBigRealEstateCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

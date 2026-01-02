@@ -61,7 +61,7 @@ public class BuyStocksTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksPrice>());
 
-        AssetManagerMock.Verify(a => a.Create(
+        PersonManagerMock.Verify(a => a.CreateAsset(
             It.Is<AssetDto>(x =>
                 x.Title == name &&
                 x.UserId == CurrentUserMock.Object.Id &&
@@ -70,7 +70,7 @@ public class BuyStocksTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyStocks(TermsServiceMock.Object, AvailableAssetsMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new BuyStocks(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

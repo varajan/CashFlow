@@ -13,10 +13,9 @@ public abstract class BuyAssetPrice<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, assetManager, personManager) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     protected IHistoryManager HistoryManager { get; } = historyManager;
@@ -26,11 +25,11 @@ public abstract class BuyAssetPrice<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
@@ -43,7 +42,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         }
 
         asset.Price = number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         var person = PersonManager.Read(CurrentUser.Id);
         if (person.Cash < asset.Price)
@@ -64,7 +63,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         HistoryManager.Add(ActionType, asset.Id, CurrentUser);
 

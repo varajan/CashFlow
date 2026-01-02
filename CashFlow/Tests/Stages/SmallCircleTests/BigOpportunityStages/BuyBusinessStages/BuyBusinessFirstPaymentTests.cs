@@ -18,8 +18,8 @@ public class BuyBusinessFirstPaymentTests : StagesBaseTest
     public void Setup()
     {
         PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object.Id)).Returns([Asset]);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BusinessFirstPayment)).Returns(FirstPayments);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Business, CurrentUserMock.Object.Id)).Returns([Asset]);
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class BuyBusinessFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessCashFlow>());
-            AssetManagerMock.Verify(a => a.Update(
+            PersonManagerMock.Verify(a => a.UpdateAsset(
                 It.Is<AssetDto>(x =>
                     x.Price == price &&
                     x.Mortgage == mortgage &&
@@ -93,8 +93,8 @@ public class BuyBusinessFirstPaymentTests : StagesBaseTest
         var asset = Asset.Clone();
         asset.Price = firstPayment;
 
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.Business, CurrentUserMock.Object.Id)).Returns([asset]);
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object.Id)).Returns([asset]);
 
         // Act
         await testStage.HandleMessage($"${firstPayment}");
@@ -103,14 +103,13 @@ public class BuyBusinessFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
-            AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
         });
     }
 
     protected override IStage GetTestStage() => new BuyBusinessFirstPayment(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

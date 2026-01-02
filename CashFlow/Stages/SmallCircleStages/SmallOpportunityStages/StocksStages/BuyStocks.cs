@@ -6,27 +6,25 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class BuyStocks(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
-    : BuyAsset<BuyStocksPrice>(AssetType.Stock, AssetType.Stock, termsService, availableAssets, assetManager, personManager)
+public class BuyStocks(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
+    : BuyAsset<BuyStocksPrice>(AssetType.Stock, AssetType.Stock, termsService, availableAssets, personManager)
 { }
 
-public class BuyStocksPrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
-    : BuyAssetPriceWithCount<BuyStocksCount>(AssetType.StockPrice, AssetType.Stock, termsService, availableAssets, assetManager, personManager)
+public class BuyStocksPrice(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
+    : BuyAssetPriceWithCount<BuyStocksCount>(AssetType.StockPrice, AssetType.Stock, termsService, availableAssets, personManager)
 { }
 
 public class BuyStocksCount(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCount<BuyStocksCredit>(
-        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, assetManager, historyManager, personManager) { }
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, historyManager, personManager) { }
 
 public class BuyStocksCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, assetManager, historyManager, personManager)
+    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, historyManager, personManager)
 { }

@@ -11,8 +11,7 @@ public class BuyCoinsPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IHistoryManager historyManager,
-    IPersonManager personManager,
-    IAssetManager assetManager) : BuyCoins(termsService, availableAssets, assetManager, personManager)
+    IPersonManager personManager) : BuyCoins(termsService, availableAssets, personManager)
 {
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
@@ -35,9 +34,9 @@ public class BuyCoinsPrice(
             return;
         }
 
-        var asset = AssetManager.ReadAll(AssetType.Coin, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).Single(x => x.IsDraft);
         asset.Price = number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         var person = PersonManager.Read(CurrentUser.Id);
         if (person.Cash < asset.Price * asset.Qtty)
@@ -58,7 +57,7 @@ public class BuyCoinsPrice(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         HistoryManager.Add(ActionType.BuyCoins, asset.Id, CurrentUser);
 

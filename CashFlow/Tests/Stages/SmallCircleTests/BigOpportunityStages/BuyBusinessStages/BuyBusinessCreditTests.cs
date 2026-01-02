@@ -92,7 +92,6 @@ public class BuyBusinessCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyBusinessCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

@@ -6,39 +6,28 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BuyBigBusiness(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
-    : BuyAsset<BuyBigBusinessPrice>(AssetType.Business, AssetType.Business, termsService, availableAssets, assetManager, personManager)
+public class BuyBigBusiness(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
+    : BuyAsset<BuyBigBusinessPrice>(AssetType.BigBusinessType, AssetType.BigBusinessType, termsService, availableAssets, personManager)
 { }
 
-public class BuyBigBusinessPrice(ITermsService termsService, IAvailableAssets availableAssets, IAssetManager assetManager, IPersonManager personManager)
-    : BuyAssetPriceWithFirstPayment<BuyBigBusinessFirstPayment>(
-        AssetType.BusinessBuyPrice, AssetType.Business, termsService, availableAssets, assetManager, personManager)
+public class BuyBigBusinessPrice(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
+    : BuyAssetPriceWithFirstPayment<BuyBigBusinessCashFlow>(
+        AssetType.BigBusinessBuyPrice, AssetType.BigBusinessType, termsService, availableAssets, personManager)
 { }
 
 public class BuyBigBusinessFirstPayment(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IPersonManager personManager)
-    : BuyAssetWithCashflowFirstPayment<BuyBigBusinessCashFlow, BuyBigBusinessCashFlow>(
-        AssetType.BusinessFirstPayment, AssetType.Business, termsService, availableAssets, assetManager, personManager)
+    : BuyAssetWithCashflowFirstPayment<BuyBigBusinessCashFlow, Start>(
+        AssetType.BigBusinessCashFlow, AssetType.BigBusinessType, termsService, availableAssets, personManager)
 { }
-
-//public class BuyBigBusinessCredit(
-//    ITermsService termsService,
-//    IAvailableAssets availableAssets,
-//    IAssetManager assetManager,
-//    IPersonManager personManager)
-//    : BuyAssetWithCashflowCredit<BuyBigBusinessCashFlow>(
-//        AssetType.BusinessFirstPayment, AssetType.Business, termsService, availableAssets, assetManager, personManager)
-//{ }
 
 public class BuyBigBusinessCashFlow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(
-        AssetType.BusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, availableAssets, assetManager, historyManager, personManager)
+        AssetType.BigBusinessCashFlow, AssetType.BigBusinessType, ActionType.BuyBusiness, termsService, availableAssets, historyManager, personManager)
 { }

@@ -2,16 +2,16 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
-using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
+using CashFlow.Stages.BigCircleStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.BigOpportunityStages.BuyRealEstateStages;
+namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
 
 [TestFixture]
-public class BuyRealEstatePriceTests : StagesBaseTest
+public class BuyBigBusinessPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.RealEstate, IsDraft = true };
+    private static readonly string[] Prices = ["$100,000", "$500,000"];
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.BigBusinessType, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -19,8 +19,8 @@ public class BuyRealEstatePriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateBigBuyPrice)).Returns(Prices);
-        AssetManagerMock.Setup(a => a.ReadAll(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([Asset]);
+        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessBuyPrice)).Returns(Prices);
+        AssetManagerMock.Setup(a => a.ReadAll(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
         AssetManagerMock
             .Setup(a => a.Update(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
@@ -29,7 +29,7 @@ public class BuyRealEstatePriceTests : StagesBaseTest
     }
 
     [Test]
-    public void BuyRealEstatePrice_Question_and_Buttons()
+    public void BuyBigBusinessPrice_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
@@ -50,7 +50,7 @@ public class BuyRealEstatePriceTests : StagesBaseTest
     [TestCase("0")]
     [TestCase(" ")]
     [TestCase("$")]
-    public async Task BuyRealEstatePrice_SelectInvalidPrice_StayOnStage(string count)
+    public async Task BuyBigBusinessPrice_SelectInvalidValue_StayOnStage(string count)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -59,12 +59,12 @@ public class BuyRealEstatePriceTests : StagesBaseTest
         await testStage.HandleMessage(count);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BuyBigRealEstatePrice>());
+        Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessPrice>());
     }
 
     [TestCaseSource(nameof(Prices))]
     [TestCase("1000")]
-    public async Task BuyRealEstatePrice_SelectValidCount_MoveForward(string price)
+    public async Task BuyBigBusinessPrice_SelectValidValue_MoveForward(string price)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -75,12 +75,12 @@ public class BuyRealEstatePriceTests : StagesBaseTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(testStage.NextStage, Is.TypeOf<BuyBigRealEstateFirstPayment>());
+            Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
             AssetManagerMock.Verify(a => a.Update(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBigRealEstatePrice(
+    protected override IStage GetTestStage() => new BuyBigBusinessPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
         PersonManagerMock.Object)

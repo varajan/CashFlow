@@ -83,7 +83,6 @@ public class BuyRealEstatePriceTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuySmallRealEstatePrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        AssetManagerMock.Object,
         PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

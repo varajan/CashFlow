@@ -11,7 +11,6 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IPersonManager personManager)
      : BaseStage(termsService, personManager)
         where TNextStage : BaseStage
@@ -20,24 +19,24 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
     
     public override string Message => Terms.Get(10, CurrentUser, "What is the first payment?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            AssetManager.Delete(asset);
+            PersonManager.DeleteAsset(asset);
             NextStage = New<Start>();
             return;
         }
 
         var number = message.AsCurrency();
-        if (number < 0)
+        if (number <  0 && asset.Type != AssetType.BigBusinessType ||
+            number <= 0 && asset.Type == AssetType.BigBusinessType)
         {
             await CurrentUser.Notify(Terms.Get(11, CurrentUser, "Invalid first payment value. Try again."));
             NextStage = this;
@@ -45,9 +44,14 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         asset.Mortgage = asset.Price - number;
-        AssetManager.Update(asset);
+        PersonManager.UpdateAsset(asset);
 
         var person = PersonManager.Read(CurrentUser.Id);
+        if (person.Cash < number && asset.Type == AssetType.BigBusinessType)
+        {
+            PersonManager.DeleteAsset(asset);
+            await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
+        }
 
         NextStage = person.Cash < number
             ? New<TCreditStage>()

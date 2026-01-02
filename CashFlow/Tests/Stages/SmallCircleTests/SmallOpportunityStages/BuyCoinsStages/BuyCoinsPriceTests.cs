@@ -139,8 +139,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
             HistoryManagerMock.Object,
-            PersonManagerMock.Object,
-            AssetManagerMock.Object)
+            PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

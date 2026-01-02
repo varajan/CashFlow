@@ -12,14 +12,12 @@ public abstract class BuyAsset<TNextStage>(
     AssetType assetType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IPersonManager personManager) : BaseStage(termsService, personManager) where TNextStage : BaseStage
 {
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
 
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
     public override IEnumerable<string> Buttons => AvailableAssets
@@ -52,7 +50,7 @@ public abstract class BuyAsset<TNextStage>(
                 IsDraft = true,
             };
 
-            AssetManager.Create(draftAsset);
+            PersonManager.CreateAsset(draftAsset);
             NextStage = New<TNextStage>();
             return Task.CompletedTask;
         }

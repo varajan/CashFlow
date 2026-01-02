@@ -12,17 +12,16 @@ public abstract class BuyAssetCredit<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, assetManager, historyManager, personManager) where TNextStage : BaseStage
+    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, historyManager, personManager) where TNextStage : BaseStage
 {
     public override string Message
     {
         get
         {
             var person = PersonManager.Read(CurrentUser.Id);
-            var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
             var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
@@ -33,12 +32,12 @@ public abstract class BuyAssetCredit<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = AssetManager.ReadAll(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
 
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                AssetManager.Delete(asset);
+                PersonManager.DeleteAsset(asset);
                 NextStage = New<Start>();
                 return;
 

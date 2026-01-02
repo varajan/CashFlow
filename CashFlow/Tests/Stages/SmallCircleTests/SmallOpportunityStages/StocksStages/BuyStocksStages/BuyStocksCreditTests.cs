@@ -105,7 +105,6 @@ public class BuyStocksCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyStocksCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

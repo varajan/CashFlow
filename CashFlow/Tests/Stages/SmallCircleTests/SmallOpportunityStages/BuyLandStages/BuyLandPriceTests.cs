@@ -134,7 +134,6 @@ public class BuyLandPriceTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyLandPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
