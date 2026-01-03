@@ -109,7 +109,6 @@ public class SellBusinessPriceTests : SellAssetBaseTest
     protected override IStage GetTestStage() => new SellBusinessPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        AssetManagerMock.Object,
         PersonManagerMock.Object,
         HistoryManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

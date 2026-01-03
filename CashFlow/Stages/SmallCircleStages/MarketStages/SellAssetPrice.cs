@@ -9,7 +9,6 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class SellAssetPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IPersonManager personManager,
     IHistoryManager historyManager,
     params AssetType[] assetTypes) : BaseStage(termsService, personManager)

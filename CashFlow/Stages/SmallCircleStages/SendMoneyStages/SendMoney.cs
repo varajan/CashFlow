@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(IAssetManager assetManager, ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class SendMoney(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 

@@ -78,7 +78,6 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuySmallRealEstateCashFlow(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            AssetManagerMock.Object,
             HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

@@ -109,7 +109,6 @@ public class SellLandPriceTests : SellAssetBaseTest
     protected override IStage GetTestStage() => new SellLandPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        AssetManagerMock.Object,
         PersonManagerMock.Object,
         HistoryManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

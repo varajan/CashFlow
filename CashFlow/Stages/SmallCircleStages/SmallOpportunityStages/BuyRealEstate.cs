@@ -30,7 +30,6 @@ public class BuySmallRealEstateCredit(
 public class BuySmallRealEstateCashFlow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(

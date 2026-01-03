@@ -88,7 +88,7 @@ public class StocksMultiplyTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new StocksMultiply(TermsServiceMock.Object, AssetManagerMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new StocksMultiply(TermsServiceMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }
