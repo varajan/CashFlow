@@ -38,6 +38,7 @@ public abstract class BaseStage : IStage
         return this;
     }
 
+    public virtual Task BeforeStage() { return Task.CompletedTask; }
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => CurrentUser.SetButtons(this);
 

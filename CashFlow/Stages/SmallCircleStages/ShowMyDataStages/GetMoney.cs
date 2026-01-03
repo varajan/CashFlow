@@ -2,7 +2,6 @@
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using Castle.Components.DictionaryAdapter.Xml;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 

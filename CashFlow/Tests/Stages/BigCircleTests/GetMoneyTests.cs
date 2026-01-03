@@ -35,6 +35,7 @@ public class GetMoneyTests : StagesBaseTest
             "$500,000",
             "Cancel"
         };
+
         // Act
 
         // Assert

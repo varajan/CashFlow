@@ -10,6 +10,7 @@ public class PersonDto
     public bool ReadyForBigCircle { get; set; }
     //public Circle Circle { get; set; } // { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get; set; }
+    public bool IsWinning { get; set; }
     public int InitialCashFlow { get; set; }
     public bool Bankruptcy { get; set; }
     public bool CreditsReduced { get; set; }

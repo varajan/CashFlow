@@ -5,6 +5,7 @@ using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
+using MoreLinq;
 
 namespace CashFlow.Tests.Stages.BigCircleTests;
 
@@ -56,6 +57,21 @@ public class BigCircleTests : StagesBaseTest
             Assert.That(testStage.Message, Is.EqualTo(bigCircleDescription));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
+    }
+
+    [Test]
+    public async Task BigCircle_BeforeStage_NotifyNone()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var message = $"{CurrentUserMock.Object.Name} is the winner!";
+        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+
+        // Act
+        await testStage.BeforeStage();
+
+        // Assert
+        activeUsers.ForEach(u => u.Verify(u => u.Notify(It.IsAny<string>()), Times.Never));
     }
 
     [Test]
@@ -146,6 +162,19 @@ public class BigCircleTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
         PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
+    }
+
+    [Test]
+    public async Task BigCircle_CanNotBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
     }
 
     [Test, Ignore("Not applicable")]

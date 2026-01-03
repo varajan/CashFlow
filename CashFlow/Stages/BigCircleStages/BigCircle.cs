@@ -48,6 +48,25 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
         }
     }
 
+    public override async Task BeforeStage()
+    {
+        var person = PersonManager.Read(CurrentUser.Id);
+        if (person.CurrentCashFlow < person.TargetCashFlow || person.IsWinning)
+        {
+            person.IsWinning = person.CurrentCashFlow >= person.TargetCashFlow;
+            PersonManager.Update(person);
+            return;
+        }
+
+        person.IsWinning = true;
+        PersonManager.Update(person);
+
+        var users = OtherUsers.Where(x => x.IsActive).ToList();
+        var message = Terms.Get(148, CurrentUser, "{0} is the winner!", CurrentUser.Name);
+        var notifyAll = users.Select(u => u.Notify(message));
+        await Task.WhenAll(notifyAll);
+    }
+
     public override async Task HandleMessage(string message)
     {
         var person = PersonManager.Read(CurrentUser.Id);

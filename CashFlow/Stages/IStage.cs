@@ -12,6 +12,7 @@ public interface IStage
     IStage SetCurrentUser(IUser user);
     IStage SetAllUsers(IList<IUser> users);
 
+    Task BeforeStage();
     Task HandleMessage(string message);
     Task SetButtons();
 }
