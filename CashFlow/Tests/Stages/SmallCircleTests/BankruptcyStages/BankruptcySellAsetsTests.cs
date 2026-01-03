@@ -89,7 +89,7 @@ Cash: *$100*
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash + Assets.First().Price / 2)), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.Is<AssetDto>(a => a.Title == "Asset 1" && a.IsDeleted)), Times.Once);
+        PersonManagerMock.Verify(p => p.UpdateAsset(It.Is<AssetDto>(a => a.Title == "Asset 1" && a.IsDeleted)), Times.Once);
         CurrentUserMock.Verify(u => u.Notify($"Sale for debts: Asset 1, Price: $500"), Times.Once);
     }
 
@@ -106,8 +106,8 @@ Cash: *$100*
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<AssetDto>()), Times.Never);
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonManagerMock.Verify(p => p.UpdateAsset(It.IsAny<AssetDto>()), Times.Never);
         PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<IUser>()), Times.Never);
     }
 
@@ -125,7 +125,7 @@ Cash: *$100*
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash - Liabilities[0].FullAmount + Assets[2].Price / 2)), Times.Exactly(2));
-        PersonManagerMock.Verify(p => p.Update(It.Is<AssetDto>(a => a.Title == "Asset 3" && a.IsDeleted)), Times.Once);
+        PersonManagerMock.Verify(p => p.UpdateAsset(It.Is<AssetDto>(a => a.Title == "Asset 3" && a.IsDeleted)), Times.Once);
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, bankLoanAmount, CurrentUserMock.Object), Times.Once);
     }
 
