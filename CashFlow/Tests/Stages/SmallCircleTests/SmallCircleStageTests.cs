@@ -171,7 +171,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
-        testPerson.Expenses = new() { Taxes = downsizeAmount };
+        testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
@@ -194,10 +194,11 @@ public class SmallCircleStageTests : StagesBaseTest
         var testStage = GetTestStage();
 
         var downsizeAmount = 101;
+        var creditAmount = 1_000;
         var testPerson = TestPerson.Clone();
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
-        testPerson.Expenses = new() { Taxes = downsizeAmount };
+        testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
@@ -207,9 +208,11 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify($"You've taken {1000.AsCurrency()} from bank."), Times.Once);
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(1000), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+            pr.Id == TestPerson.Id &&
+            pr.Cash == TestPerson.Cash + creditAmount - downsizeAmount)),
+            Times.Once);
         HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }
 

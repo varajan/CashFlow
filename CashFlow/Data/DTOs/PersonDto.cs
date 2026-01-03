@@ -1,4 +1,6 @@
-﻿namespace CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Users.UserData.PersonData;
+
+namespace CashFlow.Data.DTOs;
 
 public class PersonDto
 {
@@ -23,4 +25,28 @@ public class PersonDto
     public ExpensesDto Expenses { get; set; } = new();
     public LiabilitiesDto Liabilities_OBSOLETE { get; set; } = new();
     public List<LiabilityDto> Liabilities { get; set; } = [];
+
+    public void GetCredit(int amount)
+    {
+        Cash += amount;
+        UpdateLiability("Bank Loan", amount / 10, amount);
+    }
+
+    private void UpdateLiability(string name, int cashFlow, int ammount)
+    {
+        var idx = Liabilities.FindIndex(l => l.Name == name);
+
+        if (idx >= 0)
+        {
+            var liability = Liabilities[idx];
+            liability.Cashflow += cashFlow;
+            liability.FullAmount += ammount;
+            Liabilities[idx] = liability;
+        }
+        else
+        {
+            var liability = new LiabilityDto { Name = name, Cashflow = cashFlow, FullAmount = ammount };
+            Liabilities.Add(liability);
+        }
+    }
 }

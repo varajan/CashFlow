@@ -124,7 +124,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
     private async Task Downsize()
     {
         var person = PersonManager.Read(CurrentUser);
-        var expenses = person.Expenses.Total;
+        var expenses = person.Liabilities.Sum(l => l.Cashflow) * -1;
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
 
@@ -132,9 +132,10 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
         {
             var delta = expenses - person.Cash;
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
-
-            CurrentUser.GetCredit_OBSOLETE(credit);
             var loanInfo = Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency());
+
+            person.GetCredit(credit);
+            PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
             await CurrentUser.Notify(loanInfo);
         }
 
