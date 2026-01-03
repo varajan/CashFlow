@@ -277,7 +277,7 @@ public class SmallCircleStageTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var testPerson = TestPerson.Clone();
-        testPerson.CashFlow = cashFlow;
+        testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
@@ -303,7 +303,7 @@ public class SmallCircleStageTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var testPerson = TestPerson.Clone();
-        testPerson.CashFlow = cashFlow;
+        testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 

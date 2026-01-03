@@ -13,7 +13,7 @@ public class WinGameTests : StagesBaseTest
     {
         BigCircle = true,
         Cash = 500_000,
-        CashFlow = 5_000,
+        //CashFlow = 5_000,
         CurrentCashFlow = 500_000,
         TargetCashFlow = 500_000,
     };

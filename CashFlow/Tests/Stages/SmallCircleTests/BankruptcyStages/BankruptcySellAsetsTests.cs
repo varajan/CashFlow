@@ -29,7 +29,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     private PersonDto TestPerson => new()
     {
         Cash = 100,
-        CashFlow = -500,
+        Salary = -500,
         Assets = Assets,
         Liabilities = Liabilities,
     };
@@ -44,7 +44,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         var testStage = GetTestStage();
         var message = @"*You're out of money.*
 Bank Loan: *$3,000*
-Cash Flow: *-$500*
+Cash Flow: *-$650*
 Cash: *$100*
 #1 - *Asset 3* - Price: $4,500, Cash Flow: $300
 #2 - *Asset 1* - Price: $500, Cash Flow: $100

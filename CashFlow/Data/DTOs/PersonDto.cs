@@ -17,7 +17,7 @@ public class PersonDto
     public bool Bankruptcy { get; set; }
     public bool CreditsReduced { get; set; }
 
-    public int CashFlow { get; set; }
+    public int CashFlow => Salary + Assets.Sum(a => a.CashFlow) + Liabilities.Sum(l => l.Cashflow);
     public int CurrentCashFlow { get; set; }
     public int TargetCashFlow { get; set; }
 
