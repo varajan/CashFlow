@@ -49,6 +49,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             Profession = defaults.Profession[user.Language],
             Cash = defaults.Cash,
             Salary = defaults.Salary,
+            PerChild = defaults.Expenses.PerChild,
         };
 
     person.Liabilities =

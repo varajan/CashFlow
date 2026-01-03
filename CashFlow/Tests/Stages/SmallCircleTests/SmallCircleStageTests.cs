@@ -227,10 +227,11 @@ public class SmallCircleStageTests : StagesBaseTest
 
         var testPerson = TestPerson.Clone();
         testPerson.Profession = "Parent";
-        testPerson.Expenses = new() { Children = children, PerChild = 50 };
+        testPerson.Children = children;
+        testPerson.PerChild = 50;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
-        var expenses = testPerson.Expenses.PerChild * (children + 1);
+        var expenses = testPerson.PerChild * (children + 1);
         var message = $"{testPerson.Profession}, you have {expenses.AsCurrency()} children expenses and {children+1} children.";
 
         // Act
@@ -240,7 +241,7 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Expenses.Children == children + 1)), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Children == children + 1)), Times.Once);
         HistoryManagerMock.Verify(h => h.Add(ActionType.Child, children + 1, CurrentUserMock.Object), Times.Once);
     }
 
@@ -253,7 +254,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         var testPerson = TestPerson.Clone();
         testPerson.Profession = "Parent";
-        testPerson.Expenses = new() { Children = children, PerChild = 50 };
+        testPerson.Children = children;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act

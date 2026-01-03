@@ -148,19 +148,19 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
     {
         var person = PersonManager.Read(CurrentUser);
 
-        if (person.Expenses.Children == 3)
+        if (person.Children == 3)
         {
             await CurrentUser.Notify(Terms.Get(57, CurrentUser, "You're lucky parent of three children. You don't need one more."));
             return;
         }
 
-        person.Expenses.Children++;
+        person.Children++;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.Child, person.Expenses.Children, CurrentUser);
+        HistoryManager.Add(ActionType.Child, person.Children, CurrentUser);
 
-        var termId = person.Expenses.Children == 1 ? 20 : 25;
-        var childrenExpenses = person.Expenses.ChildrenExpenses.AsCurrency();
-        var count = person.Expenses.Children.ToString();
+        var termId = person.Children == 1 ? 20 : 25;
+        var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
+        var count = person.Children.ToString();
 
         await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", person.Profession, childrenExpenses, count));
     }
