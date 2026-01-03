@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -24,7 +25,11 @@ public class GetCredit(ITermsService termsService, IPersonManager personManager)
             return;
         }
 
-        CurrentUser.GetCredit_OBSOLETE(number);
+        var person = PersonManager.Read(CurrentUser);
+        person.GetCredit(number);
+        PersonManager.Update(person);
+        PersonManager.AddHistory(ActionType.Credit, number, CurrentUser);
+        await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", number.AsCurrency()));
         NextStage = New<Start>();
     }
 }

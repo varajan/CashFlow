@@ -22,7 +22,6 @@ public interface IUser
     bool IsActive { get; }
 
     void Create();
-    void GetCredit_OBSOLETE(int amount);
 
     Task SetButtons(IStage stage);
     Task Notify(string message);

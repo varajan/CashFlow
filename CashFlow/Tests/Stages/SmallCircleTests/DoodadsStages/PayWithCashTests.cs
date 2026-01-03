@@ -73,12 +73,11 @@ public class PayWithCashTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUserMock.Object.Id &&
-            person.Cash == cash - amount
-        )), Times.Once);
+            person.Cash == cash + credit - amount
+        )), Times.AtLeastOnce);
 
         HistoryManagerMock.Verify(h => h.Add(ActionType.PayMoney, amount, CurrentUserMock.Object), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < amount ? 1 : 0));
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(credit), Times.Exactly(cash < amount ? 1 : 0));
     }
 
     protected override IStage GetTestStage() => new PayWithCash(

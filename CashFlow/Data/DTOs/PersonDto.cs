@@ -29,7 +29,7 @@ public class PersonDto
     public void GetCredit(int amount)
     {
         Cash += amount;
-        UpdateLiability("Bank Loan", amount / 10, amount);
+        UpdateLiability("Bank Loan", -amount / 10, amount);
     }
 
     private void UpdateLiability(string name, int cashFlow, int ammount)

@@ -42,7 +42,12 @@ public class SendMoneyCredit(
                 var currentUserPerson = PersonManager.Read(CurrentUser);
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
-                CurrentUser.GetCredit_OBSOLETE(credit);
+                var person = PersonManager.Read(CurrentUser);
+                
+                person.GetCredit(credit);
+                PersonManager.Update(person);
+                PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
+                await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
                 await Transfer(asset);
 
                 NextStage = New<Start>();

@@ -28,7 +28,7 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
 
     public override IEnumerable<string> Buttons => [GetCredit, Cancel];
 
-    public override Task HandleMessage(string message)
+    public override async Task HandleMessage(string message)
     {
         var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
@@ -37,19 +37,23 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
             case var m when MessageEquals(m, 6, "Cancel"):
                 PersonManager.DeleteAsset(asset);
                 NextStage = New<Start>();
-                return Task.CompletedTask;
+                return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
                 var person = PersonManager.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
-                CurrentUser.GetCredit_OBSOLETE(credit);
+                person.GetCredit(credit);
+                PersonManager.Update(person);
+                PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
+                await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
+
                 NextStage = New<TNextStage>();
-                return Task.CompletedTask;
+                return;
 
             default:
-                return Task.CompletedTask;
+                return;
         }
     }
 }

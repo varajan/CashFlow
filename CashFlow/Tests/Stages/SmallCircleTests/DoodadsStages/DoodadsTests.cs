@@ -66,6 +66,7 @@ public class DoodadsTests : StagesBaseTest
         // Arrange
         var firstPayment = 1_000;
         var testStage = GetTestStage();
+        var endCash = cash < firstPayment ? cash : cash - firstPayment;
 
         var botMessage = string.Format(
             "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
@@ -93,13 +94,12 @@ public class DoodadsTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUserMock.Object.Id &&
-            person.Cash == cash - firstPayment
-        )), Times.Once);
+            person.Cash == endCash
+        )), Times.AtLeastOnce);
 
         HistoryManagerMock.Verify(h => h.Add(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(botMessage), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(firstPayment), Times.Exactly(cash < firstPayment ? 1 : 0));
     }
 
     [Test]

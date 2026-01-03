@@ -35,14 +35,6 @@ public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService,
                                  Person_OBSOLETE.Assets.Description +
                                  Person_OBSOLETE.Expenses.Description;
 
-    public void GetCredit_OBSOLETE(int amount)
-    {
-        Person_OBSOLETE.Cash += amount;
-        Person_OBSOLETE.Expenses.BankLoan += amount / 10;
-        Person_OBSOLETE.Liabilities.BankLoan += amount;
-        History_OBSOLETE.Add(ActionType.Credit, amount);
-    }
-
     public void Create()
     {
         DataBase.Execute($"INSERT INTO {Table} " +

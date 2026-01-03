@@ -92,8 +92,6 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
-
         PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
@@ -103,8 +101,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
-            x.Cash == TestPerson.Cash - transferAmount)
-            ), Times.Once);
+            x.Cash == TestPerson.Cash + creditAmount - transferAmount)
+            ), Times.Exactly(2));
 
         HistoryManagerMock.Verify(x => x.Add(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
         HistoryManagerMock.Verify(x => x.Add(ActionType.GetMoney, transferAmount, Recipient), Times.Never);
@@ -132,7 +130,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
             It.Is<AssetDto>(x =>
@@ -143,8 +141,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
-            x.Cash == TestPerson.Cash - transferAmount)
-            ), Times.Once);
+            x.Cash == TestPerson.Cash + creditAmount - transferAmount)
+            ), Times.Exactly(2));
 
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>

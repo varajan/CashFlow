@@ -182,7 +182,8 @@ public class SmallCircleStageTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(It.IsAny<int>()), Times.Never);
+        CurrentUserMock.Verify(u => u.Notify(It.Is<string>(msg => Regex.IsMatch(msg, @"You've taken .* from bank\."))), Times.Never);
+
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
         HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }

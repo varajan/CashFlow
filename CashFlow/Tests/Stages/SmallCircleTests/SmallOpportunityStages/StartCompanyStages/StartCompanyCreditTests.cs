@@ -86,7 +86,8 @@ public class StartCompanyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.GetCredit_OBSOLETE(creditAmount), Times.Once);
+        CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+
         HistoryManagerMock.Verify(x => x.Add(ActionType.StartCompany, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
@@ -99,8 +100,8 @@ public class StartCompanyCreditTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
-            x.Cash == TestPerson.Cash - amount)
-            ), Times.Once);
+            x.Cash == TestPerson.Cash + creditAmount - amount)
+            ), Times.Exactly(2));
     }
 
     protected override IStage GetTestStage() => new StartCompanyCredit(
