@@ -20,7 +20,7 @@ public class StocksMultiplyTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns(Assets);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns(Assets);
     }
 
     [Test]

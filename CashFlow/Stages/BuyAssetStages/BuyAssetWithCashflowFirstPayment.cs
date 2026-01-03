@@ -25,7 +25,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -46,7 +46,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         asset.Mortgage = asset.Price - number;
         PersonManager.UpdateAsset(asset);
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Cash < number && asset.Type == AssetType.BigBusinessType)
         {
             PersonManager.DeleteAsset(asset);

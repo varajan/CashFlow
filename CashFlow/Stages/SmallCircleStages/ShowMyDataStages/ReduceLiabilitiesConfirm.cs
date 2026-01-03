@@ -12,7 +12,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
     {
         get
         {
-            var liability = PersonManager.Read(CurrentUser.Id).Liabilities.First(l => l.MarkedForReduction);
+            var liability = PersonManager.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
             var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
             var type = Terms.Get(-1, CurrentUser, liability.Name);
 
@@ -22,13 +22,13 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
 
     protected override Task OnDismiss()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         person.Liabilities
             .Where(liability => liability.MarkedForReduction)
             .ForEach(liability =>
             {
                 liability.MarkedForReduction = false;
-                PersonManager.Update(CurrentUser.Id, liability);
+                PersonManager.Update(CurrentUser, liability);
             });
 
         NextStage = New<ReduceLiabilities>();
@@ -38,7 +38,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
 
     protected override Task OnConfirmed()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var liability = person.Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         var amount = liability.FullAmount;
 
@@ -49,10 +49,10 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
         person.Cash -= liability.FullAmount;
         
         PersonManager.Update(person);
-        PersonManager.Update(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser, liability);
         PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
 
-        NextStage = PersonManager.Read(CurrentUser.Id).Liabilities.All(l => l.Deleted)
+        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.Deleted)
             ? New<Start>()
             : New<ReduceLiabilities>();
 

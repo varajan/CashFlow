@@ -18,7 +18,7 @@ public class IncreaseCashflowTests : SellAssetBaseTest
     public void IncreaseCashFlowSetup()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.IncreaseCashFlow)).Returns(AvailableValues);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
     }
 
     [Test]

@@ -63,7 +63,7 @@ public class PayWithCashTests : StagesBaseTest
 
         var creditMessage = string.Format("You've taken {0} from bank.", credit.AsCurrency());
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash });
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash });
 
         // Act
         await testStage.HandleMessage($"{amount}");

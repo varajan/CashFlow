@@ -31,7 +31,7 @@ public class ChooseProfession(ITermsService termsService, IPersonManager personM
 
         if (profession is not null)
         {
-            PersonManager.Create(profession, CurrentUser.Id);
+            PersonManager.Create(profession, CurrentUser);
             NextStage = New<SmallCircle>();
             return Task.CompletedTask;
         }

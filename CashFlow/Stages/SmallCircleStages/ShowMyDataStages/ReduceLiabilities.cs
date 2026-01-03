@@ -11,7 +11,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
+            var person = PersonManager.Read(CurrentUser);
             var liabilities = person.Liabilities.Where(l => !l.Deleted);
             var cashTerm = Terms.Get(51, CurrentUser, "Cash");
             var monthly = Terms.Get(42, CurrentUser, "monthly");
@@ -30,7 +30,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
         }
     }
 
-    public override IEnumerable<string> Buttons => PersonManager.Read(CurrentUser.Id)
+    public override IEnumerable<string> Buttons => PersonManager.Read(CurrentUser)
         .Liabilities
         .Select(l => Terms.Get(-1, CurrentUser, l.Name))
         .Append(Cancel);
@@ -43,7 +43,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
             return;
         }
 
-        var liability = PersonManager.Read(CurrentUser.Id)
+        var liability = PersonManager.Read(CurrentUser)
             .Liabilities
             .FirstOrDefault(l => !l.Deleted && l.Name.Equals(message, StringComparison.OrdinalIgnoreCase));
 
@@ -53,7 +53,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
         }
 
         var minPaymentAmount = liability.AllowsPartialPayment ? 1_000 : liability.FullAmount;
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Cash < minPaymentAmount)
         {
             await CurrentUser.Notify(Terms.Get(23, CurrentUser, "You don't have {0}, but only {1}",
@@ -63,7 +63,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
         }
 
         liability.MarkedForReduction = true;
-        PersonManager.Update(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser, liability);
 
         NextStage = liability.AllowsPartialPayment ? New<ReduceLiabilitiesAmount>() : New<ReduceLiabilitiesAmount>();
     }

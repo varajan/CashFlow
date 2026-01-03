@@ -36,7 +36,7 @@ public class IncreaseCashflow(
             return;
         }
 
-        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser.Id);
+        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser);
         assets.ForEach(asset =>
         {
             asset.CashFlow += cashflow;

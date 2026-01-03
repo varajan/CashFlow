@@ -21,9 +21,9 @@ public class SendMoneyCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([TransferAsset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
     }
 
     [Test]
@@ -118,7 +118,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = Recipient.Name;
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([transferAsset]);
 
         var transferAmount = transferAsset.Qtty;
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;

@@ -26,7 +26,7 @@ public class ShowMyDataTests : StagesBaseTest
             "Main menu",
         };
 
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object.Id)).Returns(description);
+        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object)).Returns(description);
 
         // Act
 
@@ -77,7 +77,7 @@ public class ShowMyDataTests : StagesBaseTest
         var liabilities = new List<LiabilityDto> { new() };
         var testPerson = new PersonDto { Liabilities = haveLiabilities ? liabilities : [] };
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<long>())).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Reduce Liabilities");
@@ -109,7 +109,7 @@ public class ShowMyDataTests : StagesBaseTest
             Assets = [ new() { CashFlow = cashFlow } ],
         };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Charity - Pay 10%");

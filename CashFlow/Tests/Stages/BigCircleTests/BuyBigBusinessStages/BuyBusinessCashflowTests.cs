@@ -18,9 +18,9 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(CashFlows);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
         var person = new PersonDto { Cash = 10_000 };
         var personCash = person.Cash - Asset.Price - Asset.Mortgage;
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(cashflow);

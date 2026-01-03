@@ -25,7 +25,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -38,7 +38,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
         asset.IsDraft = false;
         PersonManager.UpdateAsset(asset);
         
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;
         person.Cash -= amount;
         PersonManager.Update(person);

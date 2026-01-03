@@ -17,14 +17,14 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 {
     private IHistoryManager HistoryManager { get; init; } = historyManager;
 
-    public override string Message => PersonManager.GetDescription(CurrentUser.Id);
+    public override string Message => PersonManager.GetDescription(CurrentUser);
 
     public override List<string> Buttons
     {
         get
         {
             var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
-            var isReadyForBigCircle = PersonManager.Read(CurrentUser.Id).ReadyForBigCircle;
+            var isReadyForBigCircle = PersonManager.Read(CurrentUser).ReadyForBigCircle;
 
             List<string> buttons = isHistoryEmpty
                 ? [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends")]
@@ -46,7 +46,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
     public async override Task HandleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
 
         if (person.ReadyForBigCircle)
@@ -123,7 +123,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
     private async Task Downsize()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var expenses = person.Expenses.Total;
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
@@ -145,7 +145,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
     private async Task Baby()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (person.Expenses.Children == 3)
         {
@@ -166,7 +166,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
     private async Task GetMoney()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var amount = person.CashFlow;
 
         var bankruptcy = amount < 0 && person.Cash + amount < 0;

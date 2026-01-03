@@ -15,7 +15,7 @@ public class SendMoneyTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([Asset]);
     }
 
     [Test]

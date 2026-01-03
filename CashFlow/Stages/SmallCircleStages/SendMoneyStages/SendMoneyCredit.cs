@@ -17,8 +17,8 @@ public class SendMoneyCredit(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
-            var currentUserPerson = PersonManager.Read(CurrentUser.Id);
+            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
+            var currentUserPerson = PersonManager.Read(CurrentUser);
             var value = asset.Qtty.AsCurrency();
             var cash = currentUserPerson.Cash.AsCurrency();
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
@@ -29,7 +29,7 @@ public class SendMoneyCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
 
         switch (message)
         {
@@ -39,7 +39,7 @@ public class SendMoneyCredit(
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var currentUserPerson = PersonManager.Read(CurrentUser.Id);
+                var currentUserPerson = PersonManager.Read(CurrentUser);
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 CurrentUser.GetCredit_OBSOLETE(credit);

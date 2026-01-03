@@ -22,7 +22,7 @@ public class MarketTests : StagesBaseTest
             AssetType.SmallBusiness
         };
 
-        assetTypes.ForEach(t => PersonManagerMock.Setup(a => a.ReadAllAssets(t, CurrentUserMock.Object.Id)).Returns([new AssetDto()]));
+        assetTypes.ForEach(t => PersonManagerMock.Setup(a => a.ReadAllAssets(t, CurrentUserMock.Object)).Returns([new AssetDto()]));
     }
 
     [Test]
@@ -72,7 +72,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Real Estate");
@@ -87,7 +87,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Land");
@@ -102,8 +102,8 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object.Id)).Returns([]);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -118,7 +118,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -132,7 +132,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -146,7 +146,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Coins");
@@ -161,7 +161,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Increase cash flow");

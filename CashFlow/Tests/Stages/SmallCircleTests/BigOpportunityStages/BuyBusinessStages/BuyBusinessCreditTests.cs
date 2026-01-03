@@ -16,8 +16,8 @@ public class BuyBusinessCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, TestPerson.Id)).Returns([Asset]);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([Asset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
     }
 
     [Test]

@@ -18,7 +18,7 @@ public class SellCoinsPriceTests : SellAssetBaseTest
     public void PricesSetup()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.CoinSellPrice)).Returns(AvailablePrices);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
     }
 
     [Test]

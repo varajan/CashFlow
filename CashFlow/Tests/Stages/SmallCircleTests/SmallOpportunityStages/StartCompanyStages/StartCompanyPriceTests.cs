@@ -21,7 +21,7 @@ public class StartCompanyPriceTests: StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.SmallBusinessBuyPrice)).Returns(CompanyPrices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([Asset]);
 		PersonManagerMock
 			.Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
             .Callback<AssetDto>(dto =>
@@ -72,7 +72,7 @@ public class StartCompanyPriceTests: StagesBaseTest
         var person = new PersonDto { Cash = 10_000 };
         var personCash = person.Cash - price.AsCurrency();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(price);
@@ -110,8 +110,8 @@ public class StartCompanyPriceTests: StagesBaseTest
 
         asset.Price = price;
 
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([asset]);
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([asset]);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage($"${price}");

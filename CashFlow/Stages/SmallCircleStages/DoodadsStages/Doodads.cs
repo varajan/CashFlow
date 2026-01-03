@@ -51,14 +51,14 @@ public class Doodads(ITermsService termsService, IAssetManager assetManager, IPe
     {
         const int firstPayment = 1_000;
 
-        var boat = PersonManager.ReadAllAssets(AssetType.Boat, CurrentUser.Id).FirstOrDefault();
+        var boat = PersonManager.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
             await CurrentUser.Notify(Terms.Get(113, CurrentUser, "You already have a boat."));
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (person.Cash < firstPayment)
         {

@@ -13,7 +13,7 @@ public class SendMoney(ITermsService termsService, IPersonManager personManager)
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).FirstOrDefault(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).FirstOrDefault(x => x.IsDraft);
             PersonManager.DeleteAsset(asset);
 
             var bank = Terms.Get(149, CurrentUser, "Bank");

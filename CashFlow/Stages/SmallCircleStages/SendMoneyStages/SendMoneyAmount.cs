@@ -24,7 +24,7 @@ public class SendMoneyAmount(
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
+            var person = PersonManager.Read(CurrentUser);
 
             return
                 person.BigCircle
@@ -35,8 +35,8 @@ public class SendMoneyAmount(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser.Id).First(x => x.IsDraft);
-        var person = PersonManager.Read(CurrentUser.Id);
+        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
+        var person = PersonManager.Read(CurrentUser);
 
         if (IsCanceled(message))
         {
@@ -92,14 +92,14 @@ public class SendMoneyAmount(
                 .Append(CurrentUser)
                 .ToList();
 
-        var currentUserPerson = PersonManager.Read(CurrentUser.Id);
+        var currentUserPerson = PersonManager.Read(CurrentUser);
         currentUserPerson.Cash -= amount;
         PersonManager.Update(currentUserPerson);
         HistoryManager.Add(ActionType.PayMoney, amount, CurrentUser);
 
         if (friend is not null)
         {
-            var friendPerson = PersonManager.Read(friend.Id);
+            var friendPerson = PersonManager.Read(friend);
             friendPerson.Cash += amount;
             PersonManager.Update(friendPerson);
             HistoryManager.Add(ActionType.GetMoney, amount, friend);

@@ -19,7 +19,7 @@ public class WinGameTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Person);
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
 
     [Test]
     public void WinGame_Question_and_Buttons()

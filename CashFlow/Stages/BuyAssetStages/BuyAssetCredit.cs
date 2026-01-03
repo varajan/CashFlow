@@ -20,8 +20,8 @@ public abstract class BuyAssetCredit<TNextStage>(
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+            var person = PersonManager.Read(CurrentUser);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
             var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
@@ -32,7 +32,7 @@ public abstract class BuyAssetCredit<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         switch (message)
         {
@@ -42,7 +42,7 @@ public abstract class BuyAssetCredit<TNextStage>(
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var person = PersonManager.Read(CurrentUser.Id);
+                var person = PersonManager.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 

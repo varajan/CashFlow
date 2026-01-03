@@ -84,7 +84,7 @@ public abstract class StagesBaseTest
         user.SetupGet(u => u.Person_OBSOLETE).Returns(person.Object);
 
         var testPerson = new PersonDto { Id = id, Cash = 100, BigCircle = cirle == Circle.Big };
-        personManagerMock.Setup(p => p.Read(user.Object.Id)).Returns(testPerson);
+        personManagerMock.Setup(p => p.Read(user.Object)).Returns(testPerson);
 
         return user;
     }

@@ -73,7 +73,7 @@ public abstract class BaseStage : IStage
         {
             liability.FullAmount /= 2;
             liability.Cashflow /= 2;
-            PersonManager.Update(person.Id, liability);
+            PersonManager.Update(CurrentUser, liability);
         }
         await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
 

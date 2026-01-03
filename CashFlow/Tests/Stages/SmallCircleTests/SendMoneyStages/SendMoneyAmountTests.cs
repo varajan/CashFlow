@@ -22,9 +22,9 @@ public class SendMoneyAmountTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        PersonManagerMock.Setup(p => p.Read(RecipientPerson.Id)).Returns(RecipientPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([TransferAsset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
     }
 
     [Test]
@@ -150,7 +150,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([transferAsset]);
 
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());

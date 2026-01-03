@@ -17,7 +17,7 @@ public class BuyCoinsCountTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(Counts);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([Asset]);
     }
 
     [Test]

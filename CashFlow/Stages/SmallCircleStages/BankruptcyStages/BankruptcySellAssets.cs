@@ -8,7 +8,7 @@ namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 public class BankruptcySellAssets(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private PersonDto Person => PersonManager.Read(CurrentUser.Id);
+    private PersonDto Person => PersonManager.Read(CurrentUser);
     private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Name == "Bank Loan");
     private IEnumerable<AssetDto> Assets => Person.Assets.Where(a => !a.IsDeleted).OrderBy(x => x.Type);
 
@@ -100,7 +100,7 @@ public class BankruptcySellAssets(ITermsService termsService, IPersonManager per
         liability.Deleted = liability.FullAmount == 0;
 
         PersonManager.Update(person);
-        PersonManager.Update(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser, liability);
         PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
         return Task.CompletedTask;
     }

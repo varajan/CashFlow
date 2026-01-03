@@ -17,8 +17,8 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([Asset]);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateBigFirstPayment)).Returns(FirstPayments);
     }
 
@@ -64,7 +64,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         var price = Asset.Price;
         var mortgage = price - firstPayment.AsCurrency();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(firstPayment);
@@ -93,8 +93,8 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         var asset = Asset.Clone();
         asset.Price = firstPayment;
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object.Id)).Returns([asset]);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([asset]);
 
         // Act
         await testStage.HandleMessage($"${firstPayment}");

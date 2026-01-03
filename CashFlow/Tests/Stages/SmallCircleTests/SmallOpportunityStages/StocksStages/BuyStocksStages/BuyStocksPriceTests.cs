@@ -17,7 +17,7 @@ public class BuyStocksPriceTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.StockPrice, CurrentUserMock.Object.Language)).Returns(Prices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns([Asset]);
     }
 
     [Test]

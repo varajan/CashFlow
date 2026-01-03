@@ -7,32 +7,31 @@ namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IPersonManager
 {
-    bool Exists(long id);
-    void Create(string profession, long userId);
+    bool Exists(IUser user);
+    void Create(string profession, IUser user);
     void Update(PersonDto person);
-    PersonDto Read(long id);
-    string GetDescription(long id);
-    void Delete(long id);
+    PersonDto Read(IUser user);
+    string GetDescription(IUser user);
+    void Delete(IUser user);
 
-    void Update(long id, LiabilityDto liability);
+    void Update(IUser user, LiabilityDto liability);
 
     void AddHistory(ActionType type, long value, IUser user);
 
-    List<AssetDto> ReadAllAssets(AssetType type, long userId);
+    List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(AssetDto asset);
     void DeleteAsset(AssetDto asset);
-    void DeleteAllAssets(long userId);
+    void DeleteAllAssets(IUser user);
     void UpdateAsset(AssetDto asset);
     void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
 }
 
-//public class PersonManager(IDataBase dataBase, ITermsService terms, IUser user) : IPersonManager
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
 {
-    //private ITermsService Terms { get; } = terms;
+    private ITermsService Terms { get; } = terms;
     //private IUser User { get; } = user;
 
-    public void Create(string profession, long userId)
+    public void Create(string profession, IUser user)
     {
         var defaults = Persons.Get(profession);
 
@@ -41,13 +40,13 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //           "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
         //           $"VALUES ({userId}, '', '', '', '', '', '', '', 0, 0)");
 
-        Delete(userId);
-        DeleteAllAssets(userId);
+        Delete(user);
+        DeleteAllAssets(user);
 
         var person = new PersonDto
         {
-            Id = userId,
-            Profession = defaults.Profession[Language.EN],
+            Id = user.Id,
+            Profession = defaults.Profession[user.Language],
             Cash = defaults.Cash,
             Salary = defaults.Salary,
         };
@@ -64,7 +63,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             new() { Name = "Small Credits", FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
         ];
 
-        dataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({userId}, '{person.Serialize()}')");
+        dataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
 
         //Assets.Clear();
         //Profession = defaultProfessionData.Profession[User.Language];
@@ -94,17 +93,15 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     //    dataBase.Execute(sql);
     //}
 
-    public bool Exists(long id)
+    public bool Exists(IUser user)
     {
-        var sql = $"SELECT * FROM Persons WHERE ID = {id}";
+        var sql = $"SELECT * FROM Persons WHERE ID = {user.Id}";
         var data = dataBase.GetRows(sql);
 
         return data.Any();
     }
 
-    public PersonDto Read(long id) => dataBase
-        .GetValue($"SELECT PersonData FROM Persons WHERE ID = {id}")
-        .Deserialize<PersonDto>();
+    public PersonDto Read(IUser user) => dataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
     //{
         //var sql = $"SELECT * FROM Persons WHERE ID = {id}";
         //var data = dataBase.GetRow(sql);
@@ -123,51 +120,61 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //};
     //}
 
-    public string GetDescription(long id)
+    public string GetDescription(IUser user)
     {
-        var person = Read(id);
-        //User.LastActive = DateTime.Now;
-        return person.BigCircle ? BigCircleDescription(person) : SmallCircleDescription(person);
+        var person = Read(user);
+        user.LastActive = DateTime.Now;
+        return person.BigCircle ? BigCircleDescription(person, user) : SmallCircleDescription(person, user);
     }
 
-    private string ProfessionTerm => "Profession";
-    private string CashTerm => "Cash";
-    private string SalaryTerm => "Salary";
-    private string IncomeTerm => "Income";
-    private string ExpensesTerm => "Expenses";
-    private string CashFlowTerm => "Cash Flow";
-    private string InitialTerm => "Initial";
-    private string CurrentTerm => "Current";
-    private string TargetTerm => "Target";
-
-    private string SmallCircleDescription(PersonDto person) =>
-    $"*{ProfessionTerm}:* {person.Profession}{Environment.NewLine}" +
-    $"*{CashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
-    $"*{SalaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
-    $"*{IncomeTerm}:* {person.Assets.Sum(a => a.CashFlow).AsCurrency()}{Environment.NewLine}" +
-    //$"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
-    $"*{ExpensesTerm}:* {person.Liabilities.Sum(l => l.Cashflow).AsCurrency()}{Environment.NewLine}" +
-    $"*{CashFlowTerm}*: {person.CashFlow.AsCurrency()}";
-
-    private string BigCircleDescription(PersonDto person) =>
-        $"*{ProfessionTerm}:* {person.Profession}{Environment.NewLine}" +
-        $"*{CashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
-        $"{InitialTerm} {CashFlowTerm}: {person.InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
-        $"{CurrentTerm} {CashFlowTerm}: {person.CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
-        $"{TargetTerm} {CashFlowTerm}: {person.TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
-        //$"{person.Assets.BigCircleDescription}";
-        $"";
-
-    public void Delete(long id)
+    private string SmallCircleDescription(PersonDto person, IUser user)
     {
-        dataBase.Execute($"DELETE FROM Persons WHERE ID = {id}");
-        DeleteAllAssets(id);
+        var professionTerm = Terms.Get(50, user, "Profession");
+        var cashTerm = Terms.Get(51, user, "Cash");
+        var salaryTerm = Terms.Get(52, user, "Salary");
+        var incomeTerm = Terms.Get(53, user, "Income");
+        var expensesTerm = Terms.Get(54, user, "Expenses");
+        var cashFlowTerm = Terms.Get(55, user, "Cash Flow");
+
+        return
+            $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
+            $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
+            $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
+            $"*{incomeTerm}:* {person.Assets.Sum(a => a.CashFlow).AsCurrency()}{Environment.NewLine}" +
+            //$"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
+            $"*{expensesTerm}:* {person.Liabilities.Sum(l => l.Cashflow).AsCurrency()}{Environment.NewLine}" +
+            $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
+    }
+
+    private string BigCircleDescription(PersonDto person, IUser user)
+    {
+        var professionTerm = Terms.Get(50, user, "Profession");
+        var cashTerm = Terms.Get(51, user, "Cash");
+        var cashFlowTerm = Terms.Get(55, user, "Cash Flow");
+        var initialTerm = Terms.Get(65, user, "Initial");
+        var currentTerm = Terms.Get(66, user, "Current");
+        var targetTerm = Terms.Get(67, user, "Target");
+
+        return
+            $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
+            $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
+            $"{initialTerm} {cashFlowTerm}: {person.InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{currentTerm} {cashFlowTerm}: {person.CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{targetTerm} {cashFlowTerm}: {person.TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
+            //$"{person.Assets.BigCircleDescription}";
+            $"";
+    }
+
+    public void Delete(IUser user)
+    {
+        dataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
+        DeleteAllAssets(user);
         // assets?
         // liabilities?
         // history?
     }
 
-    public void Update(long id, LiabilityDto liability) => throw new NotImplementedException();
+    public void Update(IUser user, LiabilityDto liability) => throw new NotImplementedException();
 
     public void AddHistory(ActionType type, long value, IUser user)
     {
@@ -177,15 +184,15 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
     }
 
-    public List<AssetDto> ReadAllAssets(AssetType type, long userId)
+    public List<AssetDto> ReadAllAssets(AssetType type, IUser user)
     {
-        var ids = dataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {userId}");
-        return ids.Select(id => ReadAsset(id.ToLong(), userId)).ToList();
+        var ids = dataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
+        return ids.Select(id => ReadAsset(id.ToLong(), user)).ToList();
     }
 
-    public AssetDto ReadAsset(long id, long userId)
+    public AssetDto ReadAsset(long id, IUser user)
     {
-        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {userId}";
+        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
         var data = dataBase.GetRow(sql);
 
         return new AssetDto
@@ -238,7 +245,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         UpdateAsset(asset);
     }
 
-    public void DeleteAllAssets(long userId) => dataBase.Execute($"DELETE FROM Assets WHERE UserID = {userId}");
+    public void DeleteAllAssets(IUser user) => dataBase.Execute($"DELETE FROM Assets WHERE UserID = {user.Id}");
 
     public void UpdateAsset(AssetDto asset)
     {

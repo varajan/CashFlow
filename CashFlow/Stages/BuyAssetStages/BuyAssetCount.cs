@@ -24,8 +24,8 @@ public class BuyAssetCount<TNextStage>(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
-            var person = PersonManager.Read(CurrentUser.Id);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var person = PersonManager.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
 
             return upToQtty == 0
@@ -38,8 +38,8 @@ public class BuyAssetCount<TNextStage>(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
-            var person = PersonManager.Read(CurrentUser.Id);
+            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var person = PersonManager.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
             int upTo50 = upToQtty / 50 * 50;
             var isSimple = asset.Price < 1000;
@@ -70,7 +70,7 @@ public class BuyAssetCount<TNextStage>(
 
     public async override Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -89,7 +89,7 @@ public class BuyAssetCount<TNextStage>(
         asset.Qtty = number;
         PersonManager.UpdateAsset(asset);
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Qtty * asset.Price)
         {
 
@@ -103,7 +103,7 @@ public class BuyAssetCount<TNextStage>(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         person.Cash -= asset.Price * asset.Qtty;
         PersonManager.Update(person);
 

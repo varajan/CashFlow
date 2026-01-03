@@ -16,7 +16,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expected = personExists ? typeof(Start) : typeof(ChooseLanguage);
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object.Id)).Returns(personExists);
+        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage("cancel");
@@ -32,7 +32,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var languages = new List<string> { "EN", "DE", "UA" };
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object.Id)).Returns(personExists);
+        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
         if (personExists) languages.Add("Cancel");
 
         // Act
@@ -52,7 +52,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expected = personExists ? typeof(Start) : typeof(ChooseLanguage);
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object.Id)).Returns(personExists);
+        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage("IT");
@@ -66,7 +66,7 @@ public class ChooseLanguageTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object.Id)).Returns(personExists);
+        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage($"{language}");

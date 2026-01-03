@@ -15,7 +15,7 @@ public class BuyLandTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.LandTitle, It.IsAny<Language>())).Returns(Names);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUserMock.Object)).Returns([]);
     }
 
     [Test]

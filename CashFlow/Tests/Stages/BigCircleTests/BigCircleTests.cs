@@ -24,7 +24,7 @@ public class BigCircleTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Person);
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
 
     [Test]
     public void BigCircle_Question_and_Buttons()
@@ -47,7 +47,7 @@ public class BigCircleTests : StagesBaseTest
             "Stop Game",
         };
 
-        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object.Id)).Returns(bigCircleDescription);
+        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object)).Returns(bigCircleDescription);
 
         // Act
 

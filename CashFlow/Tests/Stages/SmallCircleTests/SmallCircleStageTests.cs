@@ -23,7 +23,7 @@ public class SmallCircleStageTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
     }
 
     [Test, Ignore("Not applicable")]
@@ -43,8 +43,8 @@ public class SmallCircleStageTests : StagesBaseTest
 
         HistoryManagerMock.Setup(x => x.IsEmpty(CurrentUserMock.Object.Id)).Returns(isHistoryEmpty);
         testPerson.ReadyForBigCircle = isReadyForBigCircle;
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetDescription(testPerson.Id)).Returns(description);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object)).Returns(description);
 
         // Act
 
@@ -172,7 +172,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
         testPerson.Expenses = new() { Taxes = downsizeAmount };
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -198,7 +198,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
         testPerson.Expenses = new() { Taxes = downsizeAmount };
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -224,7 +224,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.Profession = "Parent";
         testPerson.Expenses = new() { Children = children, PerChild = 50 };
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         var expenses = testPerson.Expenses.PerChild * (children + 1);
         var message = $"{testPerson.Profession}, you have {expenses.AsCurrency()} children expenses and {children+1} children.";
@@ -250,7 +250,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.Profession = "Parent";
         testPerson.Expenses = new() { Children = children, PerChild = 50 };
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("baby");
@@ -275,7 +275,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.CashFlow = cashFlow;
         testPerson.Cash = cashAmount;
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Pay check");
@@ -301,7 +301,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.CashFlow = cashFlow;
         testPerson.Cash = cashAmount;
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Pay check");
@@ -344,7 +344,7 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.ReadyForBigCircle = true;
         TestPerson.Assets = assets;
 
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");
@@ -364,7 +364,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testStage = GetTestStage();
         var testPerson = TestPerson.Clone();
         testPerson.ReadyForBigCircle = false;
-        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");

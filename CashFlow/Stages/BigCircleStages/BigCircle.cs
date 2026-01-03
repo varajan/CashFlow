@@ -14,11 +14,11 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
+            var person = PersonManager.Read(CurrentUser);
 
             return person.CurrentCashFlow >= person.TargetCashFlow
                 ? Terms.Get(73, CurrentUser, "You are the winner!")
-                : PersonManager.GetDescription(CurrentUser.Id);
+                : PersonManager.GetDescription(CurrentUser);
         }
     }
 
@@ -26,7 +26,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
+            var person = PersonManager.Read(CurrentUser);
 
             return person.CurrentCashFlow >= person.TargetCashFlow
             ? [
@@ -50,7 +50,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
     public override async Task BeforeStage()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.CurrentCashFlow < person.TargetCashFlow || person.IsWinning)
         {
             person.IsWinning = person.CurrentCashFlow >= person.TargetCashFlow;
@@ -69,7 +69,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
     public override async Task HandleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (person.CurrentCashFlow >= person.TargetCashFlow)
         {
@@ -102,7 +102,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
     private async Task HandleBigCircleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (MessageEquals(message, 79, "Pay Check"))
         {

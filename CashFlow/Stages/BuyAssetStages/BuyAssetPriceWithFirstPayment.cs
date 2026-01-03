@@ -19,7 +19,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {

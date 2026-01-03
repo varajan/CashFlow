@@ -35,7 +35,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<long>())).Returns(TestPerson);
+    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
 
     [Test]
     public void BankruptcySellAssets_Question_and_Buttons()
@@ -141,7 +141,7 @@ Cash: *$100*
         assets.Skip(1).ForEach(a => a.IsDeleted = true);
         person.Assets = assets;
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<long>())).Returns(person);
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(person);
 
         // Act
         await testStage.HandleMessage("#1");

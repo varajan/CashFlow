@@ -14,7 +14,7 @@ public class SmallOpportunityTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object)).Returns([]);
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class SmallOpportunityTests : StagesBaseTest
 
         if (hasStocks)
         {
-            PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object.Id)).Returns([new AssetDto()]);
+            PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object)).Returns([new AssetDto()]);
         }
 
         // Act

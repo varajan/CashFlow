@@ -31,7 +31,7 @@ public class PayWithCreditCard(ITermsService termsService, IAvailableAssets avai
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         person.Liabilities_OBSOLETE.CreditCard += amount;
         person.Expenses.CreditCard += (int)(amount * 0.03);
         PersonManager.Update(person);

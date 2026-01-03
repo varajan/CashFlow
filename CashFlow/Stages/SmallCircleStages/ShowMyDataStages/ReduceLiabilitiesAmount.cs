@@ -16,8 +16,8 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser.Id);
-            var liability = PersonManager.Read(CurrentUser.Id).Liabilities.FirstOrDefault(l => l.MarkedForReduction);
+            var person = PersonManager.Read(CurrentUser);
+            var liability = PersonManager.Read(CurrentUser).Liabilities.FirstOrDefault(l => l.MarkedForReduction);
             var buttons = new[] { 1000, 5000, 10000, liability.FullAmount, person.Cash / 1000 * 1000 }
                 .Where(x => x <= person.Cash && x <= liability.FullAmount)
                 .OrderBy(x => x)
@@ -30,7 +30,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
 
     public override async Task HandleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (IsCanceled(message))
         {
@@ -39,7 +39,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
                 .ForEach(liability =>
                 {
                     liability.MarkedForReduction = false;
-                    PersonManager.Update(CurrentUser.Id, liability);
+                    PersonManager.Update(CurrentUser, liability);
                 });
 
             NextStage = New<Start>();
@@ -61,14 +61,14 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
 
         ReduceLiability(amount, person);
 
-        NextStage = PersonManager.Read(CurrentUser.Id).Liabilities.All(l => l.Deleted)
+        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.Deleted)
             ? New<Start>()
             : New<ReduceLiabilities>();
     }
 
     private void ReduceLiability(int amount, PersonDto person)
     {
-        var liability = PersonManager.Read(CurrentUser.Id).Liabilities.FirstOrDefault(l => l.MarkedForReduction);
+        var liability = PersonManager.Read(CurrentUser).Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         amount = amount / 1000 * 1000;
         amount = Math.Min(amount, liability.FullAmount);
         var percent = (decimal)1 / 10;
@@ -81,7 +81,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
         liability.Deleted = liability.FullAmount == 0;
 
         PersonManager.Update(person);
-        PersonManager.Update(CurrentUser.Id, liability);
+        PersonManager.Update(CurrentUser, liability);
         PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
     }
 }

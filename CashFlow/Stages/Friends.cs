@@ -20,8 +20,8 @@ public class Friends(ITermsService termsService, IPersonManager personManager, I
             var onSmall = Terms.Get(142, CurrentUser, "On Small circle:");
             var onBig = Terms.Get(143, CurrentUser, "On Big circle:");
 
-            var onSmallCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == false).ToList();
-            var onBigCircle = ActiveUsers.Where(x => PersonManager.Read(x.Id).BigCircle == true).ToList();
+            var onSmallCircle = ActiveUsers.Where(x => PersonManager.Read(x).BigCircle == false).ToList();
+            var onBigCircle = ActiveUsers.Where(x => PersonManager.Read(x).BigCircle == true).ToList();
 
             if (onSmallCircle.Any()) message += $"*{onSmall}*{NL}{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}{NL}";
             if (onBigCircle.Any()) message += $"*{onBig}* {NL}{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}";
@@ -43,7 +43,7 @@ public class Friends(ITermsService termsService, IPersonManager personManager, I
         var friend = ActiveUsers.FirstOrDefault(x => x.Name.Equals(message, StringComparison.InvariantCultureIgnoreCase));
         if (friend is null) return;
 
-        var description = PersonManager.GetDescription(friend.Id);
+        var description = PersonManager.GetDescription(friend);
         var topFive = HistoryManager.TopFive(friend.Id, CurrentUser);
 
         await CurrentUser.Notify(description);

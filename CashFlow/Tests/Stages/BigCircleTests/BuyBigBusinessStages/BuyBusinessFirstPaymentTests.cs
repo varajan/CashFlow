@@ -17,8 +17,8 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object.Id)).Returns([Asset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(FirstPayments);
     }
 

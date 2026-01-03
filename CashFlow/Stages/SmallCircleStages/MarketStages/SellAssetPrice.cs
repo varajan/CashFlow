@@ -48,7 +48,7 @@ public class SellAssetPrice(
         {
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                var count = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser.Id).First(a => a.MarkedToSell)
+                var count = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell)
                     .Title
                     .GetApartmentsCount();
 
@@ -65,7 +65,7 @@ public class SellAssetPrice(
 
     public override async Task HandleMessage(string message)
     {
-        var assets = AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser.Id)).Where(a => a.MarkedToSell).ToList();
+        var assets = AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser)).Where(a => a.MarkedToSell).ToList();
 
         if (IsCanceled(message))
         {
@@ -86,7 +86,7 @@ public class SellAssetPrice(
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         assets.ForEach(asset =>
         {
             var count = asset.Title.GetApartmentsCount();

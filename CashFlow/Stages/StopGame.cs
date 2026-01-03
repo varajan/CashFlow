@@ -12,8 +12,8 @@ public class StopGame(ITermsService termsService, IPersonManager personManager, 
     protected override Task OnConfirmed()
     {
         HistoryManager.Clear(CurrentUser.Id);
-        PersonManager.DeleteAllAssets(CurrentUser.Id);
-        PersonManager.Delete(CurrentUser.Id);
+        PersonManager.DeleteAllAssets(CurrentUser);
+        PersonManager.Delete(CurrentUser);
         NextStage = New<Start>();
 
         return Task.CompletedTask;

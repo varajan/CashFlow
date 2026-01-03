@@ -25,7 +25,7 @@ public abstract class BuyAssetPrice<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -44,7 +44,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         asset.Price = number;
         PersonManager.UpdateAsset(asset);
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Price)
         {
             NextStage = New<TNextStage>();
@@ -57,7 +57,7 @@ public abstract class BuyAssetPrice<TNextStage>(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         person.Cash -= asset.Price;
         PersonManager.Update(person);

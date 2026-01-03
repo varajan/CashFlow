@@ -18,7 +18,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
     public void PricesSetup()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.RealEstateSellPrice)).Returns(AvailablePrices);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
     }
 
     [TestCase("2/1", "What is the price?")]

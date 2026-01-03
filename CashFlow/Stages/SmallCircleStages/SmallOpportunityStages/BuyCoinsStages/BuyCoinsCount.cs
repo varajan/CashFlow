@@ -33,7 +33,7 @@ public class BuyCoinsCount(
             return;
         }
 
-        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
         asset.Qtty = number;
         PersonManager.UpdateAsset(asset);
 

@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
@@ -26,7 +27,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         };
         var person = new PersonDto { Cash = cash, Liabilities = liabilities };
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
 
@@ -51,7 +52,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
             new() { Name = "Loan No4", FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
         };
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Liabilities = liabilities });
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(new PersonDto { Liabilities = liabilities });
 
         // Act
         await testStage.HandleMessage("Cancel");
@@ -59,14 +60,14 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
             l.Name == "Loan No2" &&
             l.MarkedForReduction == false)),
         Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<long>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
             l.Name == "Loan No3" &&
             l.MarkedForReduction == false)),
         Times.Once);
@@ -87,7 +88,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         };
         var person = new PersonDto { Cash = cash, Liabilities = liabilities };
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(value);
@@ -112,7 +113,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
         var amount = Math.Min(value.AsCurrency(), liabilities[1].FullAmount);
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(value);
@@ -121,7 +122,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
             It.Is<LiabilityDto>(l =>
                 l.Name == "Bank loan" &&
                 l.Deleted == false &&
@@ -147,7 +148,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage(value);
@@ -156,7 +157,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 
@@ -174,7 +175,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(person);
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
         // Act
         await testStage.HandleMessage($"{amount}");
@@ -183,7 +184,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object.Id,
+        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
             It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
     }
 

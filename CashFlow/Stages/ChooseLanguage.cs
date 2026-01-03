@@ -8,7 +8,7 @@ namespace CashFlow.Stages;
 public class ChooseLanguage(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => "Language/Мова";
-    public override IEnumerable<string> Buttons => PersonManager.Exists(CurrentUser.Id) ? Languages.Append(Cancel) : Languages;
+    public override IEnumerable<string> Buttons => PersonManager.Exists(CurrentUser) ? Languages.Append(Cancel) : Languages;
 
     private static List<string> Languages => Enum.GetValues<Language>().Select(l => l.ToString()).ToList();
 
@@ -16,7 +16,7 @@ public class ChooseLanguage(ITermsService termsService, IPersonManager personMan
     {
         if (IsCanceled(message))
         {
-            NextStage = PersonManager.Exists(CurrentUser.Id) ? New<Start>() : this;
+            NextStage = PersonManager.Exists(CurrentUser) ? New<Start>() : this;
             return Task.CompletedTask;
         }
 

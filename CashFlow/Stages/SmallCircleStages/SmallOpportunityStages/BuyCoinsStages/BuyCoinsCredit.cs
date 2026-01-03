@@ -16,9 +16,9 @@ public class BuyCoinsCredit(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+            var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
             var value = (asset.Qtty * asset.Price).AsCurrency();
-            var cash = PersonManager.Read(CurrentUser.Id).Cash.AsCurrency();
+            var cash = PersonManager.Read(CurrentUser).Cash.AsCurrency();
 
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
         }
@@ -28,7 +28,7 @@ public class BuyCoinsCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser.Id).First(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
 
         switch (message)
         {
@@ -38,7 +38,7 @@ public class BuyCoinsCredit(
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var person = PersonManager.Read(CurrentUser.Id);
+                var person = PersonManager.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 

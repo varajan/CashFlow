@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users.UserData.HistoryData;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
@@ -21,8 +20,8 @@ public class SendMoneyTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([TransferAsset]);
-        PersonManagerMock.Setup(p => p.Read(TestPerson.Id)).Returns(TestPerson);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([TransferAsset]);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.BigGiveMoney)).Returns(["$100,000", "$200,000"]);
     }
 
@@ -92,7 +91,7 @@ public class SendMoneyTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, TestPerson.Id)).Returns([transferAsset]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([transferAsset]);
 
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());

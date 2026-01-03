@@ -31,7 +31,7 @@ public class PayWithCash(ITermsService termsService, IAvailableAssets availableA
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
 
         if (person.Cash < amount)
         {

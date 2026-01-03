@@ -20,7 +20,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var testPerson = new PersonDto { CashFlow = cashFlow };
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
 
@@ -40,7 +40,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var amount = message.AsCurrency();
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Cash = cashAmount });
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Cash = cashAmount });
 
         // Act
         await testStage.HandleMessage(message);
@@ -63,7 +63,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var amount = message.AsCurrency();
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(new PersonDto { Cash = cashAmount, CashFlow = -cashAmount });
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Cash = cashAmount, CashFlow = -cashAmount });
 
         // Act
         await testStage.HandleMessage(message);

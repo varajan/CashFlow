@@ -9,7 +9,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
 {
     protected IHistoryManager HistoryManager { get; } = historyManager;
 
-    public override string Message => PersonManager.GetDescription(CurrentUser.Id);
+    public override string Message => PersonManager.GetDescription(CurrentUser);
 
     public override List<string> Buttons =>
     [
@@ -54,7 +54,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
 
     private async Task ReduceLiabilities()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Liabilities.Any())
         {
             NextStage = New<ReduceLiabilities>();
@@ -67,7 +67,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
 
     private async Task Charity()
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var amount = (person.Assets.Sum(a => a.CashFlow) + person.Salary) / 10;
 
         if (person.Cash < amount)

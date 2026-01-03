@@ -25,7 +25,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser.Id).Single(x => x.IsDraft);
+        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
@@ -45,7 +45,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
         asset.Mortgage = asset.Price - number;
         PersonManager.UpdateAsset(asset);
 
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         if (person.Cash < number)
         {
             NextStage = New<TNextStage>();
@@ -58,7 +58,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser.Id);
+        var person = PersonManager.Read(CurrentUser);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
         person.Cash -= amount;

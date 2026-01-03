@@ -68,7 +68,7 @@ public class PayWithCreditCardTests : StagesBaseTest
             Expenses = new ExpensesDto { CreditCard = initialExpenses, }
         };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object.Id)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage(amount);
