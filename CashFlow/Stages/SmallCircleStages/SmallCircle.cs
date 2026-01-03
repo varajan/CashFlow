@@ -111,6 +111,11 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
                 return;
 
             case var m when person.ReadyForBigCircle && MessageEquals(m, 1, "Go to Big Circle"):
+                person.InitialCashFlow = person.Assets.Sum(a => a.CashFlow) / 10 * 1000;
+                person.Cash += person.InitialCashFlow;
+                person.BigCircle = true;
+                PersonManager.Update(person);
+
                 NextStage = New<BigCircle>();
                 return;
         }

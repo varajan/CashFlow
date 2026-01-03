@@ -329,20 +329,49 @@ public class SmallCircleStageTests : StagesBaseTest
     }
 
     [Test]
-    public async Task SmallCircle_GoToBigCircle([Values] bool isReadyForBigCircle)
+    public async Task SmallCircle_GoToBigCircle_WhenReady()
     {
         // Arrange
         var testStage = GetTestStage();
-        var nextStage = isReadyForBigCircle ? typeof(BigCircle) : typeof(SmallCircle);
         var testPerson = TestPerson.Clone();
-        testPerson.ReadyForBigCircle = isReadyForBigCircle;
+        var assets = new List<AssetDto>
+        {
+            new() { Id = 1, CashFlow = 200 },
+            new() { Id = 2, CashFlow = 300 },
+        };
+        var initialCashFlow = assets.Sum(a => a.CashFlow);
+
+        testPerson.ReadyForBigCircle = true;
+        TestPerson.Assets = assets;
+
         PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+        Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+            pr.BigCircle == true &&
+            pr.InitialCashFlow == initialCashFlow &&
+            pr.Cash == TestPerson.Cash + initialCashFlow)), Times.Never);
+    }
+
+    [Test]
+    public async Task SmallCircle_GoToBigCircle_WhenNotReady()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var testPerson = TestPerson.Clone();
+        testPerson.ReadyForBigCircle = false;
+        PersonManagerMock.Setup(p => p.Read(testPerson.Id)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage("Go to Big Circle");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
     }
 
     [Test]
