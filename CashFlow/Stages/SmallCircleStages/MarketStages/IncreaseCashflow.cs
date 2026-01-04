@@ -41,7 +41,7 @@ public class IncreaseCashflow(
         {
             asset.CashFlow += cashflow;
             PersonManager.UpdateAsset(asset);
-            HistoryManager.Add(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
+            PersonManager.AddHistory(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
         });
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));

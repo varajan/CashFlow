@@ -80,7 +80,7 @@ public class Doodads(ITermsService termsService, IAssetManager assetManager, IPe
 
         person.Cash -= firstPayment;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.BuyBoat, boat.Price, CurrentUser);
+        PersonManager.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
         var message = Terms.Get(117, CurrentUser,
             "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",

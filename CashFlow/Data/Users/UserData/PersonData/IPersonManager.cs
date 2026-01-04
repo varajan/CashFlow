@@ -16,6 +16,10 @@ public interface IPersonManager
     void Update(IUser user, LiabilityDto liability);
 
     void AddHistory(ActionType type, long value, IUser user);
+    List<HistoryDto> ReadHistory(IUser user);
+    bool IsHistoryEmpty(IUser user);
+    string HistoryTopFive(IUser user, IUser currentUser);
+    void RollbackHistory(HistoryDto record);
 
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(AssetDto asset);
@@ -28,14 +32,14 @@ public interface IPersonManager
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
 {
     private ITermsService Terms { get; } = terms;
-    //private IUser User { get; } = user;
+    private IDataBase DataBase { get; }  = dataBase;
 
     public void Create(string profession, IUser user)
     {
         var defaults = Persons.Get(profession);
 
         //Clear();
-        //dataBase.Execute($"INSERT INTO Persons " +
+        //DataBase.Execute($"INSERT INTO Persons " +
         //           "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
         //           $"VALUES ({userId}, '', '', '', '', '', '', '', 0, 0)");
 
@@ -64,10 +68,10 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         ];
 
         person.Cash += person.CashFlow;
-        dataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
+        DataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
     }
 
-    public void Update(PersonDto person) => dataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
+    public void Update(PersonDto person) => DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
     //{
     //    var sql = $"" +
     //        $"UPDATE Persons SET " +
@@ -80,21 +84,21 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     //        $"Bankruptcy = {(person.Bankruptcy ? 1 : 0)}," +
     //        $"CreditsReduced = {(person.CreditsReduced ? 1 : 0)}," +
     //        $"WHERE ID = {person.Id}";
-    //    dataBase.Execute(sql);
+    //    DataBase.Execute(sql);
     //}
 
     public bool Exists(IUser user)
     {
         var sql = $"SELECT * FROM Persons WHERE ID = {user.Id}";
-        var data = dataBase.GetRows(sql);
+        var data = DataBase.GetRows(sql);
 
         return data.Any();
     }
 
-    public PersonDto Read(IUser user) => dataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
+    public PersonDto Read(IUser user) => DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
     //{
         //var sql = $"SELECT * FROM Persons WHERE ID = {id}";
-        //var data = dataBase.GetRow(sql);
+        //var data = DataBase.GetRow(sql);
 
         //return new PersonDto
         //{
@@ -157,7 +161,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void Delete(IUser user)
     {
-        dataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
+        DataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
         DeleteAllAssets(user);
         // assets?
         // liabilities?
@@ -166,24 +170,149 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void Update(IUser user, LiabilityDto liability) => throw new NotImplementedException();
 
+    #region History
+
     public void AddHistory(ActionType type, long value, IUser user)
     {
-        //var record = new HistoryDto { UserId = user.Id, Action = type, Value = value };
-        //long newId = DataBase.GetValue("SELECT MAX(ID) FROM History").ToLong() + 1;
-        //var text = GetDescription(record, user);
-        //DataBase.Execute($@"INSERT INTO History VALUES ({newId}, {user.Id}, {(int)type}, {value}, '• {text}')");
+        var record = new HistoryDto
+        {
+            UserId = user.Id,
+            Date = DateTime.UtcNow,
+            Action = type,
+            Value = value,
+            Description = $"• {GetDescription(type, value, user)}"
+        };
+
+        DataBase.Execute($@"INSERT INTO History (UserId, Id, HistoryRecord) VALUES ({user.Id}, {record.Date.Ticks}, '{record.Serialize()}')");
     }
+
+    public bool IsHistoryEmpty(IUser user) => DataBase.GetValue($"SELECT COUNT(*) FROM History WHERE UserID = {user.Id}").ToInt() == 0;
+
+    public List<HistoryDto> ReadHistory(IUser user)
+    {
+        var sql = $"SELECT * FROM History WHERE UserID = {user.Id}";
+        var data = DataBase.GetRows(sql);
+        var result = data.Select(row => row["HistoryRecord"].Deserialize<HistoryDto>()).OrderBy(r => r.Date).ToList();
+        return result;
+    }
+
+    public string HistoryTopFive(IUser user, IUser currentUser)
+    {
+        var records = ReadHistory(user);
+        records.Reverse();
+
+        return records.Any() ?
+            Terms.Get(111, currentUser, "No records found.") :
+            string.Join(Environment.NewLine, records.Take(5).Select(x => x.Description));
+    }
+
+    public void RollbackHistory(HistoryDto record) => DataBase.Execute($"DELETE FROM History WHERE UserId = {record.UserId} AND Id = {record.Date.Ticks}");
+
+    private string GetDescription(ActionType Action, long Value, IUser user)
+    {
+        switch (Action)
+        {
+            case ActionType.PayMoney:
+                return Terms.Get(103, user, "Pay {0}", Value.AsCurrency());
+
+            case ActionType.GetMoney:
+                return Terms.Get(104, user, "Get {0}", Value.AsCurrency());
+
+            case ActionType.Child:
+                return Terms.Get(105, user, "Get a child");
+
+            case ActionType.Downsize:
+                return Terms.Get(106, user, "Downsize and paying {0}", Value.AsCurrency());
+
+            case ActionType.Credit:
+                return Terms.Get(107, user, "Get credit: {0}", Value.AsCurrency());
+
+            case ActionType.Charity:
+                return Terms.Get(108, user, "Charity: {0}", Value.AsCurrency());
+
+            case ActionType.Mortgage:
+            case ActionType.SchoolLoan:
+            case ActionType.CarLoan:
+            case ActionType.CreditCard:
+            case ActionType.SmallCredit:
+            case ActionType.BankLoan:
+            case ActionType.PayOffBoat:
+            case ActionType.BankruptcyBankLoan:
+                var reduceLiabilities = Terms.Get(40, user, "Reduce Liabilities");
+                var type = Terms.Get((int)Action, user, "Liability");
+                var amount = Value.AsCurrency();
+                return $"{reduceLiabilities}. {type}: {amount}";
+
+            case ActionType.BuyRealEstate:
+            case ActionType.BuyBusiness:
+            case ActionType.BuyStocks:
+            case ActionType.BuyLand:
+            case ActionType.StartCompany:
+            case ActionType.BuyCoins:
+                var buyAsset = Terms.Get((int)Action, user, "Buy Asset");
+                var asset = ReadAsset(Value, user);
+                var description = GetAssetDescription(asset, user);
+
+                return $"{buyAsset}. {description}";
+
+            case ActionType.IncreaseCashFlow:
+                var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cash Flow");
+                return $"{increaseCashFlow}. {Value.AsCurrency()}";
+
+            case ActionType.SellRealEstate:
+            case ActionType.SellBusiness:
+            case ActionType.SellStocks:
+            case ActionType.SellLand:
+            case ActionType.SellCoins:
+            case ActionType.BankruptcySellAsset:
+                var sellAsset = Terms.Get((int)Action, user, "Sell Asset");
+                var assetToSell = ReadAsset(Value, user);
+                var sellDescription = GetAssetDescription(assetToSell, user);
+
+                return $"{sellAsset}. {sellDescription}";
+
+            case ActionType.Stocks1To2:
+            case ActionType.Stocks2To1:
+                var multiply = Terms.Get((int)Action, user, "Multiply Stocks");
+                var stock = ReadAsset(Value, user);
+                var stockDescription = GetAssetDescription(stock, user);
+
+                return $"{multiply}. {stockDescription}";
+
+            case ActionType.MicroCredit:
+                return Terms.Get(96, user, "Pay with Credit Card") + " - " + Value.AsCurrency();
+
+            case ActionType.BuyBoat:
+                var buyBoat = Terms.Get(112, user, "Buy a boat");
+                return $"{buyBoat}: {Value.AsCurrency()}";
+
+            case ActionType.BankruptcyDebtRestructuring:
+            case ActionType.Bankruptcy:
+                return Terms.Get((int)Action, user, "Bankruptcy");
+
+            case ActionType.GoToBigCircle:
+            case ActionType.Divorce:
+            case ActionType.TaxAudit:
+            case ActionType.Lawsuit:
+                return Terms.Get((int)Action, user, "BigCircle");
+
+            default:
+                return $"<{Action}> - {Value}";
+        }
+    }
+
+    #endregion
 
     public List<AssetDto> ReadAllAssets(AssetType type, IUser user)
     {
-        var ids = dataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
+        var ids = DataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
         return ids.Select(id => ReadAsset(id.ToLong(), user)).ToList();
     }
 
     public AssetDto ReadAsset(long id, IUser user)
     {
         var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
-        var data = dataBase.GetRow(sql);
+        var data = DataBase.GetRow(sql);
 
         return new AssetDto
         {
@@ -205,7 +334,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void CreateAsset(AssetDto asset)
     {
-        int newId = dataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+        int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
         var sql = $@"
             INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
             VALUES
@@ -223,7 +352,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 {(asset.IsDraft ? 1 : 0)},
                 {(asset.IsDeleted ? 1 : 0)}
             );";
-        dataBase.Execute(sql);
+        DataBase.Execute(sql);
 
         //return Read(newId, asset.UserId);
     }
@@ -235,7 +364,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         UpdateAsset(asset);
     }
 
-    public void DeleteAllAssets(IUser user) => dataBase.Execute($"DELETE FROM Assets WHERE UserID = {user.Id}");
+    public void DeleteAllAssets(IUser user) => DataBase.Execute($"DELETE FROM Assets WHERE UserID = {user.Id}");
 
     public void UpdateAsset(AssetDto asset)
     {
@@ -253,7 +382,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
             $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
             $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
-        dataBase.Execute(sql);
+        DataBase.Execute(sql);
     }
 
     public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)
@@ -261,5 +390,49 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         asset.SellPrice = price;
         DeleteAsset(asset);
         AddHistory(action, asset.Id, user);
+    }
+
+    private string GetAssetDescription(AssetDto asset, IUser user)
+    {
+        var mortgage = Terms.Get(43, user, "Mortgage");
+        var price = Terms.Get(64, user, "Price");
+        var cashFlow = Terms.Get(55, user, "Cash Flow");
+
+        return asset.Type switch
+        {
+            AssetType.Stock => asset.IsDeleted
+                                ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
+                            : asset.CashFlow == 0
+                            ? $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}"
+                                    : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()} x {asset.Qtty} = {(asset.CashFlow * asset.Qtty).AsCurrency()}",
+
+            AssetType.RealEstate => asset.IsDeleted
+                            ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
+
+            AssetType.LandTitle => asset.IsDeleted
+                                ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
+                                : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}",
+
+            AssetType.Business => asset.IsDeleted
+                                ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
+                            : asset.Mortgage > 0
+                                    ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}"
+                                    : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
+
+            AssetType.Boat => asset.CashFlow == 0
+                            ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {(-asset.CashFlow).AsCurrency()}",
+
+            AssetType.SmallBusinessType => asset.CashFlow == 0
+                            ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
+
+            AssetType.Coin => asset.IsDeleted
+                                ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
+                                : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}",
+
+            _ => string.Empty,
+        };
     }
 }

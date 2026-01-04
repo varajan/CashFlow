@@ -23,7 +23,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
     {
         get
         {
-            var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
+            var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
             var isReadyForBigCircle = PersonManager.Read(CurrentUser).ReadyForBigCircle;
 
             List<string> buttons = isHistoryEmpty
@@ -47,7 +47,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
     public async override Task HandleMessage(string message)
     {
         var person = PersonManager.Read(CurrentUser);
-        var isHistoryEmpty = HistoryManager.IsEmpty(CurrentUser.Id);
+        var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
 
         if (person.ReadyForBigCircle)
         {
@@ -141,7 +141,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
         person.Cash -= expenses;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.Downsize, expenses, CurrentUser);
+        PersonManager.AddHistory(ActionType.Downsize, expenses, CurrentUser);
     }
 
     private async Task Baby()
@@ -156,7 +156,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
         person.Children++;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.Child, person.Children, CurrentUser);
+        PersonManager.AddHistory(ActionType.Child, person.Children, CurrentUser);
 
         var termId = person.Children == 1 ? 20 : 25;
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
@@ -179,7 +179,7 @@ public class SmallCircle(ITermsService termsService, IHistoryManager historyMana
 
         person.Cash += amount;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.GetMoney, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
     }

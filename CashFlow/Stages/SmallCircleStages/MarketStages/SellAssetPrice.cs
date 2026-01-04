@@ -92,7 +92,7 @@ public class SellAssetPrice(
             var count = asset.Title.GetApartmentsCount();
             person.Cash += price * count;
             PersonManager.SellAsset(asset, ActionType, price, CurrentUser);
-            HistoryManager.Add(ActionType, asset.Id, CurrentUser);
+            PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
         });
         PersonManager.Update(person);
 

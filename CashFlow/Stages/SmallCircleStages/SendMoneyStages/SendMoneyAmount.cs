@@ -95,14 +95,14 @@ public class SendMoneyAmount(
         var currentUserPerson = PersonManager.Read(CurrentUser);
         currentUserPerson.Cash -= amount;
         PersonManager.Update(currentUserPerson);
-        HistoryManager.Add(ActionType.PayMoney, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.PayMoney, amount, CurrentUser);
 
         if (friend is not null)
         {
             var friendPerson = PersonManager.Read(friend);
             friendPerson.Cash += amount;
             PersonManager.Update(friendPerson);
-            HistoryManager.Add(ActionType.GetMoney, amount, friend);
+            PersonManager.AddHistory(ActionType.GetMoney, amount, friend);
         }
 
         PersonManager.DeleteAsset(asset);

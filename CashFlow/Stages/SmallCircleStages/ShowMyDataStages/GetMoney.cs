@@ -69,7 +69,7 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager, 
 
         person.Cash += amount;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.GetMoney, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
         NextStage = New<Start>();

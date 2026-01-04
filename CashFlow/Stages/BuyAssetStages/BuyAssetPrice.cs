@@ -65,7 +65,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         asset.IsDraft = false;
         PersonManager.UpdateAsset(asset);
 
-        HistoryManager.Add(ActionType, asset.Id, CurrentUser);
+        PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

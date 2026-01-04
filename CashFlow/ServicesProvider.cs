@@ -32,7 +32,6 @@ public static class ServicesProvider
         services.AddSingleton<IAvailableAssets, AvailableAssets>();
         services.AddSingleton<IAssetManager, AssetManager>();
         services.AddSingleton<IPersonManager, PersonManager>();
-        services.AddSingleton<IHistoryManager, HistoryManager>();
 
         services.AddTransient<Start>();
         services.AddTransient<SmallCircle>();

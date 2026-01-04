@@ -42,7 +42,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
         var amount = asset.Price * asset.Qtty - asset.Mortgage;
         person.Cash -= amount;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType, asset.Id, CurrentUser);
+        PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
 
         NextStage = New<Start>();

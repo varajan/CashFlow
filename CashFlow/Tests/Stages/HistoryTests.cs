@@ -10,15 +10,17 @@ public class HistoryTests : StagesBaseTest
 {
     private List<HistoryDto> Records =
     [
-        new HistoryDto { Id = 3, Action = ActionType.Credit,  Value = 1000, Description = "Credit: 1000" },
-        new HistoryDto { Id = 2, Action = ActionType.GetMoney, Value = 200, Description = "GetMoney: 200" },
-        new HistoryDto { Id = 1, Action = ActionType.PayMoney, Value = 100, Description = "PayMoney: 100" },
+        new HistoryDto { Date = new DateTime(2025, 12, 30), Action = ActionType.Credit,  Value = 1000, Description = "• Credit: 1000" },
+        new HistoryDto { Date = new DateTime(2025, 12, 30), Action = ActionType.GetMoney, Value = 200, Description = "• GetMoney: 200" },
+        new HistoryDto { Date = new DateTime(2025, 12, 30), Action = ActionType.PayMoney, Value = 100, Description = "• PayMoney: 100" },
     ];
 
     [SetUp]
     public void Setup()
     {
-        HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Records);
+        //PersonManagerMock.Setup(p => p.).Returns(Records);
+        //PersonManagerMock.Setup(p => p.AddHistory).Returns(Records);
+        //HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Records);
     }
 
     [Test]
@@ -87,7 +89,7 @@ public class HistoryTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
         HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.First().Id)), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
@@ -109,11 +111,11 @@ public class HistoryTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Id == Records.Last().Id)), Times.Once);
+        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
         CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

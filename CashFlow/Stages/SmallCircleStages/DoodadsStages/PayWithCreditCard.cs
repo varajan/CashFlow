@@ -35,7 +35,7 @@ public class PayWithCreditCard(ITermsService termsService, IAvailableAssets avai
         person.Liabilities_OBSOLETE.CreditCard += amount;
         person.Expenses.CreditCard += (int)(amount * 0.03);
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.MicroCredit, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.MicroCredit, amount, CurrentUser);
         NextStage = New<Start>();
     }
 }

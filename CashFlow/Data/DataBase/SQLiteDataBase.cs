@@ -184,7 +184,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
 
         if (columns.Count == 1 && columns[0] == "*")
         {
-            var table = sql.SubString("from").Trim();
+            var table = sql.SubString("from").Trim().Split(' ').First();
             columns = [.. GetColumn($"SELECT name FROM pragma_table_info('{table}')")];
         }
 

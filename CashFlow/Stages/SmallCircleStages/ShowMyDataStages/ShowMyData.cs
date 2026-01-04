@@ -79,7 +79,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
 
         person.Cash -= amount;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.Charity, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.Charity, amount, CurrentUser);
 
         var message = Terms.Get(91, CurrentUser, "You've payed {0}, now you can use two dice in next 3 turns.", amount.AsCurrency());
         await CurrentUser.Notify(message);

@@ -46,7 +46,7 @@ public class PayWithCash(ITermsService termsService, IAvailableAssets availableA
 
         person.Cash -= amount;
         PersonManager.Update(person);
-        HistoryManager.Add(ActionType.PayMoney, amount, CurrentUser);
+        PersonManager.AddHistory(ActionType.PayMoney, amount, CurrentUser);
         NextStage = New<Start>();
     }
 }

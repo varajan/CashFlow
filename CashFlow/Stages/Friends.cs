@@ -5,10 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager) : BaseStage(termsService, personManager)
+public class Friends(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    protected IHistoryManager HistoryManager {get; } = historyManager;
-
     private IList<IUser> ActiveUsers => OtherUsers.Where(x => x.IsActive).ToList();
 
     public override string Message
@@ -44,7 +42,7 @@ public class Friends(ITermsService termsService, IPersonManager personManager, I
         if (friend is null) return;
 
         var description = PersonManager.GetDescription(friend);
-        var topFive = HistoryManager.TopFive(friend.Id, CurrentUser);
+        var topFive = PersonManager.HistoryTopFive(friend, CurrentUser);
 
         await CurrentUser.Notify(description);
         await CurrentUser.Notify(topFive);
