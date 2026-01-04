@@ -13,7 +13,6 @@ public interface IPersonManager
     PersonDto Read(IUser user);
     string GetDescription(IUser user);
     void Delete(IUser user);
-
     void Update(IUser user, LiabilityDto liability);
 
     void AddHistory(ActionType type, long value, IUser user);
@@ -64,18 +63,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             new() { Name = "Small Credits", FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
         ];
 
+        person.Cash += person.CashFlow;
         dataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
-
-        //Assets.Clear();
-        //Profession = defaultProfessionData.Profession[User.Language];
-        //Cash = defaultProfessionData.Cash;
-        //Salary = defaultProfessionData.Salary;
-
-        //Expenses.Clear();
-        //Expenses.Create(defaultProfessionData.Expenses);
-
-        //Liabilities.Clear();
-        //Liabilities.Create(defaultProfessionData.Liabilities);
     }
 
     public void Update(PersonDto person) => dataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
@@ -143,7 +132,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
             $"*{incomeTerm}:* {person.Assets.Sum(a => a.CashFlow).AsCurrency()}{Environment.NewLine}" +
             //$"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
-            $"*{expensesTerm}:* {person.Liabilities.Sum(l => l.Cashflow).AsCurrency()}{Environment.NewLine}" +
+            $"*{expensesTerm}:* {person.TotalExpenses.AsCurrency()}{Environment.NewLine}" +
             $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
     }
 

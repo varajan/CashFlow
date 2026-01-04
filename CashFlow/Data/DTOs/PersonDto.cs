@@ -1,6 +1,4 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-
-namespace CashFlow.Data.DTOs;
+﻿namespace CashFlow.Data.DTOs;
 
 public class PersonDto
 {
@@ -20,7 +18,9 @@ public class PersonDto
     public int PerChild { get; set; }
     public int Children { get; set; }
 
-    public int CashFlow => Salary + Assets.Sum(a => a.CashFlow) + Liabilities.Sum(l => l.Cashflow) + Children * PerChild;
+    public int CashFlow => Salary + Assets.Sum(a => a.CashFlow) + TotalExpenses;
+    public int TotalExpenses => Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
+
     public int CurrentCashFlow { get; set; }
     public int TargetCashFlow { get; set; }
 
