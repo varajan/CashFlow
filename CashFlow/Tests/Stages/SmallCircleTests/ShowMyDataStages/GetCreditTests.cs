@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
@@ -68,7 +69,7 @@ public class GetCreditTests : StagesBaseTest
             ), Times.Once);
 
         Assert.That(person.Liabilities.Count, Is.EqualTo(1), "One liability should be added");
-        Assert.That(person.Liabilities[0].Name, Is.EqualTo("Bank Loan"), "Liability name should be 'Bank Loan'");
+        Assert.That(person.Liabilities[0].Name, Is.EqualTo(Liability.Bank_Loan), "Liability name should be 'Bank Loan'");
         Assert.That(person.Liabilities[0].FullAmount, Is.EqualTo(amount.AsCurrency()), "'amount' should be added to 'Bank Loan'");
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(-amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }
@@ -86,7 +87,7 @@ public class GetCreditTests : StagesBaseTest
         {
             Id = CurrentUserMock.Object.Id,
             Cash = initialCash,
-            Liabilities = [new() { Name = "Bank Loan", FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
+            Liabilities = [new() { Name = Liability.Bank_Loan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(person);
 
@@ -105,7 +106,7 @@ public class GetCreditTests : StagesBaseTest
             ), Times.Once);
 
         Assert.That(person.Liabilities.Count, Is.EqualTo(1), "One liability should be added");
-        Assert.That(person.Liabilities[0].Name, Is.EqualTo("Bank Loan"), "Liability name should be 'Bank Loan'");
+        Assert.That(person.Liabilities[0].Name, Is.EqualTo(Liability.Bank_Loan), "Liability name should be 'Bank Loan'");
         Assert.That(person.Liabilities[0].FullAmount, Is.EqualTo(initialLoanAmount + amount.AsCurrency()), "'amount' should be added to 'Bank Loan'");
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }

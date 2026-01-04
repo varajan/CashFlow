@@ -25,7 +25,9 @@ public class History(ITermsService termsService, IPersonManager personManager) :
 
         if (MessageEquals(message, 109, "Rollback last action"))
         {
-            PersonManager.RollbackHistory(Records.Last());
+            var person = PersonManager.Read(CurrentUser);
+
+            PersonManager.RollbackHistory(person, Records.Last());
         }
 
         if (Records.Count == 0)

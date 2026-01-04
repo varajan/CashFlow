@@ -22,8 +22,8 @@ public class BankruptcySellAsetsTests : StagesBaseTest
 
     private List<LiabilityDto> Liabilities =
     [
-        new() { Name = "Bank Loan", FullAmount = 3_000, Cashflow = -300, IsBankruptcyDivisible = false },
-        new() { Name = "Car Loan", FullAmount = 10_000, Cashflow = -450, IsBankruptcyDivisible = true },
+        new() { Name = Liability.Bank_Loan, FullAmount = 3_000, Cashflow = -300, IsBankruptcyDivisible = false },
+        new() { Name = Liability.Car_Loan, FullAmount = 10_000, Cashflow = -450, IsBankruptcyDivisible = true },
     ];
 
     private PersonDto TestPerson => new()
@@ -116,7 +116,7 @@ Cash: *$100*
     {
         // Arrange
         var testStage = GetTestStage();
-        var bankLoanAmount = Liabilities.First(l => l.Name == "Bank Loan").FullAmount;
+        var bankLoanAmount = Liabilities.First(l => l.Name == Liability.Bank_Loan).FullAmount;
 
         // Act
         await testStage.HandleMessage("#1");
@@ -134,7 +134,7 @@ Cash: *$100*
     {
         // Arrange
         var testStage = GetTestStage();
-        var bankLoanAmount = Liabilities.First(l => l.Name == "Bank Loan").FullAmount;
+        var bankLoanAmount = Liabilities.First(l => l.Name == Liability.Bank_Loan).FullAmount;
         var assets = Assets.Clone();
         var person = TestPerson.Clone();
 

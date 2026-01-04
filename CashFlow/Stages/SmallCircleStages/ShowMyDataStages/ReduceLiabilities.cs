@@ -19,7 +19,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
 
             foreach (var liability in liabilities)
             {
-                var name = Terms.Get(-1, CurrentUser, liability.Name);
+                var name = Terms.Get(-1, CurrentUser, liability.Name.AsString());
                 var fullAmount = liability.FullAmount;
                 var cashflow = liability.Cashflow * -1;
 
@@ -32,7 +32,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
 
     public override IEnumerable<string> Buttons => PersonManager.Read(CurrentUser)
         .Liabilities
-        .Select(l => Terms.Get(-1, CurrentUser, l.Name))
+        .Select(l => Terms.Get(-1, CurrentUser, l.Name.AsString()))
         .Append(Cancel);
 
     public async override Task HandleMessage(string message)
@@ -45,7 +45,7 @@ public class ReduceLiabilities(ITermsService termsService, IPersonManager person
 
         var liability = PersonManager.Read(CurrentUser)
             .Liabilities
-            .FirstOrDefault(l => !l.Deleted && l.Name.Equals(message, StringComparison.OrdinalIgnoreCase));
+            .FirstOrDefault(l => !l.Deleted && l.Name.AsString().Equals(message, StringComparison.OrdinalIgnoreCase));
 
         if (liability is null)
         {

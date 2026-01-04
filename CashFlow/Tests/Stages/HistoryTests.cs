@@ -69,7 +69,7 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Never);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
     }
 
     [Test]
@@ -84,8 +84,8 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Once);
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
@@ -106,8 +106,8 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Once);
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
         CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
     }
 

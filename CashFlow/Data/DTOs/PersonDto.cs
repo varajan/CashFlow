@@ -1,4 +1,6 @@
-﻿namespace CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+
+namespace CashFlow.Data.DTOs;
 
 public class PersonDto
 {
@@ -32,10 +34,10 @@ public class PersonDto
     public void GetCredit(int amount)
     {
         Cash += amount;
-        UpdateLiability("Bank Loan", -amount / 10, amount);
+        UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
     }
 
-    private void UpdateLiability(string name, int cashFlow, int ammount)
+    public void UpdateLiability(Liability name, int cashFlow, int ammount)
     {
         var idx = Liabilities.FindIndex(l => l.Name == name);
 

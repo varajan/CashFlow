@@ -2,6 +2,8 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
+using MoreLinq;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
@@ -19,12 +21,13 @@ public interface IPersonManager
     List<HistoryDto> ReadHistory(IUser user);
     bool IsHistoryEmpty(IUser user);
     string HistoryTopFive(IUser user, IUser currentUser);
-    void RollbackHistory(HistoryDto record);
+    void RollbackHistory(PersonDto person, HistoryDto record);
     void ClearHistory(IUser user);
 
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(AssetDto asset);
     void DeleteAsset(AssetDto asset);
+    void RestoreAsset(AssetDto asset);
     void DeleteAllAssets(IUser user);
     void UpdateAsset(AssetDto asset);
     void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
@@ -58,14 +61,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     person.Liabilities =
         [
-            new() { Name = "Taxes", FullAmount = 0 /*defaults.Liabilities.Taxes*/, Cashflow = -defaults.Expenses.Taxes, },
-            new() { Name = "Mortgage", FullAmount = defaults.Liabilities.Mortgage, Cashflow = -defaults.Expenses.Mortgage, },
-            new() { Name = "School Loan", FullAmount = defaults.Liabilities.SchoolLoan, Cashflow = -defaults.Expenses.SchoolLoan, },
-            new() { Name = "Car Loan", FullAmount = defaults.Liabilities.CarLoan, Cashflow = -defaults.Expenses.CarLoan, },
-            new() { Name = "Credit Card", FullAmount = defaults.Liabilities.CreditCard, Cashflow = -defaults.Expenses.CreditCard, },
-            new() { Name = "Bank Loan", FullAmount = defaults.Liabilities.BankLoan, Cashflow = -defaults.Expenses.BankLoan, },
-            new() { Name = "Others", FullAmount = 0 /*defaults.Liabilities.Others*/, Cashflow = -defaults.Expenses.Others, },
-            new() { Name = "Small Credits", FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
+            new() { Name = Liability.Taxes, FullAmount = 0 /*defaults.Liabilities.Taxes*/, Cashflow = -defaults.Expenses.Taxes, },
+            new() { Name = Liability.Mortgage, FullAmount = defaults.Liabilities.Mortgage, Cashflow = -defaults.Expenses.Mortgage, },
+            new() { Name = Liability.School_Loan, FullAmount = defaults.Liabilities.SchoolLoan, Cashflow = -defaults.Expenses.SchoolLoan, },
+            new() { Name = Liability.Car_Loan, FullAmount = defaults.Liabilities.CarLoan, Cashflow = -defaults.Expenses.CarLoan, },
+            new() { Name = Liability.Credit_Card, FullAmount = defaults.Liabilities.CreditCard, Cashflow = -defaults.Expenses.CreditCard, },
+            new() { Name = Liability.Bank_Loan, FullAmount = defaults.Liabilities.BankLoan, Cashflow = -defaults.Expenses.BankLoan, },
+            new() { Name = Liability.Others, FullAmount = 0 /*defaults.Liabilities.Others*/, Cashflow = -defaults.Expenses.Others, },
+            new() { Name = Liability.Small_Credits, FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
         ];
 
         person.Cash += person.CashFlow;
@@ -73,20 +76,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     }
 
     public void Update(PersonDto person) => DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
-    //{
-    //    var sql = $"" +
-    //        $"UPDATE Persons SET " +
-    //        $"Profession = '{person.Profession}'," +
-    //        $"Salary = {person.Salary}," +
-    //        $"Cash = {person.Cash}," +
-    //        $"ReadyForBigCircle = {(person.ReadyForBigCircle ? 1 : 0)}," +
-    //        $"BigCircle = {(person.BigCircle ? 1 : 0)}," +
-    //        $"InitialCashFlow = {person.InitialCashFlow}," +
-    //        $"Bankruptcy = {(person.Bankruptcy ? 1 : 0)}," +
-    //        $"CreditsReduced = {(person.CreditsReduced ? 1 : 0)}," +
-    //        $"WHERE ID = {person.Id}";
-    //    DataBase.Execute(sql);
-    //}
 
     public bool Exists(IUser user)
     {
@@ -97,23 +86,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     }
 
     public PersonDto Read(IUser user) => DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
-    //{
-        //var sql = $"SELECT * FROM Persons WHERE ID = {id}";
-        //var data = DataBase.GetRow(sql);
-
-        //return new PersonDto
-        //{
-        //    Id = id,
-        //    Profession = data["Profession"],
-        //    Salary = data["Salary"].ToInt(),
-        //    Cash = data["Cash"].ToInt(),
-        //    ReadyForBigCircle = data["ReadyForBigCircle"].ToInt() == 1,
-        //    BigCircle = data["BigCircle"].ToInt() == 1,
-        //    InitialCashFlow = data["InitialCashFlow"].ToInt(),
-        //    Bankruptcy = data["Bankruptcy"].ToInt() == 1,
-        //    CreditsReduced = data["CreditsReduced"].ToInt() == 1,
-        //};
-    //}
 
     public string GetDescription(IUser user)
     {
@@ -207,7 +179,196 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             string.Join(Environment.NewLine, records.Take(5).Select(x => x.Description));
     }
 
-    public void RollbackHistory(HistoryDto record) => DataBase.Execute($"DELETE FROM History WHERE UserId = {record.UserId} AND Id = {record.Date.Ticks}");
+    public void RollbackHistory(PersonDto person, HistoryDto record)
+    {
+        var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
+        var asset = person.Assets.Find(a => a.Id == (int)record.Value);
+        var amount = (int)record.Value;
+        var defaults = Persons.Get(person.Profession);
+
+        decimal percent;
+        int expenses;
+
+        switch (record.Action)
+        {
+            case ActionType.PayMoney:
+            case ActionType.Downsize:
+            case ActionType.Charity:
+                person.Cash += amount;
+                break;
+
+            case ActionType.GetMoney:
+                person.Cash -= amount;
+                break;
+
+            case ActionType.Child:
+                person.Children--;
+                break;
+
+            case ActionType.Credit:
+                person.Cash -= amount;
+                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+                break;
+
+            case ActionType.Mortgage:
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Mortgage, -defaults.Expenses.Mortgage, amount);
+                break;
+
+            case ActionType.SchoolLoan:
+                person.Cash += amount;
+                person.UpdateLiability(Liability.School_Loan, -defaults.Expenses.SchoolLoan, amount);
+                break;
+
+            case ActionType.CarLoan:
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Car_Loan, -defaults.Expenses.CarLoan, amount);
+                break;
+
+            case ActionType.CreditCard:
+                percent = (decimal)defaults.Expenses.CreditCard / defaults.Liabilities.CreditCard;
+                expenses = (int)(amount * percent);
+
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Credit_Card, expenses, amount);
+                break;
+
+            case ActionType.SmallCredit:
+                percent = (decimal)defaults.Expenses.SmallCredits / defaults.Liabilities.SmallCredits;
+                expenses = (int)(amount * percent);
+
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Small_Credits, expenses, amount);
+                break;
+
+            case ActionType.BankLoan:
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Bank_Loan, amount / 10, -amount);
+                break;
+
+            case ActionType.BankruptcyBankLoan:
+                percent = 0.1m;
+                expenses = (int)(amount * percent);
+
+                person.Cash += amount;
+                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+                person.Bankruptcy = true;
+                break;
+
+            case ActionType.BuyRealEstate:
+            case ActionType.BuyBusiness:
+            case ActionType.BuyLand:
+            case ActionType.StartCompany:
+                person.Cash += asset.Price - asset.Mortgage;
+                DeleteAsset(asset);
+                break;
+
+            case ActionType.IncreaseCashFlow:
+                person.Assets.Where(a => a.Type == AssetType.SmallBusiness).ForEach(x => x.CashFlow -= (int)record.Value);
+                break;
+
+            case ActionType.SellRealEstate:
+            case ActionType.SellBusiness:
+            case ActionType.SellLand:
+                person.Cash -= asset.SellPrice - asset.Mortgage;
+                RestoreAsset(asset);
+                break;
+
+            case ActionType.BuyStocks:
+            case ActionType.BuyCoins:
+                person.Cash += asset.Price * asset.Qtty;
+                DeleteAsset(asset);
+                break;
+
+            case ActionType.SellStocks:
+            case ActionType.SellCoins:
+                person.Cash -= asset.Qtty * asset.SellPrice;
+                RestoreAsset(asset);
+                break;
+
+            case ActionType.Stocks1To2:
+                asset.Qtty /= 2;
+                break;
+
+            case ActionType.Stocks2To1:
+                asset.Qtty *= 2;
+                break;
+
+            case ActionType.MicroCredit:
+                person.UpdateLiability(Liability.Credit_Card, (int)(amount * 0.03), -amount);
+                break;
+
+            case ActionType.BuyBoat:
+                person.Cash += 1_000;
+                DeleteAsset(boat);
+                break;
+
+            case ActionType.PayOffBoat:
+                person.Cash += amount;
+                RestoreAsset(boat);
+                break;
+
+            case ActionType.Bankruptcy:
+                person.Bankruptcy = false;
+                break;
+
+            case ActionType.BankruptcySellAsset:
+                person.Cash -= asset.BancrupcySellPrice;
+                person.Bankruptcy = true;
+                RestoreAsset(asset);
+                break;
+
+            case ActionType.BankruptcyDebtRestructuring:
+                ReduceCreditsRollback();
+                break;
+
+            case ActionType.GoToBigCircle:
+                person.Cash -= person.InitialCashFlow;
+                person.InitialCashFlow = 0;
+                person.BigCircle = false;
+                break;
+
+            case ActionType.Divorce:
+            case ActionType.TaxAudit:
+            case ActionType.Lawsuit:
+                person.Cash += amount;
+                break;
+
+            default:
+                throw new Exception($"<{record.Action}> ???");
+        }
+
+        Update(person);
+        DataBase.Execute($"DELETE FROM History WHERE UserId = {record.UserId} AND Id = {record.Date.Ticks}");
+    }
+
+    private void ReduceCreditsRollback()
+    {
+        throw new Exception("Not implemented rollback for BankruptcyDebtRestructuring");
+
+        //var person = Persons.Get(User.Person_OBSOLETE.Profession);
+        //var count = User.History_OBSOLETE.Count(ActionType.BankruptcyDebtRestructuring);
+
+        //Expenses.CarLoan = person.Expenses.CarLoan;
+        //Expenses.CreditCard = person.Expenses.CreditCard;
+        //Expenses.SmallCredits = person.Expenses.SmallCredits;
+        //Liabilities.CarLoan = person.Liabilities.CarLoan;
+        //Liabilities.CreditCard = person.Liabilities.CreditCard;
+        //Liabilities.SmallCredits = person.Liabilities.SmallCredits;
+
+        //for (var i = 0; i < count; i++)
+        //{
+        //    Expenses.CarLoan /= 2;
+        //    Expenses.CreditCard /= 2;
+        //    Expenses.SmallCredits /= 2;
+        //    Liabilities.CarLoan /= 2;
+        //    Liabilities.CreditCard /= 2;
+        //    Liabilities.SmallCredits /= 2;
+        //}
+
+        //CreditsReduced = false;
+        //Bankruptcy = CashFlow < 0;
+    }
 
     public void ClearHistory(IUser user) => DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
 
@@ -365,7 +526,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public void DeleteAsset(AssetDto asset)
     {
         asset.IsDeleted = true;
-        asset.Title = asset.Title.SubStringTo("*");
+        UpdateAsset(asset);
+    }
+
+    public void RestoreAsset(AssetDto asset)
+    {
+        asset.IsDeleted = false;
         UpdateAsset(asset);
     }
 

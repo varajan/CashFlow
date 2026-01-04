@@ -1,4 +1,5 @@
-﻿using CashFlow.Extensions;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using System;
 
@@ -38,7 +39,7 @@ public class Expenses(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, 
             var carLoanTerm = Terms.Get(45, User, "Car Loan");
             var creditCardTerm = Terms.Get(46, User, "Credit Card");
             var smallCreditsTerm = Terms.Get(92, User, "Small Credit");
-            var bankLoanTerm = Terms.Get(47, User, "Bank Loan");
+            var bankLoanTerm = Terms.Get(47, User,"Bank Loan");
             var boatLoanTerm = Terms.Get(114, User, "Boat Loan");
             var otherPaymentTerm = Terms.Get(60, User, "Other Payments");
             var childrenTerm = Terms.Get(61, User, "Children");
