@@ -118,8 +118,8 @@ public class ShowMyDataTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
 
-        HistoryManagerMock.Verify(h => h.Add(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<IUser>()), Times.Exactly(payed));
-        HistoryManagerMock.Verify(h => h.Add(ActionType.Charity, amount, CurrentUserMock.Object), Times.Exactly(payed));
+        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<IUser>()), Times.Exactly(payed));
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Charity, amount, CurrentUserMock.Object), Times.Exactly(payed));
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Exactly(payed));
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash - amount)), Times.Exactly(payed));
@@ -128,7 +128,7 @@ public class ShowMyDataTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    protected override IStage GetTestStage() => new ShowMyData(TermsServiceMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object)
+    protected override IStage GetTestStage() => new ShowMyData(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

@@ -75,7 +75,7 @@ public class IncreaseCashflowTests : SellAssetBaseTest
                     a.CashFlow == assetCashflow[a.Id] + value.AsCurrency()))
                     , Times.Once);
 
-                HistoryManagerMock.Verify(h => h.Add(ActionType.IncreaseCashFlow, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.IncreaseCashFlow, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 
         CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
@@ -85,7 +85,6 @@ public class IncreaseCashflowTests : SellAssetBaseTest
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
         AssetManagerMock.Object,
-        HistoryManagerMock.Object,
         PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

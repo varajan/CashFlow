@@ -13,12 +13,10 @@ public class BuyAssetCount<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
-    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message
     {

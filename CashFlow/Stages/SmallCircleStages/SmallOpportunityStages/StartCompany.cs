@@ -13,14 +13,12 @@ public class StartCompany(ITermsService termsService, IAvailableAssets available
 public class StartCompanyPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetPrice<StartCompanyCredit>(AssetType.SmallBusinessBuyPrice, AssetType.SmallBusinessType, ActionType.StartCompany, termsService, availableAssets, historyManager, personManager)
+    : BuyAssetPrice<StartCompanyCredit>(AssetType.SmallBusinessBuyPrice, AssetType.SmallBusinessType, ActionType.StartCompany, termsService, availableAssets, personManager)
 { }
 
 public class StartCompanyCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.SmallBusinessBuyPrice, AssetType.SmallBusinessType, ActionType.StartCompany, termsService, availableAssets, historyManager, personManager)
+    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.SmallBusinessBuyPrice, AssetType.SmallBusinessType, ActionType.StartCompany, termsService, availableAssets, personManager)
 { }

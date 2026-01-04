@@ -20,6 +20,7 @@ public interface IPersonManager
     bool IsHistoryEmpty(IUser user);
     string HistoryTopFive(IUser user, IUser currentUser);
     void RollbackHistory(HistoryDto record);
+    void ClearHistory(IUser user);
 
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(AssetDto asset);
@@ -208,6 +209,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void RollbackHistory(HistoryDto record) => DataBase.Execute($"DELETE FROM History WHERE UserId = {record.UserId} AND Id = {record.Date.Ticks}");
 
+    public void ClearHistory(IUser user) => DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
+
     private string GetDescription(ActionType Action, long Value, IUser user)
     {
         switch (Action)
@@ -302,6 +305,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     }
 
     #endregion
+
+    #region Assets
 
     public List<AssetDto> ReadAllAssets(AssetType type, IUser user)
     {
@@ -435,4 +440,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             _ => string.Empty,
         };
     }
+
+    #endregion
 }

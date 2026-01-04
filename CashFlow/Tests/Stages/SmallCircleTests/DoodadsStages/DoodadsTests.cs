@@ -97,7 +97,7 @@ public class DoodadsTests : StagesBaseTest
             person.Cash == endCash
         )), Times.AtLeastOnce);
 
-        HistoryManagerMock.Verify(h => h.Add(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(botMessage), Times.Once);
         CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
     }
@@ -118,14 +118,13 @@ public class DoodadsTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
         CurrentUserMock.Verify(u => u.Notify("You already have a boat."), Times.Once);
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        HistoryManagerMock.Verify(h => h.Add(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
+        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
     }
 
     protected override IStage GetTestStage() => new Doodads(
         TermsServiceMock.Object,
         AssetManagerMock.Object,
-        PersonManagerMock.Object,
-        HistoryManagerMock.Object)
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

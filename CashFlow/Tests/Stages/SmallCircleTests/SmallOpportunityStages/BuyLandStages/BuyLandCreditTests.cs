@@ -87,7 +87,7 @@ public class BuyLandCreditTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
 
-        HistoryManagerMock.Verify(x => x.Add(ActionType.BuyLand, Asset.Id, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyLand, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
             It.Is<AssetDto>(x =>
@@ -106,7 +106,6 @@ public class BuyLandCreditTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyLandCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

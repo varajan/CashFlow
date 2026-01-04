@@ -90,11 +90,11 @@ public class StartCompanyPriceTests: StagesBaseTest
 
             PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
-            HistoryManagerMock.Verify(m => m.Add(
-                ActionType.StartCompany,
-                Asset.Id,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
-            ), Times.Once);
+            PersonManagerMock.Verify(x => x.AddHistory(
+                    ActionType.StartCompany,
+                    Asset.Id,
+                    It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
+                ), Times.Once);
         });
     }
 
@@ -126,7 +126,7 @@ public class StartCompanyPriceTests: StagesBaseTest
             Assert.That(AssetsList[0].IsDraft, Is.True);
 
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
-            HistoryManagerMock.Verify(m => m.Add(ActionType.StartCompany,
+            PersonManagerMock.Verify(x => x.AddHistory(ActionType.StartCompany,
                 asset.Id,
                 It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
@@ -135,7 +135,6 @@ public class StartCompanyPriceTests: StagesBaseTest
     protected override IStage GetTestStage() => new StartCompanyPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

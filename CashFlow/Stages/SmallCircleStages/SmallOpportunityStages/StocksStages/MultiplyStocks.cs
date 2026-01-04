@@ -4,17 +4,16 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class StocksMultiply(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager)
-    : MultiplyStocks(ActionType.Stocks1To2, termsService, historyManager, personManager) { }
+public class StocksMultiply(ITermsService termsService, IPersonManager personManager)
+    : MultiplyStocks(ActionType.Stocks1To2, termsService, personManager) { }
 
-public class StocksReduce(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager)
-    : MultiplyStocks(ActionType.Stocks2To1, termsService, historyManager, personManager) { }
+public class StocksReduce(ITermsService termsService, IPersonManager personManager)
+    : MultiplyStocks(ActionType.Stocks2To1, termsService, personManager) { }
 
-public abstract class MultiplyStocks(ActionType actionType, ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager)
+public abstract class MultiplyStocks(ActionType actionType, ITermsService termsService, IPersonManager personManager)
     : BaseStage(termsService, personManager)
 {
     protected ActionType ActionType { get; } = actionType;
-    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
 

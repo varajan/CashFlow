@@ -16,12 +16,7 @@ public class HistoryTests : StagesBaseTest
     ];
 
     [SetUp]
-    public void Setup()
-    {
-        //PersonManagerMock.Setup(p => p.).Returns(Records);
-        //PersonManagerMock.Setup(p => p.AddHistory).Returns(Records);
-        //HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns(Records);
-    }
+    public void Setup() => PersonManagerMock.Setup(x => x.ReadHistory(CurrentUserMock.Object)).Returns(Records);
 
     [Test]
     public void History_Question_and_Buttons()
@@ -49,7 +44,8 @@ public class HistoryTests : StagesBaseTest
         var history = "No records found.";
         var buttons = new List<string> { "Cancel" };
 
-        HistoryManagerMock.Setup(x => x.Read(CurrentUserMock.Object.Id)).Returns([]);
+        PersonManagerMock.Setup(x => x.ReadHistory(CurrentUserMock.Object)).Returns([]);
+        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(true);
 
         // Act
 
@@ -73,7 +69,7 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Never);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Never);
     }
 
     [Test]
@@ -88,8 +84,8 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
-        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
@@ -98,8 +94,8 @@ public class HistoryTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        HistoryManagerMock
-            .SetupSequence(x => x.Read(CurrentUserMock.Object.Id))
+        PersonManagerMock
+            .SetupSequence(x => x.ReadHistory(CurrentUserMock.Object))
             .Returns([Records.Last()])
             .Returns([])
             .Returns([]);
@@ -110,8 +106,8 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        HistoryManagerMock.Verify(a => a.Rollback(It.IsAny<HistoryDto>()), Times.Once);
-        HistoryManagerMock.Verify(a => a.Rollback(It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<HistoryDto>()), Times.Once);
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
         CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
     }
 

@@ -105,7 +105,7 @@ public class BuyStocksCountTests : StagesBaseTest
 
         PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
-        HistoryManagerMock.Verify(m => m.Add(
+        PersonManagerMock.Verify(x => x.AddHistory(
             ActionType.BuyStocks,
             Asset.Id,
             It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
@@ -131,7 +131,6 @@ public class BuyStocksCountTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyStocksCount(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        HistoryManagerMock.Object,
         PersonManagerMock.Object)
     .SetCurrentUser(CurrentUserMock.Object)
     .SetAllUsers(OtherUsers);

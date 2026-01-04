@@ -12,9 +12,8 @@ public abstract class BuyAssetCredit<TNextStage>(
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, historyManager, personManager) where TNextStage : BaseStage
+    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     public override string Message
     {

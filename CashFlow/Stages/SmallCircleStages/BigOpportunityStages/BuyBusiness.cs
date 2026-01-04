@@ -30,7 +30,6 @@ public class BuyBusinessCredit(
 public class BuyBusinessCashFlow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(
-        AssetType.BusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, availableAssets, historyManager, personManager) { }
+        AssetType.BusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, availableAssets, personManager) { }

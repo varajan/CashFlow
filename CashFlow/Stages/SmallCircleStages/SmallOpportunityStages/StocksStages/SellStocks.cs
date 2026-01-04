@@ -12,5 +12,4 @@ public class SellStocks(ITermsService termsService, IAssetManager assetManager, 
 public class SellStocksPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, personManager, historyManager, AssetType.Stock) { }
+    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Stock) { }

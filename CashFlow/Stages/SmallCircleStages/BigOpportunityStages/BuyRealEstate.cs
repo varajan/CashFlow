@@ -30,7 +30,6 @@ public class BuyBigRealEstateCredit(
 public class BuyBigRealEstateCashFlow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(
-        AssetType.RealEstateBigCashFlow, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, historyManager, personManager) { }
+        AssetType.RealEstateBigCashFlow, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, availableAssets, personManager) { }

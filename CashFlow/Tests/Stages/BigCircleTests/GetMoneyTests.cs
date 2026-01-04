@@ -88,7 +88,7 @@ public class GetMoneyTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.Notify($"Invalid value. Try again."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonManagerMock.Object, HistoryManagerMock.Object)
+    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

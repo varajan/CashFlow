@@ -5,10 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ShowMyData(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager) : BaseStage(termsService, personManager)
+public class ShowMyData(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    protected IHistoryManager HistoryManager { get; } = historyManager;
-
     public override string Message => PersonManager.GetDescription(CurrentUser);
 
     public override List<string> Buttons =>

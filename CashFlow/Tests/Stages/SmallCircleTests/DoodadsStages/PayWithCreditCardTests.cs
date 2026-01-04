@@ -82,14 +82,13 @@ public class PayWithCreditCardTests : StagesBaseTest
             person.Expenses.CreditCard == initialExpenses + 0.03 * amount.AsCurrency()
         )), Times.Once);
 
-        HistoryManagerMock.Verify(h => h.Add(ActionType.MicroCredit, amount.AsCurrency(), CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUserMock.Object), Times.Once);
     }
 
     protected override IStage GetTestStage() => new PayWithCreditCard(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object,
-        HistoryManagerMock.Object)
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

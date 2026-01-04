@@ -12,6 +12,5 @@ public class SellBusiness(ITermsService termsService, IAssetManager assetManager
 public class SellBusinessPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, personManager, historyManager, AssetType.Business, AssetType.SmallBusiness)
+    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Business, AssetType.SmallBusiness)
 { }

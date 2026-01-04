@@ -10,12 +10,10 @@ public class IncreaseCashflow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IAssetManager assetManager,
-    IHistoryManager historyManager,
     IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
-    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
 

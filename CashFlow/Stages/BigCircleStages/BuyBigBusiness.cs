@@ -26,8 +26,7 @@ public class BuyBigBusinessFirstPayment(
 public class BuyBigBusinessCashFlow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCashFlow<Start>(
-        AssetType.BigBusinessCashFlow, AssetType.BigBusinessType, ActionType.BuyBusiness, termsService, availableAssets, historyManager, personManager)
+        AssetType.BigBusinessCashFlow, AssetType.BigBusinessType, ActionType.BuyBusiness, termsService, availableAssets, personManager)
 { }

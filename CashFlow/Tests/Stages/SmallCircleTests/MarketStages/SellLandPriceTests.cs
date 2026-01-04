@@ -99,7 +99,7 @@ public class SellLandPriceTests : SellAssetBaseTest
             {
                 payedAmmount += price.AsCurrency();
                 PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellLand, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                HistoryManagerMock.Verify(h => h.Add(ActionType.SellLand, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellLand, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);
@@ -109,8 +109,7 @@ public class SellLandPriceTests : SellAssetBaseTest
     protected override IStage GetTestStage() => new SellLandPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object,
-        HistoryManagerMock.Object)
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

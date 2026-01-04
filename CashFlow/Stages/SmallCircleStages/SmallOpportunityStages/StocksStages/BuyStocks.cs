@@ -17,14 +17,12 @@ public class BuyStocksPrice(ITermsService termsService, IAvailableAssets availab
 public class BuyStocksCount(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
     : BuyAssetCount<BuyStocksCredit>(
-        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, historyManager, personManager) { }
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager) { }
 
 public class BuyStocksCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, historyManager, personManager)
+    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager)
 { }

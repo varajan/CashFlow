@@ -90,7 +90,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
 
             PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
-            HistoryManagerMock.Verify(m => m.Add(
+            PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyCoins,
                 Asset.Id,
                 It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
@@ -129,7 +129,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
             Assert.That(AssetsList[0].IsDraft, Is.True);
 
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
-            HistoryManagerMock.Verify(m => m.Add(ActionType.BuyCoins,
+            PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyCoins,
                 asset.Id,
                 It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
@@ -138,7 +138,6 @@ public class BuyCoinsPriceTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyCoinsPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

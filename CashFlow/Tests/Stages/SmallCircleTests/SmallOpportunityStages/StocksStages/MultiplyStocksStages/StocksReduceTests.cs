@@ -88,7 +88,7 @@ public class StocksReduceTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new StocksReduce(TermsServiceMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new StocksReduce(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

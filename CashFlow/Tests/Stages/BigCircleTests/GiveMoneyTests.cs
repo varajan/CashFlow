@@ -127,7 +127,7 @@ public class SendMoneyTests : StagesBaseTest
             x.Cash == TestPerson.Cash - transferAmount)
             ), Times.Once);
 
-        HistoryManagerMock.Verify(x => x.Add(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
 
         activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
     }
@@ -159,7 +159,6 @@ public class SendMoneyTests : StagesBaseTest
     protected override IStage GetTestStage() => new SendMoneyAmount(
         AssetManagerMock.Object,
         PersonManagerMock.Object,
-        HistoryManagerMock.Object,
         TermsServiceMock.Object,
         AvailableAssetsMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)

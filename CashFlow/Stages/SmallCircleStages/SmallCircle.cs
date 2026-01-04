@@ -13,10 +13,8 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsService termsService, IHistoryManager historyManager, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class SmallCircle(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    private IHistoryManager HistoryManager { get; init; } = historyManager;
-
     public override string Message => PersonManager.GetDescription(CurrentUser);
 
     public override List<string> Buttons

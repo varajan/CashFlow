@@ -67,7 +67,7 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
                 Times.Once);
 
             PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
-            HistoryManagerMock.Verify(m => m.Add(
+            PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyRealEstate,
                 Asset.Id,
                 It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
@@ -78,7 +78,6 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyBigRealEstateCashFlow(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            HistoryManagerMock.Object,
             PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);

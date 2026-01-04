@@ -13,14 +13,12 @@ public class BuyLand(ITermsService termsService, IAvailableAssets availableAsset
 public class BuyLandPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
     IPersonManager personManager)
-    : BuyAssetPrice<BuyLandCredit>(AssetType.LandBuyPrice, AssetType.Land, ActionType.BuyLand, termsService, availableAssets, historyManager, personManager)
+    : BuyAssetPrice<BuyLandCredit>(AssetType.LandBuyPrice, AssetType.Land, ActionType.BuyLand, termsService, availableAssets, personManager)
 { }
 
 public class BuyLandCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IHistoryManager historyManager,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.LandBuyPrice, AssetType.Land, ActionType.BuyLand, termsService, availableAssets, historyManager, personManager)
+    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.LandBuyPrice, AssetType.Land, ActionType.BuyLand, termsService, availableAssets, personManager)
 { }

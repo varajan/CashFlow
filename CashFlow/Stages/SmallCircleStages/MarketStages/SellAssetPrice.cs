@@ -10,7 +10,6 @@ public class SellAssetPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IPersonManager personManager,
-    IHistoryManager historyManager,
     params AssetType[] assetTypes) : BaseStage(termsService, personManager)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
@@ -40,7 +39,6 @@ public class SellAssetPrice(
     };
 
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message
     {

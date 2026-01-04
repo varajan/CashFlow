@@ -106,7 +106,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
             {
                 payedAmmount += count * price.AsCurrency();
                 PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellRealEstate, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                HistoryManagerMock.Verify(h => h.Add(ActionType.SellRealEstate, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellRealEstate, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);
@@ -116,8 +116,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
     protected override IStage GetTestStage() => new SellRealEstatePrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object,
-        HistoryManagerMock.Object)
+        PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

@@ -5,11 +5,9 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetMoney(ITermsService termsService, IPersonManager personManager, IHistoryManager historyManager)
+public class GetMoney(ITermsService termsService, IPersonManager personManager)
     : BaseStage(termsService, personManager)
 {
-    protected IHistoryManager HistoryManager { get; } = historyManager;
-
     public override string Message
     {
         get

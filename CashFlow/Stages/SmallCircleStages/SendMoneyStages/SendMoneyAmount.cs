@@ -10,13 +10,11 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoneyAmount(
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager,
     ITermsService termsService,
     IAvailableAssets availableAssets) : BaseStage(termsService, personManager)
 {
     private IAvailableAssets AvailableAssets { get; } = availableAssets;
     protected IAssetManager AssetManager { get; } = assetManager;
-    protected IHistoryManager HistoryManager { get; } = historyManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

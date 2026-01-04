@@ -11,6 +11,5 @@ public class SellRealEstate(ITermsService termsService, IAssetManager assetManag
 public class SellRealEstatePrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, personManager, historyManager, AssetType.RealEstate)
+    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.RealEstate)
 { }

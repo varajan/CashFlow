@@ -41,7 +41,7 @@ public class SmallCircleStageTests : StagesBaseTest
         buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Pay Check", "Give Money"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
-        HistoryManagerMock.Setup(x => x.IsEmpty(CurrentUserMock.Object.Id)).Returns(isHistoryEmpty);
+        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
         testPerson.ReadyForBigCircle = isReadyForBigCircle;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
         PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object)).Returns(description);
@@ -100,7 +100,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expectedNextStage = isHistoryEmpty ? typeof(SmallCircle) : typeof(History);
 
-        HistoryManagerMock.Setup(x => x.IsEmpty(CurrentUserMock.Object.Id)).Returns(isHistoryEmpty);
+        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
 
         // Act
         await testStage.HandleMessage("history");
@@ -185,7 +185,7 @@ public class SmallCircleStageTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.Notify(It.Is<string>(msg => Regex.IsMatch(msg, @"You've taken .* from bank\."))), Times.Never);
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
-        HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }
 
     [Test]
@@ -214,7 +214,7 @@ public class SmallCircleStageTests : StagesBaseTest
             pr.Id == TestPerson.Id &&
             pr.Cash == TestPerson.Cash + creditAmount - downsizeAmount)),
             Times.Once);
-        HistoryManagerMock.Verify(h => h.Add(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
     }
 
     [TestCase(0)]
@@ -242,7 +242,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Children == children + 1)), Times.Once);
-        HistoryManagerMock.Verify(h => h.Add(ActionType.Child, children + 1, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Child, children + 1, CurrentUserMock.Object), Times.Once);
     }
 
     [TestCase(3)]
@@ -265,7 +265,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        HistoryManagerMock.Verify(h => h.Add(It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
     }
 
     [TestCase(0, 0)]
@@ -392,7 +392,7 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
     }
 
-    protected override IStage GetTestStage() => new SmallCircle(TermsServiceMock.Object, HistoryManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new SmallCircle(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

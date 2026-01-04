@@ -11,6 +11,5 @@ public class SellCoins(ITermsService termsService, IAssetManager assetManager, I
 public class SellCoinsPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager,
-    IHistoryManager historyManager) : SellAssetPrice(termsService, availableAssets, personManager, historyManager, AssetType.Coin)
+    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Coin)
 { }

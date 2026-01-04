@@ -9,9 +9,8 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoneyCredit(
     IAssetManager assetManager,
     IPersonManager personManager,
-    IHistoryManager historyManager,
     ITermsService termsService,
-    IAvailableAssets availableAssets) : SendMoneyAmount(assetManager, personManager, historyManager, termsService, availableAssets)
+    IAvailableAssets availableAssets) : SendMoneyAmount(assetManager, personManager, termsService, availableAssets)
 {
     public override string Message
     {

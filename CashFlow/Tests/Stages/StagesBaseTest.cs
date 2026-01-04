@@ -15,7 +15,6 @@ public abstract class StagesBaseTest
     protected Mock<IAssetManager> AssetManagerMock;
     protected Mock<IAvailableAssets> AvailableAssetsMock;
     protected Mock<IPersonManager> PersonManagerMock;
-    protected Mock<IHistoryManager> HistoryManagerMock;
     protected Mock<ITermsService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssets> AssetsMock;
@@ -32,7 +31,6 @@ public abstract class StagesBaseTest
         AssetManagerMock = new Mock<IAssetManager>();
         AvailableAssetsMock = new Mock<IAvailableAssets>();
         PersonManagerMock = new Mock<IPersonManager>();
-        HistoryManagerMock = new Mock<IHistoryManager>();
         TermsServiceMock = new Mock<ITermsService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssets>();
