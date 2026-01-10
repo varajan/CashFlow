@@ -26,8 +26,6 @@ public interface IPersonManager
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(IUser user, AssetDto asset);
     void DeleteAsset(IUser user, AssetDto asset);
-    void RestoreAsset(IUser user, AssetDto asset);
-    void DeleteAllAssets(IUser user);
     void UpdateAsset(IUser user, AssetDto asset);
     void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
     string GetAssetDescription(AssetDto asset, IUser user);
@@ -48,7 +46,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //           $"VALUES ({userId}, '', '', '', '', '', '', '', 0, 0)");
 
         Delete(user);
-        DeleteAllAssets(user);
 
         var person = new PersonDto
         {
@@ -134,7 +131,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public void Delete(IUser user)
     {
         DataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
-        DeleteAllAssets(user);
         // assets?
         // liabilities?
         // history?
@@ -508,55 +504,30 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public void DeleteAsset(IUser user, AssetDto asset)
     {
         var person = Read(user);
-        person.Assets.Single(a => a.Id == asset.Id).IsDeleted = true;
-        //asset.IsDeleted = true;
+        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
+        person.Assets[index].IsDeleted = true;
         Update(person);
     }
 
     public void RestoreAsset(AssetDto asset) => throw new NotImplementedException();
 
-    public void RestoreAsset(IUser user, AssetDto asset)
-    {
-        var person = Read(user);
-        person.Assets.Single(a => a.Id == asset.Id).IsDeleted = false;
-        //asset.IsDeleted = true;
-        Update(person);
-
-        //asset.IsDeleted = false;
-        //UpdateAsset(CurrentUser, asset);
-    }
-
-    public void DeleteAllAssets(IUser user) => DataBase.Execute($"DELETE FROM Assets WHERE UserID = {user.Id}");
-
     public void UpdateAsset(IUser user, AssetDto asset)
     {
         var person = Read(user);
-        var currentAsset = person.Assets.Find(a => a.Id == asset.Id);
-        currentAsset = asset;
-        Update(person);
+        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
+        person.Assets[index] = asset;
 
-        //var sql = $"" +
-        //    $"UPDATE Assets SET " +
-        //    $"Type = {(int)asset.Type}," +
-        //    $"Title = '{asset.Title}'," +
-        //    $"Price = {asset.Price}," +
-        //    $"SellPrice = {asset.SellPrice}," +
-        //    $"Qtty = {asset.Qtty}," +
-        //    $"Mortgage = {asset.Mortgage}," +
-        //    $"CashFlow = {asset.CashFlow}," +
-        //    $"BigCircle = {asset.BigCircle}," +
-        //    $"CashFlow = {asset.CashFlow}," +
-        //    $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
-        //    $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
-        //    $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
-        //DataBase.Execute(sql);
+        Update(person);
     }
 
     public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)
     {
         asset.SellPrice = price;
+        asset.MarkedToSell = false;
+
+        UpdateAsset(user, asset);
         DeleteAsset(user, asset);
-        AddHistory(action, asset.Id, user);
+        //AddHistory(action, asset.Id, user);
     }
 
     public string GetAssetDescription(AssetDto asset, IUser user)

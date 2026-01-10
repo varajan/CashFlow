@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
@@ -15,11 +16,11 @@ public class SellStocksPriceTests : StagesBaseTest
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
     private static readonly List<string> AvailablePrices = [ "$100", "$500", "$1,000", ];
 
-    private static readonly List<AssetDto> Assets =
+    private static List<AssetDto> Assets =>
     [
-        new AssetDto { Title = "Uno", Type = AssetType.Stock, Qtty = 10, MarkedToSell = true },
-        new AssetDto { Title = "Dos", Type = AssetType.Stock, Qtty = 20, MarkedToSell = true },
-        new AssetDto { Title = "Tres", Type = AssetType.Stock, Qtty = 30, MarkedToSell = false },
+        new AssetDto { Id = 1, Title = "Uno", Type = AssetType.Stock, Qtty = 10, MarkedToSell = true },
+        new AssetDto { Id = 2, Title = "Dos", Type = AssetType.Stock, Qtty = 20, MarkedToSell = true },
+        new AssetDto { Id = 3, Title = "Tres", Type = AssetType.Stock, Qtty = 30, MarkedToSell = false },
     ];
 
     [SetUp]
@@ -52,6 +53,7 @@ public class SellStocksPriceTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var assets = Assets;
 
         // Act
         await testStage.HandleMessage("cancel");
@@ -59,7 +61,7 @@ public class SellStocksPriceTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        Assets.Where(a => a.MarkedToSell).ForEach(asset =>
+        assets.Where(a => a.MarkedToSell).ForEach(asset =>
         {
             PersonManagerMock.Verify(a => a.UpdateAsset(
                 CurrentUserMock.Object,
@@ -94,6 +96,7 @@ public class SellStocksPriceTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var payedAmmount = 0;
+        var assets = Assets;
 
         // Act
         await testStage.HandleMessage(price);
@@ -101,16 +104,18 @@ public class SellStocksPriceTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        Assets
+        assets
             .Where(a => a.Type == AssetType.Stock && a.MarkedToSell)
             .ForEach(asset =>
             {
                 payedAmmount += asset.Qtty * price.AsCurrency();
-                PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
+
+                PersonManagerMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
                 PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellStocks, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id)), Times.Exactly(2));
             });
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Exactly(2));
         CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
     }
 

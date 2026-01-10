@@ -14,7 +14,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
     IPersonManager personManager) : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsText(AssetName, CurrentUser.Language).Append(Cancel);
+    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {

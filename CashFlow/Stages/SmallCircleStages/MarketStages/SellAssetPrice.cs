@@ -84,15 +84,16 @@ public class SellAssetPrice(
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
         assets.ForEach(asset =>
         {
-            var count = asset.Title.GetApartmentsCount();
+            var person = PersonManager.Read(CurrentUser);
+            var count = asset.Type == AssetType.RealEstate ? asset.Title.GetApartmentsCount() : asset.Qtty;
             person.Cash += price * count;
+
+            PersonManager.Update(person);
             PersonManager.SellAsset(asset, ActionType, price, CurrentUser);
             PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
         });
-        PersonManager.Update(person);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
         NextStage = New<Start>();

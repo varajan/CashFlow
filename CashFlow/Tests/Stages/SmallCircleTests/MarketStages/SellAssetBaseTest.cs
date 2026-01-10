@@ -30,9 +30,9 @@ public abstract class SellAssetBaseTest : StagesBaseTest
         foreach (var type in assetTypes)
         {
             List<AssetDto> assetsOfType = [
-                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No1", CashFlow = 100 * id, MarkedToSell = true },
-                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No2", CashFlow = 100 * id, MarkedToSell = false },
-                new AssetDto { Type = type, Id = id++, Qtty = 1, Title = $"{type} No3", CashFlow = 100 * id, MarkedToSell = true },
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No1", CashFlow = 100 * id, MarkedToSell = false },
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No2", CashFlow = 100 * id, MarkedToSell = true },
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No3", CashFlow = 100 * id, MarkedToSell = false },
             ];
 
             PersonManagerMock.Setup(a => a.ReadAllAssets(type, CurrentUserMock.Object)).Returns(assetsOfType);

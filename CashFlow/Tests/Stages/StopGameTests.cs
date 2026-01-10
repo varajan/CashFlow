@@ -33,7 +33,6 @@ public class StopGameTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.ClearHistory(CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Delete(CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(a => a.DeleteAllAssets(CurrentUserMock.Object), Times.Once);
     }
 
     [Test]
@@ -49,7 +48,6 @@ public class StopGameTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(p => p.ClearHistory(CurrentUserMock.Object), Times.Never);
-        PersonManagerMock.Verify(a => a.DeleteAllAssets(CurrentUserMock.Object), Times.Never);
         PersonManagerMock.Verify(p => p.Delete(CurrentUserMock.Object), Times.Never);
     }
 

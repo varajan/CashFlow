@@ -103,7 +103,7 @@ public class SellBusinessPriceTests : SellAssetBaseTest
                 PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellBusiness, asset.Id, CurrentUserMock.Object), Times.Once);
             });
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Exactly(2));
         CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
     }
 
