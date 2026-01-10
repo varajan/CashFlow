@@ -33,7 +33,7 @@ public class BuyCoinsPrice(
 
         var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).Single(x => x.IsDraft);
         asset.Price = number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Price * asset.Qtty)
@@ -54,7 +54,7 @@ public class BuyCoinsPrice(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         PersonManager.AddHistory(ActionType.BuyCoins, asset.Id, CurrentUser);
 

@@ -4,10 +4,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class Market(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class Market(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    protected IAssetManager AssetManager { get; }  = assetManager;
-
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
 
     public override IEnumerable<string> Buttons =>

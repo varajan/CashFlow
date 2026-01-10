@@ -8,13 +8,11 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyAmount(
-    IAssetManager assetManager,
     IPersonManager personManager,
     ITermsService termsService,
     IAvailableAssets availableAssets) : BaseStage(termsService, personManager)
 {
     private IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 
@@ -38,7 +36,7 @@ public class SendMoneyAmount(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -52,7 +50,7 @@ public class SendMoneyAmount(
         }
 
         asset.Qtty = amount;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         if (!person.BigCircle && person.Cash < amount)
         {
@@ -62,7 +60,7 @@ public class SendMoneyAmount(
 
         if (person.BigCircle && person.Cash < amount)
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
             return;
@@ -81,10 +79,7 @@ public class SendMoneyAmount(
         var bank = Terms.Get(149, CurrentUser, "Bank");
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.",
-            CurrentUser.Name,
-            friend?.Name ?? bank,
-            amount.AsCurrency());
+        var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(x => x.IsActive)
                 .Append(CurrentUser)
@@ -103,7 +98,7 @@ public class SendMoneyAmount(
             PersonManager.AddHistory(ActionType.GetMoney, amount, friend);
         }
 
-        PersonManager.DeleteAsset(asset);
+        PersonManager.DeleteAsset(CurrentUser, asset);
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);

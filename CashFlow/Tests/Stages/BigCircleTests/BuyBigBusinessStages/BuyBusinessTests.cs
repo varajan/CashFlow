@@ -61,6 +61,7 @@ public class BuyBigBusinessTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessPrice>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == title &&
                 x.Qtty == 1 &&

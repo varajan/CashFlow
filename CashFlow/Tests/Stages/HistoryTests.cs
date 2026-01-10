@@ -24,7 +24,7 @@ public class HistoryTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var history = string.Join(Environment.NewLine, Records.Select(x => x.Description));
-        var buttons = new List<string> { "Rollback last action", "Cancel" };
+        var buttons = new List<string> { "Rollback last action", "Main menu" };
 
         // Act
 
@@ -42,7 +42,7 @@ public class HistoryTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var history = "No records found.";
-        var buttons = new List<string> { "Cancel" };
+        var buttons = new List<string> { "Main menu" };
 
         PersonManagerMock.Setup(x => x.ReadHistory(CurrentUserMock.Object)).Returns([]);
         PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(true);
@@ -65,6 +65,21 @@ public class HistoryTests : StagesBaseTest
 
         // Act
         await testStage.HandleMessage("cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
+    }
+
+    [Test]
+    public async Task History_CanGoToMainMenu()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Main Menu");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());

@@ -29,7 +29,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -44,12 +44,12 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         asset.Mortgage = asset.Price - number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         var person = PersonManager.Read(CurrentUser);
         if (person.Cash < number && asset.Type == AssetType.BigBusinessType)
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
         }
 

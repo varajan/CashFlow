@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using MoreLinq;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
@@ -25,12 +24,13 @@ public interface IPersonManager
     void ClearHistory(IUser user);
 
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
-    void CreateAsset(AssetDto asset);
-    void DeleteAsset(AssetDto asset);
-    void RestoreAsset(AssetDto asset);
+    void CreateAsset(IUser user, AssetDto asset);
+    void DeleteAsset(IUser user, AssetDto asset);
+    void RestoreAsset(IUser user, AssetDto asset);
     void DeleteAllAssets(IUser user);
-    void UpdateAsset(AssetDto asset);
+    void UpdateAsset(IUser user, AssetDto asset);
     void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
+    string GetAssetDescription(AssetDto asset, IUser user);
 }
 
 public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
@@ -207,7 +207,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             case ActionType.Credit:
                 person.Cash -= amount;
-                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+                person.UpdateLiability(Liability.Bank_Loan, amount / 10, -amount);
                 break;
 
             case ActionType.Mortgage:
@@ -469,101 +469,124 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     #region Assets
 
-    public List<AssetDto> ReadAllAssets(AssetType type, IUser user)
+    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => Read(user).Assets;
+    //{
+
+    //    //var ids = DataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
+    //    //return ids.Select(id => ReadAsset(id.ToLong(), user)).ToList();
+    //}
+
+    public AssetDto ReadAsset(long id, IUser user) => Read(user).Assets.First(a => a.Id == id);
+    //{
+    //    var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
+    //    var data = DataBase.GetRow(sql);
+
+    //    return new AssetDto
+    //    {
+    //        Type = data["Type"].ParseEnum<AssetType>(),
+    //        Title = data["Title"],
+    //        Id = data["Id"].ToInt(),
+    //        UserId = data["UserId"].ToInt(),
+    //        Price = data["Price"].ToInt(),
+    //        SellPrice = data["SellPrice"].ToInt(),
+    //        Qtty = data["Qtty"].ToInt(),
+    //        Mortgage = data["Mortgage"].ToInt(),
+    //        TotalCashFlow = data["TotalCashFlow"].ToInt(),
+    //        CashFlow = data["CashFlow"].ToInt(),
+    //        BigCircle = data["BigCircle"].ToInt() == 1,
+    //        IsDraft = data["IsDraft"].ToInt() == 1,
+    //        IsDeleted = data["IsDeleted"].ToInt() == 1,
+    //    };
+    //}
+
+    public void CreateAsset(IUser user, AssetDto asset)
     {
-        var ids = DataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
-        return ids.Select(id => ReadAsset(id.ToLong(), user)).ToList();
+        var person = Read(user);
+        asset.Id = person.Assets.Any() ? person.Assets.Max(a => a.Id) + 1 : 1;
+        person.Assets.Add(asset);
+        Update(person);
+
+
+        //int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
+        //var sql = $@"
+        //    INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
+        //    VALUES
+        //    (
+        //        {newId},
+        //        {asset.UserId},
+        //        {(int)asset.Type},
+        //        '{asset.Title.Replace("'", "''")}',
+        //        {asset.Price},
+        //        {asset.SellPrice},
+        //        {asset.Qtty},
+        //        {asset.Mortgage},
+        //        {asset.CashFlow},
+        //        {asset.BigCircle},
+        //        {(asset.IsDraft ? 1 : 0)},
+        //        {(asset.IsDeleted ? 1 : 0)}
+        //    );";
+        //DataBase.Execute(sql);
+
+        ////return Read(newId, asset.UserId);
     }
 
-    public AssetDto ReadAsset(long id, IUser user)
-    {
-        var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
-        var data = DataBase.GetRow(sql);
+    public void DeleteAsset(AssetDto asset) => throw new NotImplementedException();
 
-        return new AssetDto
-        {
-            Type = data["Type"].ParseEnum<AssetType>(),
-            Title = data["Title"],
-            Id = data["Id"].ToInt(),
-            UserId = data["UserId"].ToInt(),
-            Price = data["Price"].ToInt(),
-            SellPrice = data["SellPrice"].ToInt(),
-            Qtty = data["Qtty"].ToInt(),
-            Mortgage = data["Mortgage"].ToInt(),
-            TotalCashFlow = data["TotalCashFlow"].ToInt(),
-            CashFlow = data["CashFlow"].ToInt(),
-            BigCircle = data["BigCircle"].ToInt() == 1,
-            IsDraft = data["IsDraft"].ToInt() == 1,
-            IsDeleted = data["IsDeleted"].ToInt() == 1,
-        };
+    public void DeleteAsset(IUser user, AssetDto asset)
+    {
+        var person = Read(user);
+        person.Assets.Single(a => a.Id == asset.Id).IsDeleted = true;
+        //asset.IsDeleted = true;
+        Update(person);
     }
 
-    public void CreateAsset(AssetDto asset)
-    {
-        int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
-        var sql = $@"
-            INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
-            VALUES
-            (
-                {newId},
-                {asset.UserId},
-                {(int)asset.Type},
-                '{asset.Title.Replace("'", "''")}',
-                {asset.Price},
-                {asset.SellPrice},
-                {asset.Qtty},
-                {asset.Mortgage},
-                {asset.CashFlow},
-                {asset.BigCircle},
-                {(asset.IsDraft ? 1 : 0)},
-                {(asset.IsDeleted ? 1 : 0)}
-            );";
-        DataBase.Execute(sql);
+    public void RestoreAsset(AssetDto asset) => throw new NotImplementedException();
 
-        //return Read(newId, asset.UserId);
-    }
-
-    public void DeleteAsset(AssetDto asset)
+    public void RestoreAsset(IUser user, AssetDto asset)
     {
-        asset.IsDeleted = true;
-        UpdateAsset(asset);
-    }
+        var person = Read(user);
+        person.Assets.Single(a => a.Id == asset.Id).IsDeleted = false;
+        //asset.IsDeleted = true;
+        Update(person);
 
-    public void RestoreAsset(AssetDto asset)
-    {
-        asset.IsDeleted = false;
-        UpdateAsset(asset);
+        //asset.IsDeleted = false;
+        //UpdateAsset(CurrentUser, asset);
     }
 
     public void DeleteAllAssets(IUser user) => DataBase.Execute($"DELETE FROM Assets WHERE UserID = {user.Id}");
 
-    public void UpdateAsset(AssetDto asset)
+    public void UpdateAsset(IUser user, AssetDto asset)
     {
-        var sql = $"" +
-            $"UPDATE Assets SET " +
-            $"Type = {(int)asset.Type}," +
-            $"Title = '{asset.Title}'," +
-            $"Price = {asset.Price}," +
-            $"SellPrice = {asset.SellPrice}," +
-            $"Qtty = {asset.Qtty}," +
-            $"Mortgage = {asset.Mortgage}," +
-            $"CashFlow = {asset.CashFlow}," +
-            $"BigCircle = {asset.BigCircle}," +
-            $"CashFlow = {asset.CashFlow}," +
-            $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
-            $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
-            $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
-        DataBase.Execute(sql);
+        var person = Read(user);
+        var currentAsset = person.Assets.Find(a => a.Id == asset.Id);
+        currentAsset = asset;
+        Update(person);
+
+        //var sql = $"" +
+        //    $"UPDATE Assets SET " +
+        //    $"Type = {(int)asset.Type}," +
+        //    $"Title = '{asset.Title}'," +
+        //    $"Price = {asset.Price}," +
+        //    $"SellPrice = {asset.SellPrice}," +
+        //    $"Qtty = {asset.Qtty}," +
+        //    $"Mortgage = {asset.Mortgage}," +
+        //    $"CashFlow = {asset.CashFlow}," +
+        //    $"BigCircle = {asset.BigCircle}," +
+        //    $"CashFlow = {asset.CashFlow}," +
+        //    $"IsDraft = {(asset.IsDraft ? 1 : 0)}," +
+        //    $"IsDeleted = {(asset.IsDeleted ? 1 : 0)}," +
+        //    $"WHERE AssetID = {asset.Id} AND UserID = {asset.UserId}";
+        //DataBase.Execute(sql);
     }
 
     public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)
     {
         asset.SellPrice = price;
-        DeleteAsset(asset);
+        DeleteAsset(user, asset);
         AddHistory(action, asset.Id, user);
     }
 
-    private string GetAssetDescription(AssetDto asset, IUser user)
+    public string GetAssetDescription(AssetDto asset, IUser user)
     {
         var mortgage = Terms.Get(43, user, "Mortgage");
         var price = Terms.Get(64, user, "Price");

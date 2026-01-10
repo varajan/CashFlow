@@ -59,6 +59,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
             .ForEach(asset =>
             {
                 PersonManagerMock.Verify(a => a.UpdateAsset(
+                    CurrentUserMock.Object,
                     It.Is<AssetDto>(x =>
                         x.Title == asset.Title &&
                         x.Type == AssetType.RealEstate &&
@@ -79,7 +80,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstatePrice>());
         CurrentUserMock.Verify(u => u.Notify("Invalid price value. Try again."), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Never);
+        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
         PersonManagerMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
     }
 

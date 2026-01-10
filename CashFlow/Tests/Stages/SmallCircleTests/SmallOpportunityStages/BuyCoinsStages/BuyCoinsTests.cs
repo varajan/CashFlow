@@ -61,6 +61,7 @@ public class BuyCoinsTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsCount>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == title &&
                 x.UserId == CurrentUserMock.Object.Id &&

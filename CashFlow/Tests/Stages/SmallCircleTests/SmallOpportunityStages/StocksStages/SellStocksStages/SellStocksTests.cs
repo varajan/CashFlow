@@ -67,6 +67,7 @@ public class SellStocksTests: StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == asset.Title &&
                 x.Type == AssetType.Stock &&
@@ -74,7 +75,7 @@ public class SellStocksTests: StagesBaseTest
         ), Times.Exactly(assetsCount));
     }
 
-    protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

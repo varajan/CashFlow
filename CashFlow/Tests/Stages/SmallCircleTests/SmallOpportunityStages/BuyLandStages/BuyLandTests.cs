@@ -61,6 +61,7 @@ public class BuyLandTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyLandPrice>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == name &&
                 x.Qtty == 1 &&

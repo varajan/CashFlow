@@ -23,7 +23,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -36,7 +36,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
         }
 
         asset.Price = number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
         NextStage = New<TNextStage>();
     }
 }

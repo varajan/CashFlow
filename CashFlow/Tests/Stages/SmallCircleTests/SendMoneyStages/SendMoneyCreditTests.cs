@@ -39,6 +39,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer)
@@ -93,6 +94,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -133,6 +135,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -157,7 +160,6 @@ public class SendMoneyCreditTests : StagesBaseTest
     }
 
     protected override IStage GetTestStage() => new SendMoneyCredit(
-        AssetManagerMock.Object,
         PersonManagerMock.Object,
         TermsServiceMock.Object,
         AvailableAssetsMock.Object)

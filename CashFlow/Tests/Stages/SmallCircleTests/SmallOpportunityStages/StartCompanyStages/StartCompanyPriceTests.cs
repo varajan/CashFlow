@@ -22,9 +22,9 @@ public class StartCompanyPriceTests: StagesBaseTest
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.SmallBusinessBuyPrice)).Returns(CompanyPrices);
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([Asset]);
-		PersonManagerMock
-			.Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
-            .Callback<AssetDto>(dto =>
+        PersonManagerMock
+            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
+            .Callback<IUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }

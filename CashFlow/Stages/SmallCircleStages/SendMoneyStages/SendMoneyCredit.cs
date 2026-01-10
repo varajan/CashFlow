@@ -7,10 +7,9 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyCredit(
-    IAssetManager assetManager,
     IPersonManager personManager,
     ITermsService termsService,
-    IAvailableAssets availableAssets) : SendMoneyAmount(assetManager, personManager, termsService, availableAssets)
+    IAvailableAssets availableAssets) : SendMoneyAmount(personManager, termsService, availableAssets)
 {
     public override string Message
     {
@@ -33,7 +32,7 @@ public class SendMoneyCredit(
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                PersonManager.DeleteAsset(asset);
+                PersonManager.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 

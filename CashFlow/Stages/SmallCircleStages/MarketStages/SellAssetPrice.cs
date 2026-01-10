@@ -70,7 +70,7 @@ public class SellAssetPrice(
             assets.ForEach(a =>
             {
                 a.MarkedToSell = false;
-                PersonManager.UpdateAsset(a);
+                PersonManager.UpdateAsset(CurrentUser, a);
             });
 
             NextStage = New<Start>();

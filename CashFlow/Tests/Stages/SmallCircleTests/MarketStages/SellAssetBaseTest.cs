@@ -23,7 +23,7 @@ public abstract class SellAssetBaseTest : StagesBaseTest
             AssetType.SmallBusiness
         };
 
-        AssetManagerMock.Setup(a => a.GetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))
+        PersonManagerMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))
             .Returns((AssetDto asset, IUser user) => $"{asset.Title} Text");
 
         int id = 0;

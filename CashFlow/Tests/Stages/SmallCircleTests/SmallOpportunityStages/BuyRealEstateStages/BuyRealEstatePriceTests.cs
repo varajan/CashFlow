@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
@@ -21,9 +22,9 @@ public class BuyRealEstatePriceTests : StagesBaseTest
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateSmallBuyPrice)).Returns(Prices);
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([Asset]);
-        AssetManagerMock
-            .Setup(a => a.Update(It.IsAny<AssetDto>()))
-            .Callback<AssetDto>(dto =>
+        PersonManagerMock
+            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
+            .Callback<IUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -76,7 +77,7 @@ public class BuyRealEstatePriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateFirstPayment>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 

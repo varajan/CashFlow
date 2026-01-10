@@ -76,7 +76,7 @@ public class BankruptcySellAssets(ITermsService termsService, IPersonManager per
             asset.IsDeleted = true;
             person.Cash += asset.BancrupcySellPrice;
 
-            PersonManager.UpdateAsset(asset);
+            PersonManager.UpdateAsset(CurrentUser, asset);
             PersonManager.Update(person);
 
             var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}";

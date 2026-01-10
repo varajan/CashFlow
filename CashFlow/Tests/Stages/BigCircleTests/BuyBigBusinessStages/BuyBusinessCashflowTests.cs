@@ -60,6 +60,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
             Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
             PersonManagerMock.Verify(a => a.UpdateAsset(
+                CurrentUserMock.Object,
                 It.Is<AssetDto>(x =>
                     x.CashFlow == cashflow.AsCurrency() &&
                     x.IsDraft == false)),

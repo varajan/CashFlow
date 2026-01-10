@@ -23,8 +23,8 @@ public class BuyCoinsPriceTests : StagesBaseTest
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.CoinBuyPrice)).Returns(Prices);
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([Asset]);
         PersonManagerMock
-            .Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
-            .Callback<AssetDto>(dto =>
+            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
+            .Callback<IUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }

@@ -9,11 +9,9 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class IncreaseCashflow(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IAssetManager assetManager,
     IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     protected IAvailableAssets AvailableAssets { get; } = availableAssets;
-    protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
 
@@ -38,7 +36,7 @@ public class IncreaseCashflow(
         assets.ForEach(asset =>
         {
             asset.CashFlow += cashflow;
-            PersonManager.UpdateAsset(asset);
+            PersonManager.UpdateAsset(CurrentUser, asset);
             PersonManager.AddHistory(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
         });
 

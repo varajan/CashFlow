@@ -74,6 +74,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCashFlow>());
             PersonManagerMock.Verify(a => a.UpdateAsset(
+                CurrentUserMock.Object,
                 It.Is<AssetDto>(x =>
                     x.Price == price &&
                     x.Mortgage == mortgage &&
@@ -103,7 +104,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
-            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
         });
     }
 

@@ -38,6 +38,7 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer)
@@ -81,7 +82,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
         CurrentUserMock.Verify(x => x.Notify("Invalid value. Try again."), Times.Once, "Message to user should be sent");
-        AssetManagerMock.Verify(x => x.Update(It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
+        PersonManagerMock.Verify(x => x.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
@@ -109,6 +110,7 @@ public class SendMoneyTests : StagesBaseTest
         AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
@@ -116,6 +118,7 @@ public class SendMoneyTests : StagesBaseTest
         ), Times.Once);
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
@@ -146,7 +149,8 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
-        It.Is<AssetDto>(x =>
+            CurrentUserMock.Object,
+            It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
@@ -157,7 +161,6 @@ public class SendMoneyTests : StagesBaseTest
     }
 
     protected override IStage GetTestStage() => new SendMoneyAmount(
-        AssetManagerMock.Object,
         PersonManagerMock.Object,
         TermsServiceMock.Object,
         AvailableAssetsMock.Object)

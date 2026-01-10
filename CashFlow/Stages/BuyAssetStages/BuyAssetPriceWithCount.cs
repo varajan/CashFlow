@@ -22,7 +22,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -36,7 +36,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
         }
 
         asset.Price = number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         NextStage = New<TNextStage>();
     }

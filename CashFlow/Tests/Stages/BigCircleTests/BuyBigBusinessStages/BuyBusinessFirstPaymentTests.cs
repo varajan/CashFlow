@@ -71,6 +71,7 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
             PersonManagerMock.Verify(a => a.UpdateAsset(
+                CurrentUserMock.Object,
                 It.Is<AssetDto>(x =>
                     x.Price == price &&
                     x.Mortgage == mortgage &&
@@ -92,7 +93,7 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
         CurrentUserMock.Verify(u => u.Notify("You don't have enough money."), Times.Once);
-        PersonManagerMock.Verify(p => p.DeleteAsset(It.Is<AssetDto>(a => a.IsDraft)), Times.Once);
+        PersonManagerMock.Verify(p => p.DeleteAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new BuyBigBusinessFirstPayment(

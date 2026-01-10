@@ -71,6 +71,7 @@ public class BuyStocksPriceTests : StagesBaseTest
             Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCount>());
 
             PersonManagerMock.Verify(m => m.UpdateAsset(
+                CurrentUserMock.Object,
                 It.Is<AssetDto>(x => x.Id == Asset.Id && x.Price == price.AsCurrency() && x.Qtty == 0)
             ), Times.Once);
         });

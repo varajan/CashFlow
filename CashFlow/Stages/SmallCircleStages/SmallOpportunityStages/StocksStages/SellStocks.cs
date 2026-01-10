@@ -6,8 +6,8 @@ using CashFlow.Stages.SmallCircleStages.MarketStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class SellStocks(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager)
-    : SellAsset<SellStocksPrice>(termsService, assetManager, personManager, AssetType.Stock) { }
+public class SellStocks(ITermsService termsService, IPersonManager personManager)
+    : SellAsset<SellStocksPrice>(termsService, personManager, AssetType.Stock) { }
 
 public class SellStocksPrice(
     ITermsService termsService,

@@ -129,7 +129,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
                 IsDraft = true,
             };
 
-            PersonManager.CreateAsset(transfer);
+            PersonManager.CreateAsset(CurrentUser, transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }

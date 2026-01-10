@@ -72,7 +72,7 @@ public class BuyAssetCount<TNextStage>(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -85,7 +85,7 @@ public class BuyAssetCount<TNextStage>(
         }
 
         asset.Qtty = number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Qtty * asset.Price)
@@ -106,7 +106,7 @@ public class BuyAssetCount<TNextStage>(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
 

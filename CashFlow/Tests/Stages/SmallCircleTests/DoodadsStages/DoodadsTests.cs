@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.DoodadsStages;
@@ -84,7 +83,7 @@ public class DoodadsTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AssetManagerMock.Verify(a => a.Create(It.Is<AssetDto>(asset =>
+        PersonManagerMock.Verify(a => a.CreateAsset(CurrentUserMock.Object, It.Is<AssetDto>(asset =>
             asset.UserId == CurrentUserMock.Object.Id &&
             asset.CashFlow == -340 &&
             asset.Price == 18_000 &&
@@ -121,10 +120,7 @@ public class DoodadsTests : StagesBaseTest
         PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new Doodads(
-        TermsServiceMock.Object,
-        AssetManagerMock.Object,
-        PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new Doodads(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

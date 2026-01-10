@@ -54,11 +54,11 @@ public class SellRealEstateTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstatePrice>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
+        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Once);
+        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellRealEstate(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new SellRealEstate(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

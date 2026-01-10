@@ -30,7 +30,6 @@ public static class ServicesProvider
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITermsService, TermsService>();
         services.AddSingleton<IAvailableAssets, AvailableAssets>();
-        services.AddSingleton<IAssetManager, AssetManager>();
         services.AddSingleton<IPersonManager, PersonManager>();
 
         services.AddTransient<Start>();

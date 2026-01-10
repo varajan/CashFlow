@@ -184,7 +184,7 @@ public class MarketTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Market>());
     }
 
-    protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, AssetManagerMock.Object, PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

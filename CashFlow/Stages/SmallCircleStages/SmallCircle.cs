@@ -122,7 +122,7 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
     private async Task Downsize()
     {
         var person = PersonManager.Read(CurrentUser);
-        var expenses = person.Liabilities.Sum(l => l.Cashflow) * -1;
+        var expenses = -1 * person.TotalExpenses;
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
 

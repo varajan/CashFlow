@@ -49,14 +49,11 @@ public class StopGameTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(p => p.ClearHistory(CurrentUserMock.Object), Times.Never);
-        AssetManagerMock.Verify(a => a.DeleteAll(CurrentUserMock.Object.Id), Times.Never);
+        PersonManagerMock.Verify(a => a.DeleteAllAssets(CurrentUserMock.Object), Times.Never);
         PersonManagerMock.Verify(p => p.Delete(CurrentUserMock.Object), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new StopGame(
-        TermsServiceMock.Object,
-        PersonManagerMock.Object,
-        AssetManagerMock.Object)
+    protected override IStage GetTestStage() => new StopGame(TermsServiceMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

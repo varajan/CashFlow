@@ -12,7 +12,7 @@ public abstract class StagesBaseTest
 {
     protected Mock<IUser> CurrentUserMock;
     protected List<IUser> OtherUsers;
-    protected Mock<IAssetManager> AssetManagerMock;
+    //protected Mock<IAssetManager> AssetManagerMock;
     protected Mock<IAvailableAssets> AvailableAssetsMock;
     protected Mock<IPersonManager> PersonManagerMock;
     protected Mock<ITermsService> TermsServiceMock;
@@ -28,7 +28,7 @@ public abstract class StagesBaseTest
     {
         ServicesProvider.Init();
 
-        AssetManagerMock = new Mock<IAssetManager>();
+        //AssetManagerMock = new Mock<IAssetManager>();
         AvailableAssetsMock = new Mock<IAvailableAssets>();
         PersonManagerMock = new Mock<IPersonManager>();
         TermsServiceMock = new Mock<ITermsService>();

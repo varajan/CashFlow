@@ -33,6 +33,7 @@ public class BuyStocksCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Stock)
@@ -90,6 +91,7 @@ public class BuyStocksCreditTests : StagesBaseTest
         PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyStocks, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Stock &&

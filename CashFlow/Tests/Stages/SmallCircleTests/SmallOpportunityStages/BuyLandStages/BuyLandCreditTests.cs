@@ -33,6 +33,7 @@ public class BuyLandCreditTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         PersonManagerMock.Verify(a => a.DeleteAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Land)
@@ -90,6 +91,7 @@ public class BuyLandCreditTests : StagesBaseTest
         PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyLand, Asset.Id, CurrentUserMock.Object), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Land &&

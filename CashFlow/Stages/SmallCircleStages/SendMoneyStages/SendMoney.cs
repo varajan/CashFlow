@@ -13,9 +13,6 @@ public class SendMoney(ITermsService termsService, IPersonManager personManager)
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).FirstOrDefault(x => x.IsDraft);
-            PersonManager.DeleteAsset(asset);
-
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).Select(x => x.Name).ToList();
 
@@ -38,9 +35,10 @@ public class SendMoney(ITermsService termsService, IPersonManager personManager)
                 Title = message,
                 UserId = CurrentUser.Id,
                 Type = AssetType.Transfer,
+                IsDraft = true,
             };
 
-            PersonManager.CreateAsset(transfer);
+            PersonManager.CreateAsset(CurrentUser, transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }

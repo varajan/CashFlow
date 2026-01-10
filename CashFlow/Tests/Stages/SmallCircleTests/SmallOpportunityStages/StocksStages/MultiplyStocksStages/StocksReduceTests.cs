@@ -74,11 +74,12 @@ public class StocksReduceTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(It.IsAny<AssetDto>()), Times.Exactly(updatedAssets.Count));
+        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Exactly(updatedAssets.Count));
 
         updatedAssets.ForEach(updatedAsset =>
         {
             PersonManagerMock.Verify(a => a.UpdateAsset(
+                CurrentUserMock.Object,
                 It.Is<AssetDto>(x =>
                     x.Title == updatedAsset.Title &&
                     x.Type == AssetType.Stock &&

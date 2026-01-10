@@ -46,7 +46,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITermsService termsS
         stocks.ForEach(asset =>
         {
             asset.Qtty = (int)(asset.Qtty * k);
-            PersonManager.UpdateAsset(asset);
+            PersonManager.UpdateAsset(CurrentUser, asset);
             PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
         });
 

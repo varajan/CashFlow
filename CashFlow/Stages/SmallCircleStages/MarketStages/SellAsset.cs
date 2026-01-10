@@ -8,19 +8,17 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAsset<TNextStage>(
     ITermsService termsService,
-    IAssetManager assetManager,
     IPersonManager personManager,
     params AssetType[] assetTypes)
     : BaseStage(termsService, personManager) where TNextStage : BaseStage
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
-    protected IAssetManager AssetManager { get; } = assetManager;
 
     public override string Message
     {
         get
         {
-            var assetNames = Assets.Select((a, i) => $"*#{i + 1}* {AssetManager.GetDescription(a, CurrentUser)}").Join(Environment.NewLine);
+            var assetNames = Assets.Select((a, i) => $"*#{i + 1}* {PersonManager.GetAssetDescription(a, CurrentUser)}").Join(Environment.NewLine);
 
             if (AssetTypes.Contains(AssetType.Land))
             {
@@ -112,7 +110,7 @@ public class SellAsset<TNextStage>(
 
         var asset = Assets[index - 1];
         asset.MarkedToSell = true;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
         return true;
     }
 
@@ -142,7 +140,7 @@ public class SellAsset<TNextStage>(
         assets.ForEach(asset =>
         {
             asset.MarkedToSell = true;
-            PersonManager.UpdateAsset(asset);
+            PersonManager.UpdateAsset(CurrentUser, asset);
         });
 
         return true;

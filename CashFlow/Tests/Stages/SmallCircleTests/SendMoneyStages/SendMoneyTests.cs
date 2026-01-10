@@ -33,7 +33,7 @@ public class SendMoneyTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify("Not found."), Times.Once);
         PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
-        AssetManagerMock.Verify(x => x.Update(It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
+        PersonManagerMock.Verify(x => x.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
     }
 
     [Test]
@@ -67,6 +67,7 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == testUser.Name &&
                 x.UserId == CurrentUserMock.Object.Id &&
@@ -90,6 +91,7 @@ public class SendMoneyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == bank &&
                 x.UserId == CurrentUserMock.Object.Id &&

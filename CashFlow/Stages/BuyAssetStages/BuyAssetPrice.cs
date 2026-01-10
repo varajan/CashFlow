@@ -26,7 +26,7 @@ public abstract class BuyAssetPrice<TNextStage>(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -39,7 +39,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         }
 
         asset.Price = number;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Price)
@@ -60,7 +60,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         PersonManager.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
 
         PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
 

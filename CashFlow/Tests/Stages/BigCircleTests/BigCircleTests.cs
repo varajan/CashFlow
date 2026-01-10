@@ -139,6 +139,7 @@ public class BigCircleTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.UserId == CurrentUserMock.Object.Id &&
                 x.Type == AssetType.Transfer &&

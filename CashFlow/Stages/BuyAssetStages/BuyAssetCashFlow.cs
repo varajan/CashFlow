@@ -26,14 +26,14 @@ public abstract class BuyAssetCashFlow<TNextStage>(
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(asset);
+            PersonManager.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
 
         asset.CashFlow = message.AsCurrency();
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(asset);
+        PersonManager.UpdateAsset(CurrentUser, asset);
         
         var person = PersonManager.Read(CurrentUser);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;

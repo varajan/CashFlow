@@ -5,8 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class SellRealEstate(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager)
-    : SellAsset<SellRealEstatePrice>(termsService, assetManager, personManager, AssetType.RealEstate) { }
+public class SellRealEstate(ITermsService termsService, IPersonManager personManager)
+    : SellAsset<SellRealEstatePrice>(termsService, personManager, AssetType.RealEstate) { }
 
 public class SellRealEstatePrice(
     ITermsService termsService,

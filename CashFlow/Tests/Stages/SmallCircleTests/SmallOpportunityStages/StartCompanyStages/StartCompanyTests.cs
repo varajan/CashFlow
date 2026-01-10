@@ -61,6 +61,7 @@ public class StartCompanyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<StartCompanyPrice>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == companyName &&
                 x.Qtty == 1 &&

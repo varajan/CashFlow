@@ -36,7 +36,7 @@ public abstract class BuyAssetCredit<TNextStage>(
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                PersonManager.DeleteAsset(asset);
+                PersonManager.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 

@@ -50,7 +50,7 @@ public abstract class BuyAsset<TNextStage>(
                 IsDraft = true,
             };
 
-            PersonManager.CreateAsset(draftAsset);
+            PersonManager.CreateAsset(CurrentUser, draftAsset);
             NextStage = New<TNextStage>();
             return Task.CompletedTask;
         }

@@ -62,6 +62,7 @@ public class BuyStocksTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksPrice>());
 
         PersonManagerMock.Verify(a => a.CreateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Title == name &&
                 x.UserId == CurrentUserMock.Object.Id &&

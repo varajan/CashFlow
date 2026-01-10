@@ -10,14 +10,15 @@ public class History(ITermsService termsService, IPersonManager personManager) :
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
         : Terms.Get(111, CurrentUser, "No records found.");
 
-    public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, Cancel] : [Cancel];
+    public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
 
     private List<HistoryDto> Records => PersonManager.ReadHistory(CurrentUser);
     private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
+    private string MainMenu => Terms.Get(102, CurrentUser, "Main menu");
 
     public async override Task HandleMessage(string message)
     {
-        if (IsCanceled(message))
+        if (IsCanceled(message) || MessageEquals(message, 102, "Main menu"))
         {
             NextStage = New<Start>();
             return;

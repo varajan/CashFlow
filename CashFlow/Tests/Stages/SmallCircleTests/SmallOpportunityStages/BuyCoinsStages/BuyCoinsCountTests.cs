@@ -67,6 +67,7 @@ public class BuyCoinsCountTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
+            CurrentUserMock.Object,
             It.Is<AssetDto>(x =>
                 x.Qtty == count.ToInt() &&
                 x.Type == AssetType.Coin &&

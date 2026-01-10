@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
@@ -21,9 +22,9 @@ public class BuyBusinessPriceTests : StagesBaseTest
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BusinessBuyPrice)).Returns(Prices);
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([Asset]);
-        AssetManagerMock
-            .Setup(a => a.Update(It.IsAny<AssetDto>()))
-            .Callback<AssetDto>(dto =>
+        PersonManagerMock
+            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
+            .Callback<IUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -76,14 +77,11 @@ public class BuyBusinessPriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessFirstPayment>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBusinessPrice(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
+    protected override IStage GetTestStage() => new BuyBusinessPrice(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
         .SetCurrentUser(CurrentUserMock.Object)
         .SetAllUsers(OtherUsers);
 }

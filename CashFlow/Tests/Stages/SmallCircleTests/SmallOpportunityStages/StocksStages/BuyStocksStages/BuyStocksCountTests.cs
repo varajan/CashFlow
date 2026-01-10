@@ -24,10 +24,10 @@ public class BuyStocksCountTests : StagesBaseTest
 
         AssetsList = [];
         PersonManagerMock
-        .Setup(a => a.UpdateAsset(It.IsAny<AssetDto>()))
-        .Callback<AssetDto>(dto =>
-            AssetsList.Add(dto.Clone())
-        );
+            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
+            .Callback<IUser, AssetDto>((user, dto) =>
+                AssetsList.Add(dto.Clone())
+            );
     }
 
     [TestCase(100, 50, "How much?", new string[] { "100", "150", "200", "Cancel" })]
@@ -125,7 +125,7 @@ public class BuyStocksCountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCredit>());
 
-        PersonManagerMock.Verify(m => m.UpdateAsset(It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
+        PersonManagerMock.Verify(m => m.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new BuyStocksCount(

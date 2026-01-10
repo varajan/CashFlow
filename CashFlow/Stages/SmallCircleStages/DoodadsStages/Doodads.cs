@@ -6,11 +6,9 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class Doodads(ITermsService termsService, IAssetManager assetManager, IPersonManager personManager)
+public class Doodads(ITermsService termsService, IPersonManager personManager)
     : BaseStage(termsService, personManager)
 {
-    protected IAssetManager AssetManager { get; init; } = assetManager;
-
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
 
     public override List<string> Buttons =>
@@ -75,7 +73,7 @@ public class Doodads(ITermsService termsService, IAssetManager assetManager, IPe
             Mortgage = 17_000,
             IsDraft = false,
         };
-        AssetManager.Create(boat);
+        PersonManager.CreateAsset(CurrentUser, boat);
 
         person.Cash -= firstPayment;
         PersonManager.Update(person);
