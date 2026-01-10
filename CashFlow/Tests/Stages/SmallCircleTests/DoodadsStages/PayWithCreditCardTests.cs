@@ -59,13 +59,26 @@ public class PayWithCreditCardTests : StagesBaseTest
         var testStage = GetTestStage();
 
         var initialCredit = 1000;
-        var initialExpenses = 10;
+        var initialExpenses = -10;
         var testPerson = new PersonDto
         {
             Id = CurrentUserMock.Object.Id,
             Cash = 5000,
-            Liabilities_OBSOLETE = new LiabilitiesDto { CreditCard = initialCredit, },
-            Expenses = new ExpensesDto { CreditCard = initialExpenses, }
+            Liabilities =
+            [
+                new()
+                {
+                    Type = Liability.Credit_Card,
+                    FullAmount = initialCredit,
+                    Cashflow = initialExpenses,
+                },
+                new()
+                {
+                    Type = Liability.Small_Credit,
+                    FullAmount = 2000,
+                    Cashflow = -15,
+                },
+            ],
         };
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
@@ -78,8 +91,8 @@ public class PayWithCreditCardTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUserMock.Object.Id &&
-            person.Liabilities_OBSOLETE.CreditCard == initialCredit + amount.AsCurrency() &&
-            person.Expenses.CreditCard == initialExpenses + 0.03 * amount.AsCurrency()
+            person.Liabilities.First(l => l.Type == Liability.Credit_Card).FullAmount == initialCredit + amount.AsCurrency() &&
+            person.Liabilities.First(l => l.Type == Liability.Credit_Card).Cashflow == initialExpenses - 0.03 * amount.AsCurrency()
         )), Times.Once);
 
         PersonManagerMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUserMock.Object), Times.Once);

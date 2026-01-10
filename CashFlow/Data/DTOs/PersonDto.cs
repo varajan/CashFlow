@@ -20,15 +20,15 @@ public class PersonDto
     public int PerChild { get; set; }
     public int Children { get; set; }
 
-    public int CashFlow => Salary + Assets.Sum(a => a.CashFlow) + TotalExpenses;
-    public int TotalExpenses => Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
+    public int BoatPayment => Assets.FirstOrDefault(a => a.Type == AssetType.Boat)?.CashFlow ?? 0;
+    public int CashFlow => Salary + Assets.Sum(a => a.CashFlow) - BoatPayment + TotalExpenses;
+    public int TotalExpenses => BoatPayment + Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
 
     public int CurrentCashFlow { get; set; }
     public int TargetCashFlow { get; set; }
 
     public List<AssetDto> Assets { get; set; } = [];
-    public ExpensesDto Expenses { get; set; } = new();
-    public LiabilitiesDto Liabilities_OBSOLETE { get; set; } = new();
+    //public ExpensesDto Expenses { get; set; } = new();
     public List<LiabilityDto> Liabilities { get; set; } = [];
 
     public void GetCredit(int amount)
@@ -39,7 +39,7 @@ public class PersonDto
 
     public void UpdateLiability(Liability name, int cashFlow, int ammount)
     {
-        var idx = Liabilities.FindIndex(l => l.Name == name);
+        var idx = Liabilities.FindIndex(l => l.Type == name);
 
         if (idx >= 0)
         {
@@ -50,7 +50,7 @@ public class PersonDto
         }
         else
         {
-            var liability = new LiabilityDto { Name = name, Cashflow = cashFlow, FullAmount = ammount };
+            var liability = new LiabilityDto { Type = name, Cashflow = cashFlow, FullAmount = ammount };
             Liabilities.Add(liability);
         }
     }

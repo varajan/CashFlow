@@ -67,23 +67,26 @@ public class Doodads(ITermsService termsService, IPersonManager personManager)
 
         boat = new AssetDto
         {
+            Type = AssetType.Boat,
             UserId = CurrentUser.Id,
             CashFlow = -340,
             Price = 18_000,
             Mortgage = 17_000,
             IsDraft = false,
+            Qtty = 1,
+            Title = "Boat"
         };
-        PersonManager.CreateAsset(CurrentUser, boat);
-
         person.Cash -= firstPayment;
+
         PersonManager.Update(person);
+        PersonManager.CreateAsset(CurrentUser, boat);
         PersonManager.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
         var message = Terms.Get(117, CurrentUser,
             "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
             boat.Price.AsCurrency(),
             firstPayment.AsCurrency(),
-            boat.CashFlow.AsCurrency());
+            Math.Abs(boat.CashFlow).AsCurrency());
         await CurrentUser.Notify(message);
     }
 }

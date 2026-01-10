@@ -12,10 +12,10 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
 {
     private List<LiabilityDto> Liabilities =>
     [
-        new() { Name = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
-        new() { Name = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  MarkedForReduction = true,  AllowsPartialPayment = true , Deleted = false },
-        new() { Name = Liability.Mortgage, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
-        new() { Name = Liability.School_Loan, FullAmount = 5_000,  Cashflow = -500,  MarkedForReduction = false, AllowsPartialPayment = true , Deleted = true },
+        new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
+        new() { Type = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  MarkedForReduction = true,  AllowsPartialPayment = true , Deleted = false },
+        new() { Type = Liability.Mortgage, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
+        new() { Type = Liability.School_Loan, FullAmount = 5_000,  Cashflow = -500,  MarkedForReduction = false, AllowsPartialPayment = true , Deleted = true },
     ];
 
     private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
@@ -58,12 +58,12 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
-            l.Name == Liability.Car_Loan &&
+            l.Type == Liability.Car_Loan &&
             l.MarkedForReduction == false)),
         Times.Once);
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
-            l.Name == Liability.Boat_Loan &&
+            l.Type == Liability.Boat_Loan &&
             l.MarkedForReduction == false)),
         Times.Once);
     }
@@ -76,8 +76,8 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
 
         var liabilities = new List<LiabilityDto>
         {
-            new() { Name = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
-            new() { Name = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
+            new() { Type = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
+            new() { Type = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
@@ -92,7 +92,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
-            It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
+            It.Is<LiabilityDto>(l => l.Type == liabilities.First().Type && l.Deleted == true)), Times.Once);
     }
 
     [Test]
@@ -103,8 +103,8 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
 
         var liabilities = new List<LiabilityDto>
         {
-            new() { Name = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
-            new() { Name = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = false },
+            new() { Type = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
+            new() { Type = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = false },
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
@@ -119,7 +119,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
 
         PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
-            It.Is<LiabilityDto>(l => l.Name == liabilities.First().Name && l.Deleted == true)), Times.Once);
+            It.Is<LiabilityDto>(l => l.Type == liabilities.First().Type && l.Deleted == true)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new ReduceLiabilitiesConfirm(TermsServiceMock.Object, PersonManagerMock.Object)

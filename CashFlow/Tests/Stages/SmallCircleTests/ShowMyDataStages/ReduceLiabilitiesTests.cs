@@ -13,10 +13,10 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 {
     private readonly List<LiabilityDto> Liabilities =
     [
-        new() { Name = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = false },
-        new() { Name = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = false },
-        new() { Name = Liability.Mortgage, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = true },
-        new() { Name = Liability.School_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = true },
+        new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = false },
+        new() { Type = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = false },
+        new() { Type = Liability.Mortgage, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = true },
+        new() { Type = Liability.School_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = true },
     ];
 
     private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
@@ -29,7 +29,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Liabilities.Select(x => x.Name.AsString()).Append("Cancel");
+        var buttons = Liabilities.Select(x => x.Type.AsString()).Append("Cancel");
         var message = $"*Cash:* $50,250{NL}*Car Loan:* $50,000 - $5,100 monthly{NL}*Boat Loan:* $5,000 - $500 monthly";
 
         // Act
@@ -52,7 +52,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var liability = Liabilities.First(l => l.Name.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         var testPerson = TestPerson.Clone();
         testPerson.Cash = cash;
@@ -65,7 +65,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilitiesAmount>());
 
         PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
-            It.Is<LiabilityDto>(l => l.Name == liability.Name && l.MarkedForReduction == true)),
+            It.Is<LiabilityDto>(l => l.Type == liability.Type && l.MarkedForReduction == true)),
             Times.Once);
     }
 
@@ -77,7 +77,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var liability = Liabilities.First(l => l.Name.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         var testPerson = TestPerson.Clone();
         testPerson.Cash = cash;

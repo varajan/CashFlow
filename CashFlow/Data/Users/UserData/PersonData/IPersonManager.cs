@@ -61,14 +61,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     person.Liabilities =
         [
-            new() { Name = Liability.Taxes, FullAmount = 0 /*defaults.Liabilities.Taxes*/, Cashflow = -defaults.Expenses.Taxes, },
-            new() { Name = Liability.Mortgage, FullAmount = defaults.Liabilities.Mortgage, Cashflow = -defaults.Expenses.Mortgage, },
-            new() { Name = Liability.School_Loan, FullAmount = defaults.Liabilities.SchoolLoan, Cashflow = -defaults.Expenses.SchoolLoan, },
-            new() { Name = Liability.Car_Loan, FullAmount = defaults.Liabilities.CarLoan, Cashflow = -defaults.Expenses.CarLoan, },
-            new() { Name = Liability.Credit_Card, FullAmount = defaults.Liabilities.CreditCard, Cashflow = -defaults.Expenses.CreditCard, },
-            new() { Name = Liability.Bank_Loan, FullAmount = defaults.Liabilities.BankLoan, Cashflow = -defaults.Expenses.BankLoan, },
-            new() { Name = Liability.Others, FullAmount = 0 /*defaults.Liabilities.Others*/, Cashflow = -defaults.Expenses.Others, },
-            new() { Name = Liability.Small_Credits, FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
+            new() { Type = Liability.Taxes, Name = Liability.Taxes.AsString(), FullAmount = 0 /*defaults.Liabilities.Taxes*/, Cashflow = -defaults.Expenses.Taxes, },
+            new() { Type = Liability.Mortgage, Name = Liability.Mortgage.AsString(), FullAmount = defaults.Liabilities.Mortgage, Cashflow = -defaults.Expenses.Mortgage, },
+            new() { Type = Liability.School_Loan, Name = Liability.School_Loan.AsString(), FullAmount = defaults.Liabilities.SchoolLoan, Cashflow = -defaults.Expenses.SchoolLoan, },
+            new() { Type = Liability.Car_Loan, Name = Liability.Car_Loan.AsString(), FullAmount = defaults.Liabilities.CarLoan, Cashflow = -defaults.Expenses.CarLoan, },
+            new() { Type = Liability.Credit_Card, Name = Liability.Credit_Card.AsString(), FullAmount = defaults.Liabilities.CreditCard, Cashflow = -defaults.Expenses.CreditCard, },
+            new() { Type = Liability.Bank_Loan, Name = Liability.Bank_Loan.AsString(), FullAmount = defaults.Liabilities.BankLoan, Cashflow = -defaults.Expenses.BankLoan, },
+            new() { Type = Liability.Others, Name = Liability.Others.AsString(), FullAmount = 0 /*defaults.Liabilities.Others*/, Cashflow = -defaults.Expenses.Others, },
+            new() { Type = Liability.Small_Credit, Name = Liability.Small_Credit.AsString(), FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits, },
         ];
 
         person.Cash += person.CashFlow;
@@ -107,8 +107,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
-            $"*{incomeTerm}:* {person.Assets.Sum(a => a.CashFlow).AsCurrency()}{Environment.NewLine}" +
-            //$"*{ExpensesTerm}:* {Expenses.Total.AsCurrency()}{Environment.NewLine}" +
+            $"*{incomeTerm}:* {(person.Assets.Sum(a => a.CashFlow - person.BoatPayment)).AsCurrency()}{Environment.NewLine}" +
             $"*{expensesTerm}:* {person.TotalExpenses.AsCurrency()}{Environment.NewLine}" +
             $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
     }
@@ -238,7 +237,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Small_Credits, expenses, amount);
+                person.UpdateLiability(Liability.Small_Credit, expenses, amount);
                 break;
 
             case ActionType.BankLoan:
@@ -470,34 +469,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     #region Assets
 
     public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => Read(user).Assets;
-    //{
-
-    //    //var ids = DataBase.GetColumn($"SELECT ID FROM Assets WHERE Type = {type} AND UserID = {user.Id}");
-    //    //return ids.Select(id => ReadAsset(id.ToLong(), user)).ToList();
-    //}
 
     public AssetDto ReadAsset(long id, IUser user) => Read(user).Assets.First(a => a.Id == id);
-    //{
-    //    var sql = $"SELECT * FROM Assets WHERE AssetID = {id} AND UserID = {user.Id}";
-    //    var data = DataBase.GetRow(sql);
-
-    //    return new AssetDto
-    //    {
-    //        Type = data["Type"].ParseEnum<AssetType>(),
-    //        Title = data["Title"],
-    //        Id = data["Id"].ToInt(),
-    //        UserId = data["UserId"].ToInt(),
-    //        Price = data["Price"].ToInt(),
-    //        SellPrice = data["SellPrice"].ToInt(),
-    //        Qtty = data["Qtty"].ToInt(),
-    //        Mortgage = data["Mortgage"].ToInt(),
-    //        TotalCashFlow = data["TotalCashFlow"].ToInt(),
-    //        CashFlow = data["CashFlow"].ToInt(),
-    //        BigCircle = data["BigCircle"].ToInt() == 1,
-    //        IsDraft = data["IsDraft"].ToInt() == 1,
-    //        IsDeleted = data["IsDeleted"].ToInt() == 1,
-    //    };
-    //}
 
     public void CreateAsset(IUser user, AssetDto asset)
     {

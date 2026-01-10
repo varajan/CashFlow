@@ -71,7 +71,7 @@ public class DoodadsTests : StagesBaseTest
             "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
             18_000.AsCurrency(),
             firstPayment.AsCurrency(),
-            (-340).AsCurrency());
+            340.AsCurrency());
         var creditMessage = string.Format("You've taken {0} from bank.", firstPayment.AsCurrency());
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash });

@@ -4,7 +4,6 @@ public enum Liability
 {
     Taxes,
     Others,
-    Small_Credits,
     Mortgage,
     School_Loan,
     Car_Loan,

@@ -15,7 +15,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
         {
             var liability = PersonManager.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
             var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
-            var type = Terms.Get(-1, CurrentUser, liability.Name.AsString());
+            var type = Terms.Get(-1, CurrentUser, liability.Type.AsString());
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }

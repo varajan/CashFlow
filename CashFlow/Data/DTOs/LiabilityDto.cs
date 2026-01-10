@@ -10,5 +10,6 @@ public class LiabilityDto
     public bool Deleted { get; set; }
     public int FullAmount { get; set; }
     public int Cashflow { get; set; }
-    public Liability Name { get; set; }
+    public Liability Type { get; set; }
+    public string Name { get; set; }
 }

@@ -9,7 +9,7 @@ namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 public class BankruptcySellAssets(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
     private PersonDto Person => PersonManager.Read(CurrentUser);
-    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Name == Liability.Bank_Loan);
+    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);
     private IEnumerable<AssetDto> Assets => Person.Assets.Where(a => !a.IsDeleted).OrderBy(x => x.Type);
 
     public override string Message
