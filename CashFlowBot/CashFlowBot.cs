@@ -16,8 +16,6 @@ public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
-    //private static ITermsService TermsService => ServicesProvider.Get<ITermsService>();
-    //private static IAvailableAssets Assets => ServicesProvider.Get<IAvailableAssets>();
 
     private static string BotToken
     {
