@@ -7,7 +7,7 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 public class ShowMyData(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
 {
-    public override string Message => PersonManager.GetDescription(CurrentUser);
+    public override string Message => PersonManager.GetDescription(CurrentUser, false);
 
     public override List<string> Buttons =>
     [

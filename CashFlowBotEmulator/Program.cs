@@ -7,31 +7,27 @@ using CashFlowBotEmulator;
 
 ServicesProvider.Init();
 
-ILogger Logger = ServicesProvider.Get<ILogger>();
-IDataBase DataBase = ServicesProvider.Get<IDataBase>();
+var Logger = ServicesProvider.Get<ILogger>();
+var DataBase = ServicesProvider.Get<IDataBase>();
 
 while (true)
 {
-    var file = "message.txt";
-    if (!TryReadFile(file, out string message))
+    if (!TryReadFirstFile(out int chatId, out string message, out string file))
     {
-        Thread.Sleep(1_000);
+        Thread.Sleep(100);
         continue;
     }
 
-    //var message = File.ReadAllText(file);
     File.Delete(file);
     if (message == "exit") break;
 
-    HandleUpdateAsync(message!).GetAwaiter().GetResult();
+    HandleUpdateAsync(chatId, message).GetAwaiter().GetResult();
 }
 
-async Task HandleUpdateAsync(string update)
+async Task HandleUpdateAsync(int chatId, string message)
 {
     try
     {
-        var chatId = update.SubStringTo(":").ToLong();
-        var message = update.SubString(":").Trim();
         var notifyService = new EmulationNotifyService(chatId);
         var user = new CashFlowUsersUser(DataBase, notifyService, chatId);
         var users = GetOtherUsers(user);
@@ -69,17 +65,23 @@ List<IUser> GetOtherUsers(IUser currentUser) =>
         .Select(x => (IUser)new CashFlowUsersUser(DataBase, new EmulationNotifyService(x), x))
         .ToList();
 
-static bool TryReadFile(string path, out string content)
+static bool TryReadFirstFile(out int chatId, out string message, out string file)
 {
-    content = null!;
+    chatId = default;
+    message = default;
+    file = default;
+
     try
     {
-        using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.None);
+        file = Directory.GetFiles(AppContext.BaseDirectory, "*.cmd").OrderBy(x => x).FirstOrDefault()!;
+        using var fs = new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None);
         using var sr = new StreamReader(fs);
-        content = sr.ReadToEnd().Trim();
+        chatId = file.SubString("_", ".").ToInt();
+        message = sr.ReadToEnd().Trim();
+
         return true;
     }
-    catch (IOException)
+    catch (Exception)
     {
         return false;
     }

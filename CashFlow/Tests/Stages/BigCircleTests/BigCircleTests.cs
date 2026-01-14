@@ -32,6 +32,7 @@ public class BigCircleTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
+        var smallCircleDescription = $"{CurrentUserMock.Object.Name} at SmallCircle!";
         var bigCircleDescription = $"{CurrentUserMock.Object.Name} at BigCircle!";
         var buttons = new[]
         {
@@ -47,7 +48,8 @@ public class BigCircleTests : StagesBaseTest
             "Stop Game",
         };
 
-        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object)).Returns(bigCircleDescription);
+        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object, false)).Returns(smallCircleDescription);
+        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object, true)).Returns(bigCircleDescription);
 
         // Act
 

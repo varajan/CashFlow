@@ -12,7 +12,7 @@ public interface IPersonManager
     void Create(string profession, IUser user);
     void Update(PersonDto person);
     PersonDto Read(IUser user);
-    string GetDescription(IUser user);
+    string GetDescription(IUser user, bool compact = true);
     void Delete(IUser user);
     void Update(IUser user, LiabilityDto liability);
 
@@ -84,11 +84,87 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public PersonDto Read(IUser user) => DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
 
-    public string GetDescription(IUser user)
+    public string GetDescription(IUser user, bool compact = true)
     {
         var person = Read(user);
         user.LastActive = DateTime.Now;
-        return person.BigCircle ? BigCircleDescription(person, user) : SmallCircleDescription(person, user);
+        var description = person.BigCircle
+            ? BigCircleDescription(person, user)
+            : SmallCircleDescription(person, user);
+
+        if (!compact)
+        {
+            description += AssetsDescription(person, user);
+            description += ExpensesDescription(person, user);
+        }
+
+        return description;
+    }
+
+    private string AssetsDescription(PersonDto person, IUser user)
+    {
+        if (!person.Assets.Any(a => !a.IsDeleted))
+            return string.Empty;
+
+        var assetsTerm = Terms.Get(56, user, "Assets");
+        var assets = $"{Environment.NewLine}{Environment.NewLine}*{assetsTerm}:*{Environment.NewLine}";
+        assets += string.Join(Environment.NewLine, person.Assets
+            .Where(a => !a.IsDeleted)
+            .OrderBy(a => a.Type)
+            .Select(a => $"• {GetAssetDescription(a, user)}"));
+
+        return assets;
+    }
+
+    private string ExpensesDescription(PersonDto person, IUser user)
+    {
+        var expensesTerm = Terms.Get(54, user, "Expenses");
+        var taxesTerm = Terms.Get(58, user, "Taxes");
+        var mortgageTerm = Terms.Get(59, user, "Mortgage/Rent Pay");
+        var schoolLoanTerm = Terms.Get(44, user, "School Loan");
+        var carLoanTerm = Terms.Get(45, user, "Car Loan");
+        var creditCardTerm = Terms.Get(46, user, "Credit Card");
+        var smallCreditsTerm = Terms.Get(92, user, "Small Credit");
+        var bankLoanTerm = Terms.Get(47, user, "Bank Loan");
+        var boatLoanTerm = Terms.Get(114, user, "Boat Loan");
+        var otherPaymentTerm = Terms.Get(60, user, "Other Payments");
+        var childrenTerm = Terms.Get(61, user, "Children");
+        var childrenExpensesTerm = Terms.Get(62, user, "Children Expenses");
+        var perChildTerm = Terms.Get(63, user, "per child");
+
+        var mortgage = GetLiability(person, Liability.Mortgage);
+        var schoolLoan = GetLiability(person, Liability.School_Loan);
+        var carLoan = GetLiability(person, Liability.Car_Loan);
+        var creditCard = GetLiability(person, Liability.Credit_Card);
+        var smallCredits = GetLiability(person, Liability.Small_Credit);
+        var bankLoan = GetLiability(person, Liability.Bank_Loan);
+        var boatLoan = GetLiability(person, Liability.Boat_Loan);
+        var taxes = GetLiability(person, Liability.Taxes);
+        var others = GetLiability(person, Liability.Others);
+        var childrenExpenses = person.Children * person.PerChild;
+        var children = person.Children;
+
+        var expenses = $"{Environment.NewLine}{Environment.NewLine}*{expensesTerm}:*{Environment.NewLine}";
+        expenses += $"*{taxesTerm}:* {taxes.AsCurrency()}{Environment.NewLine}";
+
+        if (mortgage > 0) expenses += $"*{mortgageTerm}:* {mortgage.AsCurrency()}{Environment.NewLine}";
+        if (schoolLoan > 0) expenses += $"*{schoolLoanTerm}:* {schoolLoan.AsCurrency()}{Environment.NewLine}";
+        if (carLoan > 0) expenses += $"*{carLoanTerm}:* {carLoan.AsCurrency()}{Environment.NewLine}";
+        if (creditCard > 0) expenses += $"*{creditCardTerm}:* {creditCard.AsCurrency()}{Environment.NewLine}";
+        if (smallCredits > 0) expenses += $"*{smallCreditsTerm}:* {smallCredits.AsCurrency()}{Environment.NewLine}";
+        if (bankLoan > 0) expenses += $"*{bankLoanTerm}:* {bankLoan.AsCurrency()}{Environment.NewLine}";
+        if (boatLoan > 0) expenses += $"*{boatLoanTerm}:* {boatLoan.AsCurrency()}{Environment.NewLine}";
+        expenses += $"*{otherPaymentTerm}:* {others.AsCurrency()}{Environment.NewLine}";
+        if (childrenExpenses > 0) expenses += $"*{childrenTerm}:* {children} ({person.PerChild.AsCurrency()} {perChildTerm}){Environment.NewLine}";
+        if (childrenExpenses > 0) expenses += $"*{childrenExpensesTerm}:* {childrenExpenses.AsCurrency()}{Environment.NewLine}";
+
+        return expenses;
+    }
+
+    private static int GetLiability(PersonDto person, Liability name)
+    {
+        var liability = person.Liabilities.FirstOrDefault(l => l.Type == name)?.Cashflow ?? 0;
+        return Math.Abs(liability);
     }
 
     private string SmallCircleDescription(PersonDto person, IUser user)
@@ -105,7 +181,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
             $"*{incomeTerm}:* {(person.Assets.Sum(a => a.CashFlow - person.BoatPayment)).AsCurrency()}{Environment.NewLine}" +
-            $"*{expensesTerm}:* {person.TotalExpenses.AsCurrency()}{Environment.NewLine}" +
+            $"*{expensesTerm}:* {(-person.TotalExpenses).AsCurrency()}{Environment.NewLine}" +
             $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
     }
 

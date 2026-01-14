@@ -26,7 +26,8 @@ public class ShowMyDataTests : StagesBaseTest
             "Main menu",
         };
 
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object)).Returns(description);
+        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns("Compact description");
+        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, false)).Returns(description);
 
         // Act
 

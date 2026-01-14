@@ -6,7 +6,7 @@ namespace CashFlowBotEmulator;
 
 public class EmulationNotifyService(long chatId) : INotifyService
 {
-    private string FileName => $"EmulationChat_{chatId}.txt";
+    private string FileName => $"{chatId}.msg";
 
     public Task SetButtons(IStage stage)
     {

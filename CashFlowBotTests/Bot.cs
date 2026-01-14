@@ -3,11 +3,11 @@ using CashFlow.Extensions;
 
 namespace CashFlowBotTests;
 
-public static class Bot
+public class Bot()
 {
     private static readonly string emulatorDirectory = "C:\\git\\CashFlow\\CashFlowBotEmulator\\emulator";
 
-    public static void Start() =>
+    public void Start() =>
         Process.Start(new ProcessStartInfo
         {
             FileName = "CashFlowBotEmulator.exe",
@@ -15,14 +15,13 @@ public static class Bot
             UseShellExecute = true
         });
 
-    public static void Stop() => SendMessage("exit");
+    public void Stop() => SendMessage("exit");
 
-    public static void SendMessage(string message, long? chatId = null)
+    public void SendMessage(string message, long? chatId = null)
     {
         var lastReply = chatId.HasValue ? GetReply(chatId.Value) : null;
-        var text = chatId.HasValue ? $"{chatId}:{message}" : message;
-        var file = Path.Combine(emulatorDirectory, "message.txt");
-        File.WriteAllText(file, text);
+        var file = Path.Combine(emulatorDirectory, $"{DateTime.UtcNow.Ticks}_{chatId}.cmd");
+        File.WriteAllText(file, message);
         WaitForReply(chatId, lastReply);
     }
 
@@ -42,7 +41,7 @@ public static class Bot
         throw new TimeoutException("No reply from bot within the expected time.");
     }
 
-    private static string GetFileName(long chatId) => Path.Combine(emulatorDirectory, $"EmulationChat_{chatId}.txt");
+    private static string GetFileName(long chatId) => Path.Combine(emulatorDirectory, $"{chatId}.msg");
 
     public static MessageDto GetReply(long chatId)
     {
@@ -51,6 +50,8 @@ public static class Bot
 
         var lastMessage = File.ReadAllLines(fileName).Last();
         var message = lastMessage.Deserialize<MessageDto>();
+        message.Message = message.Message.Trim();
+
         return message;
     }
 }

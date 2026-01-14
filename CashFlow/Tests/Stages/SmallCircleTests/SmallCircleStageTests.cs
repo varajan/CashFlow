@@ -44,7 +44,7 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
         testPerson.ReadyForBigCircle = isReadyForBigCircle;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object)).Returns(description);
+        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns(description);
 
         // Act
 

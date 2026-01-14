@@ -37,7 +37,7 @@ public class FriendsTests : StagesBaseTest
         var description = $"{testUser.Name} description";
         var top5 = $"{testUser.Name} history";
 
-        PersonManagerMock.Setup(p => p.GetDescription(testUser)).Returns(description);
+        PersonManagerMock.Setup(p => p.GetDescription(testUser, true)).Returns(description);
         PersonManagerMock.Setup(p => p.HistoryTopFive(testUser, CurrentUserMock.Object)).Returns(top5);
 
         // Act
