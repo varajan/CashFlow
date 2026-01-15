@@ -10,8 +10,12 @@ public class Bot()
     public static void SendMessage(string message, long? chatId = null)
     {
         var lastReply = chatId.HasValue ? GetReply(chatId.Value) : null;
-        var file = Path.Combine(emulatorDirectory, $"{DateTime.UtcNow.Ticks}_{chatId}.cmd");
-        File.WriteAllText(file, message);
+        var fileName = $"{DateTime.UtcNow.Ticks}_{chatId}";
+        var tmpFile = Path.Combine(emulatorDirectory, $"{fileName}.txt");
+        var finalFile = Path.Combine(emulatorDirectory, $"{fileName}.cmd");
+
+        File.WriteAllText(tmpFile, message);
+        File.Move(tmpFile, finalFile);
         WaitForReply(chatId, lastReply);
     }
 
