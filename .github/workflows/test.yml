@@ -21,17 +21,16 @@ jobs:
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
-      - name: Unit Tests
+      - name: Run Unit Tests
         run: dotnet test CashFlowBot/CashFlowBot.csproj --configuration Release --no-build --verbosity minimal
 
       - name: Build Bot Emulator
         run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
 
-      - name: Run Bot Emulator
+      - name: Launch Bot Emulator
         run: |
           chmod +x emulator/CashFlowBotEmulator
           ./emulator/CashFlowBotEmulator &
 
-      - name: System Tests
-        working-directory: ./emulator
-        run: dotnet test ../CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal
+      - name: Run System Tests
+        run: dotnet test CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal

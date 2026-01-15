@@ -5,8 +5,7 @@ namespace CashFlowBotTests;
 
 public class Bot()
 {
-    private static readonly string emulatorDirectory = "./../../../../emulator";
-    //private static readonly string emulatorDirectory = Directory.GetCurrentDirectory();
+    private static readonly string emulatorDirectory = "./../../../../../emulator";
 
     public static void SendMessage(string message, long? chatId = null)
     {
@@ -29,7 +28,7 @@ public class Bot()
             Thread.Sleep(100);
         }
 
-        throw new TimeoutException($"No reply from bot within the expected time.\r\n{emulatorDirectory}");
+        throw new TimeoutException("No reply from bot within the expected time.");
     }
 
     private static string GetFileName(long chatId) => Path.Combine(emulatorDirectory, $"{chatId}.msg");
