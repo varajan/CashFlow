@@ -34,7 +34,4 @@ jobs:
 
       - name: System Tests
         working-directory: ./emulator
-        run: dotnet test ../CashFlowBotTests/CashFlowBotTests.csproj \
-          --configuration Release \
-          --no-build \
-          --verbosity minimal
+        run: dotnet test ../CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal
