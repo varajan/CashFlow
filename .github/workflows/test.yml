@@ -18,8 +18,14 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
-      - name: Build
+      - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
-      - name: Unit Test
+      - name: Unit Tests
         run: dotnet test CashFlowBot/CashFlowBot.csproj --configuration Release --no-build --verbosity minimal
+
+      - name: Build Bot Emulator
+        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release
+
+      - name: System Tests
+        run: dotnet test CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal
