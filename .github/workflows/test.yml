@@ -25,7 +25,16 @@ jobs:
         run: dotnet test CashFlowBot/CashFlowBot.csproj --configuration Release --no-build --verbosity minimal
 
       - name: Build Bot Emulator
-        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release
+        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
+
+      - name: Run Bot Emulator
+        run: |
+          chmod +x artifacts/emulator/CashFlowBotEmulator
+          ./artifacts/emulator/CashFlowBotEmulator &
 
       - name: System Tests
-        run: dotnet test CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal
+        working-directory: ./emulator
+        run: dotnet test ../../CashFlowBotTests/CashFlowBotTests.csproj \
+          --configuration Release \
+          --no-build \
+          --verbosity minimal

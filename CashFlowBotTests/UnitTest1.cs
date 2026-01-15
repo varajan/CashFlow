@@ -6,11 +6,11 @@ public class Tests
 
     public Tests() => Bot = new Bot();
 
-    [OneTimeSetUp]
-    public void Setup() => Bot.Start();
+    //[OneTimeSetUp]
+    //public void Setup() => Bot.Start();
 
-    [OneTimeTearDown]
-    public void TearDown() => Bot.Stop();
+    //[OneTimeTearDown]
+    //public void TearDown() => Bot.Stop();
 
     [Test]
     public void SmallOpportunity_Buy_and_Sell_Stocks()
