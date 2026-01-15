@@ -43,7 +43,7 @@ public class Bot()
 
         var lastMessage = File.ReadAllLines(fileName).Last();
         var message = lastMessage.Deserialize<MessageDto>();
-        message.Message = message.Message.Trim();
+        message.Message = message?.Message?.Trim();
 
         return message;
     }
