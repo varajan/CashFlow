@@ -5,12 +5,12 @@ namespace CashFlowBotTests;
 
 public class Bot()
 {
-    private static readonly string emulatorDirectory = "./../../../../../emulator";
+    private static readonly string emulatorDirectory = "./../../../../emulator";
 
     public static void SendMessage(string message, long? chatId = null)
     {
         var lastReply = chatId.HasValue ? GetReply(chatId.Value) : null;
-        var fileName = $"{DateTime.UtcNow.Ticks}_{chatId}";
+        var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{chatId}";
         var tmpFile = Path.Combine(emulatorDirectory, $"{fileName}.txt");
         var finalFile = Path.Combine(emulatorDirectory, $"{fileName}.cmd");
 
