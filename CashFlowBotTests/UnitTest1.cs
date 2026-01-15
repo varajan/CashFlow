@@ -55,6 +55,7 @@ public class Tests
         // Assert
         user.SendMessage("Show my Data");
         var reply = user.GetReply();
-        Assert.That(reply.Message, Is.EqualTo(afterBuyStocks));
+        var allMessages = user.GetAllMessages();
+        Assert.That(reply.Message, Is.EqualTo(afterBuyStocks), allMessages);
     }
 }

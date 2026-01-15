@@ -47,4 +47,11 @@ public class Bot()
 
         return message;
     }
+
+    public static string GetAllMessages(long chatId)
+    {
+        var fileName = Path.Combine(emulatorDirectory, $"{chatId}.msg");
+        if (!File.Exists(fileName)) return string.Empty;
+        return File.ReadAllText(fileName);
+    }
 }
