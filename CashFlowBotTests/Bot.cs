@@ -5,18 +5,8 @@ namespace CashFlowBotTests;
 
 public class Bot()
 {
-    private static readonly string emulatorDirectory = Directory.GetCurrentDirectory();
-    //"C:\\git\\CashFlow\\CashFlowBotEmulator\\emulator";
-
-    //public void Start() =>
-    //    Process.Start(new ProcessStartInfo
-    //    {
-    //        FileName = "CashFlowBotEmulator",
-    //        WorkingDirectory = emulatorDirectory,
-    //        UseShellExecute = false
-    //    });
-
-    //public void Stop() => SendMessage("exit");
+    private static readonly string emulatorDirectory = "./../../../../emulator";
+    //private static readonly string emulatorDirectory = Directory.GetCurrentDirectory();
 
     public static void SendMessage(string message, long? chatId = null)
     {
