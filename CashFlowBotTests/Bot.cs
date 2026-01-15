@@ -26,10 +26,11 @@ public class Bot()
         var stopwatch = Stopwatch.StartNew();
         while (stopwatch.Elapsed < TimeSpan.FromSeconds(15))
         {
+            Thread.Sleep(100);
+
             var reply = GetReply(chatId.Value);
             if (lastReply == null && reply != null) return;
             if (lastReply != null && reply.UtcNow > lastReply.UtcNow) return;
-            Thread.Sleep(100);
         }
 
         throw new TimeoutException("No reply from bot within the expected time.");
