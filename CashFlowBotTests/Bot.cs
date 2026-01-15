@@ -24,7 +24,7 @@ public class Bot()
         if (!chatId.HasValue) return;
 
         var stopwatch = Stopwatch.StartNew();
-        while (stopwatch.Elapsed < TimeSpan.FromSeconds(5))
+        while (stopwatch.Elapsed < TimeSpan.FromSeconds(15))
         {
             var reply = GetReply(chatId.Value);
             if (lastReply == null && reply != null) return;

@@ -29,8 +29,9 @@ jobs:
 
       - name: Launch Bot Emulator
         run: |
-          chmod +x emulator/CashFlowBotEmulator
-          ./emulator/CashFlowBotEmulator &
+          cd emulator
+          chmod +x CashFlowBotEmulator
+          ./CashFlowBotEmulator &
 
       - name: Run System Tests
         run: dotnet test CashFlowBotTests/CashFlowBotTests.csproj --configuration Release --no-build --verbosity minimal
