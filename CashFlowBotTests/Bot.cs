@@ -39,7 +39,7 @@ public class Bot()
             Thread.Sleep(100);
         }
 
-        throw new TimeoutException("No reply from bot within the expected time.");
+        throw new TimeoutException($"No reply from bot within the expected time.\r\n{emulatorDirectory}");
     }
 
     private static string GetFileName(long chatId) => Path.Combine(emulatorDirectory, $"{chatId}.msg");
