@@ -35,11 +35,9 @@ public class Bot()
         throw new TimeoutException("No reply from bot within the expected time.");
     }
 
-    private static string GetFileName(long chatId) => Path.Combine(emulatorDirectory, $"{chatId}.msg");
-
     public static MessageDto GetReply(long chatId)
     {
-        var fileName = Path.Combine(emulatorDirectory, GetFileName(chatId));
+        var fileName = Path.Combine(emulatorDirectory, $"{chatId}.msg");
         if (!File.Exists(fileName)) return null;
 
         var lastMessage = File.ReadAllLines(fileName).Last();
