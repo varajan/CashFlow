@@ -25,6 +25,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
                 Directory
                     .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
                     .Where(file => file.ToLower().EndsWith(".sql"))
+                    .OrderBy(x => x)
                     .Select(File.ReadAllText)
                     .ToList()
                     .ForEach(sql => Execute(sql, _connection));
