@@ -37,7 +37,7 @@ public static class StringExtensions
         return line.Substring(start);
     }
 
-    public static string Escape(this string line) => line.Replace("_", "\\_").Replace("\r\n", "\n");
+    public static string Escape(this string line) => line.Replace("_", "\\_").Replace("\r\n", "\n").Replace("�", "•");
 
     public static bool ContainsIgnoreCase(this string line, string word) => line.Contains(word ?? string.Empty, StringComparison.OrdinalIgnoreCase);
 
