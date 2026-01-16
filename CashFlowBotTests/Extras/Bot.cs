@@ -1,11 +1,14 @@
 ﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using CashFlow.Extensions;
 
-namespace CashFlowBotTests;
+namespace CashFlowBotTests.Extras;
 
 public class Bot()
 {
-    private static readonly string emulatorDirectory = "./../../../../emulator";
+    private static readonly string emulatorDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        ? "./../../../../CashFlowBotEmulator/emulator"
+        : "./../../../../emulator";
 
     public static void SendMessage(string message, long? chatId = null)
     {

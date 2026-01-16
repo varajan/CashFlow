@@ -1,4 +1,4 @@
-﻿namespace CashFlowBotTests;
+﻿namespace CashFlowBotTests.Extras;
 
 public class MessageDto
 {
