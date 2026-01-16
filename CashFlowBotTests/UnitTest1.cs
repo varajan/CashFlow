@@ -1,3 +1,5 @@
+using CashFlow.Extensions;
+
 namespace CashFlowBotTests;
 
 public class Tests
@@ -55,7 +57,6 @@ public class Tests
         // Assert
         user.SendMessage("Show my Data");
         var reply = user.GetReply();
-        var allMessages = user.GetAllMessages();
-        Assert.That(reply.Message, Is.EqualTo(afterBuyStocks), allMessages);
+        Assert.That(reply.Message.Escape(), Is.EqualTo(afterBuyStocks.Escape()));
     }
 }
