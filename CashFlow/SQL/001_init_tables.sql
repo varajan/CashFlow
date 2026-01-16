@@ -1,4 +1,4 @@
-DROP TABLE  IF EXISTS AvailableAssets;
+--DROP TABLE  IF EXISTS AvailableAssets;
 CREATE TABLE IF NOT EXISTS Terms (ID Number, Language Text, Term Text);
 CREATE TABLE IF NOT EXISTS Users (ID Number, Stage Text, Admin Number, Name Text, Language Text, LastActive Text, FirstLogin Text);
 CREATE TABLE IF NOT EXISTS Persons (ID Number, PersonData Text);
