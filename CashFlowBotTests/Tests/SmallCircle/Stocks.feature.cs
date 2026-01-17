@@ -271,12 +271,12 @@ this.ScenarioInitialize(scenarioInfo);
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("I see transactions in history")]
-        public void ISeeTransactionsInHistory()
+        [NUnit.Framework.DescriptionAttribute("I can see transactions in history")]
+        public void ICanSeeTransactionsInHistory()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I see transactions in history", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see transactions in history", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 82
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -323,9 +323,9 @@ this.ScenarioInitialize(scenarioInfo);
 • Buy Stocks. *ON2U* - 500 @ $5
 • Get credit: $10,000
 • Buy Stocks. *OK4U* - 2000 @ $5
-• Stocks ÷2. *OK4U* - 2000 @ $1
-• Stocks ÷2. *OK4U* - 4000 @ $5
-• Stocks x2. *ON2U* - 250 @ $5
+• Stocks x2. *OK4U* - 2000 @ $1
+• Stocks x2. *OK4U* - 4000 @ $5
+• Stocks ÷2. *ON2U* - 250 @ $5
 • Sell Stocks. *OK4U* - 2000 @ $50
 • Sell Stocks. *OK4U* - 4000 @ $50", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden

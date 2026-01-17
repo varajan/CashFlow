@@ -79,7 +79,7 @@ Scenario: I can multiply and divide stocks
 		| OK4U  |     4000 | $5    |
 		| ON2U  |       50 | $10   |
 
-Scenario: I see transactions in history
+Scenario: I can see transactions in history
 	Given I am 'Diane Kelly' user
 		And I play as 'Lawyer'
 		And I buy 1000 shares of 'Ok4U' stock with price '$1' each
@@ -97,9 +97,9 @@ Scenario: I see transactions in history
 • Buy Stocks. *ON2U* - 500 @ $5
 • Get credit: $10,000
 • Buy Stocks. *OK4U* - 2000 @ $5
-• Stocks ÷2. *OK4U* - 2000 @ $1
-• Stocks ÷2. *OK4U* - 4000 @ $5
-• Stocks x2. *ON2U* - 250 @ $5
+• Stocks x2. *OK4U* - 2000 @ $1
+• Stocks x2. *OK4U* - 4000 @ $5
+• Stocks ÷2. *ON2U* - 250 @ $5
 • Sell Stocks. *OK4U* - 2000 @ $50
 • Sell Stocks. *OK4U* - 4000 @ $50
 """
