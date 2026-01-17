@@ -44,4 +44,5 @@ jobs:
           path: |
             emulator/Logs/*.*
             emulator/*.msg
+            emulator/*.db
           retention-days: 7

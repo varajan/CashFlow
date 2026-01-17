@@ -20,6 +20,17 @@ public class Steps
         user.SendMessage(role);
     }
 
+    [Given(@"I get pay check")]
+    public void GetPayCheck() => user.SendMessage("Pay Check");
+
+    [Given(@"I get (.*) in cash")]
+    public void GetMoney(string amount)
+    {
+        user.SendMessage("Show my Data");
+        user.SendMessage("Get Money");
+        user.SendMessage(amount);
+    }
+
     [Given(@"I buy (\d+) shares of '(.*)' stock with price '(.*)' each")]
     [When(@"I buy (\d+) shares of '(.*)' stock with price '(.*)' each")]
     public void BuyStocks(int count, string name, string price)
@@ -29,14 +40,23 @@ public class Steps
         user.SendMessage(name);
         user.SendMessage(price);
         user.SendMessage(count.ToString());
+    }
 
+    [Given(@"I get credit")]
+    [When (@"I get credit")]
+    public void GetCredit()
+    {
         var reply = user.GetReply();
         if (reply.Buttons.First() == "Get Credit")
         {
             user.SendMessage("Get Credit");
+            return;
         }
+
+        Assert.Fail("No credit is suggested");
     }
 
+    [Given(@"I sell '(.*)' stock with price '(.*)' each")]
     [When(@"I sell '(.*)' stock with price '(.*)' each")]
     public void SellStocks(string name, string price)
     {
@@ -46,6 +66,7 @@ public class Steps
         user.SendMessage(price);
     }
 
+    [Given(@"I (multiply|divide) '(.*)' stocks")]
     [When(@"I (multiply|divide) '(.*)' stocks")]
     public void MultiplyStocks(string action, string name)
     {
@@ -60,5 +81,59 @@ public class Steps
         user.SendMessage("Show my Data");
         var reply = user.GetReply();
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
+    }
+
+    [Then(@"My history data is following:")]
+    public void CheckHistory(string expected)
+    {
+        user.SendMessage("History");
+        var reply = user.GetReply();
+        Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
+    }
+
+    [When(@"I rollback last action")]
+    public void RollbackLastTransaction()
+    {
+        user.SendMessage("History");
+        user.SendMessage("Rollback last action");
+        user.SendMessage("Main menu");
+    }
+
+    [Then(@"I have (.*) in cash")]
+    public void CheckCash(string expectedCash)
+    {
+        user.SendMessage("Show my Data");
+        var reply = user.GetReply();
+        var cashLine = reply.Message
+            .Escape()
+            .Split("\n")
+            .First(line => line.Contains("Cash:"));
+        var actualCash = cashLine.Split(" ").Last().Trim();
+        Assert.That(actualCash, Is.EqualTo(expectedCash));
+    }
+
+    [Then(@"My assets are:")]
+    public void CheckAssets(Table assets)
+    {
+        var expected = assets.Rows
+            .Select(row =>
+            {
+                var title = row["Title"];
+                var qtty = int.Parse(row["Quantity"]);
+                var price = row["Price"];
+
+                return $"• *{title}* - {qtty} @ {price}";
+            })
+            .ToList();
+
+        user.SendMessage("Show my Data");
+        var reply = user.GetReply();
+        var actual = reply.Message.SubString("*Assets:*", "*Expenses:*")
+            .Escape()
+            .Split("\n")
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToList();
+
+        Assert.That(actual, Is.EquivalentTo(expected));
     }
 }

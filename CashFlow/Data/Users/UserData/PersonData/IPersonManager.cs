@@ -331,7 +331,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.BuyLand:
             case ActionType.StartCompany:
                 person.Cash += asset.Price - asset.Mortgage;
-                DeleteAsset(asset);
+                DeleteAsset(person, asset);
                 break;
 
             case ActionType.IncreaseCashFlow:
@@ -342,19 +342,19 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.SellBusiness:
             case ActionType.SellLand:
                 person.Cash -= asset.SellPrice - asset.Mortgage;
-                RestoreAsset(asset);
+                RestoreAsset(person, asset);
                 break;
 
             case ActionType.BuyStocks:
             case ActionType.BuyCoins:
                 person.Cash += asset.Price * asset.Qtty;
-                DeleteAsset(asset);
+                DeleteAsset(person, asset);
                 break;
 
             case ActionType.SellStocks:
             case ActionType.SellCoins:
                 person.Cash -= asset.Qtty * asset.SellPrice;
-                RestoreAsset(asset);
+                RestoreAsset(person, asset);
                 break;
 
             case ActionType.Stocks1To2:
@@ -371,12 +371,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             case ActionType.BuyBoat:
                 person.Cash += 1_000;
-                DeleteAsset(boat);
+                DeleteAsset(person, boat);
                 break;
 
             case ActionType.PayOffBoat:
                 person.Cash += amount;
-                RestoreAsset(boat);
+                RestoreAsset(person, boat);
                 break;
 
             case ActionType.Bankruptcy:
@@ -386,7 +386,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.BankruptcySellAsset:
                 person.Cash -= asset.BancrupcySellPrice;
                 person.Bankruptcy = true;
-                RestoreAsset(asset);
+                RestoreAsset(person, asset);
                 break;
 
             case ActionType.BankruptcyDebtRestructuring:
@@ -575,7 +575,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         ////return Read(newId, asset.UserId);
     }
 
-    public void DeleteAsset(AssetDto asset) => throw new NotImplementedException();
+    public void DeleteAsset(PersonDto person, AssetDto asset)
+    {
+        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
+        person.Assets[index].IsDeleted = true;
+        Update(person);
+    }
 
     public void DeleteAsset(IUser user, AssetDto asset)
     {
@@ -585,7 +590,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         Update(person);
     }
 
-    public void RestoreAsset(AssetDto asset) => throw new NotImplementedException();
+    public void RestoreAsset(PersonDto person, AssetDto asset)
+    {
+        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
+        person.Assets[index].IsDeleted = false;
+        Update(person);
+    }
 
     public void UpdateAsset(IUser user, AssetDto asset)
     {
