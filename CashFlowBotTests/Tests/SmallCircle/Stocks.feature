@@ -3,8 +3,8 @@
 Scenario: I can buy stocks
 	Given I am 'Michael Scott' user
 		And I play as 'Engineer'
-	When I buy 1000 shares of 'OK4U' stock with price '$1' each
-		And I buy 500 shares of 'ON2U' stock with price '$5' each
+	When I buy 1000 shares of 'ok4u' stock with price '$1' each
+		And I buy 500 shares of 'on2u' stock with price '$5' each
 			But I get credit
 	Then My Data is following:
 """
@@ -64,43 +64,26 @@ Scenario: I can sell stocks
 Scenario: I can multiply and divide stocks
 	Given I am 'Jim Halpert' user
 		And I play as 'Business manager'
+		And I get $20,000 in cash
 		And I buy 1000 shares of 'OK4U' stock with price '$1' each
 		And I buy 500 shares of 'ON2U' stock with price '$5' each
-			But I get credit
 		And I buy 2000 shares of 'OK4U' stock with price '$5' each
-			But I get credit
+		And I buy 100 shares of 'ON2U' stock with price '$10' each
 	When I multiply 'OK4U' stocks
 		But I divide 'ON2U' stocks
-	Then My Data is following:
-"""
-*Profession:* Business manager
-*Cash:* $570
-*Salary:* $4,600
-*Income:* $0
-*Expenses:* $4,130
-*Cash Flow*: $470
-
-*Assets:*
-• *OK4U* - 2000 @ $1
-• *ON2U* - 250 @ $5
-• *OK4U* - 4000 @ $5
-
-*Expenses:*
-*Taxes:* $910
-*Mortgage/Rent Pay:* $700
-*School Loan:* $60
-*Car Loan:* $120
-*Credit Card:* $90
-*Small Credit:* $50
-*Bank Loan:* $1,200
-*Other Payments:* $1,000
-"""
+	Then I have $7,570 in cash
+		And My assets are:
+		| Title | Quantity | Price |
+		| OK4U  |     2000 | $1    |
+		| ON2U  |      250 | $5    |
+		| OK4U  |     4000 | $5    |
+		| ON2U  |       50 | $10   |
 
 Scenario: I see transactions in history
 	Given I am 'Diane Kelly' user
 		And I play as 'Lawyer'
-		And I buy 1000 shares of 'OK4U' stock with price '$1' each
-		And I buy 500 shares of 'ON2U' stock with price '$5' each
+		And I buy 1000 shares of 'Ok4U' stock with price '$1' each
+		And I buy 500 shares of 'on2U' stock with price '$5' each
 			But I get credit
 		And I buy 2000 shares of 'OK4U' stock with price '$5' each
 			But I get credit
