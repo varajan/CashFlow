@@ -97,10 +97,10 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I play as \'Engineer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 6
- testRunner.When("I buy 1000 shares of \'ok4u\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I buy 1000 shares of \'ok4u\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 7
-  testRunner.And("I buy 500 shares of \'on2u\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'on2u\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 8
    testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -155,22 +155,22 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I play as \'Track driver\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 36
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 37
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 38
    testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 39
-  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 40
    testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 41
- testRunner.When("I sell \'OK4U\' stock with price \'$100\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I sell \'OK4U\' stock with price $100 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 42
  testRunner.Then("My Data is following:", @"*Profession:* Track driver
@@ -223,16 +223,16 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $20,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 68
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 69
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 70
-  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 71
-  testRunner.And("I buy 100 shares of \'ON2U\' stock with price \'$10\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 100 shares of \'ON2U\' stock with price $10 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 72
  testRunner.When("I multiply \'OK4U\' stocks", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -294,16 +294,16 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I play as \'Lawyer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 85
-  testRunner.And("I buy 1000 shares of \'Ok4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'Ok4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 86
-  testRunner.And("I buy 500 shares of \'on2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'on2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 87
    testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 88
-  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 2000 shares of \'OK4U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 89
    testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -315,7 +315,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.But("I divide \'ON2U\' stocks", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 92
-  testRunner.And("I sell \'OK4U\' stock with price \'$50\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I sell \'OK4U\' stock with price $50 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 93
  testRunner.Then("My history data is following:", @"• Buy Stocks. *OK4U* - 1000 @ $1
@@ -360,10 +360,10 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $10,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 111
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 112
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 113
  testRunner.When("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -413,13 +413,13 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $5,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 123
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 124
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 125
-  testRunner.But("I sell \'OK4U\' stock with price \'$50\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+  testRunner.But("I sell \'OK4U\' stock with price $50 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 126
  testRunner.When("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
@@ -473,13 +473,13 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $5,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 137
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 138
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 139
-  testRunner.And("I buy 100 shares of \'OK4U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 100 shares of \'OK4U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 140
  testRunner.But("I multiply \'OK4U\' stocks", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -540,13 +540,13 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $5,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 153
-  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price \'$1\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 1000 shares of \'OK4U\' stock with price $1 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 154
-  testRunner.And("I buy 500 shares of \'ON2U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 500 shares of \'ON2U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 155
-  testRunner.And("I buy 100 shares of \'OK4U\' stock with price \'$5\' each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 100 shares of \'OK4U\' stock with price $5 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 156
  testRunner.But("I divide \'OK4U\' stocks", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");

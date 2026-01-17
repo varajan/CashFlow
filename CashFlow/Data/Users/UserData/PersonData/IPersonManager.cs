@@ -625,24 +625,24 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         return asset.Type switch
         {
             AssetType.Stock => asset.IsDeleted
-                                ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
+                            ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
                             : asset.CashFlow == 0
-                            ? $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}"
-                                    : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()} x {asset.Qtty} = {(asset.CashFlow * asset.Qtty).AsCurrency()}",
+                                ? $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}"
+                                : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()} x {asset.Qtty} = {(asset.CashFlow * asset.Qtty).AsCurrency()}",
 
             AssetType.RealEstate => asset.IsDeleted
                             ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
                             : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
 
-            AssetType.LandTitle => asset.IsDeleted
-                                ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
-                                : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}",
+            AssetType.Land => asset.IsDeleted
+                            ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}",
 
             AssetType.Business => asset.IsDeleted
-                                ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
+                            ? $"*{asset.Title}* - {price}: {asset.SellPrice.AsCurrency()}"
                             : asset.Mortgage > 0
-                                    ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}"
-                                    : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
+                                ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}"
+                                : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.Boat => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
@@ -653,8 +653,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                             : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.Coin => asset.IsDeleted
-                                ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
-                                : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}",
+                            ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
+                            : $"*{asset.Title}* - {asset.Qtty} @ {asset.Price.AsCurrency()}",
 
             _ => string.Empty,
         };
