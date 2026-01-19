@@ -60,18 +60,45 @@ Scenario: I can sell land
 *Other Payments:* $690
 """
 
-#@draft
-#Scenario: I can see history
-#	Given I am 'Gina Salazar' user
-#		And I play as 'Police officer'
-#	And I buy 10 Acrs of land with price $5,000
-#		But I get credit
-#	And I buy 20 Acrs of land with price $20,000
-#		But I get credit
-#	When I sell 10 Acrs for $150,000
+Scenario: I can see history
+	Given I am 'Emilie Velez' user
+		And I play as 'Nurse'
+		And I get $30,000 in cash
+	When I buy 10 Acrs of land with price $5,000
+		And I buy 20 Acrs of land with price $20,000
+	But I sell 10 Acrs for $150,000
+	Then My history data is following:
+"""
+• Get $30,000
+• Buy Land. *10 Acrs* - Price: $5,000
+• Buy Land. *20 Acrs* - Price: $20,000
+• Sell Land. *10 Acrs* - Price: $150,000
+"""
 
-#@draft
-# rollback buy
+Scenario: I can rollback last buy transaction
+	Given I am 'Kaine Becker' user
+		And I play as 'Doctor'
+		And I get $25,000 in cash
+	When I buy 10 Acrs of land with price $5,000
+		And I buy 20 Acrs of land with price $20,000
+	But I rollback last action
+	Then I have $23,950 in cash
+		And My assets are:
+"""
+• *10 Acrs* - Price: $5,000
+"""
 
-#@draft
-# rollback sell
+Scenario: I can rollback last sell transaction
+	Given I am 'Dan Mccullough' user
+		And I play as 'Teacher'
+		And I get $25,000 in cash
+	When I buy 10 Acrs of land with price $5,000
+		And I buy 20 Acrs of land with price $20,000
+		And I sell 10 Acrs for $150,000
+	But I rollback last action
+	Then I have $1,510 in cash
+		And My assets are:
+"""
+• *10 Acrs* - Price: $5,000
+• *20 Acrs* - Price: $20,000
+"""

@@ -73,21 +73,11 @@ public class BaseSteps(StepsContext context)
     }
 
     [Then(@"My assets are:")]
-    public void CheckAssets(Table assets)
+    public void CheckAssets(string assets)
     {
-        var expected = assets.Rows
-            .Select(row =>
-            {
-                var title = row["Title"];
-                var qtty = int.Parse(row["Quantity"]);
-                var price = row["Price"];
-
-                return $"• *{title}* - {qtty} @ {price}";
-            })
-            .ToList();
-
         User.SendMessage("Show my Data");
         var reply = User.GetReply();
+        var expected = assets.Escape().Split("\n").ToList();
         var actual = reply.Message.SubString("*Assets:*", "*Expenses:*")
             .Escape()
             .Split("\n")

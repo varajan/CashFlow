@@ -73,11 +73,12 @@ Scenario: I can multiply and divide stocks
 		But I divide 'ON2U' stocks
 	Then I have $7,570 in cash
 		And My assets are:
-		| Title | Quantity | Price |
-		| OK4U  |     2000 | $1    |
-		| ON2U  |      250 | $5    |
-		| OK4U  |     4000 | $5    |
-		| ON2U  |       50 | $10   |
+"""
+• *OK4U* - 2000 @ $1
+• *ON2U* - 250 @ $5
+• *OK4U* - 4000 @ $5
+• *ON2U* - 50 @ $10
+"""
 
 Scenario: I can see transactions in history
 	Given I am 'Diane Kelly' user
@@ -113,8 +114,9 @@ Scenario: I can rollback last buy transaction
 	When I rollback last action
 	Then I have $10,210 in cash
 		And My assets are:
-		| Title | Quantity | Price |
-		| OK4U  |     1000 | $1    |
+"""
+• *OK4U* - 1000 @ $1
+"""
 
 Scenario: I can rollback last sell transaction
 	Given I am 'Jan Levinson' user
@@ -126,9 +128,10 @@ Scenario: I can rollback last sell transaction
 	When I rollback last action
 	Then I have $3,010 in cash
 		And My assets are:
-		| Title | Quantity | Price |
-		| OK4U  |     1000 | $1    |
-		| ON2U  |     500  | $5    |
+"""
+• *OK4U* - 1000 @ $1
+• *ON2U* - 500 @ $5
+"""
 
 Scenario: I can rollback last multiply transaction
 	Given I am 'Ford Taurus' user
@@ -141,10 +144,11 @@ Scenario: I can rollback last multiply transaction
 	When I rollback last action
 	Then I have $2,390 in cash
 		And My assets are:
-		| Title | Quantity | Price |
-		| OK4U  |     2000 | $1    |
-		| ON2U  |     500  | $5    |
-		| OK4U  |     100  | $5    |
+"""
+• *OK4U* - 2000 @ $1
+• *ON2U* - 500 @ $5
+• *OK4U* - 100 @ $5
+"""
 
 Scenario: I can rollback last divide transaction
 	Given I am 'Ryan Howard' user
@@ -157,7 +161,8 @@ Scenario: I can rollback last divide transaction
 	When I rollback last action
 	Then I have $4,000 in cash
 		And My assets are:
-		| Title | Quantity | Price |
-		| OK4U  |     500  | $1    |
-		| ON2U  |     500  | $5    |
-		| OK4U  |     100  | $5    |
+"""
+• *OK4U* - 500 @ $1
+• *ON2U* - 500 @ $5
+• *OK4U* - 100 @ $5
+"""
