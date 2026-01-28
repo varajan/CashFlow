@@ -30,6 +30,34 @@ Scenario: I can buy stocks
 *Other Payments:* $1,090
 """
 
+Scenario: I can buy profitable stocks
+	Given I am 'Jordanne Walton' user
+		And I play as 'Doctor'
+		And I get $20,000 in cash
+	When I buy 10 shares of 'CD' stock with price $1200 each
+		And The cashflow is $20
+	Then My Data is following:
+"""
+*Profession:* Doctor
+*Cash:* $11,950
+*Salary:* $13,200
+*Income:* $200
+*Expenses:* $9,650
+*Cash Flow*: $3,750
+
+*Assets:*
+• *CD* - 10 @ $1,200, Cash Flow: $20 x 10 = $200
+
+*Expenses:*
+*Taxes:* $3,420
+*Mortgage/Rent Pay:* $1,900
+*School Loan:* $750
+*Car Loan:* $380
+*Credit Card:* $270
+*Small Credit:* $50
+*Other Payments:* $2,880
+"""
+
 Scenario: I can sell stocks
 	Given I am 'Dwight Schrute' user
 		And I play as 'Track driver'
@@ -59,6 +87,37 @@ Scenario: I can sell stocks
 *Small Credit:* $50
 *Bank Loan:* $1,200
 *Other Payments:* $570
+"""
+
+Scenario: I can sell profitable stocks
+	Given I am 'Camilla Nelson' user
+		And I play as 'Doctor'
+		And I get $20,000 in cash
+	When I buy 5 shares of 'CD' stock with price $1200 each
+		And The cashflow is $10
+	And I buy 4 shares of '2BIG' stock with price $4000 each
+		And The cashflow is $20
+	But I sell CD for 2000
+	Then My Data is following:
+"""
+*Profession:* Doctor
+*Cash:* $11,950
+*Salary:* $13,200
+*Income:* $80
+*Expenses:* $9,650
+*Cash Flow*: $3,630
+
+*Assets:*
+• *2BIG* - 4 @ $4,000, Cash Flow: $20 x 4 = $80
+
+*Expenses:*
+*Taxes:* $3,420
+*Mortgage/Rent Pay:* $1,900
+*School Loan:* $750
+*Car Loan:* $380
+*Credit Card:* $270
+*Small Credit:* $50
+*Other Payments:* $2,880
 """
 
 Scenario: I can multiply and divide stocks

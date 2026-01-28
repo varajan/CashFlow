@@ -20,20 +20,6 @@ public class StockSteps(StepsContext context)
         User.SendMessage(count.ToString());
     }
 
-    [Given(@"I get credit")]
-    [When (@"I get credit")]
-    public void GetCredit()
-    {
-        var reply = User.GetReply();
-        if (reply.Buttons.First() == "Get Credit")
-        {
-            User.SendMessage("Get Credit");
-            return;
-        }
-
-        Assert.Fail("No credit is suggested");
-    }
-
     [Given(@"I sell '(.*)' stock with price (.*) each")]
     [When(@"I sell '(.*)' stock with price (.*) each")]
     public void SellStocks(string name, string price)

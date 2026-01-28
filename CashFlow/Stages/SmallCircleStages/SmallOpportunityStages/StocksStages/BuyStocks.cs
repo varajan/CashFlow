@@ -18,11 +18,19 @@ public class BuyStocksCount(
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IPersonManager personManager)
-    : BuyAssetCount<BuyStocksCredit>(
+    : BuyAssetCount<BuyStocksCredit, BuyStocksCashFlow>(
         AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager) { }
 
 public class BuyStocksCredit(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager) : BuyAssetCredit<Start>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager)
+    IPersonManager personManager) : BuyAssetCredit<BuyStocksCashFlow>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager)
+{ }
+
+public class BuyStocksCashFlow(
+    ITermsService termsService,
+    IAvailableAssets availableAssets,
+    IPersonManager personManager)
+    : BuyAssetCashFlow<Start>(
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager)
 { }

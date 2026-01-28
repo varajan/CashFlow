@@ -197,14 +197,12 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("I can see history")]
-        [NUnit.Framework.CategoryAttribute("draft")]
         public void ICanSeeHistory()
         {
-            string[] tagsOfScenario = new string[] {
-                    "draft"};
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see history", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 64
+#line 63
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -214,25 +212,25 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 65
+#line 64
  testRunner.Given("I am \'Emilie Velez\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 66
+#line 65
   testRunner.And("I play as \'Nurse\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 67
+#line 66
   testRunner.And("I get $30,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 68
+#line 67
  testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 69
+#line 68
   testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 70
+#line 69
  testRunner.But("I sell 10 Acrs for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 71
+#line 70
  testRunner.Then("My history data is following:", "• Get $30,000\r\n• Buy Land. *10 Acrs* - Price: $5,000\r\n• Buy Land. *20 Acrs* - Pri" +
                         "ce: $20,000\r\n• Sell Land. *10 Acrs* - Price: $150,000", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -242,14 +240,12 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("I can rollback last buy transaction")]
-        [NUnit.Framework.CategoryAttribute("draft")]
         public void ICanRollbackLastBuyTransaction()
         {
-            string[] tagsOfScenario = new string[] {
-                    "draft"};
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback last buy transaction", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 80
+#line 78
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -259,28 +255,28 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 81
+#line 79
  testRunner.Given("I am \'Kaine Becker\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 82
+#line 80
   testRunner.And("I play as \'Doctor\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 83
+#line 81
   testRunner.And("I get $25,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 84
+#line 82
  testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 85
+#line 83
   testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 86
+#line 84
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 87
+#line 85
  testRunner.Then("I have $23,950 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 88
+#line 86
   testRunner.And("My assets are:", "• *10 Acrs* - Price: $5,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -289,14 +285,12 @@ this.ScenarioInitialize(scenarioInfo);
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("I can rollback last sell transaction")]
-        [NUnit.Framework.CategoryAttribute("draft")]
         public void ICanRollbackLastSellTransaction()
         {
-            string[] tagsOfScenario = new string[] {
-                    "draft"};
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback last sell transaction", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 94
+#line 91
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -306,31 +300,31 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 95
+#line 92
  testRunner.Given("I am \'Dan Mccullough\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 96
+#line 93
   testRunner.And("I play as \'Teacher\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 97
+#line 94
   testRunner.And("I get $25,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 98
+#line 95
  testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 99
+#line 96
   testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 100
+#line 97
   testRunner.And("I sell 10 Acrs for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 101
+#line 98
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 102
+#line 99
  testRunner.Then("I have $1,510 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 103
+#line 100
   testRunner.And("My assets are:", "• *10 Acrs* - Price: $5,000\r\n• *20 Acrs* - Price: $20,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }

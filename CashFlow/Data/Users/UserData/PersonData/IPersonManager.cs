@@ -180,7 +180,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
-            $"*{incomeTerm}:* {(person.Assets.Sum(a => a.CashFlow - person.BoatPayment)).AsCurrency()}{Environment.NewLine}" +
+            $"*{incomeTerm}:* {person.Income.AsCurrency()}{Environment.NewLine}" +
             $"*{expensesTerm}:* {(-person.TotalExpenses).AsCurrency()}{Environment.NewLine}" +
             $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
     }

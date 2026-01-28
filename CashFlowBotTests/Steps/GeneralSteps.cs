@@ -59,6 +59,33 @@ public class BaseSteps(StepsContext context)
         User.SendMessage("Main menu");
     }
 
+    [Given(@"I get credit")]
+    [When(@"I get credit")]
+    public void GetCredit()
+    {
+        var reply = User.GetReply();
+        if (reply.Buttons.First() == "Get Credit")
+        {
+            User.SendMessage("Get Credit");
+            return;
+        }
+
+        Assert.Fail("No credit is suggested");
+    }
+
+    [When(@"The cashflow is (.*)")]
+    public void CheckCashflow(string cashflow)
+    {
+        var reply = User.GetReply();
+        if (reply.Message == "What is the cash flow?")
+        {
+            User.SendMessage(cashflow);
+            return;
+        }
+
+        Assert.Fail("No cash flow message");
+    }
+
     [Then(@"I have (.*) in cash")]
     public void CheckCash(string expectedCash)
     {

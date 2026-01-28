@@ -7,14 +7,16 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
-public class BuyAssetCount<TNextStage>(
+public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
     ITermsService termsService,
     IAvailableAssets availableAssets,
     IPersonManager personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
+    : BuyAsset<TCreditStage>(assetName, assetType, termsService, availableAssets, personManager)
+        where TCreditStage : BaseStage
+        where TCashFlowStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
 
@@ -90,8 +92,13 @@ public class BuyAssetCount<TNextStage>(
         var person = PersonManager.Read(CurrentUser);
         if (person.Cash < asset.Qtty * asset.Price)
         {
+            NextStage = New<TCreditStage>();
+            return;
+        }
 
-            NextStage = New<TNextStage>();
+        if (asset.Price > 1000)
+        {
+            NextStage = New<TCashFlowStage>();
             return;
         }
 
