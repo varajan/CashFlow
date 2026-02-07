@@ -20,7 +20,7 @@ public class LandSteps(StepsContext context)
         User.SendMessage(price);
     }
 
-    [When(@"I sell (.*) for (.*)")]
+    [When(@"I sell (.*) of land for (.*)")]
     public void SellLand(string name, string price)
     {
         User.SendMessage("Market");

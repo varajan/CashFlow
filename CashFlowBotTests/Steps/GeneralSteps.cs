@@ -1,4 +1,5 @@
-﻿using CashFlow.Extensions;
+﻿using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Extensions;
 using CashFlowBotTests.Extras;
 using TechTalk.SpecFlow;
 
@@ -46,6 +47,7 @@ public class BaseSteps(StepsContext context)
     [Then(@"My history data is following:")]
     public void CheckHistory(string expected)
     {
+        User.SendMessage("Main menu");
         User.SendMessage("History");
         var reply = User.GetReply();
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
@@ -105,6 +107,21 @@ public class BaseSteps(StepsContext context)
         User.SendMessage("Show my Data");
         var reply = User.GetReply();
         var expected = assets.Escape().Split("\n").ToList();
+        var actual = reply.Message.SubString("*Assets:*", "*Expenses:*")
+            .Escape()
+            .Split("\n")
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToList();
+
+        Assert.That(actual, Is.EquivalentTo(expected));
+    }
+
+    [Then(@"I have no assets")]
+    public void CheckNoAssets()
+    {
+        User.SendMessage("Show my Data");
+        var reply = User.GetReply();
+        string[] expected = [];
         var actual = reply.Message.SubString("*Assets:*", "*Expenses:*")
             .Escape()
             .Split("\n")

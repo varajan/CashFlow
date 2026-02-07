@@ -169,7 +169,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 40
- testRunner.When("I sell 10 Acrs for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I sell 10 Acrs of land for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 41
  testRunner.Then("My Data is following:", @"*Profession:* Police officer
@@ -228,7 +228,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 69
- testRunner.But("I sell 10 Acrs for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+ testRunner.But("I sell 10 Acrs of land for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 70
  testRunner.Then("My history data is following:", "• Get $30,000\r\n• Buy Land. *10 Acrs* - Price: $5,000\r\n• Buy Land. *20 Acrs* - Pri" +
@@ -316,7 +316,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 97
-  testRunner.And("I sell 10 Acrs for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I sell 10 Acrs of land for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 98
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");

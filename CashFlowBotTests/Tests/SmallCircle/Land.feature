@@ -37,7 +37,7 @@ Scenario: I can sell land
 		But I get credit
 	And I buy 20 Acrs of land with price $20,000
 		But I get credit
-	When I sell 10 Acrs for $150,000
+	When I sell 10 Acrs of land for $150,000
 	Then My Data is following:
 """
 *Profession:* Police officer
@@ -66,7 +66,7 @@ Scenario: I can see history
 		And I get $30,000 in cash
 	When I buy 10 Acrs of land with price $5,000
 		And I buy 20 Acrs of land with price $20,000
-	But I sell 10 Acrs for $150,000
+	But I sell 10 Acrs of land for $150,000
 	Then My history data is following:
 """
 • Get $30,000
@@ -94,7 +94,7 @@ Scenario: I can rollback last sell transaction
 		And I get $25,000 in cash
 	When I buy 10 Acrs of land with price $5,000
 		And I buy 20 Acrs of land with price $20,000
-		And I sell 10 Acrs for $150,000
+		And I sell 10 Acrs of land for $150,000
 	But I rollback last action
 	Then I have $1,510 in cash
 		And My assets are:
