@@ -56,7 +56,7 @@ public class BuyCoinsPrice(
         asset.IsDraft = false;
         PersonManager.UpdateAsset(CurrentUser, asset);
 
-        PersonManager.AddHistory(ActionType.BuyCoins, asset.Id, CurrentUser);
+        PersonManager.AddHistory(ActionType.BuyCoins, asset.Qtty, CurrentUser, asset.Id);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

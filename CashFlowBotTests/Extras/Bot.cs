@@ -27,7 +27,7 @@ public class Bot()
         if (!chatId.HasValue) return;
 
         var stopwatch = Stopwatch.StartNew();
-        while (stopwatch.Elapsed < TimeSpan.FromSeconds(15))
+        while (stopwatch.Elapsed < TimeSpan.FromSeconds(5))
         {
             Thread.Sleep(100);
 

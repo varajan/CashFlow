@@ -107,8 +107,9 @@ public class BuyStocksCountTests : StagesBaseTest
 
         PersonManagerMock.Verify(x => x.AddHistory(
             ActionType.BuyStocks,
-            Asset.Id,
-            It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
+            count.AsCurrency(),
+            It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+            Asset.Id
         ), Times.Once);
     }
 

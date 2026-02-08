@@ -6,11 +6,11 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellBusiness(ITermsService termsService, IPersonManager personManager) :
-    SellAsset<SellBusinessPrice>(termsService, personManager, AssetType.Business, AssetType.SmallBusiness)
+    SellAsset<SellBusinessPrice>(termsService, personManager, AssetType.Business, AssetType.SmallBusinessType)
 { }
 
 public class SellBusinessPrice(
     ITermsService termsService,
     IAvailableAssets availableAssets,
-    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Business, AssetType.SmallBusiness)
+    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Business, AssetType.SmallBusinessType)
 { }

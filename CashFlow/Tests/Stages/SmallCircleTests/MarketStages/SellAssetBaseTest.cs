@@ -20,7 +20,7 @@ public abstract class SellAssetBaseTest : StagesBaseTest
             AssetType.Business,
             AssetType.Coin,
             AssetType.Stock,
-            AssetType.SmallBusiness
+            AssetType.SmallBusinessType
         };
 
         PersonManagerMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))

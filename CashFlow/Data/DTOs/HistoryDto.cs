@@ -8,5 +8,6 @@ public class HistoryDto
     public DateTime Date { get; set; }
     public ActionType Action { get; set; }
     public long Value { get; set; }
+    public long AssetId { get; set; }
     public string Description { get; set; }
 }

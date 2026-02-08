@@ -92,8 +92,9 @@ public class BuyCoinsPriceTests : StagesBaseTest
 
             PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyCoins,
-                Asset.Id,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
+                Asset.Qtty,
+                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+                Asset.Id
             ), Times.Once);
         });
     }
@@ -130,8 +131,9 @@ public class BuyCoinsPriceTests : StagesBaseTest
 
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
             PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyCoins,
-                asset.Id,
-                It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
+                asset.Qtty,
+                It.IsAny<IUser>(),
+                asset.Id), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
     }
 

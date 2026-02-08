@@ -20,7 +20,7 @@ public class Market(ITermsService termsService, IPersonManager personManager) : 
 
     public override async Task HandleMessage(string message)
     {
-        var noSmallBusiness = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser).Count == 0;
+        var noSmallBusiness = PersonManager.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Count == 0;
 
         switch (message)
         {

@@ -92,8 +92,9 @@ public class BuyLandPriceTests : StagesBaseTest
 
             PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyLand,
-                Asset.Id,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
+                price.AsCurrency(),
+                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+                Asset.Id
             ), Times.Once);
         });
     }
@@ -126,8 +127,9 @@ public class BuyLandPriceTests : StagesBaseTest
 
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
             PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyLand,
-                asset.Id,
-                It.IsAny<IUser>()), Times.Exactly(creditIsNeeded ? 0 : 1));
+                price,
+                It.IsAny<IUser>(),
+                asset.Id), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
     }
 

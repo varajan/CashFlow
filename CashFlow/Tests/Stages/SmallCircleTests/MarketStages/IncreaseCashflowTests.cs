@@ -67,7 +67,7 @@ public class IncreaseCashflowTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        Assets.Where(a => a.Type == AssetType.SmallBusiness)
+        Assets.Where(a => a.Type == AssetType.SmallBusinessType)
             .ForEach(asset =>
             {
                 PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a =>
@@ -75,7 +75,7 @@ public class IncreaseCashflowTests : SellAssetBaseTest
                     a.CashFlow == assetCashflow[a.Id] + value.AsCurrency()))
                     , Times.Once);
 
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.IncreaseCashFlow, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.IncreaseCashFlow, value.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
             });
 
         CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);

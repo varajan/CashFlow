@@ -111,7 +111,7 @@ public class SellStocksPriceTests : StagesBaseTest
                 payedAmmount += asset.Qtty * price.AsCurrency();
 
                 PersonManagerMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellStocks, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
                 PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id)), Times.Exactly(2));
             });
 

@@ -19,7 +19,7 @@ public class MarketTests : StagesBaseTest
             AssetType.Land,
             AssetType.Business,
             AssetType.Coin,
-            AssetType.SmallBusiness
+            AssetType.SmallBusinessType
         };
 
         assetTypes.ForEach(t => PersonManagerMock.Setup(a => a.ReadAllAssets(t, CurrentUserMock.Object)).Returns([new AssetDto()]));
@@ -103,7 +103,7 @@ public class MarketTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([]);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -161,7 +161,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
+        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Increase cash flow");

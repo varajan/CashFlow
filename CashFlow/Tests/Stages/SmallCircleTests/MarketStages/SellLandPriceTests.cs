@@ -100,7 +100,7 @@ public class SellLandPriceTests : SellAssetBaseTest
             {
                 payedAmmount += price.AsCurrency();
                 PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellLand, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellLand, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellLand, price.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
             });
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Once);

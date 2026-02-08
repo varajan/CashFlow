@@ -115,7 +115,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
         asset.IsDraft = false;
         PersonManager.UpdateAsset(CurrentUser, asset);
 
-        PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
+        PersonManager.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

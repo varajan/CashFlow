@@ -95,12 +95,12 @@ public class SellBusinessPriceTests : SellAssetBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
         Assets
-            .Where(a => a.MarkedToSell && (a.Type == AssetType.Business || a.Type == AssetType.SmallBusiness))
+            .Where(a => a.MarkedToSell && (a.Type == AssetType.Business || a.Type == AssetType.SmallBusinessType))
             .ForEach(asset =>
             {
                 payedAmmount += price.AsCurrency();
                 PersonManagerMock.Verify(a => a.SellAsset(asset, ActionType.SellBusiness, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellBusiness, asset.Id, CurrentUserMock.Object), Times.Once);
+                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellBusiness, price.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
             });
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Exactly(2));

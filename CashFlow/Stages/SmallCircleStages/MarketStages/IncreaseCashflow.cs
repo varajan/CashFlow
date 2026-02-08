@@ -32,12 +32,13 @@ public class IncreaseCashflow(
             return;
         }
 
-        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusiness, CurrentUser);
+        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser);
+
         assets.ForEach(asset =>
         {
             asset.CashFlow += cashflow;
             PersonManager.UpdateAsset(CurrentUser, asset);
-            PersonManager.AddHistory(ActionType.IncreaseCashFlow, asset.Id, CurrentUser);
+            PersonManager.AddHistory(ActionType.IncreaseCashFlow, cashflow, CurrentUser, asset.Id);
         });
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));

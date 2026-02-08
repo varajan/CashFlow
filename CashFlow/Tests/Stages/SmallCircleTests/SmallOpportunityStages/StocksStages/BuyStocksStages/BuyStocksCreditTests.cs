@@ -88,7 +88,7 @@ public class BuyStocksCreditTests : StagesBaseTest
 
         CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyStocks, Asset.Id, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyStocks, Asset.Qtty, CurrentUserMock.Object, Asset.Id), Times.Once);
 
         PersonManagerMock.Verify(a => a.UpdateAsset(
             CurrentUserMock.Object,

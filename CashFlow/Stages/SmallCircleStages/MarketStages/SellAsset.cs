@@ -99,7 +99,7 @@ public class SellAsset<TNextStage>(
                 return false;
             }
 
-            if (AssetTypes.Contains(AssetType.Land) || AssetTypes.Contains(AssetType.SmallBusiness))
+            if (AssetTypes.Contains(AssetType.Business) || AssetTypes.Contains(AssetType.SmallBusinessType))
             {
                 await CurrentUser.Notify(Terms.Get(76, CurrentUser, "Invalid business number."));
                 return false;

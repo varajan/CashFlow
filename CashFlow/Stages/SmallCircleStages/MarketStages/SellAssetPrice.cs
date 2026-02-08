@@ -92,7 +92,7 @@ public class SellAssetPrice(
 
             PersonManager.Update(person);
             PersonManager.SellAsset(asset, ActionType, price, CurrentUser);
-            PersonManager.AddHistory(ActionType, asset.Id, CurrentUser);
+            PersonManager.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));

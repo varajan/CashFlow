@@ -97,7 +97,7 @@ Scenario: I can sell profitable stocks
 		And The cashflow is $10
 	And I buy 4 shares of '2BIG' stock with price $4000 each
 		And The cashflow is $20
-	But I sell CD for 2000
+	But I sell 'CD' stock with price 2000 each
 	Then My Data is following:
 """
 *Profession:* Doctor

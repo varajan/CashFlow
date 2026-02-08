@@ -17,6 +17,7 @@ public interface IPersonManager
     void Update(IUser user, LiabilityDto liability);
 
     void AddHistory(ActionType type, long value, IUser user);
+    void AddHistory(ActionType type, long value, IUser user, long assetId);
     List<HistoryDto> ReadHistory(IUser user);
     bool IsHistoryEmpty(IUser user);
     string HistoryTopFive(IUser user, IUser currentUser);
@@ -216,7 +217,9 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     #region History
 
-    public void AddHistory(ActionType type, long value, IUser user)
+    public void AddHistory(ActionType type, long value, IUser user) => AddHistory(type, value, user, 0);
+
+    public void AddHistory(ActionType type, long value, IUser user, long assetId)
     {
         var record = new HistoryDto
         {
@@ -224,7 +227,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             Date = DateTime.UtcNow,
             Action = type,
             Value = value,
-            Description = $"• {GetDescription(type, value, user)}"
+            AssetId = assetId,
+            Description = $"• {GetDescription(type, value, user, assetId)}"
         };
 
         DataBase.Execute($@"INSERT INTO History (UserId, Id, HistoryRecord) VALUES ({user.Id}, {record.Date.Ticks}, '{record.Serialize()}')");
@@ -253,7 +257,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public void RollbackHistory(PersonDto person, HistoryDto record)
     {
         var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
-        var asset = person.Assets.Find(a => a.Id == (int)record.Value);
+        var asset = person.Assets.Find(a => a.Id == (int)record.AssetId);
         var amount = (int)record.Value;
         var defaults = Persons.Get(person.Profession);
 
@@ -443,27 +447,27 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void ClearHistory(IUser user) => DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
 
-    private string GetDescription(ActionType Action, long Value, IUser user)
+    private string GetDescription(ActionType Action, long value, IUser user, long assetId)
     {
         switch (Action)
         {
             case ActionType.PayMoney:
-                return Terms.Get(103, user, "Pay {0}", Value.AsCurrency());
+                return Terms.Get(103, user, "Pay {0}", value.AsCurrency());
 
             case ActionType.GetMoney:
-                return Terms.Get(104, user, "Get {0}", Value.AsCurrency());
+                return Terms.Get(104, user, "Get {0}", value.AsCurrency());
 
             case ActionType.Child:
                 return Terms.Get(105, user, "Get a child");
 
             case ActionType.Downsize:
-                return Terms.Get(106, user, "Downsize and paying {0}", Value.AsCurrency());
+                return Terms.Get(106, user, "Downsize and paying {0}", value.AsCurrency());
 
             case ActionType.Credit:
-                return Terms.Get(107, user, "Get credit: {0}", Value.AsCurrency());
+                return Terms.Get(107, user, "Get credit: {0}", value.AsCurrency());
 
             case ActionType.Charity:
-                return Terms.Get(108, user, "Charity: {0}", Value.AsCurrency());
+                return Terms.Get(108, user, "Charity: {0}", value.AsCurrency());
 
             case ActionType.Mortgage:
             case ActionType.SchoolLoan:
@@ -475,7 +479,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.BankruptcyBankLoan:
                 var reduceLiabilities = Terms.Get(40, user, "Reduce Liabilities");
                 var type = Terms.Get((int)Action, user, "Liability");
-                var amount = Value.AsCurrency();
+                var amount = value.AsCurrency();
                 return $"{reduceLiabilities}. {type}: {amount}";
 
             case ActionType.BuyRealEstate:
@@ -485,14 +489,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.StartCompany:
             case ActionType.BuyCoins:
                 var buyAsset = Terms.Get((int)Action, user, "Buy Asset");
-                var asset = ReadAsset(Value, user);
+                var asset = ReadAsset(assetId, user);
                 var description = GetAssetDescription(asset, user);
-
                 return $"{buyAsset}. {description}";
 
             case ActionType.IncreaseCashFlow:
+                var smallBusiness = ReadAsset(assetId, user);
                 var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cash Flow");
-                return $"{increaseCashFlow}. {Value.AsCurrency()}";
+                return $"*{smallBusiness.Title}* - {increaseCashFlow}. {value.AsCurrency()}";
 
             case ActionType.SellRealEstate:
             case ActionType.SellBusiness:
@@ -501,7 +505,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.SellCoins:
             case ActionType.BankruptcySellAsset:
                 var sellAsset = Terms.Get((int)Action, user, "Sell Asset");
-                var assetToSell = ReadAsset(Value, user);
+                var assetToSell = ReadAsset(assetId, user);
                 var sellDescription = GetAssetDescription(assetToSell, user);
 
                 return $"{sellAsset}. {sellDescription}";
@@ -509,17 +513,17 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             case ActionType.Stocks1To2:
             case ActionType.Stocks2To1:
                 var multiply = Terms.Get((int)Action, user, "Multiply Stocks");
-                var stock = ReadAsset(Value, user);
+                var stock = ReadAsset(assetId, user);
                 var stockDescription = GetAssetDescription(stock, user);
 
                 return $"{multiply}. {stockDescription}";
 
             case ActionType.MicroCredit:
-                return Terms.Get(96, user, "Pay with Credit Card") + " - " + Value.AsCurrency();
+                return Terms.Get(96, user, "Pay with Credit Card") + " - " + value.AsCurrency();
 
             case ActionType.BuyBoat:
                 var buyBoat = Terms.Get(112, user, "Buy a boat");
-                return $"{buyBoat}: {Value.AsCurrency()}";
+                return $"{buyBoat}: {value.AsCurrency()}";
 
             case ActionType.BankruptcyDebtRestructuring:
             case ActionType.Bankruptcy:
@@ -532,7 +536,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 return Terms.Get((int)Action, user, "BigCircle");
 
             default:
-                return $"<{Action}> - {Value}";
+                return $"<{Action}> - {value}";
         }
     }
 
@@ -540,7 +544,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     #region Assets
 
-    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => Read(user).Assets;
+    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => Read(user).Assets.Where(a => a.Type == type).ToList();
 
     public AssetDto ReadAsset(long id, IUser user) => Read(user).Assets.First(a => a.Id == id);
 

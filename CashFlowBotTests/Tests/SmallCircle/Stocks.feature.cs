@@ -291,7 +291,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("The cashflow is $20", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 100
- testRunner.But("I sell CD for 2000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+ testRunner.But("I sell \'CD\' stock with price 2000 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 101
  testRunner.Then("My Data is following:", @"*Profession:* Doctor

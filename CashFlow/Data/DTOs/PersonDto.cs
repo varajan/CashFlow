@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Data.DTOs;
 
@@ -9,9 +8,7 @@ public class PersonDto
     public string Profession { get; set; }
     public int Salary { get; set; }
     public int Cash { get; set; }
-    //public bool SmallRealEstate { get; set; }
     public bool ReadyForBigCircle { get; set; }
-    //public Circle Circle { get; set; } // { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get; set; }
     public bool IsWinning { get; set; }
     public int InitialCashFlow { get; set; }
@@ -30,7 +27,6 @@ public class PersonDto
     public int TargetCashFlow { get; set; }
 
     public List<AssetDto> Assets { get; set; } = [];
-    //public ExpensesDto Expenses { get; set; } = new();
     public List<LiabilityDto> Liabilities { get; set; } = [];
 
     public void GetCredit(int amount)

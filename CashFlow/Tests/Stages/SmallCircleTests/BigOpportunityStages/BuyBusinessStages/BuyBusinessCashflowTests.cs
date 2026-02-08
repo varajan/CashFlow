@@ -70,8 +70,9 @@ public class BuyBusinessCashflowTests : StagesBaseTest
             PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
             PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyBusiness,
-                Asset.Id,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id)
+                cashflow.AsCurrency(),
+                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+                Asset.Id
             ), Times.Once);
         });
     }
