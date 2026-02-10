@@ -101,6 +101,19 @@ public class BaseSteps(StepsContext context)
         Assert.That(actualCash, Is.EqualTo(expectedCash));
     }
 
+    [Then(@"My passive in come is (.*)")]
+    public void CheckCashFlow(string expected)
+    {
+        User.SendMessage("Show my Data");
+        var reply = User.GetReply();
+        var cashLine = reply.Message
+            .Escape()
+            .Split("\n")
+            .First(line => line.Contains("Income:"));
+        var actualCash = cashLine.Split(" ").Last().Trim();
+        Assert.That(actualCash, Is.EqualTo(expected));
+    }
+
     [Then(@"My assets are:")]
     public void CheckAssets(string assets)
     {

@@ -114,6 +114,50 @@ Scenario: I can sell small business
 • Sell Business. *Auto Tools* - Price: $3,000, monthly: $650
 """
 
-# rollback buy
-# rollback sell
-# rollback increase cash flow
+Scenario: I can rollback starting a small business
+	Given I am 'Kylie Salinas' user
+		And I play as 'Business manager'
+		And I get $20,000 in cash
+		And I start the Auto Tools company with $3000
+		And I start the Computer Programs company with $5000
+	When I rollback last action
+	Then I have $19,070 in cash
+		And My assets are:
+"""
+• *Auto Tools* - Price: $3,000
+"""
+
+Scenario: I can rollback selling small business
+	Given I am 'Alan George' user
+		And I play as 'Business manager'
+		And I get $20,000 in cash
+		And I start the Auto Tools company with $3000
+		And I start the Computer Programs company with $5000
+		And I increase the cash flow of my small business by $400
+	When I sell Auto Tools small business for $100,000
+		But I rollback last action
+	Then I have $14,070 in cash
+		And My passive in come is $800
+		And My assets are:
+"""
+• *Auto Tools* - Price: $3,000, monthly: $400
+• *Computer Programs* - Price: $5,000, monthly: $400
+"""
+
+Scenario: I can rollback increasing cashflow
+	Given I am 'Lea Suarez' user
+		And I play as 'Business manager'
+		And I get $20,000 in cash
+		And I start the Auto Tools company with $3000
+		And I start the Computer Programs company with $5000
+		And I increase the cash flow of my small business by $250
+		And I increase the cash flow of my small business by $400
+	When I sell Auto Tools small business for $100,000
+		But I rollback last action
+	Then I have $14,070 in cash
+		And My passive in come is $1,300
+		And My assets are:
+"""
+• *Auto Tools* - Price: $3,000, monthly: $650
+• *Computer Programs* - Price: $5,000, monthly: $650
+"""

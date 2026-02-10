@@ -280,6 +280,164 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback starting a small business")]
+        public void ICanRollbackStartingASmallBusiness()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback starting a small business", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 117
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 118
+ testRunner.Given("I am \'Kylie Salinas\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 119
+  testRunner.And("I play as \'Business manager\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 120
+  testRunner.And("I get $20,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 121
+  testRunner.And("I start the Auto Tools company with $3000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 122
+  testRunner.And("I start the Computer Programs company with $5000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 123
+ testRunner.When("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 124
+ testRunner.Then("I have $19,070 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 125
+  testRunner.And("My assets are:", "• *Auto Tools* - Price: $3,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback selling small business")]
+        public void ICanRollbackSellingSmallBusiness()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback selling small business", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 130
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 131
+ testRunner.Given("I am \'Alan George\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 132
+  testRunner.And("I play as \'Business manager\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 133
+  testRunner.And("I get $20,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 134
+  testRunner.And("I start the Auto Tools company with $3000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 135
+  testRunner.And("I start the Computer Programs company with $5000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 136
+  testRunner.And("I increase the cash flow of my small business by $400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 137
+ testRunner.When("I sell Auto Tools small business for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 138
+  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 139
+ testRunner.Then("I have $14,070 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 140
+  testRunner.And("My passive in come is $800", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 141
+  testRunner.And("My assets are:", "• *Auto Tools* - Price: $3,000, monthly: $400\r\n• *Computer Programs* - Price: $5," +
+                        "000, monthly: $400", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback increasing cashflow")]
+        public void ICanRollbackIncreasingCashflow()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback increasing cashflow", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 147
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 148
+ testRunner.Given("I am \'Lea Suarez\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 149
+  testRunner.And("I play as \'Business manager\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 150
+  testRunner.And("I get $20,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 151
+  testRunner.And("I start the Auto Tools company with $3000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 152
+  testRunner.And("I start the Computer Programs company with $5000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 153
+  testRunner.And("I increase the cash flow of my small business by $250", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 154
+  testRunner.And("I increase the cash flow of my small business by $400", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 155
+ testRunner.When("I sell Auto Tools small business for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 156
+  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 157
+ testRunner.Then("I have $14,070 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 158
+  testRunner.And("My passive in come is $1,300", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 159
+  testRunner.And("My assets are:", "• *Auto Tools* - Price: $3,000, monthly: $650\r\n• *Computer Programs* - Price: $5," +
+                        "000, monthly: $650", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

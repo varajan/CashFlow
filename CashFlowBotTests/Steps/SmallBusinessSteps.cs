@@ -39,6 +39,7 @@ public class SmallBusinessSteps(StepsContext context)
         User.SendMessage(price);
     }
 
+    [Given(@"I increase the cash flow of my small business by (.*)")]
     [When(@"I increase the cash flow of my small business by (.*)")]
     public void IncreaseCashFlow(string amount)
     {
