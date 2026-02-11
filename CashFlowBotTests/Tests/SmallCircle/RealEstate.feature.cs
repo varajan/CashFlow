@@ -270,6 +270,136 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback buy transaction")]
+        public void ICanRollbackBuyTransaction()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback buy transaction", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 86
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 87
+ testRunner.Given("I am \'Lilli Atkins\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 88
+  testRunner.And("I play as \'Pilot\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 89
+  testRunner.And("I get $10,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Opportunity",
+                            "Title",
+                            "Price",
+                            "First Payment",
+                            "Monthly Cashflow"});
+                table3.AddRow(new string[] {
+                            "Small",
+                            "2/1",
+                            "60,000",
+                            "2,000",
+                            "160"});
+                table3.AddRow(new string[] {
+                            "Big",
+                            "8-plex",
+                            "150,000",
+                            "10,000",
+                            "1,600"});
+#line 90
+ testRunner.When("I buy real estate:", ((string)(null)), table3, "When ");
+#line hidden
+#line 94
+  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 95
+ testRunner.Then("I have $11,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 96
+  testRunner.And("My passive in come is $160", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 97
+  testRunner.And("My assets are:", "• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback sell transaction")]
+        public void ICanRollbackSellTransaction()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback sell transaction", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 102
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 103
+ testRunner.Given("I am \'Zaina Ramirez\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 104
+  testRunner.And("I play as \'Pilot\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 105
+  testRunner.And("I get $10,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Opportunity",
+                            "Title",
+                            "Price",
+                            "First Payment",
+                            "Monthly Cashflow"});
+                table4.AddRow(new string[] {
+                            "Small",
+                            "2/1",
+                            "60,000",
+                            "2,000",
+                            "160"});
+                table4.AddRow(new string[] {
+                            "Big",
+                            "8-plex",
+                            "150,000",
+                            "10,000",
+                            "1,600"});
+#line 106
+ testRunner.When("I buy real estate:", ((string)(null)), table4, "When ");
+#line hidden
+#line 110
+  testRunner.And("I sell 2/1 for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 111
+  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 112
+ testRunner.Then("I have $1,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 113
+  testRunner.And("My passive in come is $1,760", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 114
+  testRunner.And("My assets are:", "• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160\r\n• *8-plex* - Price:" +
+                        " $150,000, Mortgage: $140,000, Cash Flow: $1,600", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

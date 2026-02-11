@@ -83,3 +83,36 @@ Scenario: I can sell real estate
 • Sell Real Estate. *8-plex* - Price: $45,000
 """
 
+Scenario: I can rollback buy transaction
+	Given I am 'Lilli Atkins' user
+		And I play as 'Pilot'
+		And I get $10,000 in cash
+	When I buy real estate:
+		| Opportunity | Title  | Price   | First Payment | Monthly Cashflow |
+		| Small       | 2/1    |  60,000 |         2,000 |              160 |
+		| Big         | 8-plex | 150,000 |        10,000 |            1,600 |
+		But I rollback last action
+	Then I have $11,000 in cash
+		And My passive in come is $160
+		And My assets are:
+"""
+• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
+"""
+
+Scenario: I can rollback sell transaction
+	Given I am 'Zaina Ramirez' user
+		And I play as 'Pilot'
+		And I get $10,000 in cash
+	When I buy real estate:
+		| Opportunity | Title  | Price   | First Payment | Monthly Cashflow |
+		| Small       | 2/1    |  60,000 |         2,000 |              160 |
+		| Big         | 8-plex | 150,000 |        10,000 |            1,600 |
+		And I sell 2/1 for $100,000
+		But I rollback last action
+	Then I have $1,000 in cash
+		And My passive in come is $1,760
+		And My assets are:
+"""
+• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
+• *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+"""
