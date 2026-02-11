@@ -1,4 +1,5 @@
-﻿using CashFlowBotTests.Extras;
+﻿using CashFlow.Extensions;
+using CashFlowBotTests.Extras;
 using TechTalk.SpecFlow;
 
 namespace CashFlowBotTests.Steps;
@@ -27,5 +28,23 @@ public class RealEstateSteps(StepsContext context)
             User.SendMessage(firstPayment);
             User.SendMessage(cashflow);
         }
+    }
+
+    [Scope(Feature = "RealEstate")]
+    [When(@"I sell (.*) for (\S*)( each|)")]
+    public void SellRealEstate(string title, string price, string _)
+    {
+        User.SendMessage("Market");
+        User.SendMessage("Sell Real Estate");
+        var message = User.GetReply().Message;
+        var button = message
+            .Escape()
+            .Split("\n")
+            .First(x => x.Contains(title, StringComparison.InvariantCultureIgnoreCase))
+            .Split(" ")
+            .First()
+            .SubString("*", "*");
+        User.SendMessage(button);
+        User.SendMessage(price);
     }
 }

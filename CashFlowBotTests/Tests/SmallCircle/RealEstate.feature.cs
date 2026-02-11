@@ -74,12 +74,12 @@ namespace CashFlowBotTests.Tests.SmallCircle
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("I can buy houses")]
-        public void ICanBuyHouses()
+        [NUnit.Framework.DescriptionAttribute("I can buy real estate")]
+        public void ICanBuyRealEstate()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can buy houses", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can buy real estate", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -152,6 +152,102 @@ this.ScenarioInitialize(scenarioInfo);
 • *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
 • *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
 • *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+
+*Expenses:*
+*Taxes:* $2,350
+*Mortgage/Rent Pay:* $1,330
+*Car Loan:* $300
+*Credit Card:* $660
+*Small Credit:* $50
+*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can sell real estate")]
+        public void ICanSellRealEstate()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can sell real estate", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 39
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 40
+ testRunner.Given("I am \'Jacques Hamilton\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 41
+  testRunner.And("I play as \'Pilot\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 42
+  testRunner.And("I get $100,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Opportunity",
+                            "Title",
+                            "Price",
+                            "First Payment",
+                            "Monthly Cashflow"});
+                table2.AddRow(new string[] {
+                            "Small",
+                            "2/1",
+                            "60,000",
+                            "2,000",
+                            "160"});
+                table2.AddRow(new string[] {
+                            "Small",
+                            "3/2",
+                            "65,000",
+                            "3,000",
+                            "-100"});
+                table2.AddRow(new string[] {
+                            "Big",
+                            "3/2",
+                            "90,000",
+                            "7,000",
+                            "400"});
+                table2.AddRow(new string[] {
+                            "Big",
+                            "2-plex",
+                            "125,000",
+                            "9,000",
+                            "500"});
+                table2.AddRow(new string[] {
+                            "Big",
+                            "8-plex",
+                            "150,000",
+                            "10,000",
+                            "1,600"});
+#line 43
+ testRunner.When("I buy real estate:", ((string)(null)), table2, "When ");
+#line hidden
+#line 50
+  testRunner.But("I sell 2/1 for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 51
+  testRunner.And("I sell 8-plex for $45,000 each", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 52
+ testRunner.Then("My Data is following:", @"*Profession:* Pilot
+*Cash:* $334,000
+*Salary:* $9,500
+*Income:* $800
+*Expenses:* $6,900
+*Cash Flow*: $3,400
+
+*Assets:*
+• *3/2* - Price: $65,000, Mortgage: $62,000, Cash Flow: -$100
+• *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
+• *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
 
 *Expenses:*
 *Taxes:* $2,350
