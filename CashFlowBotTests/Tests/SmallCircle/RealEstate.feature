@@ -71,3 +71,15 @@ Scenario: I can sell real estate
 *Small Credit:* $50
 *Other Payments:* $2,210
 """
+	And My history data is following:
+"""
+• Get $100,000
+• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
+• Buy Real Estate. *3/2* - Price: $65,000, Mortgage: $62,000, Cash Flow: -$100
+• Buy Real Estate. *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
+• Buy Real Estate. *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
+• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+• Sell Real Estate. *2/1* - Price: $100,000
+• Sell Real Estate. *8-plex* - Price: $45,000
+"""
+
