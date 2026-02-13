@@ -10,7 +10,7 @@ public class BigOpportunity(ITermsService termsService, IPersonManager personMan
     public override IEnumerable<string> Buttons =>
     [
         Terms.Get(37, CurrentUser, "Buy Real Estate"),
-        Terms.Get(94, CurrentUser, "Buy Business"),
+        Terms.Get(74, CurrentUser, "Buy Business"),
         Terms.Get(94, CurrentUser, "Buy Land"),
         Cancel
     ];
@@ -23,7 +23,7 @@ public class BigOpportunity(ITermsService termsService, IPersonManager personMan
                 NextStage = New<BuyBigRealEstate>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, 94, "Buy Business"):
+            case var m when MessageEquals(m, 74, "Buy Business"):
                 NextStage = New<BuyBusiness>();
                 return Task.CompletedTask;
 

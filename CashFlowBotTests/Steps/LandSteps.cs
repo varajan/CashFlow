@@ -10,11 +10,11 @@ public class LandSteps(StepsContext context)
     private readonly StepsContext _context = context;
     private User User => _context.User;
 
-    [Given(@"I buy (.*) of land with price (.*)")]
-    [When(@"I buy (.*) of land with price (.*)")]
-    public void BuyLand(string name, string price)
+    [Given(@"I buy (.*) of land with price (.*) as (Small|Big) opprotunity")]
+    [When(@"I buy (.*) of land with price (.*) as (Small|Big) opprotunity")]
+    public void BuyLand(string name, string price, string type)
     {
-        User.SendMessage("Small Opportunity");
+        User.SendMessage($"{type} Opportunity");
         User.SendMessage("Buy Land");
         User.SendMessage(name);
         User.SendMessage(price);

@@ -3,9 +3,9 @@
 Scenario: I can buy land
 	Given I am 'Kyla Parker' user
 		And I play as 'Secretary'
-	When I buy 10 Acrs of land with price $5,000
+	When I buy 10 Acrs of land with price $5,000 as Small opprotunity
 		But I get credit
-	And I buy 20 Acrs of land with price $20,000
+	And I buy 20 Acrs of land with price $20,000 as Big opprotunity
 		But I get credit
 	Then My Data is following:
 """
@@ -33,9 +33,9 @@ Scenario: I can buy land
 Scenario: I can sell land
 	Given I am 'Gina Salazar' user
 		And I play as 'Police officer'
-	And I buy 10 Acrs of land with price $5,000
+	And I buy 10 Acrs of land with price $5,000 as Small opprotunity
 		But I get credit
-	And I buy 20 Acrs of land with price $20,000
+	And I buy 20 Acrs of land with price $20,000 as Big opprotunity
 		But I get credit
 	When I sell 10 Acrs of land for $150,000
 	Then My Data is following:
@@ -64,8 +64,8 @@ Scenario: I can see history
 	Given I am 'Emilie Velez' user
 		And I play as 'Nurse'
 		And I get $30,000 in cash
-	When I buy 10 Acrs of land with price $5,000
-		And I buy 20 Acrs of land with price $20,000
+	When I buy 10 Acrs of land with price $5,000 as Small opprotunity
+		And I buy 20 Acrs of land with price $20,000 as Big opprotunity
 	But I sell 10 Acrs of land for $150,000
 	Then My history data is following:
 """
@@ -79,8 +79,8 @@ Scenario: I can rollback last buy transaction
 	Given I am 'Kaine Becker' user
 		And I play as 'Doctor'
 		And I get $25,000 in cash
-	When I buy 10 Acrs of land with price $5,000
-		And I buy 20 Acrs of land with price $20,000
+	When I buy 10 Acrs of land with price $5,000 as Small opprotunity
+		And I buy 20 Acrs of land with price $20,000 as Big opprotunity
 	But I rollback last action
 	Then I have $23,950 in cash
 		And My assets are:
@@ -92,8 +92,8 @@ Scenario: I can rollback last sell transaction
 	Given I am 'Dan Mccullough' user
 		And I play as 'Teacher'
 		And I get $25,000 in cash
-	When I buy 10 Acrs of land with price $5,000
-		And I buy 20 Acrs of land with price $20,000
+	When I buy 10 Acrs of land with price $5,000 as Small opprotunity
+		And I buy 20 Acrs of land with price $20,000 as Big opprotunity
 		And I sell 10 Acrs of land for $150,000
 	But I rollback last action
 	Then I have $1,510 in cash

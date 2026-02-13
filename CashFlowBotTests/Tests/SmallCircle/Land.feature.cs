@@ -97,13 +97,13 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I play as \'Secretary\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 6
- testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I buy 10 Acrs of land with price $5,000 as Small opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 7
   testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 8
- testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I buy 20 Acrs of land with price $20,000 as Big opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 9
   testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -157,13 +157,13 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I play as \'Police officer\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 36
- testRunner.And("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I buy 10 Acrs of land with price $5,000 as Small opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 37
   testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
 #line 38
- testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+ testRunner.And("I buy 20 Acrs of land with price $20,000 as Big opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 39
   testRunner.But("I get credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -222,10 +222,10 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $30,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 67
- testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I buy 10 Acrs of land with price $5,000 as Small opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 68
-  testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 20 Acrs of land with price $20,000 as Big opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 69
  testRunner.But("I sell 10 Acrs of land for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -265,10 +265,10 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $25,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 82
- testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I buy 10 Acrs of land with price $5,000 as Small opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 83
-  testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 20 Acrs of land with price $20,000 as Big opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 84
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -310,10 +310,10 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("I get $25,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 95
- testRunner.When("I buy 10 Acrs of land with price $5,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+ testRunner.When("I buy 10 Acrs of land with price $5,000 as Small opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
 #line 96
-  testRunner.And("I buy 20 Acrs of land with price $20,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("I buy 20 Acrs of land with price $20,000 as Big opprotunity", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 97
   testRunner.And("I sell 10 Acrs of land for $150,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
