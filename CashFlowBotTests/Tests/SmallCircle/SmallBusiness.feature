@@ -137,7 +137,7 @@ Scenario: I can rollback selling small business
 	When I sell Auto Tools small business for $100,000
 		But I rollback last action
 	Then I have $14,070 in cash
-		And My passive in come is $800
+		And My passive income is $800
 		And My assets are:
 """
 • *Auto Tools* - Price: $3,000, monthly: $400
@@ -155,7 +155,7 @@ Scenario: I can rollback increasing cashflow
 	When I sell Auto Tools small business for $100,000
 		But I rollback last action
 	Then I have $14,070 in cash
-		And My passive in come is $1,300
+		And My passive income is $1,300
 		And My assets are:
 """
 • *Auto Tools* - Price: $3,000, monthly: $650

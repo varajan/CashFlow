@@ -61,6 +61,14 @@ public class BaseSteps(StepsContext context)
         User.SendMessage("Main menu");
     }
 
+    [When(@"I rollback last (\d+) actions")]
+    public void RollbackLastTransaction(int n)
+    {
+        User.SendMessage("History");
+        for (var i = 0; i < n; i++) User.SendMessage("Rollback last action");
+        User.SendMessage("Main menu");
+    }
+
     [Given(@"I get credit")]
     [When(@"I get credit")]
     public void GetCredit()
@@ -89,7 +97,7 @@ public class BaseSteps(StepsContext context)
     }
 
     [Then(@"I have (.*) in cash")]
-    public void CheckCash(string expectedCash)
+    public void CheckCash(string expected)
     {
         User.SendMessage("Show my Data");
         var reply = User.GetReply();
@@ -97,11 +105,11 @@ public class BaseSteps(StepsContext context)
             .Escape()
             .Split("\n")
             .First(line => line.Contains("Cash:"));
-        var actualCash = cashLine.Split(" ").Last().Trim();
-        Assert.That(actualCash, Is.EqualTo(expectedCash));
+        var actual = cashLine.Split(" ").Last().Trim();
+        Assert.That(actual, Is.EqualTo(expected));
     }
 
-    [Then(@"My passive in come is (.*)")]
+    [Then(@"My passive income is (.*)")]
     public void CheckCashFlow(string expected)
     {
         User.SendMessage("Show my Data");
@@ -110,8 +118,21 @@ public class BaseSteps(StepsContext context)
             .Escape()
             .Split("\n")
             .First(line => line.Contains("Income:"));
-        var actualCash = cashLine.Split(" ").Last().Trim();
-        Assert.That(actualCash, Is.EqualTo(expected));
+        var actual = cashLine.Split(" ").Last().Trim();
+        Assert.That(actual, Is.EqualTo(expected));
+    }
+
+    [Then(@"My expenses are (.*)")]
+    public void CheckExpenses(string expected)
+    {
+        User.SendMessage("Show my Data");
+        var reply = User.GetReply();
+        var cashLine = reply.Message
+            .Escape()
+            .Split("\n")
+            .First(line => line.Contains("Expenses:"));
+        var actual = cashLine.Split(" ").Last().Trim();
+        Assert.That(actual, Is.EqualTo(expected));
     }
 
     [Then(@"My assets are:")]
@@ -136,6 +157,23 @@ public class BaseSteps(StepsContext context)
         var reply = User.GetReply();
         string[] expected = [];
         var actual = reply.Message.SubString("*Assets:*", "*Expenses:*")
+            .Escape()
+            .Split("\n")
+            .Where(x => !string.IsNullOrEmpty(x))
+            .ToList();
+
+        Assert.That(actual, Is.EquivalentTo(expected));
+    }
+
+    [Then("My Expenses are:")]
+    public void CheckAllExpenses(string expenses)
+    {
+        User.SendMessage("Show my Data");
+        var reply = User.GetReply();
+        var expected = expenses.Escape().Split("\n").ToList();
+        var actual = reply.Message
+            .SubString("*Expenses:*")
+            .SubString("*Expenses:*")
             .Escape()
             .Split("\n")
             .Where(x => !string.IsNullOrEmpty(x))

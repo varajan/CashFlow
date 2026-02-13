@@ -93,7 +93,7 @@ Scenario: I can rollback buy transaction
 		| Big         | 8-plex | 150,000 |        10,000 |            1,600 |
 		But I rollback last action
 	Then I have $11,000 in cash
-		And My passive in come is $160
+		And My passive income is $160
 		And My assets are:
 """
 • *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
@@ -110,7 +110,7 @@ Scenario: I can rollback sell transaction
 		And I sell 2/1 for $100,000
 		But I rollback last action
 	Then I have $1,000 in cash
-		And My passive in come is $1,760
+		And My passive income is $1,760
 		And My assets are:
 """
 • *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160

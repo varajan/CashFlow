@@ -325,7 +325,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("I have $11,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 96
-  testRunner.And("My passive in come is $160", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("My passive income is $160", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 97
   testRunner.And("My assets are:", "• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -391,7 +391,7 @@ this.ScenarioInitialize(scenarioInfo);
  testRunner.Then("I have $1,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 113
-  testRunner.And("My passive in come is $1,760", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("My passive income is $1,760", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 114
   testRunner.And("My assets are:", "• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160\r\n• *8-plex* - Price:" +

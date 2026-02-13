@@ -375,6 +375,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             case ActionType.BuyBoat:
                 person.Cash += 1_000;
+                person.DeleteLiability(Liability.Boat_Loan);
                 DeleteAsset(person, boat);
                 break;
 

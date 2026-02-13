@@ -98,7 +98,7 @@ Scenario: I can rollback buy action
 		| Company             |  25,000 |        20,000 |             1000 |
 	But I rollback last action
 	Then I have $31,390 in cash
-		And My passive in come is $800
+		And My passive income is $800
 		And My assets are:
 """
 • *Car Wash* - Price: $20,000, Cash Flow: $800
@@ -115,7 +115,7 @@ Scenario: I can rollback sell action
 	When I sell Car wash for $30,000
 	But I rollback last action
 	Then I have $11,390 in cash
-		And My passive in come is $1,800
+		And My passive income is $1,800
 		And My assets are:
 """
 • *Car Wash* - Price: $20,000, Cash Flow: $800

@@ -77,6 +77,7 @@ public class Doodads(ITermsService termsService, IPersonManager personManager)
             Title = "Boat"
         };
         person.Cash -= firstPayment;
+        person.UpdateLiability(Liability.Boat_Loan, boat.CashFlow, boat.Mortgage);
 
         PersonManager.Update(person);
         PersonManager.CreateAsset(CurrentUser, boat);

@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Data.DTOs;
 
@@ -18,7 +19,7 @@ public class PersonDto
     public int PerChild { get; set; }
     public int Children { get; set; }
 
-    public int BoatPayment => Assets.FirstOrDefault(a => a.Type == AssetType.Boat)?.CashFlow ?? 0;
+    public int BoatPayment => Assets.Where(a => !a.IsDeleted).FirstOrDefault(a => a.Type == AssetType.Boat)?.CashFlow ?? 0;
     public int Income => Assets.Where(a => !a.IsDeleted).Sum(a => a.Qtty * a.CashFlow) - BoatPayment;
     public int CashFlow => Salary + Income + TotalExpenses;
     public int TotalExpenses => BoatPayment + Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
@@ -33,6 +34,11 @@ public class PersonDto
     {
         Cash += amount;
         UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+    }
+
+    public void DeleteLiability(Liability name)
+    {
+        Liabilities = [.. Liabilities.Where(l => l.Type != name)];
     }
 
     public void UpdateLiability(Liability name, int cashFlow, int ammount)
