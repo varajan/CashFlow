@@ -7,7 +7,7 @@ using CashFlow.Data.Consts;
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
 public class BuyBusiness(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
-    : BuyAsset<BuyBusinessPrice>(AssetType.Business, AssetType.Business, termsService, availableAssets, personManager) { }
+    : BuyAsset<BuyBusinessPrice>(AssetType.BusinessType, AssetType.Business, termsService, availableAssets, personManager) { }
 
 public class BuyBusinessPrice(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
     : BuyAssetPriceWithFirstPayment<BuyBusinessFirstPayment>(

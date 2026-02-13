@@ -99,44 +99,44 @@ this.ScenarioInitialize(scenarioInfo);
 #line 6
   testRunner.And("I get $100,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
                             "Opportunity",
                             "Title",
                             "Price",
                             "First Payment",
                             "Monthly Cashflow"});
-                table1.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Small",
                             "2/1",
                             "60,000",
                             "2,000",
                             "160"});
-                table1.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Small",
                             "3/2",
                             "65,000",
                             "3,000",
                             "-100"});
-                table1.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Big",
                             "3/2",
                             "90,000",
                             "7,000",
                             "400"});
-                table1.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Big",
                             "2-plex",
                             "125,000",
                             "9,000",
                             "500"});
-                table1.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "Big",
                             "8-plex",
                             "150,000",
                             "10,000",
                             "1,600"});
 #line 7
- testRunner.When("I buy real estate:", ((string)(null)), table1, "When ");
+ testRunner.When("I buy real estate:", ((string)(null)), table5, "When ");
 #line hidden
 #line 14
  testRunner.Then("My Data is following:", @"*Profession:* Pilot
@@ -191,44 +191,44 @@ this.ScenarioInitialize(scenarioInfo);
 #line 42
   testRunner.And("I get $100,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                             "Opportunity",
                             "Title",
                             "Price",
                             "First Payment",
                             "Monthly Cashflow"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Small",
                             "2/1",
                             "60,000",
                             "2,000",
                             "160"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Small",
                             "3/2",
                             "65,000",
                             "3,000",
                             "-100"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Big",
                             "3/2",
                             "90,000",
                             "7,000",
                             "400"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Big",
                             "2-plex",
                             "125,000",
                             "9,000",
                             "500"});
-                table2.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "Big",
                             "8-plex",
                             "150,000",
                             "10,000",
                             "1,600"});
 #line 43
- testRunner.When("I buy real estate:", ((string)(null)), table2, "When ");
+ testRunner.When("I buy real estate:", ((string)(null)), table6, "When ");
 #line hidden
 #line 50
   testRunner.But("I sell 2/1 for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -297,26 +297,26 @@ this.ScenarioInitialize(scenarioInfo);
 #line 89
   testRunner.And("I get $10,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table7 = new TechTalk.SpecFlow.Table(new string[] {
                             "Opportunity",
                             "Title",
                             "Price",
                             "First Payment",
                             "Monthly Cashflow"});
-                table3.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Small",
                             "2/1",
                             "60,000",
                             "2,000",
                             "160"});
-                table3.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "Big",
                             "8-plex",
                             "150,000",
                             "10,000",
                             "1,600"});
 #line 90
- testRunner.When("I buy real estate:", ((string)(null)), table3, "When ");
+ testRunner.When("I buy real estate:", ((string)(null)), table7, "When ");
 #line hidden
 #line 94
   testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
@@ -360,26 +360,26 @@ this.ScenarioInitialize(scenarioInfo);
 #line 105
   testRunner.And("I get $10,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
+                TechTalk.SpecFlow.Table table8 = new TechTalk.SpecFlow.Table(new string[] {
                             "Opportunity",
                             "Title",
                             "Price",
                             "First Payment",
                             "Monthly Cashflow"});
-                table4.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Small",
                             "2/1",
                             "60,000",
                             "2,000",
                             "160"});
-                table4.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "Big",
                             "8-plex",
                             "150,000",
                             "10,000",
                             "1,600"});
 #line 106
- testRunner.When("I buy real estate:", ((string)(null)), table4, "When ");
+ testRunner.When("I buy real estate:", ((string)(null)), table8, "When ");
 #line hidden
 #line 110
   testRunner.And("I sell 2/1 for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
