@@ -105,7 +105,7 @@ Scenario: I can rollback buy action
 """
 
 Scenario: I can rollback sell action
-	Given I am 'Gabriela Johns' user
+	Given I am 'Sidney Nielsen' user
 		And I play as 'Car mechanic'
 		And I get $50,000 in cash
 		And I buy businesses:
