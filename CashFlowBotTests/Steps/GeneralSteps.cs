@@ -26,6 +26,7 @@ public class BaseSteps(StepsContext context)
     }
 
     [Given(@"I get (.*) in cash")]
+    [When(@"I get (.*) in cash")]
     public void GetMoney(string amount)
     {
         User.SendMessage("Show my Data");
