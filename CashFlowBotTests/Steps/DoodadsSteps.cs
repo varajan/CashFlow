@@ -19,6 +19,7 @@ public class DoodadsSteps(StepsContext context)
         User.SendMessage(amount);
     }
 
+    [Given("I buy a boat")]
     [When("I buy a boat")]
     public void BuyBoat()
     {

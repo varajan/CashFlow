@@ -2,13 +2,13 @@
 
 public enum Liability
 {
-    Taxes,
-    Others,
-    Mortgage,
-    School_Loan,
-    Car_Loan,
-    Credit_Card,
-    Small_Credit,
-    Bank_Loan,
-    Boat_Loan
+    Taxes = 58,
+    Others = 60,
+    Mortgage = 43,
+    School_Loan = 44,
+    Car_Loan = 45,
+    Credit_Card = 46,
+    Small_Credit = 92,
+    Bank_Loan = 47,
+    Boat_Loan = 114
 }

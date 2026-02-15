@@ -75,7 +75,7 @@ public class ShowMyDataTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var nextStage = haveLiabilities ? typeof(ReduceLiabilities) : typeof(Start);
-        var liabilities = new List<LiabilityDto> { new() };
+        var liabilities = new List<LiabilityDto> { new() { FullAmount = 1 } };
         var testPerson = new PersonDto { Liabilities = haveLiabilities ? liabilities : [] };
 
         PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(testPerson);

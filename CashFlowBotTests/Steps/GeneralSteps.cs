@@ -46,6 +46,7 @@ public class BaseSteps(StepsContext context)
     [Then(@"My Data is following:")]
     public void CheckMyData(string expected)
     {
+        User.SendMessage("Cancel");
         User.SendMessage("Show my Data");
         var reply = User.GetReply();
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));

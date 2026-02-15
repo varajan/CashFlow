@@ -77,10 +77,11 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         var liabilities = new List<LiabilityDto>
         {
             new() { Type = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = false, Deleted = false },
-            new() { Type = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
+            new() { Type = Liability.Bank_Loan, FullAmount = 0, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = false, Deleted = true },
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
+        var liability = liabilities.First();
 
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
@@ -90,9 +91,9 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
-            It.Is<LiabilityDto>(l => l.Type == liabilities.First().Type && l.Deleted == true)), Times.Once);
+            It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
 
     [Test]
@@ -108,6 +109,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
+        var liability = liabilities.First();
 
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
 
@@ -117,9 +119,9 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, amount, CurrentUserMock.Object), Times.Once);
+        PersonManagerMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUserMock.Object), Times.Once);
         PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
-            It.Is<LiabilityDto>(l => l.Type == liabilities.First().Type && l.Deleted == true)), Times.Once);
+            It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new ReduceLiabilitiesConfirm(TermsServiceMock.Object, PersonManagerMock.Object)

@@ -45,6 +45,7 @@ public static class ServicesProvider
         services.AddTransient<GetCredit>();
         services.AddTransient<ReduceLiabilities>();
         services.AddTransient<ReduceLiabilitiesAmount>();
+        services.AddTransient<ReduceLiabilitiesConfirm>();
         services.AddTransient<StopGame>();
 
         services.AddTransient<Friends>();

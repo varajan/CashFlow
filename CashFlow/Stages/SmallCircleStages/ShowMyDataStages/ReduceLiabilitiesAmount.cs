@@ -61,7 +61,7 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
 
         ReduceLiability(amount, person);
 
-        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.Deleted)
+        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
             ? New<Start>()
             : New<ReduceLiabilities>();
     }
@@ -82,6 +82,6 @@ public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager 
 
         PersonManager.Update(person);
         PersonManager.Update(CurrentUser, liability);
-        PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
+        PersonManager.AddHistory((ActionType)liability.Type, amount, CurrentUser);
     }
 }

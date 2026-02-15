@@ -15,7 +15,7 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
         {
             var liability = PersonManager.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
             var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
-            var type = Terms.Get(-1, CurrentUser, liability.Type.AsString());
+            var type = Terms.Get((int)liability.Type, CurrentUser, liability.Type.AsString());
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }
@@ -43,17 +43,24 @@ public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager
         var liability = person.Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         var amount = liability.FullAmount;
 
+        if (liability.Type == Liability.Boat_Loan)
+        {
+            var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
+            boat.CashFlow = 0;
+            PersonManager.UpdateAsset(CurrentUser, boat);
+        }
+
         liability.Cashflow = 0;
         liability.FullAmount = 0;
         liability.MarkedForReduction = false;
         liability.Deleted = true;
-        person.Cash -= liability.FullAmount;
+        person.Cash -= amount;
         
         PersonManager.Update(person);
         PersonManager.Update(CurrentUser, liability);
-        PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
+        PersonManager.AddHistory((ActionType)liability.Type, amount, CurrentUser);
 
-        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.Deleted)
+        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
             ? New<Start>()
             : New<ReduceLiabilities>();
 

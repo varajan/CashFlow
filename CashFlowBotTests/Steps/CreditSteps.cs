@@ -9,6 +9,7 @@ public class CreditSteps(StepsContext context)
     private readonly StepsContext _context = context;
     private User User => _context.User;
 
+    [Given("I get (.*) as a credit")]
     [When("I get (.*) as a credit")]
     public void GetCredit(string amount)
     {

@@ -53,7 +53,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
     private async Task ReduceLiabilities()
     {
         var person = PersonManager.Read(CurrentUser);
-        if (person.Liabilities.Any())
+        if (person.Liabilities.Any(l => l.FullAmount > 0))
         {
             NextStage = New<ReduceLiabilities>();
             return;

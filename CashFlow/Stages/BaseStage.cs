@@ -68,13 +68,13 @@ public abstract class BaseStage : IStage
             return;
         }
 
-        // divide Car Loan, Credit cards, retail debt by 2
         foreach (var liability in person.Liabilities.Where(l => l.IsBankruptcyDivisible))
         {
             liability.FullAmount /= 2;
             liability.Cashflow /= 2;
             PersonManager.Update(CurrentUser, liability);
         }
+        PersonManager.Update(person);
         await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
 
         if (person.CashFlow >= 0)
@@ -91,7 +91,7 @@ public abstract class BaseStage : IStage
     }
 
     protected bool MessageEquals(string message, int id, string value) =>
-    message.Equals(Terms.Get(id, CurrentUser, value), StringComparison.InvariantCultureIgnoreCase);
+        message.Equals(Terms.Get(id, CurrentUser, value), StringComparison.InvariantCultureIgnoreCase);
 
     protected bool IsCanceled(string message) => MessageEquals(message, 6, "Cancel");
 

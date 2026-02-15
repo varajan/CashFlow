@@ -95,6 +95,7 @@ public class BankruptcySellAssets(ITermsService termsService, IPersonManager per
         var cashflow = (int)(amount * percent);
 
         person.Cash -= amount;
+        liability.MarkedForReduction = false;
         liability.Cashflow += cashflow;
         liability.FullAmount -= amount;
         liability.Deleted = liability.FullAmount == 0;
