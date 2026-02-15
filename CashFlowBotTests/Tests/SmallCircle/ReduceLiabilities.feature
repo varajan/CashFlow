@@ -198,7 +198,44 @@ Scenario: I can pay off my Boat Loan
 • Reduce Liabilities. Boat Loan: $17,000
 """
 
-# bank loan, full and partial
-# boat loan
+Scenario: I can rollback transactions
+	Given I am 'Jak Sosa' user
+		And I play as 'Pilot'
+		And I get $200,000 in cash
+	But I get 2000 as a credit
+		And I buy a boat
+	When I pay off my Mortgage
+		And I pay off my Car Loan
+		And I pay off my Credit Card
+		And I pay off my Small Credit
+		And I pay off $2000 of my Bank Loan
+		And I pay off my Boat Loan
+	But I rollback last 6 actions
+	Then My Data is following:
+"""
+*Profession:* Pilot
+*Cash:* $204,000
+*Salary:* $9,500
+*Income:* $0
+*Expenses:* $7,440
+*Cash Flow*: $2,060
 
-# rollbacks
+*Assets:*
+• *Boat* - Price: $18,000, monthly: -$340
+
+*Expenses:*
+*Taxes:* $2,350
+*Mortgage/Rent Pay:* $1,330
+*Car Loan:* $300
+*Credit Card:* $660
+*Small Credit:* $50
+*Bank Loan:* $200
+*Boat Loan:* $340
+*Other Payments:* $2,210
+"""
+	And My history data is following:
+"""
+• Get $200,000
+• Get credit: $2,000
+• Buy a boat: $18,000
+"""

@@ -311,7 +311,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Credit_Card, expenses, amount);
+                person.UpdateLiability(Liability.Credit_Card, -expenses, amount);
                 break;
 
             case ActionType.SmallCredit:
@@ -319,12 +319,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Small_Credit, expenses, amount);
+                person.UpdateLiability(Liability.Small_Credit, -expenses, amount);
                 break;
 
             case ActionType.BankLoan:
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Bank_Loan, amount / 10, -amount);
+                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, -amount);
                 break;
 
             case ActionType.BankruptcyBankLoan:
@@ -387,6 +387,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             case ActionType.PayOffBoat:
                 person.Cash += amount;
+                boat.CashFlow = -340;
+                person.UpdateLiability(Liability.Boat_Loan, boat.CashFlow, boat.Mortgage);
                 RestoreAsset(person, boat);
                 break;
 
@@ -657,7 +659,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             AssetType.Boat => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
-                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {(-asset.CashFlow).AsCurrency()}",
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.SmallBusinessType => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"

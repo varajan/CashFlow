@@ -389,6 +389,87 @@ this.ScenarioInitialize(scenarioInfo);
             }
             this.ScenarioCleanup();
         }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can rollback transactions")]
+        public void ICanRollbackTransactions()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback transactions", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 201
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 202
+ testRunner.Given("I am \'Jak Sosa\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
+#line hidden
+#line 203
+  testRunner.And("I play as \'Pilot\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 204
+  testRunner.And("I get $200,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 205
+ testRunner.But("I get 2000 as a credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 206
+  testRunner.And("I buy a boat", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 207
+ testRunner.When("I pay off my Mortgage", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 208
+  testRunner.And("I pay off my Car Loan", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 209
+  testRunner.And("I pay off my Credit Card", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 210
+  testRunner.And("I pay off my Small Credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 211
+  testRunner.And("I pay off $2000 of my Bank Loan", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 212
+  testRunner.And("I pay off my Boat Loan", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 213
+ testRunner.But("I rollback last 6 actions", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
+#line hidden
+#line 214
+ testRunner.Then("My Data is following:", @"*Profession:* Pilot
+*Cash:* $204,000
+*Salary:* $9,500
+*Income:* $0
+*Expenses:* $7,440
+*Cash Flow*: $2,060
+
+*Assets:*
+• *Boat* - Price: $18,000, monthly: -$340
+
+*Expenses:*
+*Taxes:* $2,350
+*Mortgage/Rent Pay:* $1,330
+*Car Loan:* $300
+*Credit Card:* $660
+*Small Credit:* $50
+*Bank Loan:* $200
+*Boat Loan:* $340
+*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 236
+ testRunner.And("My history data is following:", "• Get $200,000\r\n• Get credit: $2,000\r\n• Buy a boat: $18,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
     }
 }
 #pragma warning restore

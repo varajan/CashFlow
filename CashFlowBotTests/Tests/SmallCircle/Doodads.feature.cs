@@ -189,11 +189,11 @@ this.ScenarioInitialize(scenarioInfo);
 *Cash:* $590
 *Salary:* $2,500
 *Income:* $0
-*Expenses:* $2,300
-*Cash Flow*: $200
+*Expenses:* $1,960
+*Cash Flow*: $540
 
 *Assets:*
-• *Boat* - Price: $18,000, monthly: $340
+• *Boat* - Price: $18,000, monthly: -$340
 
 *Expenses:*
 *Taxes:* $460
