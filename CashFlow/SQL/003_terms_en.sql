@@ -78,7 +78,7 @@
 (76, 'EN', 'Invalid Business number.'),
 (77, 'EN', 'You have no Business.'),
 (78, 'EN', 'What Business do you want to sell?{0}{1}.'),
-(79, 'EN', 'Pay Check'),
+(79, 'EN', 'Paycheck'),
 (80, 'EN', 'Downsize'),
 (81, 'EN', 'Small Opportunity'),
 (82, 'EN', 'Stocks x2'),

@@ -72,7 +72,7 @@ public class WinGameTests : StagesBaseTest
             Times.Once);
     }
 
-    [TestCase("Pay Check")]
+    [TestCase("Paycheck")]
     [TestCase("Get Money")]
     [TestCase("Give Money")]
     [TestCase("Divorce")]

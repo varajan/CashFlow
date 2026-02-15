@@ -36,7 +36,7 @@ public class BigCircleTests : StagesBaseTest
         var bigCircleDescription = $"{CurrentUserMock.Object.Name} at BigCircle!";
         var buttons = new[]
         {
-            "Pay Check",
+            "Paycheck",
             "Get Money",
             "Give Money",
             "Divorce",
@@ -83,7 +83,7 @@ public class BigCircleTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Pay Check");
+        await testStage.HandleMessage("Paycheck");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());

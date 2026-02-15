@@ -34,7 +34,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
                 Terms.Get(41, CurrentUser, "Stop Game"),
             ]
             : [
-                Terms.Get(79, CurrentUser, "Pay Check"),
+                Terms.Get(79, CurrentUser, "Paycheck"),
                 Terms.Get(32, CurrentUser, "Get Money"),
                 Terms.Get(33, CurrentUser, "Give Money"),
                 Terms.Get(69, CurrentUser, "Divorce"),
@@ -104,7 +104,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     {
         var person = PersonManager.Read(CurrentUser);
 
-        if (MessageEquals(message, 79, "Pay Check"))
+        if (MessageEquals(message, 79, "Paycheck"))
         {
             person.Cash += person.CurrentCashFlow;
             PersonManager.Update(person);

@@ -33,8 +33,8 @@ public class BaseSteps(StepsContext context)
         User.SendMessage(amount);
     }
 
-    [Given(@"I get pay check")]
-    public void GetPayCheck() => User.SendMessage("Pay Check");
+    [Given(@"I get Paycheck")]
+    public void GetPayCheck() => User.SendMessage("Paycheck");
 
     [Then(@"My Data is following:")]
     public void CheckMyData(string expected)

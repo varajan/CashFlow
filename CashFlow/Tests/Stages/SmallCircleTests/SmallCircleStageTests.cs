@@ -38,7 +38,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var description = $"{testPerson.Id} has {testPerson.Cash}";
 
         List<string> buttons = isHistoryEmpty ? ["Show my Data", "Friends"] : ["Show my Data", "Friends", "History"];
-        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Pay Check", "Give Money"]);
+        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
         PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
@@ -283,7 +283,7 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
-        await testStage.HandleMessage("Pay check");
+        await testStage.HandleMessage("Paycheck");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
@@ -309,7 +309,7 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
 
         // Act
-        await testStage.HandleMessage("Pay check");
+        await testStage.HandleMessage("Paycheck");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());

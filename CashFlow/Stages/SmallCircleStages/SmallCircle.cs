@@ -31,7 +31,7 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
             buttons.AddRange([Terms.Get(81, CurrentUser, "Small Opportunity"), Terms.Get(84, CurrentUser, "Big Opportunity")]);
             buttons.AddRange([Terms.Get(86, CurrentUser, "Doodads"), Terms.Get(85, CurrentUser, "Market")]);
             buttons.AddRange([Terms.Get(80, CurrentUser, "Downsize"), Terms.Get(39, CurrentUser, "Baby")]);
-            buttons.AddRange([Terms.Get(79, CurrentUser, "Pay Check"), Terms.Get(33, CurrentUser, "Give Money")]);
+            buttons.AddRange([Terms.Get(79, CurrentUser, "Paycheck"), Terms.Get(33, CurrentUser, "Give Money")]);
 
             if (isReadyForBigCircle)
             {
@@ -100,7 +100,7 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
                 await Baby();
                 return;
 
-            case var m when MessageEquals(m, 79, "Pay Check"):
+            case var m when MessageEquals(m, 79, "Paycheck"):
                 await GetMoney();
                 return;
 
