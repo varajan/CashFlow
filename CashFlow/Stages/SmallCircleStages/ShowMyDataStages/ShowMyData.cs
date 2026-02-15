@@ -40,7 +40,7 @@ public class ShowMyData(ITermsService termsService, IPersonManager personManager
                 await ReduceLiabilities();
                 return;
 
-            case var m when MessageEquals(m, 40, "Stop Game"):
+            case var m when MessageEquals(m, 41, "Stop Game"):
                 NextStage = New<StopGame>();
                 return;
 

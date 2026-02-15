@@ -1,5 +1,4 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Extensions;
+﻿using CashFlow.Extensions;
 using CashFlowBotTests.Extras;
 using TechTalk.SpecFlow;
 
@@ -17,12 +16,19 @@ public class BaseSteps(StepsContext context)
         _context.User = new User(userName);
     }
 
+    [Given("I say '(.*)'")]
+    [When("I say '(.*)'")]
+    [Then("I say '(.*)'")]
+    public void Say(string text) => User.SendMessage(text);
+
     [Given(@"I play as '(.*)'")]
     public void StartGame(string role)
     {
         User.SendMessage("start");
         User.SendMessage("en");
         User.SendMessage(role);
+
+        _context.Profession = role;
     }
 
     [Given(@"I get (.*) in cash")]
