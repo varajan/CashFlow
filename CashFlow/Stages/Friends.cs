@@ -22,7 +22,7 @@ public class Friends(ITermsService termsService, IPersonManager personManager) :
             var onBigCircle = ActiveUsers.Where(x => PersonManager.Read(x).BigCircle == true).ToList();
 
             if (onSmallCircle.Any()) message += $"*{onSmall}*{NL}{string.Join("", onSmallCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}{NL}";
-            if (onBigCircle.Any()) message += $"*{onBig}* {NL}{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}";
+            if (onBigCircle.Any()) message += $"*{onBig}*{NL}{string.Join("", onBigCircle.Select(x => $"• {x.Name.Escape()}{NL}"))}";
 
             return message;
         }

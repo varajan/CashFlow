@@ -8,6 +8,10 @@ public class BaseSteps(StepsContext context)
 {
     protected readonly StepsContext Context = context;
     protected User User => Context.Users.First();
+
+    protected User GetUser(string name) => name.Equals("I")
+        ? Context.Users.First()
+        : Context.Users.First(u => u.Name.Equals(name));
 }
 
 [Binding]
@@ -35,13 +39,15 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         User.Profession = role;
     }
 
-    [Given(@"I get (.*) in cash")]
-    [When(@"I get (.*) in cash")]
-    public void GetMoney(string amount)
+    [Given(@"(.*) get (.*) in cash")]
+    [When (@"(.*) get (.*) in cash")]
+    public void GetMoney(string name, string amount)
     {
-        User.SendMessage("Show my Data");
-        User.SendMessage("Get Money");
-        User.SendMessage(amount);
+        var user = GetUser(name);
+
+        user.SendMessage("Show my Data");
+        user.SendMessage("Get Money");
+        user.SendMessage(amount);
     }
 
     [Given(@"I get Paycheck")]
@@ -193,4 +199,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
 
         Assert.That(actual, Is.EquivalentTo(expected));
     }
+
+    [When("(.*) go(es|) to the Big Circle")]
+    public void GoToBigCircle(string name, string _) => GetUser(name).SendMessage("Go to Big Circle");
 }

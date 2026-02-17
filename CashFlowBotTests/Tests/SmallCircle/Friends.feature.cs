@@ -74,12 +74,12 @@ namespace CashFlowBotTests.Tests.SmallCircle
         }
         
         [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("I can see my friends data")]
-        public void ICanSeeMyFriendsData()
+        [NUnit.Framework.DescriptionAttribute("I can see my friends")]
+        public void ICanSeeMyFriends()
         {
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see my friends data", null, tagsOfScenario, argumentsOfScenario, featureTags);
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see my friends", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 3
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
@@ -95,15 +95,55 @@ this.ScenarioInitialize(scenarioInfo);
                             "Profession"});
                 table5.AddRow(new string[] {
                             "Bronwyn Berry",
-                            "Teacher"});
+                            "Doctor"});
                 table5.AddRow(new string[] {
                             "Damien Washington",
                             "Pilot"});
                 table5.AddRow(new string[] {
                             "Bryony Morrison",
-                            "Doctor"});
+                            "Teacher"});
+                table5.AddRow(new string[] {
+                            "Kelsie Humphrey",
+                            "Lawyer"});
 #line 4
  testRunner.Given("Few players:", ((string)(null)), table5, "Given ");
+#line hidden
+#line 11
+ testRunner.When("Bronwyn Berry get $1000 as a credit", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 12
+  testRunner.And("Damien Washington get $1000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 13
+  testRunner.And("Bryony Morrison get $10000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                            "Opportunity",
+                            "Title",
+                            "Price",
+                            "First Payment",
+                            "Monthly Cashflow"});
+                table6.AddRow(new string[] {
+                            "Small",
+                            "2/1",
+                            "60,000",
+                            "2,000",
+                            "1,000"});
+                table6.AddRow(new string[] {
+                            "Big",
+                            "8-plex",
+                            "150,000",
+                            "5,000",
+                            "1,500"});
+#line 14
+  testRunner.And("Bryony Morrison buys real estate:", ((string)(null)), table6, "And ");
+#line hidden
+#line 18
+  testRunner.And("Bryony Morrison goes to the Big Circle", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 20
+ testRunner.Then("Kelsie Humphrey can see friends:", "*On Small circle:*\r\n• Bronwyn Berry\r\n• Damien Washington\r\n\r\n*On Big circle:*\r\n• B" +
+                        "ryony Morrison", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

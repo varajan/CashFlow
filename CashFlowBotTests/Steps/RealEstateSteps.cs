@@ -7,23 +7,24 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class RealEstateSteps(StepsContext context) : BaseSteps(context)
 {
-    [When("I buy real estate:")]
-    public void BuyRealEstate(Table table)
+    [When("(.*) buy(s|) real estate:")]
+    public void BuyRealEstate(string name, string _, Table table)
     {
         foreach (var row in table.Rows)
         {
+            var user = GetUser(name);
             var type = row["Opportunity"];
             var title = row["Title"];
             var price = row["Price"];
             var firstPayment = row["First Payment"];
             var cashflow = row["Monthly Cashflow"];
 
-            User.SendMessage($"{type} Opportunity");
-            User.SendMessage("Buy Real Estate");
-            User.SendMessage(title);
-            User.SendMessage(price);
-            User.SendMessage(firstPayment);
-            User.SendMessage(cashflow);
+            user.SendMessage($"{type} Opportunity");
+            user.SendMessage("Buy Real Estate");
+            user.SendMessage(title);
+            user.SendMessage(price);
+            user.SendMessage(firstPayment);
+            user.SendMessage(cashflow);
         }
     }
 
