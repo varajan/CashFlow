@@ -5,11 +5,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class LandSteps(StepsContext context)
+public class LandSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [Given(@"I buy (.*) of land with price (.*) as (Small|Big) opprotunity")]
     [When(@"I buy (.*) of land with price (.*) as (Small|Big) opprotunity")]
     public void BuyLand(string name, string price, string type)

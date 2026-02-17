@@ -4,11 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class KidsSteps(StepsContext context)
+public class KidsSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [When(@"I get (\d+) kid(s|)")]
     public void GetKids(int count, string _)
     {

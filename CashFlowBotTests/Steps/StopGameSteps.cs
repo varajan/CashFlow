@@ -4,12 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class StopGameSteps(StepsContext context)
+public class StopGameSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-    private string Profession => _context.Profession;
-
     [When("I decide to stop the game")]
     public void GoToStopGame()
     {
@@ -30,6 +26,6 @@ public class StopGameSteps(StepsContext context)
     {
         var reply = User.GetReply();
 
-        Assert.That(reply.Message, Does.StartWith($"*Profession:* {Profession}"));
+        Assert.That(reply.Message, Does.StartWith($"*Profession:* {User.Profession}"));
     }
 }

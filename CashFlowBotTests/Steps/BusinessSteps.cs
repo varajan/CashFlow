@@ -5,11 +5,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class BusinessSteps(StepsContext context)
+public class BusinessSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [Given("I buy businesses:")]
     [When("I buy businesses:")]
     public void BuyRealEstate(Table table)

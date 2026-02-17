@@ -4,11 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class CoinsSteps(StepsContext context)
+public class CoinsSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [Given(@"I buy (\d+) (Peso|Krugerand)(s|) with price (.*) each")]
     [When(@"I buy (\d+) (Peso|Krugerand)(s|) with price (.*) each")]
     public void BuyCoins(string count, string name, string _, string price)

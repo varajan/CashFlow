@@ -5,11 +5,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class SmallBusinessSteps(StepsContext context)
+public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [Given(@"I start the (Auto Tools|Computer Programs) company with (.*)")]
     [When(@"I start the (Auto Tools|Computer Programs) company with (.*)")]
     public void StartCompany(string name, string price)

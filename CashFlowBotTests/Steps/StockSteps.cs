@@ -4,11 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class StockSteps(StepsContext context)
+public class StockSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [Given(@"I buy (\d+) shares of '(.*)' stock with price (.*) each")]
     [When(@"I buy (\d+) shares of '(.*)' stock with price (.*) each")]
     public void BuyStocks(int count, string name, string price)

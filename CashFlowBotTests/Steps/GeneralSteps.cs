@@ -4,16 +4,20 @@ using TechTalk.SpecFlow;
 
 namespace CashFlowBotTests.Steps;
 
-[Binding]
 public class BaseSteps(StepsContext context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
+    protected readonly StepsContext Context = context;
+    protected User User => Context.Users.First();
+}
 
+[Binding]
+public class GeneralSteps(StepsContext context) : BaseSteps(context)
+{
     [Given(@"I am '(.*)' user")]
     public void SetName(string userName)
     {
-        _context.User = new User(userName);
+        var user = new User(userName);
+        Context.Users.Add(user);
     }
 
     [Given("I say '(.*)'")]
@@ -28,7 +32,7 @@ public class BaseSteps(StepsContext context)
         User.SendMessage("en");
         User.SendMessage(role);
 
-        _context.Profession = role;
+        User.Profession = role;
     }
 
     [Given(@"I get (.*) in cash")]

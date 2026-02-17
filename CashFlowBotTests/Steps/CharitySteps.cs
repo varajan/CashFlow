@@ -4,11 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class CharitySteps(StepsContext context)
+public class CharitySteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [When("I donate to a charity")]
     public void Charity()
     {

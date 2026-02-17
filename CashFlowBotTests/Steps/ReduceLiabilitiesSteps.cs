@@ -4,11 +4,8 @@ using TechTalk.SpecFlow;
 namespace CashFlowBotTests.Steps;
 
 [Binding]
-public class ReduceLiabilitiesSteps(StepsContext context)
+public class ReduceLiabilitiesSteps(StepsContext context) : BaseSteps(context)
 {
-    private readonly StepsContext _context = context;
-    private User User => _context.User;
-
     [When("I pay off my (.*)")]
     public void PayOff(string liability)
     {
