@@ -1,5 +1,8 @@
 ﻿Feature: Friends
 
+@non-parallel
+@do-cleanup
+
 Scenario: I can see my friends
 	Given Few players:
 	| Name              | Profession |

@@ -75,12 +75,16 @@ namespace CashFlowBotTests.Tests.SmallCircle
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("I can buy businesses")]
+        [NUnit.Framework.CategoryAttribute("non-parallel")]
+        [NUnit.Framework.CategoryAttribute("do-cleanup")]
         public void ICanBuyBusinesses()
         {
-            string[] tagsOfScenario = ((string[])(null));
+            string[] tagsOfScenario = new string[] {
+                    "non-parallel",
+                    "do-cleanup"};
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can buy businesses", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 3
+#line 6
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -90,13 +94,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 4
+#line 7
  testRunner.Given("I am \'Inayah Hodge\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 5
+#line 8
   testRunner.And("I play as \'Car mechanic\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 6
+#line 9
   testRunner.And("I get $200,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table1 = new TechTalk.SpecFlow.Table(new string[] {
@@ -134,10 +138,10 @@ this.ScenarioInitialize(scenarioInfo);
                             "500,000",
                             "50,000",
                             "2500"});
-#line 7
+#line 10
  testRunner.When("I buy businesses:", ((string)(null)), table1, "When ");
 #line hidden
-#line 15
+#line 18
  testRunner.Then("My Data is following:", @"*Profession:* Car mechanic
 *Cash:* $16,390
 *Salary:* $2,000
@@ -172,7 +176,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can sell businesses", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 41
+#line 44
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -182,13 +186,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 42
+#line 45
  testRunner.Given("I am \'Timothy Fry\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 43
+#line 46
   testRunner.And("I play as \'Car mechanic\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 44
+#line 47
   testRunner.And("I get $200,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table2 = new TechTalk.SpecFlow.Table(new string[] {
@@ -226,16 +230,16 @@ this.ScenarioInitialize(scenarioInfo);
                             "500,000",
                             "50,000",
                             "2500"});
-#line 45
+#line 48
  testRunner.When("I buy businesses:", ((string)(null)), table2, "When ");
 #line hidden
-#line 53
+#line 56
   testRunner.But("I sell Car wash for $100,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 54
+#line 57
   testRunner.And("I sell Passage for $200,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 55
+#line 58
  testRunner.Then("My Data is following:", @"*Profession:* Car mechanic
 *Cash:* $206,390
 *Salary:* $2,000
@@ -257,7 +261,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Small Credit:* $50
 *Other Payments:* $450", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 78
+#line 81
  testRunner.And("My history data is following:", @"• Get $200,000
 • Buy Business. *Car Wash* - Price: $20,000, Cash Flow: $800
 • Buy Business. *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
@@ -279,7 +283,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback buy action", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 91
+#line 94
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -289,13 +293,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 92
+#line 95
  testRunner.Given("I am \'Gabriela Johns\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 93
+#line 96
   testRunner.And("I play as \'Car mechanic\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 94
+#line 97
   testRunner.And("I get $50,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table3 = new TechTalk.SpecFlow.Table(new string[] {
@@ -313,19 +317,19 @@ this.ScenarioInitialize(scenarioInfo);
                             "25,000",
                             "20,000",
                             "1000"});
-#line 95
+#line 98
  testRunner.When("I buy businesses:", ((string)(null)), table3, "When ");
 #line hidden
-#line 99
+#line 102
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 100
+#line 103
  testRunner.Then("I have $31,390 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 101
+#line 104
   testRunner.And("My passive income is $800", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 102
+#line 105
   testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cash Flow: $800", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -339,7 +343,7 @@ this.ScenarioInitialize(scenarioInfo);
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can rollback sell action", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 107
+#line 110
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -349,13 +353,13 @@ this.ScenarioInitialize(scenarioInfo);
             else
             {
                 this.ScenarioStart();
-#line 108
+#line 111
  testRunner.Given("I am \'Sidney Nielsen\' user", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Given ");
 #line hidden
-#line 109
+#line 112
   testRunner.And("I play as \'Car mechanic\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 110
+#line 113
   testRunner.And("I get $50,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
                 TechTalk.SpecFlow.Table table4 = new TechTalk.SpecFlow.Table(new string[] {
@@ -373,22 +377,22 @@ this.ScenarioInitialize(scenarioInfo);
                             "25,000",
                             "20,000",
                             "1000"});
-#line 111
+#line 114
   testRunner.And("I buy businesses:", ((string)(null)), table4, "And ");
 #line hidden
-#line 115
+#line 118
  testRunner.When("I sell Car wash for $30,000", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 116
+#line 119
  testRunner.But("I rollback last action", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "But ");
 #line hidden
-#line 117
+#line 120
  testRunner.Then("I have $11,390 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 118
+#line 121
   testRunner.And("My passive income is $1,800", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 119
+#line 122
   testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cash Flow: $800\r\n• *Company* - Price: $25,000, Mor" +
                         "tgage: $5,000, Cash Flow: $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden

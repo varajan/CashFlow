@@ -19,7 +19,16 @@ while (true)
     }
 
     File.Delete(file);
-    if (message == "exit") break;
+
+    if (message == "EXIT") break;
+
+    if (message == "RESET")
+    {
+        DataBase.Execute("DELETE FROM Users");
+        DataBase.Execute("DELETE FROM Persons");
+        Thread.Sleep(200);
+        continue;
+    }
 
     HandleUpdateAsync(chatId, message).GetAwaiter().GetResult();
 }

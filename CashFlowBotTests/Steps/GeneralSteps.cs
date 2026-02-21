@@ -7,7 +7,7 @@ namespace CashFlowBotTests.Steps;
 public class BaseSteps(StepsContext context)
 {
     protected readonly StepsContext Context = context;
-    protected User User => Context.Users.First();
+    protected User User => GetUser("I");
 
     protected User GetUser(string name) => name.Equals("I")
         ? Context.Users.First()
@@ -17,6 +17,15 @@ public class BaseSteps(StepsContext context)
 [Binding]
 public class GeneralSteps(StepsContext context) : BaseSteps(context)
 {
+    [BeforeTestRun]
+    [BeforeScenario("@do-cleanup")]
+    [AfterScenario("@do-cleanup")]
+    public static void Reset()
+    {
+        Bot.SendMessage("RESET");
+        Thread.Sleep(500);
+    }
+
     [Given(@"I am '(.*)' user")]
     public void SetName(string userName)
     {
@@ -32,7 +41,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     [Given(@"I play as '(.*)'")]
     public void StartGame(string role)
     {
-        User.SendMessage("start");
+        User.SendMessage(User.Name);
         User.SendMessage("en");
         User.SendMessage(role);
 

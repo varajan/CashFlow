@@ -1,5 +1,8 @@
 ﻿Feature: Business
 
+@non-parallel
+@do-cleanup
+
 Scenario: I can buy businesses
 	Given I am 'Inayah Hodge' user
 		And I play as 'Car mechanic'

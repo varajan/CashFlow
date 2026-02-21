@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Polly" Version="8.6.5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CashFlow\CashFlow.csproj" />
   </ItemGroup>
 

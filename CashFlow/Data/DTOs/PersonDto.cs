@@ -8,7 +8,7 @@ public class PersonDto
     public string Profession { get; set; }
     public int Salary { get; set; }
     public int Cash { get; set; }
-    public bool ReadyForBigCircle => Income > TotalExpenses;
+    public bool ReadyForBigCircle => Income > Math.Abs(TotalExpenses);
     public bool BigCircle { get; set; }
     public bool IsWinning { get; set; }
     public int InitialCashFlow { get; set; }

@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CashFlow.Extensions;
+using Polly;
+using Polly.Retry;
 
 namespace CashFlowBotTests.Extras;
 
@@ -36,18 +38,31 @@ public class Bot()
             if (lastReply != null && reply.UtcNow > lastReply.UtcNow) return;
         }
 
-        throw new TimeoutException("No reply from bot within the expected time.");
+        throw new TimeoutException($"{DateTime.UtcNow} [{chatId}] No reply from bot within the expected time.");
     }
 
     public static MessageDto GetReply(long chatId)
     {
         var fileName = Path.Combine(emulatorDirectory, $"{chatId}.msg");
-        if (!File.Exists(fileName)) return null;
+        var getReply = () =>
+        {
+            var lastMessage = File.ReadAllLines(fileName).Last();
+            var message = lastMessage.Deserialize<MessageDto>();
+            message.Message = message?.Message?.Trim();
 
-        var lastMessage = File.ReadAllLines(fileName).Last();
-        var message = lastMessage.Deserialize<MessageDto>();
-        message.Message = message?.Message?.Trim();
+            return message;
+        };
 
-        return message;
+        return File.Exists(fileName)
+            ? _retryPolicy.Execute(getReply)
+            : null;
     }
+
+    private static readonly RetryPolicy _retryPolicy =
+        Policy
+            .Handle<IOException>()
+            .WaitAndRetry(
+                retryCount: 5,
+                sleepDurationProvider: retryAttempt =>
+                    TimeSpan.FromMilliseconds(200 * retryAttempt));
 }
