@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.HistoryData;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;
 
 namespace CashFlow.Data.Users;
@@ -15,7 +14,6 @@ public interface IUser
     Language Language { get; set; }
     Stage Stage { get; set; }
     string StageName { get; set; }
-    IPerson Person_OBSOLETE { get; }
     IHistory History_OBSOLETE { get; }
     DateTime FirstLogin { get; }
     DateTime LastActive { get; set; }

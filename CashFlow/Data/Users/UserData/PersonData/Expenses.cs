@@ -1,7 +1,5 @@
-﻿using CashFlow.Data.Consts;
-using CashFlow.Extensions;
+﻿using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using System;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
 
@@ -25,7 +23,7 @@ public class Expenses(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, 
     public int PerChild { get => GetInt("PerChild"); set => Set("PerChild", value); }
     public int ChildrenExpenses => Children * PerChild;
 
-    private Asset_OLD Boat => User.Person_OBSOLETE.Assets.Boat;
+    private Asset_OLD Boat => default;
     private int BoatLoan => Boat?.CashFlow ?? 0;
 
     public string Description

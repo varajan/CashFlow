@@ -12,7 +12,6 @@ public abstract class StagesBaseTest
 {
     protected Mock<IUser> CurrentUserMock;
     protected List<IUser> OtherUsers;
-    //protected Mock<IAssetManager> AssetManagerMock;
     protected Mock<IAvailableAssets> AvailableAssetsMock;
     protected Mock<IPersonManager> PersonManagerMock;
     protected Mock<ITermsService> TermsServiceMock;
@@ -28,7 +27,6 @@ public abstract class StagesBaseTest
     {
         ServicesProvider.Init();
 
-        //AssetManagerMock = new Mock<IAssetManager>();
         AvailableAssetsMock = new Mock<IAvailableAssets>();
         PersonManagerMock = new Mock<IPersonManager>();
         TermsServiceMock = new Mock<ITermsService>();
@@ -79,7 +77,6 @@ public abstract class StagesBaseTest
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);
         user.SetupGet(u => u.Description).Returns($"{name} at {cirle} circle");
-        user.SetupGet(u => u.Person_OBSOLETE).Returns(person.Object);
 
         var testPerson = new PersonDto { Id = id, Cash = 100, BigCircle = cirle == Circle.Big };
         personManagerMock.Setup(p => p.Read(user.Object)).Returns(testPerson);

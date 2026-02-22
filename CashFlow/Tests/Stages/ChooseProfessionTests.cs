@@ -43,7 +43,6 @@ public class ChooseProfessionTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var personMock = new Mock<IPerson>();
-        CurrentUserMock.SetupGet(u => u.Person_OBSOLETE).Returns(personMock.Object);
 
         // Act
         await testStage.HandleMessage("random");

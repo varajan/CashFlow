@@ -22,12 +22,11 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
     public int Cash { get => GetInt("Cash"); set => Set("Cash", value); }
     public int Salary { get => GetInt("Salary"); set => Set("Salary", value); }
     public int CashFlow => Salary + Assets.Income - Expenses.Total;
-    public bool ReadyForBigCircle => User.Person_OBSOLETE.Assets.Income > User.Person_OBSOLETE.Expenses.Total;
+    public bool ReadyForBigCircle => true;
     public bool Bankruptcy { get => GetInt("Bankruptcy") == 1; set => Set("Bankruptcy", value ? 1 : 0); }
     public bool CreditsReduced { get => GetInt("CreditsReduced") == 1; set => Set("CreditsReduced", value ? 1 : 0); }
     public Circle Circle { get => BigCircle ? Circle.Big : Circle.Small; set => throw new NotImplementedException(); }
     public bool BigCircle { get => GetInt("BigCircle") == 1; set => Set("BigCircle", value ? 1 : 0); }
-    //public bool SmallRealEstate { get => GetInt("SmallRealEstate") == 1; set => Set("SmallRealEstate", value ? 1 : 0); }
 
     public IExpenses Expenses => new Expenses(DataBase, User);
     public ILiabilities Liabilities => new Liabilities(DataBase, User);
@@ -98,7 +97,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
 
     public void ReduceCreditsRollback()
     {
-        var person = Persons.Get(User.Person_OBSOLETE.Profession);
+        var person = Persons.Get("");
         var count = User.History_OBSOLETE.Count(ActionType.BankruptcyDebtRestructuring);
 
         Expenses.CarLoan = person.Expenses.CarLoan;

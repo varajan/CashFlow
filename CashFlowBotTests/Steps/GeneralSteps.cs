@@ -9,7 +9,7 @@ public class BaseSteps(StepsContext context)
     protected readonly StepsContext Context = context;
     protected User User => GetUser("I");
 
-    protected User GetUser(string name) => name.Equals("I")
+    protected User GetUser(string name) => name.Equals("I") || name.Equals("My")
         ? Context.Users.First()
         : Context.Users.First(u => u.Name.Equals(name));
 }
@@ -37,6 +37,16 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     [When ("(I|.*) say(|s) '(.*)'")]
     [Then ("(I|.*) say(|s) '(.*)'")]
     public void Say(string name, string _, string text) => GetUser(name).SendMessage(text);
+
+    [Then("(I|.*) see(|s) buttons: (.*)")]
+    public void CheckButtons(string name, string _, string buttonNames)
+    {
+        var user = GetUser(name);
+        var actual = user.GetReply().Buttons;
+        var expected = buttonNames.Split(",").Select(b => b.Trim());
+
+        Assert.That(actual, Is.EquivalentTo(expected));
+    }
 
     [Given(@"I play as '(.*)'")]
     public void StartGame(string role)
@@ -71,21 +81,23 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
     }
 
-    [Then(@"My history data is following:")]
-    public void CheckHistory(string expected)
+    [Then(@"(My|.*) history data is following:")]
+    public void CheckHistory(string name, string expected)
     {
-        User.SendMessage("Main menu");
-        User.SendMessage("History");
-        var reply = User.GetReply();
+        var user = GetUser(name);
+        user.SendMessage("Main menu");
+        user.SendMessage("History");
+        var reply = user.GetReply();
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
     }
 
-    [When(@"I rollback last action")]
-    public void RollbackLastTransaction()
+    [When(@"(I|.*) rollback(|s) last action")]
+    public void RollbackLastTransaction(string name, string _)
     {
-        User.SendMessage("History");
-        User.SendMessage("Rollback last action");
-        User.SendMessage("Main menu");
+        var user = GetUser(name);
+        user.SendMessage("History");
+        user.SendMessage("Rollback last action");
+        user.SendMessage("Main menu");
     }
 
     [When(@"I rollback last (\d+) actions")]

@@ -14,7 +14,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
 [TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
 {
-    private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Person_OBSOLETE.Circle == Circle.Small);
+    private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Description.Contains("Small"));
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
     private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
@@ -209,7 +209,6 @@ public class SendMoneyAmountTests : StagesBaseTest
         var personMock = new Mock<IPerson>();
 
         personMock.SetupGet(p => p.Cash).Returns(100);
-        CurrentUserMock.SetupGet(u => u.Person_OBSOLETE).Returns(personMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");

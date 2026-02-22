@@ -83,7 +83,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         return data.Any();
     }
 
-    public PersonDto Read(IUser user) => DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}").Deserialize<PersonDto>();
+    public PersonDto Read(IUser user)
+    {
+        var personData = DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}");
+
+        return string.IsNullOrEmpty(personData)
+            ? default
+            : personData.Deserialize<PersonDto>();
+    }
 
     public string GetDescription(IUser user, bool compact = true)
     {

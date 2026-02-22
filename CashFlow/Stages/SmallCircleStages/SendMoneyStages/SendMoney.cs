@@ -14,7 +14,10 @@ public class SendMoney(ITermsService termsService, IPersonManager personManager)
         get
         {
             var bank = Terms.Get(149, CurrentUser, "Bank");
-            var users = OtherUsers.Where(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small).Select(x => x.Name).ToList();
+            var users = OtherUsers
+                .Where(x => x.IsActive && PersonManager.Read(x) is { BigCircle: false })
+                .Select(x => x.Name)
+                .ToList();
 
             return users.Append(bank).Append(Cancel);
         }
@@ -28,7 +31,8 @@ public class SendMoney(ITermsService termsService, IPersonManager personManager)
             return;
         }
 
-        if (MessageEquals(message, 149, "Bank") || OtherUsers.Any(x => x.IsActive && x.Person_OBSOLETE.Circle == Circle.Small && x.Name == message))
+        if (MessageEquals(message, 149, "Bank") ||
+            OtherUsers.Any(x => x.IsActive && PersonManager.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto
             {

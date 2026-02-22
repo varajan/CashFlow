@@ -2,7 +2,6 @@
 using System.Globalization;
 using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.HistoryData;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Stages;
 using CashFlow.Interfaces;
 
@@ -11,7 +10,7 @@ namespace CashFlow.Data.Users;
 public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService, long id) : BaseDataModel(dataBase, id, "Users"), IUser
 {
     public IHistory History_OBSOLETE => new UserData.HistoryData.History(DataBase, this);
-    public IPerson Person_OBSOLETE => new Person(DataBase, this);
+    //public IPerson Person_OBSOLETE => new Person(DataBase, this);
 
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
     public Stage Stage { get => throw new Exception(); set => throw new Exception(); }
@@ -31,9 +30,10 @@ public class CashFlowUsersUser(IDataBase dataBase, INotifyService notifyService,
 
     public Language Language { get => (Language)GetInt("Language"); set => Set("Language", (int)value); }
 
-    public string Description => Person_OBSOLETE.Description +
-                                 Person_OBSOLETE.Assets.Description +
-                                 Person_OBSOLETE.Expenses.Description;
+    public string Description => string.Empty;
+    //public string Description => Person_OBSOLETE.Description +
+    //                             Person_OBSOLETE.Assets.Description +
+    //                             Person_OBSOLETE.Expenses.Description;
 
     public void Create()
     {
