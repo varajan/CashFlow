@@ -16,7 +16,7 @@ public class BankruptcySellAssets(ITermsService termsService, IPersonManager per
     {
         get
         {
-            var cashFlow = Terms.Get(55, CurrentUser, "Cash Flow");
+            var cashFlow = Terms.Get(55, CurrentUser, "Cashflow");
             var cash = Terms.Get(51, CurrentUser, "Cash");
             var bankLoan = Terms.Get(47, CurrentUser, Liability.Bank_Loan.AsString());
             var price = Terms.Get(64, CurrentUser, "Price");

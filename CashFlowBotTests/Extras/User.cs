@@ -7,5 +7,5 @@ public class User(string name)
     private int Id { get; } = Math.Abs(name.GetHashCode());
 
     public void SendMessage(string message) => Bot.SendMessage(message, Id);
-    public MessageDto GetReply() => Bot.GetReply(Id);
+    public MessageDto GetReply(int indexFromEnd = 0) => Bot.GetReply(Id, indexFromEnd);
 }

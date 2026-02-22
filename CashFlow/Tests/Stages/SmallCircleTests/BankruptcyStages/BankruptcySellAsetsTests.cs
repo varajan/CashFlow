@@ -44,11 +44,11 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         var testStage = GetTestStage();
         var message = @"*You're out of money.*
 Bank Loan: *$3,000*
-Cash Flow: *-$1,130*
+Cashflow: *-$1,130*
 Cash: *$100*
-#1 - *Asset 3* - Price: $4,500, Cash Flow: $30
-#2 - *Asset 1* - Price: $500, Cash Flow: $10
-#3 - *Asset 4* - Price: $2,000, Cash Flow: $80";
+#1 - *Asset 3* - Price: $4,500, Cashflow: $30
+#2 - *Asset 1* - Price: $500, Cashflow: $10
+#3 - *Asset 4* - Price: $2,000, Cashflow: $80";
 
         // Act
 

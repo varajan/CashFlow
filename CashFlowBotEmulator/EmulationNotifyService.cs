@@ -12,14 +12,14 @@ public class EmulationNotifyService(long chatId) : INotifyService
 
     public Task SetButtons(IStage stage)
     {
-        var @object = new { stage.Message, stage.Buttons, DateTime.UtcNow };
+        var @object = new { stage.Message, stage.Buttons, DateTime = DateTime.UtcNow };
         File.AppendAllText(FileName, $"\n{@object.Serialize()}");
         return Task.CompletedTask;
     }
 
     public Task Notify(string message)
     {
-        var @object = new { message, DateTime.UtcNow };
+        var @object = new { Message = message, DateTime = DateTime.UtcNow };
         var appendFile = () =>
         {
             File.AppendAllText(FileName, $"\n{@object.Serialize()}");

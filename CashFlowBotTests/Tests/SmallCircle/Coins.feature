@@ -13,7 +13,7 @@ Scenario: I can buy coins
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Assets:*
 • *Peso* - 10 @ $300
@@ -44,7 +44,7 @@ Scenario: I can sell coins
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Expenses:*
 *Taxes:* $460

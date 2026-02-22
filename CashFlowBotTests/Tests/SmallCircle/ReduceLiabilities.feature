@@ -12,7 +12,7 @@ Scenario: I can pay off my Mortgage
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $5,570
-*Cash Flow*: $3,930
+*Cashflow:* $3,930
 
 *Expenses:*
 *Taxes:* $2,350
@@ -39,7 +39,7 @@ Scenario: I can pay off my Car Loan
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,600
-*Cash Flow*: $2,900
+*Cashflow:* $2,900
 
 *Expenses:*
 *Taxes:* $2,350
@@ -66,7 +66,7 @@ Scenario: I can pay off my Credit Card
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,240
-*Cash Flow*: $3,260
+*Cashflow:* $3,260
 
 *Expenses:*
 *Taxes:* $2,350
@@ -93,7 +93,7 @@ Scenario: I can pay off my Small Credit
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,850
-*Cash Flow*: $2,650
+*Cashflow:* $2,650
 
 *Expenses:*
 *Taxes:* $2,350
@@ -120,7 +120,7 @@ Scenario: I can pay off my Bank Loan fully
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,900
-*Cash Flow*: $2,600
+*Cashflow:* $2,600
 
 *Expenses:*
 *Taxes:* $2,350
@@ -148,7 +148,7 @@ Scenario: I can pay off my Bank Loan partially
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $7,200
-*Cash Flow*: $2,300
+*Cashflow:* $2,300
 
 *Expenses:*
 *Taxes:* $2,350
@@ -178,7 +178,7 @@ Scenario: I can pay off my Boat Loan
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,900
-*Cash Flow*: $2,600
+*Cashflow:* $2,600
 
 *Assets:*
 • *Boat* - Price: $18,000
@@ -218,7 +218,7 @@ Scenario: I can rollback transactions
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $7,440
-*Cash Flow*: $2,060
+*Cashflow:* $2,060
 
 *Assets:*
 • *Boat* - Price: $18,000, monthly: -$340

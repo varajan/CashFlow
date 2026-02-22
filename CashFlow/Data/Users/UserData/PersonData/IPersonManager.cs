@@ -175,7 +175,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         var salaryTerm = Terms.Get(52, user, "Salary");
         var incomeTerm = Terms.Get(53, user, "Income");
         var expensesTerm = Terms.Get(54, user, "Expenses");
-        var cashFlowTerm = Terms.Get(55, user, "Cash Flow");
+        var cashFlowTerm = Terms.Get(55, user, "Cashflow");
 
         return
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
@@ -183,14 +183,14 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
             $"*{incomeTerm}:* {person.Income.AsCurrency()}{Environment.NewLine}" +
             $"*{expensesTerm}:* {(-person.TotalExpenses).AsCurrency()}{Environment.NewLine}" +
-            $"*{cashFlowTerm}*: {person.CashFlow.AsCurrency()}";
+            $"*{cashFlowTerm}:* {person.CashFlow.AsCurrency()}";
     }
 
     private string BigCircleDescription(PersonDto person, IUser user)
     {
         var professionTerm = Terms.Get(50, user, "Profession");
         var cashTerm = Terms.Get(51, user, "Cash");
-        var cashFlowTerm = Terms.Get(55, user, "Cash Flow");
+        var cashFlowTerm = Terms.Get(55, user, "Cashflow");
         var initialTerm = Terms.Get(65, user, "Initial");
         var currentTerm = Terms.Get(66, user, "Current");
         var targetTerm = Terms.Get(67, user, "Target");
@@ -504,7 +504,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
             case ActionType.IncreaseCashFlow:
                 var smallBusiness = ReadAsset(assetId, user);
-                var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cash Flow");
+                var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cashflow");
                 return $"*{smallBusiness.Title}* - {increaseCashFlow}. {value.AsCurrency()}";
 
             case ActionType.SellRealEstate:
@@ -633,7 +633,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     {
         var mortgage = Terms.Get(43, user, "Mortgage");
         var price = Terms.Get(64, user, "Price");
-        var cashFlow = Terms.Get(55, user, "Cash Flow");
+        var cashFlow = Terms.Get(55, user, "Cashflow");
 
         return asset.Type switch
         {

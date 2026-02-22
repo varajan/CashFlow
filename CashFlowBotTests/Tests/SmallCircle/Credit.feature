@@ -11,7 +11,7 @@ Scenario: I can get a credit
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Expenses:*
 *Taxes:* $460
@@ -39,7 +39,7 @@ Scenario: I can undo credit operation
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,620
-*Cash Flow*: $880
+*Cashflow:* $880
 
 *Expenses:*
 *Taxes:* $460

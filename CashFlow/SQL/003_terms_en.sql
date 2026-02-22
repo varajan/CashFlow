@@ -1,5 +1,5 @@
 ﻿INSERT INTO Terms (ID, Language, Term) VALUES
-(0, 'EN', 'Your Cash Flow is *{0}*. How many should you get?'),
+(0, 'EN', 'Your Cashflow is *{0}*. How many should you get?'),
 (1, 'EN', 'Go to Big Circle'),
 (2, 'EN', 'History'),
 (3, 'EN', 'Are you sure want to stop current game?'),
@@ -54,7 +54,7 @@
 (52, 'EN', 'Salary'),
 (53, 'EN', 'Income'),
 (54, 'EN', 'Expenses'),
-(55, 'EN', 'Cash Flow'),
+(55, 'EN', 'Cashflow'),
 (56, 'EN', 'Assets'),
 (57, 'EN', 'You''re lucky parent of three children. You don''t need one more.'),
 (58, 'EN', 'Taxes'),

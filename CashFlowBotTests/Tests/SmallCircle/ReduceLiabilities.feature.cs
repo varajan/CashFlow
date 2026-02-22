@@ -104,8 +104,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 8
  testRunner.Then("My Data is following:", "*Profession:* Pilot\r\n*Cash:* $60,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:*" +
-                        " $5,570\r\n*Cash Flow*: $3,930\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Car Loan:* $300\r\n" +
-                        "*Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        " $5,570\r\n*Cashflow:* $3,930\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Car Loan:* $300\r\n*" +
+                        "Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 24
  testRunner.And("My history data is following:", "• Get $200,000\r\n• Reduce Liabilities. Mortgage: $143,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -145,8 +145,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 35
  testRunner.Then("My Data is following:", "*Profession:* Pilot\r\n*Cash:* $188,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:" +
-                        "* $6,600\r\n*Cash Flow*: $2,900\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pa" +
-                        "y:* $1,330\r\n*Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "* $6,600\r\n*Cashflow:* $2,900\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pay" +
+                        ":* $1,330\r\n*Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 51
  testRunner.And("My history data is following:", "• Get $200,000\r\n• Reduce Liabilities. Car Loan: $15,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -186,8 +186,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 62
  testRunner.Then("My Data is following:", "*Profession:* Pilot\r\n*Cash:* $181,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:" +
-                        "* $6,240\r\n*Cash Flow*: $3,260\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pa" +
-                        "y:* $1,330\r\n*Car Loan:* $300\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "* $6,240\r\n*Cashflow:* $3,260\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pay" +
+                        ":* $1,330\r\n*Car Loan:* $300\r\n*Small Credit:* $50\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 78
  testRunner.And("My history data is following:", "• Get $200,000\r\n• Reduce Liabilities. Credit Card: $22,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -227,8 +227,8 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 89
  testRunner.Then("My Data is following:", "*Profession:* Pilot\r\n*Cash:* $202,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:" +
-                        "* $6,850\r\n*Cash Flow*: $2,650\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pa" +
-                        "y:* $1,330\r\n*Car Loan:* $300\r\n*Credit Card:* $660\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "* $6,850\r\n*Cashflow:* $2,650\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pay" +
+                        ":* $1,330\r\n*Car Loan:* $300\r\n*Credit Card:* $660\r\n*Other Payments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 105
  testRunner.And("My history data is following:", "• Get $200,000\r\n• Reduce Liabilities. Small Credit: $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -268,9 +268,9 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 116
  testRunner.Then("My Data is following:", "*Profession:* Pilot\r\n*Cash:* $3,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:* " +
-                        "$6,900\r\n*Cash Flow*: $2,600\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pay:" +
-                        "* $1,330\r\n*Car Loan:* $300\r\n*Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Pay" +
-                        "ments:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "$6,900\r\n*Cashflow:* $2,600\r\n\r\n*Expenses:*\r\n*Taxes:* $2,350\r\n*Mortgage/Rent Pay:*" +
+                        " $1,330\r\n*Car Loan:* $300\r\n*Credit Card:* $660\r\n*Small Credit:* $50\r\n*Other Paym" +
+                        "ents:* $2,210", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
 #line 133
  testRunner.And("My history data is following:", "• Get credit: $5,000\r\n• Reduce Liabilities. Bank Loan: $5,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
@@ -314,7 +314,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $7,200
-*Cash Flow*: $2,300
+*Cashflow:* $2,300
 
 *Expenses:*
 *Taxes:* $2,350
@@ -370,7 +370,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $6,900
-*Cash Flow*: $2,600
+*Cashflow:* $2,600
 
 *Assets:*
 • *Boat* - Price: $18,000
@@ -449,7 +449,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $9,500
 *Income:* $0
 *Expenses:* $7,440
-*Cash Flow*: $2,060
+*Cashflow:* $2,060
 
 *Assets:*
 • *Boat* - Price: $18,000, monthly: -$340

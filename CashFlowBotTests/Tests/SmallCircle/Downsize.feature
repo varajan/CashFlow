@@ -11,7 +11,7 @@ Scenario: I can lost my job
 *Salary:* $3,300
 *Income:* $0
 *Expenses:* $2,290
-*Cash Flow*: $1,010
+*Cashflow:* $1,010
 
 *Expenses:*
 *Taxes:* $630

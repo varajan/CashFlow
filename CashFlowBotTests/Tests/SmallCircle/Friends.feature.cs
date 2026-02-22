@@ -21,12 +21,16 @@ namespace CashFlowBotTests.Tests.SmallCircle
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Friends")]
+    [NUnit.Framework.CategoryAttribute("non-parallel")]
+    [NUnit.Framework.CategoryAttribute("do-cleanup")]
     public partial class FriendsFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private static string[] featureTags = ((string[])(null));
+        private static string[] featureTags = new string[] {
+                "non-parallel",
+                "do-cleanup"};
         
 #line 1 "Friends.feature"
 #line hidden
@@ -73,42 +77,25 @@ namespace CashFlowBotTests.Tests.SmallCircle
             testRunner.CollectScenarioErrors();
         }
         
-        [NUnit.Framework.TestAttribute()]
-        [NUnit.Framework.DescriptionAttribute("I can see my friends")]
-        [NUnit.Framework.CategoryAttribute("non-parallel")]
-        [NUnit.Framework.CategoryAttribute("do-cleanup")]
-        public void ICanSeeMyFriends()
+        public virtual void FeatureBackground()
         {
-            string[] tagsOfScenario = new string[] {
-                    "non-parallel",
-                    "do-cleanup"};
-            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
-            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see my friends", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
-this.ScenarioInitialize(scenarioInfo);
 #line hidden
-            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                testRunner.SkipScenario();
-            }
-            else
-            {
-                this.ScenarioStart();
-                TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Name",
-                            "Profession"});
-                table5.AddRow(new string[] {
-                            "Bronwyn Berry",
-                            "Doctor"});
-                table5.AddRow(new string[] {
-                            "Damien Washington",
-                            "Pilot"});
-                table5.AddRow(new string[] {
-                            "Bryony Morrison",
-                            "Teacher"});
-                table5.AddRow(new string[] {
-                            "Kelsie Humphrey",
-                            "Lawyer"});
+            TechTalk.SpecFlow.Table table5 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Name",
+                        "Profession"});
+            table5.AddRow(new string[] {
+                        "Bronwyn Berry",
+                        "Doctor"});
+            table5.AddRow(new string[] {
+                        "Damien Washington",
+                        "Pilot"});
+            table5.AddRow(new string[] {
+                        "Bryony Morrison",
+                        "Teacher"});
+            table5.AddRow(new string[] {
+                        "Kelsie Humphrey",
+                        "Lawyer"});
 #line 7
  testRunner.Given("Few players:", ((string)(null)), table5, "Given ");
 #line hidden
@@ -121,33 +108,134 @@ this.ScenarioInitialize(scenarioInfo);
 #line 16
   testRunner.And("Bryony Morrison get $10000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-                TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
-                            "Opportunity",
-                            "Title",
-                            "Price",
-                            "First Payment",
-                            "Monthly Cashflow"});
-                table6.AddRow(new string[] {
-                            "Small",
-                            "2/1",
-                            "60,000",
-                            "2,000",
-                            "1,000"});
-                table6.AddRow(new string[] {
-                            "Big",
-                            "8-plex",
-                            "150,000",
-                            "5,000",
-                            "1,500"});
+            TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
+                        "Opportunity",
+                        "Title",
+                        "Price",
+                        "First Payment",
+                        "Monthly Cashflow"});
+            table6.AddRow(new string[] {
+                        "Small",
+                        "2/1",
+                        "60,000",
+                        "2,000",
+                        "1,000"});
+            table6.AddRow(new string[] {
+                        "Big",
+                        "8-plex",
+                        "150,000",
+                        "5,000",
+                        "1,500"});
 #line 17
   testRunner.And("Bryony Morrison buys real estate:", ((string)(null)), table6, "And ");
 #line hidden
 #line 21
   testRunner.And("Bryony Morrison goes to the Big Circle", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can see my friends")]
+        public void ICanSeeMyFriends()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see my friends", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 23
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 6
+this.FeatureBackground();
+#line hidden
+#line 24
+ testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 25
  testRunner.Then("Kelsie Humphrey can see friends:", "*On Small circle:*\r\n• Bronwyn Berry\r\n• Damien Washington\r\n\r\n*On Big circle:*\r\n• B" +
                         "ryony Morrison", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can see friend\'s on small circle")]
+        public void ICanSeeFriendsOnSmallCircle()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see friend\'s on small circle", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 35
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 6
+this.FeatureBackground();
+#line hidden
+#line 36
+ testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 37
+  testRunner.And("Kelsie Humphrey says \'Damien Washington\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 38
+ testRunner.Then("Kelsie Humphrey can see details:", "*Profession:* Pilot\r\n*Cash:* $4,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:* " +
+                        "$6,900\r\n*Cashflow:* $2,600", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 47
+ testRunner.And("Kelsie Humphrey can see history details:", "• Get $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+            }
+            this.ScenarioCleanup();
+        }
+        
+        [NUnit.Framework.TestAttribute()]
+        [NUnit.Framework.DescriptionAttribute("I can see friend\'s on big circle")]
+        public void ICanSeeFriendsOnBigCircle()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
+            TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see friend\'s on big circle", null, tagsOfScenario, argumentsOfScenario, featureTags);
+#line 52
+this.ScenarioInitialize(scenarioInfo);
+#line hidden
+            if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                testRunner.SkipScenario();
+            }
+            else
+            {
+                this.ScenarioStart();
+#line 6
+this.FeatureBackground();
+#line hidden
+#line 53
+ testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
+#line hidden
+#line 54
+  testRunner.And("Kelsie Humphrey says \'Bryony Morrison\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 55
+ testRunner.Then("Kelsie Humphrey can see details:", "*Profession:* Teacher\r\n*Cash:* $254,510\r\nInitial Cashflow: $250,000\r\nCurrent Cash" +
+                        "flow: $250,000\r\nTarget Cashflow: $300,000", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+#line hidden
+#line 63
+ testRunner.And("Kelsie Humphrey can see history details:", "• Get $10,000\r\n• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cash" +
+                        "flow: $1,000\r\n• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $145,000," +
+                        " Cashflow: $1,500\r\n• Go to Big Circle", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

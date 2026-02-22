@@ -114,7 +114,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $4,600
 *Income:* $0
 *Expenses:* $3,530
-*Cash Flow*: $1,070
+*Cashflow:* $1,070
 
 *Assets:*
 • *Auto Tools* - Price: $3,000
@@ -178,7 +178,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $4,600
 *Income:* $1,300
 *Expenses:* $2,930
-*Cash Flow*: $2,970
+*Cashflow:* $2,970
 
 *Assets:*
 • *Auto Tools* - Price: $3,000, monthly: $650
@@ -253,7 +253,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $4,600
 *Income:* $650
 *Expenses:* $2,930
-*Cash Flow*: $2,320
+*Cashflow:* $2,320
 
 *Assets:*
 • *Computer Programs* - Price: $5,000, monthly: $650

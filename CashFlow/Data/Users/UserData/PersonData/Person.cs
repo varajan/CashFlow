@@ -38,7 +38,7 @@ public class Person(IDataBase dataBase, IUser user) : BaseDataModel(dataBase, us
     private string SalaryTerm => Terms.Get(52, User, "Salary");
     private string IncomeTerm => Terms.Get(53, User, "Income");
     private string ExpensesTerm => Terms.Get(54, User, "Expenses");
-    private string CashFlowTerm => Terms.Get(55, User, "Cash Flow");
+    private string CashFlowTerm => Terms.Get(55, User, "Cashflow");
     private string InitialTerm => Terms.Get(65, User, "Initial");
     private string CurrentTerm => Terms.Get(66, User, "Current");
     private string TargetTerm => Terms.Get(67, User, "Target");

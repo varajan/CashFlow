@@ -13,7 +13,7 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager)
         get
         {
             var person = PersonManager.Read(CurrentUser);
-            return Terms.Get(0, CurrentUser, "Your Cash Flow is *{0}*. How much should you get?",
+            return Terms.Get(0, CurrentUser, "Your Cashflow is *{0}*. How much should you get?",
                 person.BigCircle ? person.CurrentCashFlow.AsCurrency() : person.CashFlow.AsCurrency());
         }
     }

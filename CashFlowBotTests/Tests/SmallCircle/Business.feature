@@ -1,7 +1,7 @@
-﻿Feature: Business
-
-@non-parallel
+﻿@non-parallel
 @do-cleanup
+
+Feature: Business
 
 Scenario: I can buy businesses
 	Given I am 'Inayah Hodge' user
@@ -22,15 +22,15 @@ Scenario: I can buy businesses
 *Salary:* $2,000
 *Income:* $9,200
 *Expenses:* $1,280
-*Cash Flow*: $9,920
+*Cashflow:* $9,920
 
 *Assets:*
-• *Car Wash* - Price: $20,000, Cash Flow: $800
-• *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• *Passage* - Price: $150,000, Mortgage: $110,000, Cash Flow: $1,800
-• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• *Car Wash* - Price: $20,000, Cashflow: $800
+• *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• *Passage* - Price: $150,000, Mortgage: $110,000, Cashflow: $1,800
+• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 
 *Expenses:*
 *Taxes:* $360
@@ -62,13 +62,13 @@ Scenario: I can sell businesses
 *Salary:* $2,000
 *Income:* $6,600
 *Expenses:* $1,280
-*Cash Flow*: $7,320
+*Cashflow:* $7,320
 
 *Assets:*
-• *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 
 *Expenses:*
 *Taxes:* $360
@@ -81,12 +81,12 @@ Scenario: I can sell businesses
 	And My history data is following:
 """
 • Get $200,000
-• Buy Business. *Car Wash* - Price: $20,000, Cash Flow: $800
-• Buy Business. *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• Buy Business. *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• Buy Business. *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• Buy Business. *Passage* - Price: $150,000, Mortgage: $110,000, Cash Flow: $1,800
-• Buy Business. *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• Buy Business. *Car Wash* - Price: $20,000, Cashflow: $800
+• Buy Business. *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• Buy Business. *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• Buy Business. *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• Buy Business. *Passage* - Price: $150,000, Mortgage: $110,000, Cashflow: $1,800
+• Buy Business. *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 • Sell Business. *Car Wash* - Price: $100,000
 • Sell Business. *Passage* - Price: $200,000
 """
@@ -104,7 +104,7 @@ Scenario: I can rollback buy action
 		And My passive income is $800
 		And My assets are:
 """
-• *Car Wash* - Price: $20,000, Cash Flow: $800
+• *Car Wash* - Price: $20,000, Cashflow: $800
 """
 
 Scenario: I can rollback sell action
@@ -121,6 +121,6 @@ Scenario: I can rollback sell action
 		And My passive income is $1,800
 		And My assets are:
 """
-• *Car Wash* - Price: $20,000, Cash Flow: $800
-• *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
+• *Car Wash* - Price: $20,000, Cashflow: $800
+• *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
 """

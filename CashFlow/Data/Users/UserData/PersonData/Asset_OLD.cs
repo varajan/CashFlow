@@ -22,7 +22,7 @@ public class Asset_OLD(IDataBase dataBase, IUser user, int id)
         {
             var mortgage = Terms.Get(43, User, "Mortgage");
             var price = Terms.Get(64, User, "Price");
-            var cashFlow = Terms.Get(55, User, "Cash Flow");
+            var cashFlow = Terms.Get(55, User, "Cashflow");
 
             switch (Type)
             {

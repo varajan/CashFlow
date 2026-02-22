@@ -41,7 +41,7 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(testStage.Message, Is.EqualTo($"Your Cash Flow is *{Person.CurrentCashFlow.AsCurrency()}*. How much should you get?"));
+            Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{Person.CurrentCashFlow.AsCurrency()}*. How much should you get?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
     }

@@ -93,7 +93,7 @@ public class HistoryRecord(IDataBase dataBase)
                     return $"{buyAsset}. {Asset.Description}";
 
                 case ActionType.IncreaseCashFlow:
-                    var increaseCashFlow = Terms.Get((int)Action, User, "Increase Cash Flow");
+                    var increaseCashFlow = Terms.Get((int)Action, User, "Increase Cashflow");
                     return $"{increaseCashFlow}. {Value.AsCurrency()}";
 
                 case ActionType.SellRealEstate:

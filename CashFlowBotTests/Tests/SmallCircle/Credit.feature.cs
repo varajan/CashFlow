@@ -105,7 +105,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Expenses:*
 *Taxes:* $460
@@ -154,9 +154,9 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 35
  testRunner.Then("My Data is following:", "*Profession:* Track driver\r\n*Cash:* $1,630\r\n*Salary:* $2,500\r\n*Income:* $0\r\n*Expe" +
-                        "nses:* $1,620\r\n*Cash Flow*: $880\r\n\r\n*Expenses:*\r\n*Taxes:* $460\r\n*Mortgage/Rent P" +
-                        "ay:* $400\r\n*Car Loan:* $80\r\n*Credit Card:* $60\r\n*Small Credit:* $50\r\n*Other Paym" +
-                        "ents:* $570", ((TechTalk.SpecFlow.Table)(null)), "Then ");
+                        "nses:* $1,620\r\n*Cashflow:* $880\r\n\r\n*Expenses:*\r\n*Taxes:* $460\r\n*Mortgage/Rent Pa" +
+                        "y:* $400\r\n*Car Loan:* $80\r\n*Credit Card:* $60\r\n*Small Credit:* $50\r\n*Other Payme" +
+                        "nts:* $570", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
             }
             this.ScenarioCleanup();

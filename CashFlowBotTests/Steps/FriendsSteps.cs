@@ -26,10 +26,23 @@ public class FriendsSteps(StepsContext context) : BaseSteps(context)
     [Then("(.*) can see friends:")]
     public void VerifyReply(string name, string text)
     {
-        var user = GetUser(name);
-        user.SendMessage("Friends");
-        var reply = user.GetReply();
+        var reply = GetUser(name).GetReply();
 
+        Assert.That(reply.Message, Is.EqualTo(text));
+    }
+
+    [Then(@"(.*) can see details:")]
+    public void CheckUserData(string name, string text)
+    {
+        var reply = GetUser(name).GetReply(indexFromEnd: 2);
+
+        Assert.That(reply.Message, Is.EqualTo(text));
+    }
+
+    [Then(@"(.*) can see history details:")]
+    public void CheckUserHistory(string name, string text)
+    {
+        var reply = GetUser(name).GetReply(indexFromEnd: 1);
         Assert.That(reply.Message, Is.EqualTo(text));
     }
 }

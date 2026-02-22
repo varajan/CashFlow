@@ -18,14 +18,14 @@ Scenario: I can buy real estate
 *Salary:* $9,500
 *Income:* $2,560
 *Expenses:* $6,900
-*Cash Flow*: $5,160
+*Cashflow:* $5,160
 
 *Assets:*
-• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
-• *3/2* - Price: $65,000, Mortgage: $62,000, Cash Flow: -$100
-• *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
-• *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
-• *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+• *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $160
+• *3/2* - Price: $65,000, Mortgage: $62,000, Cashflow: -$100
+• *3/2* - Price: $90,000, Mortgage: $83,000, Cashflow: $400
+• *2-plex* - Price: $125,000, Mortgage: $116,000, Cashflow: $500
+• *8-plex* - Price: $150,000, Mortgage: $140,000, Cashflow: $1,600
 
 *Expenses:*
 *Taxes:* $2,350
@@ -56,12 +56,12 @@ Scenario: I can sell real estate
 *Salary:* $9,500
 *Income:* $800
 *Expenses:* $6,900
-*Cash Flow*: $3,400
+*Cashflow:* $3,400
 
 *Assets:*
-• *3/2* - Price: $65,000, Mortgage: $62,000, Cash Flow: -$100
-• *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
-• *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
+• *3/2* - Price: $65,000, Mortgage: $62,000, Cashflow: -$100
+• *3/2* - Price: $90,000, Mortgage: $83,000, Cashflow: $400
+• *2-plex* - Price: $125,000, Mortgage: $116,000, Cashflow: $500
 
 *Expenses:*
 *Taxes:* $2,350
@@ -74,11 +74,11 @@ Scenario: I can sell real estate
 	And My history data is following:
 """
 • Get $100,000
-• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
-• Buy Real Estate. *3/2* - Price: $65,000, Mortgage: $62,000, Cash Flow: -$100
-• Buy Real Estate. *3/2* - Price: $90,000, Mortgage: $83,000, Cash Flow: $400
-• Buy Real Estate. *2-plex* - Price: $125,000, Mortgage: $116,000, Cash Flow: $500
-• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $160
+• Buy Real Estate. *3/2* - Price: $65,000, Mortgage: $62,000, Cashflow: -$100
+• Buy Real Estate. *3/2* - Price: $90,000, Mortgage: $83,000, Cashflow: $400
+• Buy Real Estate. *2-plex* - Price: $125,000, Mortgage: $116,000, Cashflow: $500
+• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $140,000, Cashflow: $1,600
 • Sell Real Estate. *2/1* - Price: $100,000
 • Sell Real Estate. *8-plex* - Price: $45,000
 """
@@ -96,7 +96,7 @@ Scenario: I can rollback buy transaction
 		And My passive income is $160
 		And My assets are:
 """
-• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
+• *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $160
 """
 
 Scenario: I can rollback sell transaction
@@ -113,6 +113,6 @@ Scenario: I can rollback sell transaction
 		And My passive income is $1,760
 		And My assets are:
 """
-• *2/1* - Price: $60,000, Mortgage: $58,000, Cash Flow: $160
-• *8-plex* - Price: $150,000, Mortgage: $140,000, Cash Flow: $1,600
+• *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $160
+• *8-plex* - Price: $150,000, Mortgage: $140,000, Cashflow: $1,600
 """

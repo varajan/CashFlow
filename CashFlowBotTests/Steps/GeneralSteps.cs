@@ -33,10 +33,10 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         Context.Users.Add(user);
     }
 
-    [Given("I say '(.*)'")]
-    [When("I say '(.*)'")]
-    [Then("I say '(.*)'")]
-    public void Say(string text) => User.SendMessage(text);
+    [Given("(I|.*) say(|s) '(.*)'")]
+    [When ("(I|.*) say(|s) '(.*)'")]
+    [Then ("(I|.*) say(|s) '(.*)'")]
+    public void Say(string name, string _, string text) => GetUser(name).SendMessage(text);
 
     [Given(@"I play as '(.*)'")]
     public void StartGame(string role)

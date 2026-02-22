@@ -11,7 +11,7 @@ Scenario: I can get kids
 *Salary:* $4,900
 *Income:* $0
 *Expenses:* $3,710
-*Cash Flow*: $1,190
+*Cashflow:* $1,190
 
 *Expenses:*
 *Taxes:* $1,050
@@ -42,7 +42,7 @@ Scenario: I can undo last action
 *Salary:* $4,900
 *Income:* $0
 *Expenses:* $3,460
-*Cash Flow*: $1,440
+*Cashflow:* $1,440
 
 *Expenses:*
 *Taxes:* $1,050

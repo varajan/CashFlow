@@ -21,12 +21,16 @@ namespace CashFlowBotTests.Tests.SmallCircle
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [NUnit.Framework.TestFixtureAttribute()]
     [NUnit.Framework.DescriptionAttribute("Business")]
+    [NUnit.Framework.CategoryAttribute("non-parallel")]
+    [NUnit.Framework.CategoryAttribute("do-cleanup")]
     public partial class BusinessFeature
     {
         
         private TechTalk.SpecFlow.ITestRunner testRunner;
         
-        private static string[] featureTags = ((string[])(null));
+        private static string[] featureTags = new string[] {
+                "non-parallel",
+                "do-cleanup"};
         
 #line 1 "Business.feature"
 #line hidden
@@ -75,13 +79,9 @@ namespace CashFlowBotTests.Tests.SmallCircle
         
         [NUnit.Framework.TestAttribute()]
         [NUnit.Framework.DescriptionAttribute("I can buy businesses")]
-        [NUnit.Framework.CategoryAttribute("non-parallel")]
-        [NUnit.Framework.CategoryAttribute("do-cleanup")]
         public void ICanBuyBusinesses()
         {
-            string[] tagsOfScenario = new string[] {
-                    "non-parallel",
-                    "do-cleanup"};
+            string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can buy businesses", null, tagsOfScenario, argumentsOfScenario, featureTags);
 #line 6
@@ -147,15 +147,15 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,000
 *Income:* $9,200
 *Expenses:* $1,280
-*Cash Flow*: $9,920
+*Cashflow:* $9,920
 
 *Assets:*
-• *Car Wash* - Price: $20,000, Cash Flow: $800
-• *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• *Passage* - Price: $150,000, Mortgage: $110,000, Cash Flow: $1,800
-• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• *Car Wash* - Price: $20,000, Cashflow: $800
+• *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• *Passage* - Price: $150,000, Mortgage: $110,000, Cashflow: $1,800
+• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 
 *Expenses:*
 *Taxes:* $360
@@ -245,13 +245,13 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,000
 *Income:* $6,600
 *Expenses:* $1,280
-*Cash Flow*: $7,320
+*Cashflow:* $7,320
 
 *Assets:*
-• *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 
 *Expenses:*
 *Taxes:* $360
@@ -263,12 +263,12 @@ this.ScenarioInitialize(scenarioInfo);
 #line hidden
 #line 81
  testRunner.And("My history data is following:", @"• Get $200,000
-• Buy Business. *Car Wash* - Price: $20,000, Cash Flow: $800
-• Buy Business. *Company* - Price: $25,000, Mortgage: $5,000, Cash Flow: $1,000
-• Buy Business. *Enterprise* - Price: $30,000, Mortgage: $5,000, Cash Flow: $1,500
-• Buy Business. *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cash Flow: $1,600
-• Buy Business. *Passage* - Price: $150,000, Mortgage: $110,000, Cash Flow: $1,800
-• Buy Business. *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cash Flow: $2,500
+• Buy Business. *Car Wash* - Price: $20,000, Cashflow: $800
+• Buy Business. *Company* - Price: $25,000, Mortgage: $5,000, Cashflow: $1,000
+• Buy Business. *Enterprise* - Price: $30,000, Mortgage: $5,000, Cashflow: $1,500
+• Buy Business. *Limited Partnership* - Price: $100,000, Mortgage: $70,000, Cashflow: $1,600
+• Buy Business. *Passage* - Price: $150,000, Mortgage: $110,000, Cashflow: $1,800
+• Buy Business. *Pizzeria* - Price: $500,000, Mortgage: $450,000, Cashflow: $2,500
 • Sell Business. *Car Wash* - Price: $100,000
 • Sell Business. *Passage* - Price: $200,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
@@ -330,7 +330,7 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("My passive income is $800", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 105
-  testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cash Flow: $800", ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cashflow: $800", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();
@@ -393,8 +393,8 @@ this.ScenarioInitialize(scenarioInfo);
   testRunner.And("My passive income is $1,800", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 122
-  testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cash Flow: $800\r\n• *Company* - Price: $25,000, Mor" +
-                        "tgage: $5,000, Cash Flow: $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("My assets are:", "• *Car Wash* - Price: $20,000, Cashflow: $800\r\n• *Company* - Price: $25,000, Mort" +
+                        "gage: $5,000, Cashflow: $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

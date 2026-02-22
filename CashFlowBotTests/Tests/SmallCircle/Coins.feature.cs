@@ -111,7 +111,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Assets:*
 • *Peso* - 10 @ $300
@@ -174,7 +174,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,820
-*Cash Flow*: $680
+*Cashflow:* $680
 
 *Expenses:*
 *Taxes:* $460

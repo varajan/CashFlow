@@ -43,7 +43,7 @@ Scenario: I can buy a boat
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,960
-*Cash Flow*: $540
+*Cashflow:* $540
 
 *Assets:*
 • *Boat* - Price: $18,000, monthly: -$340
@@ -78,7 +78,7 @@ Scenario: I can rollback doodads operations
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $1,620
-*Cash Flow*: $880
+*Cashflow:* $880
 
 *Expenses:*
 *Taxes:* $460

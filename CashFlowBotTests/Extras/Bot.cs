@@ -35,18 +35,19 @@ public class Bot()
 
             var reply = GetReply(chatId.Value);
             if (lastReply == null && reply != null) return;
-            if (lastReply != null && reply.UtcNow > lastReply.UtcNow) return;
+            if (lastReply != null && reply.DateTime > lastReply.DateTime) return;
         }
 
         throw new TimeoutException($"{DateTime.UtcNow} [{chatId}] No reply from bot within the expected time.");
     }
 
-    public static MessageDto GetReply(long chatId)
+    public static MessageDto GetReply(long chatId, int indexFromEnd = 0)
     {
         var fileName = Path.Combine(emulatorDirectory, $"{chatId}.msg");
         var getReply = () =>
         {
-            var lastMessage = File.ReadAllLines(fileName).Last();
+            var lines = File.ReadAllLines(fileName);
+            var lastMessage = lines[^(indexFromEnd + 1)];
             var message = lastMessage.Deserialize<MessageDto>();
             message.Message = message?.Message?.Trim();
 

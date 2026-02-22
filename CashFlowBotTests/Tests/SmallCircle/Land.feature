@@ -14,7 +14,7 @@ Scenario: I can buy land
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $4,020
-*Cash Flow*: -$1,520
+*Cashflow:* -$1,520
 
 *Assets:*
 • *10 Acrs* - Price: $5,000
@@ -45,7 +45,7 @@ Scenario: I can sell land
 *Salary:* $3,000
 *Income:* $0
 *Expenses:* $4,280
-*Cash Flow*: -$1,280
+*Cashflow:* -$1,280
 
 *Assets:*
 • *20 Acrs* - Price: $20,000

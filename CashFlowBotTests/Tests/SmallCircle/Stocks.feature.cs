@@ -111,7 +111,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $4,900
 *Income:* $0
 *Expenses:* $3,410
-*Cash Flow*: $1,490
+*Cashflow:* $1,490
 
 *Assets:*
 • *OK4U* - 1000 @ $1
@@ -169,10 +169,10 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $13,200
 *Income:* $200
 *Expenses:* $9,650
-*Cash Flow*: $3,750
+*Cashflow:* $3,750
 
 *Assets:*
-• *CD* - 10 @ $1,200, Cash Flow: $20 x 10 = $200
+• *CD* - 10 @ $1,200, Cashflow: $20 x 10 = $200
 
 *Expenses:*
 *Taxes:* $3,420
@@ -234,7 +234,7 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $2,500
 *Income:* $0
 *Expenses:* $2,820
-*Cash Flow*: -$320
+*Cashflow:* -$320
 
 *Assets:*
 • *ON2U* - 500 @ $5
@@ -299,10 +299,10 @@ this.ScenarioInitialize(scenarioInfo);
 *Salary:* $13,200
 *Income:* $80
 *Expenses:* $9,650
-*Cash Flow*: $3,630
+*Cashflow:* $3,630
 
 *Assets:*
-• *2BIG* - 4 @ $4,000, Cash Flow: $20 x 4 = $80
+• *2BIG* - 4 @ $4,000, Cashflow: $20 x 4 = $80
 
 *Expenses:*
 *Taxes:* $3,420
