@@ -106,7 +106,13 @@ namespace CashFlowBotTests.Tests.SmallCircle
   testRunner.And("Damien Washington get $1000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
 #line 16
-  testRunner.And("Bryony Morrison get $10000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+  testRunner.And("Bryony Morrison get $2,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 17
+  testRunner.And("Bryony Morrison get $3,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line hidden
+#line 18
+  testRunner.And("Bryony Morrison get $5,000 in cash", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             TechTalk.SpecFlow.Table table6 = new TechTalk.SpecFlow.Table(new string[] {
                         "Opportunity",
@@ -126,10 +132,10 @@ namespace CashFlowBotTests.Tests.SmallCircle
                         "150,000",
                         "5,000",
                         "1,500"});
-#line 17
+#line 19
   testRunner.And("Bryony Morrison buys real estate:", ((string)(null)), table6, "And ");
 #line hidden
-#line 21
+#line 23
   testRunner.And("Bryony Morrison goes to the Big Circle", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
         }
@@ -141,7 +147,7 @@ namespace CashFlowBotTests.Tests.SmallCircle
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see my friends", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 23
+#line 25
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -154,10 +160,10 @@ this.ScenarioInitialize(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line hidden
-#line 24
+#line 26
  testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 25
+#line 27
  testRunner.Then("Kelsie Humphrey can see friends:", "*On Small circle:*\r\n• Bronwyn Berry\r\n• Damien Washington\r\n\r\n*On Big circle:*\r\n• B" +
                         "ryony Morrison", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
@@ -172,7 +178,7 @@ this.FeatureBackground();
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see friend\'s on small circle", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 35
+#line 37
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -185,17 +191,17 @@ this.ScenarioInitialize(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line hidden
-#line 36
+#line 38
  testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 37
+#line 39
   testRunner.And("Kelsie Humphrey says \'Damien Washington\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 38
+#line 40
  testRunner.Then("Kelsie Humphrey can see details:", "*Profession:* Pilot\r\n*Cash:* $4,000\r\n*Salary:* $9,500\r\n*Income:* $0\r\n*Expenses:* " +
                         "$6,900\r\n*Cashflow:* $2,600", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 47
+#line 49
  testRunner.And("Kelsie Humphrey can see history details:", "• Get $1,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
@@ -209,7 +215,7 @@ this.FeatureBackground();
             string[] tagsOfScenario = ((string[])(null));
             System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new System.Collections.Specialized.OrderedDictionary();
             TechTalk.SpecFlow.ScenarioInfo scenarioInfo = new TechTalk.SpecFlow.ScenarioInfo("I can see friend\'s on big circle", null, tagsOfScenario, argumentsOfScenario, featureTags);
-#line 52
+#line 54
 this.ScenarioInitialize(scenarioInfo);
 #line hidden
             if ((TagHelper.ContainsIgnoreTag(tagsOfScenario) || TagHelper.ContainsIgnoreTag(featureTags)))
@@ -222,20 +228,20 @@ this.ScenarioInitialize(scenarioInfo);
 #line 6
 this.FeatureBackground();
 #line hidden
-#line 53
+#line 55
  testRunner.When("Kelsie Humphrey says \'Friends\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "When ");
 #line hidden
-#line 54
+#line 56
   testRunner.And("Kelsie Humphrey says \'Bryony Morrison\'", ((string)(null)), ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
-#line 55
+#line 57
  testRunner.Then("Kelsie Humphrey can see details:", "*Profession:* Teacher\r\n*Cash:* $254,510\r\nInitial Cashflow: $250,000\r\nCurrent Cash" +
                         "flow: $250,000\r\nTarget Cashflow: $300,000", ((TechTalk.SpecFlow.Table)(null)), "Then ");
 #line hidden
-#line 63
- testRunner.And("Kelsie Humphrey can see history details:", "• Get $10,000\r\n• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cash" +
-                        "flow: $1,000\r\n• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $145,000," +
-                        " Cashflow: $1,500\r\n• Go to Big Circle", ((TechTalk.SpecFlow.Table)(null)), "And ");
+#line 65
+ testRunner.And("Kelsie Humphrey can see history details:", "• Go to Big Circle\r\n• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $145" +
+                        ",000, Cashflow: $1,500\r\n• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58" +
+                        ",000, Cashflow: $1,000\r\n• Get $5,000\r\n• Get $3,000", ((TechTalk.SpecFlow.Table)(null)), "And ");
 #line hidden
             }
             this.ScenarioCleanup();

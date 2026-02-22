@@ -255,9 +255,9 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         var records = ReadHistory(user);
         records.Reverse();
 
-        return records.Any() ?
-            Terms.Get(111, currentUser, "No records found.") :
-            string.Join(Environment.NewLine, records.Take(5).Select(x => x.Description));
+        return records.Any()
+            ? string.Join(Environment.NewLine, records.Take(5).Select(x => x.Description))
+            : Terms.Get(111, currentUser, "No records found.");
     }
 
     public void RollbackHistory(PersonDto person, HistoryDto record)

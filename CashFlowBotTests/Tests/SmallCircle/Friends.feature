@@ -13,7 +13,9 @@ Background:
 
 	When Bronwyn Berry get $1000 as a credit
 		And Damien Washington get $1000 in cash
-		And Bryony Morrison get $10000 in cash
+		And Bryony Morrison get $2,000 in cash
+		And Bryony Morrison get $3,000 in cash
+		And Bryony Morrison get $5,000 in cash
 		And Bryony Morrison buys real estate:
 		| Opportunity | Title  | Price   | First Payment | Monthly Cashflow |
 		| Small       | 2/1    |  60,000 |         2,000 |            1,000 |
@@ -32,7 +34,7 @@ Scenario: I can see my friends
 • Bryony Morrison
 """
 
-Scenario: I can see friend's on small circle
+Scenario: I can see friend's info on small circle
 	When Kelsie Humphrey says 'Friends'
 		And Kelsie Humphrey says 'Damien Washington'
 	Then Kelsie Humphrey can see details:
@@ -49,7 +51,7 @@ Scenario: I can see friend's on small circle
 • Get $1,000
 """
 
-Scenario: I can see friend's on big circle
+Scenario: I can see friend's info on big circle
 	When Kelsie Humphrey says 'Friends'
 		And Kelsie Humphrey says 'Bryony Morrison'
 	Then Kelsie Humphrey can see details:
@@ -62,8 +64,9 @@ Target Cashflow: $300,000
 """
 	And Kelsie Humphrey can see history details:
 """
-• Get $10,000
-• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $1,000
-• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $145,000, Cashflow: $1,500
 • Go to Big Circle
+• Buy Real Estate. *8-plex* - Price: $150,000, Mortgage: $145,000, Cashflow: $1,500
+• Buy Real Estate. *2/1* - Price: $60,000, Mortgage: $58,000, Cashflow: $1,000
+• Get $5,000
+• Get $3,000
 """

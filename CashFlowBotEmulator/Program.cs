@@ -26,6 +26,7 @@ while (true)
     {
         DataBase.Execute("DELETE FROM Users");
         DataBase.Execute("DELETE FROM Persons");
+        DataBase.Execute("DELETE FROM History");
         Thread.Sleep(200);
         continue;
     }

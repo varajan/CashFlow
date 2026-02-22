@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
@@ -350,7 +351,7 @@ public class SmallCircleStageTests : StagesBaseTest
             new() { Id = 1, Qtty = 1, CashFlow = 200 },
             new() { Id = 2, Qtty = 1, CashFlow = 300 },
         };
-        var initialCashFlow = assets.Sum(a => a.CashFlow);
+        var initialCashFlow = assets.Sum(a => a.CashFlow) * 100;
 
         testPerson.Assets = assets;
 
@@ -362,9 +363,12 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
-            pr.BigCircle == true &&
             pr.InitialCashFlow == initialCashFlow &&
-            pr.Cash == testPerson.Cash + initialCashFlow)), Times.Never);
+            pr.BigCircle == true &&
+            pr.Cash == TestPerson.Cash + initialCashFlow &&
+            pr.CurrentCashFlow == initialCashFlow &&
+            pr.TargetCashFlow == initialCashFlow + 50_000)), Times.Once);
+        PersonManagerMock.Verify(x => x.AddHistory(ActionType.GoToBigCircle, initialCashFlow, CurrentUserMock.Object), Times.Once);
     }
 
     [Test]
