@@ -1,4 +1,4 @@
-﻿namespace CashFlowBotTests.Tests.SmallCircle;
+﻿namespace CashFlowBotTests.Tests;
 
 [NonParallelizable]
 public partial class BusinessFeature { }
