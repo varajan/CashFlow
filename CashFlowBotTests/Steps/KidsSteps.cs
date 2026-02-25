@@ -6,12 +6,12 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class KidsSteps(StepsContext context) : BaseSteps(context)
 {
-    [When(@"I get (\d+) kid(s|)")]
-    public void GetKids(int count, string _)
+    [When(@"(I|.*) get(|s) (\d+) kid(s|)")]
+    public void GetKids(string name, string _, int count, string __)
     {
         for (int i = 0; i < count; i++)
         {
-            User.SendMessage("Baby");
+            GetUser(name).SendMessage("Baby");
         }
     }
 }

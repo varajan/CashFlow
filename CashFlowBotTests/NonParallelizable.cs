@@ -8,3 +8,6 @@ public partial class FriendsFeature { }
 
 [NonParallelizable]
 public partial class GiveMoneyFeature { }
+
+[NonParallelizable]
+public partial class BigCircleFeature { }

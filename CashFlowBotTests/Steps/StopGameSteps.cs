@@ -6,11 +6,13 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class StopGameSteps(StepsContext context) : BaseSteps(context)
 {
-    [When("I decide to stop the game")]
-    public void GoToStopGame()
+    [When("(I|.*) decide(|s) to stop the game")]
+    public void GoToStopGame(string name, string _)
     {
-        User.SendMessage("Show my data");
-        User.SendMessage("Stop game");
+        var user = GetUser(name);
+
+        user.SendMessage("Show my data");
+        user.SendMessage("Stop game");
     }
 
     [Then("The game is restarted")]

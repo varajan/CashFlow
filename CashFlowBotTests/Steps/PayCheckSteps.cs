@@ -6,6 +6,6 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class PayCheckSteps(StepsContext context) : BaseSteps(context)
 {
-    [When("I get a paycheck")]
-    public void PayCheck() => User.SendMessage("Paycheck");
+    [When("(I|.*) get(|s) a paycheck")]
+    public void PayCheck(string name, string _) => GetUser(name).SendMessage("Paycheck");
 }

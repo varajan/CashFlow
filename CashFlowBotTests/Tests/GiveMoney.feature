@@ -12,9 +12,10 @@ Background:
 	| Kaitlin Alvarez | Teacher    |
 
 	When Ela Lynch get $1000 as a credit
-		And Haroon Stephens get $5,000 in cash
-		And Brodie Newton get $1,000 in cash
-		And Kaitlin Alvarez get $2,000 in cash
+	When Haroon Stephens get $5,000 in cash
+	When Brodie Newton get $1,000 in cash
+
+	When Kaitlin Alvarez get $2,000 in cash
 		And Kaitlin Alvarez get $3,000 in cash
 		And Kaitlin Alvarez get $5,000 in cash
 		And Kaitlin Alvarez buys real estate:

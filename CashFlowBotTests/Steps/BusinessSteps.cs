@@ -7,10 +7,12 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class BusinessSteps(StepsContext context) : BaseSteps(context)
 {
-    [Given("I buy businesses:")]
-    [When("I buy businesses:")]
-    public void BuyRealEstate(Table table)
+    [Given("(I|.*) buy(|s) businesses:")]
+    [When ("(I|.*) buy(|s) businesses:")]
+    public void BuyRealEstate(string name, string _, Table table)
     {
+        var user = GetUser(name);
+
         foreach (var row in table.Rows)
         {
             var title = row["Title"];
@@ -18,12 +20,12 @@ public class BusinessSteps(StepsContext context) : BaseSteps(context)
             var firstPayment = row["First Payment"];
             var cashflow = row["Monthly Cashflow"];
 
-            User.SendMessage("Big Opportunity");
-            User.SendMessage("Buy Business");
-            User.SendMessage(title);
-            User.SendMessage(price);
-            User.SendMessage(firstPayment);
-            User.SendMessage(cashflow);
+            user.SendMessage("Big Opportunity");
+            user.SendMessage("Buy Business");
+            user.SendMessage(title);
+            user.SendMessage(price);
+            user.SendMessage(firstPayment);
+            user.SendMessage(cashflow);
         }
     }
 

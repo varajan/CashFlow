@@ -58,9 +58,9 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         User.Profession = role;
     }
 
-    [Given(@"(.*) get (.*) in cash")]
-    [When (@"(.*) get (.*) in cash")]
-    public void GetMoney(string name, string amount)
+    [Given(@"(.*) get(|s) (.*) in cash")]
+    [When (@"(.*) get(|s) (.*) in cash")]
+    public void GetMoney(string name, string _, string amount)
     {
         var user = GetUser(name);
 
@@ -135,11 +135,13 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         Assert.Fail("No cash flow message");
     }
 
-    [Then(@"I have (.*) in cash")]
-    public void CheckCash(string expected)
+    [Then(@"(I|.*) ha(ve|s) (.*) in cash")]
+    public void CheckCash(string name, string _, string expected)
     {
-        User.SendMessage("Show my Data");
-        var reply = User.GetReply();
+        var user = GetUser(name);
+
+        user.SendMessage("Show my Data");
+        var reply = user.GetReply();
         var cashLine = reply.Message
             .Escape()
             .Split("\n")

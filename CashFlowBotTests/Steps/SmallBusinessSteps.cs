@@ -7,41 +7,46 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
 {
-    [Given(@"I start the (Auto Tools|Computer Programs) company with (.*)")]
-    [When(@"I start the (Auto Tools|Computer Programs) company with (.*)")]
-    public void StartCompany(string name, string price)
+    [Given(@"(I|.*) start(|s) the (Auto Tools|Computer Programs) company with (.*)")]
+    [When (@"(I|.*) start(|s) the (Auto Tools|Computer Programs) company with (.*)")]
+    public void StartCompany(string name, string _, string title, string price)
     {
-        User.SendMessage("Small Opportunity");
-        User.SendMessage("Start a company");
-        User.SendMessage(name);
-        User.SendMessage(price);
+        var user = GetUser(name);
+
+        user.SendMessage("Small Opportunity");
+        user.SendMessage("Start a company");
+        user.SendMessage(title);
+        user.SendMessage(price);
     }
 
-    [When(@"I sell (.*) small business for (.*)")]
-    public void SellSmallBusiness(string name, string price)
+    [When(@"(I|.*) sell(|s) (.*) small business for (.*)")]
+    public void SellSmallBusiness(string name, string _, string title, string price)
     {
-        User.SendMessage("Market");
-        User.SendMessage("Sell business");
+        var user = GetUser(name);
+        user.SendMessage("Market");
+        user.SendMessage("Sell business");
 
-        var message = User.GetReply().Message;
+        var message = user.GetReply().Message;
         var button = message
             .Escape()
             .Split("\n")
-            .First(x => x.Contains(name))
+            .First(x => x.Contains(title))
             .Split(" ")
             .First()
             .SubString("*", "*");
 
-        User.SendMessage(button);
-        User.SendMessage(price);
+        user.SendMessage(button);
+        user.SendMessage(price);
     }
 
-    [Given(@"I increase the cash flow of my small business by (.*)")]
-    [When(@"I increase the cash flow of my small business by (.*)")]
-    public void IncreaseCashFlow(string amount)
+    [Given(@"(I|.*) increase(|s) the cash flow of my small business by (.*)")]
+    [When (@"(I|.*) increase(|s) the cash flow of my small business by (.*)")]
+    public void IncreaseCashFlow(string name, string _, string amount)
     {
-        User.SendMessage("Market");
-        User.SendMessage("Increase cash flow");
-        User.SendMessage(amount);
+        var user = GetUser(name);
+
+        user.SendMessage("Market");
+        user.SendMessage("Increase cash flow");
+        user.SendMessage(amount);
     }
 }

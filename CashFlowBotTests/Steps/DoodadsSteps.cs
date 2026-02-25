@@ -16,11 +16,13 @@ public class DoodadsSteps(StepsContext context) : BaseSteps(context)
         User.SendMessage(amount);
     }
 
-    [Given("I buy a boat")]
-    [When("I buy a boat")]
-    public void BuyBoat()
+    [Given("(I|.*) buy(|s) a boat")]
+    [When ("(I|.*) buy(|s) a boat")]
+    public void BuyBoat(string name, string _)
     {
-        User.SendMessage("Doodads");
-        User.SendMessage("Buy a boat");
+        var user = GetUser(name);
+
+        user.SendMessage("Doodads");
+        user.SendMessage("Buy a boat");
     }
 }
