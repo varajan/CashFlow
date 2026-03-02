@@ -1,5 +1,5 @@
-﻿@non-parallel
-@do-cleanup
+﻿#@non-parallel
+#@do-cleanup
 
 Feature: BigCircle
 
@@ -17,8 +17,6 @@ Background:
 
 	When Rory Hartman starts the Computer Programs company with $2000
 		And Rory Hartman increases the cash flow of my small business by $7,000
-		#And Rory Hartman sells Computer Programs small business for $100,000
-		#And Rory Hartman increases the cash flow of my small business by $7,000
 		And Rory Hartman goes to the Big Circle
 
 	When Eoin Owens buys businesses:
@@ -92,7 +90,7 @@ Scenario: I can see my friends
 Scenario Outline: I can lost my money
 	When Eoin Owens loses money because of <Trouble>
 	Then Eoin Owens has <Amount> in cash
-	And Eoin Owens last history record is: • <Trouble>
+	And Eoin Owens last history record is: '• <Trouble>'
 
 Examples:
 	| Trouble   | Amount   |
@@ -111,15 +109,78 @@ Examples:
 	| Tax Audit |
 	| Lawsuit   |
 
-# buy business
+Scenario: I can buy businesses
+	When Eoin Owens gets a paycheck
+	And Eoin Owens buys big businesses:
+	| Title              | Price   | Cashflow |
+	| Gold mine          | 100,000 |    3,000 |
+	| Dry cleaning       | 150,000 |    5,000 |
+	| Pizzeria franchise | 125,000 |    8,000 |
+	| 60-plex            | 200,000 |   10,000 |
+	Then Eoin Owens' details are following:
+"""
+*Profession:* Teacher
+*Cash:* $25,510
+Initial Cashflow: $300,000
+Current Cashflow: $326,000
+Target Cashflow: $350,000
+
+
+*Assets:*
+• *Gold mine* - Price: $100,000, Cashflow: $3,000
+• *Dry cleaning* - Price: $150,000, Cashflow: $5,000
+• *Pizzeria franchise* - Price: $125,000, Cashflow: $8,000
+• *60-plex* - Price: $200,000, Cashflow: $10,000
+"""
+And Eoin Owens history data is following:
+"""
+• Buy Business. *Passage* - Price: $100,000, Mortgage: $99,000, Cashflow: $3,000
+• Go to Big Circle
+• Get $300,000
+• Buy Business. *Gold mine* - Price: $100,000, Cashflow: $3,000
+• Buy Business. *Dry cleaning* - Price: $150,000, Cashflow: $5,000
+• Buy Business. *Pizzeria franchise* - Price: $125,000, Cashflow: $8,000
+• Buy Business. *60-plex* - Price: $200,000, Cashflow: $10,000
+"""
+
+Scenario: I can undo buy business
+	When Eoin Owens buys big businesses:
+	| Title              | Price   | Cashflow |
+	| Gold mine          | 100,000 |    3,000 |
+	| 60-plex            | 200,000 |   10,000 |
+	But Eoin Owens rollbacks last action
+	Then Eoin Owens' details are following:
+"""
+*Profession:* Teacher
+*Cash:* $200,510
+Initial Cashflow: $300,000
+Current Cashflow: $303,000
+Target Cashflow: $350,000
+
+
+*Assets:*
+• *Gold mine* - Price: $100,000, Cashflow: $3,000
+"""
+
+Scenario: I can win the game
+	When Rory Hartman buys big businesses:
+	| Title              | Price   | Cashflow |
+	| Gold mine          | 100,000 |   25,000 |
+	| 60-plex            | 100,000 |   25,000 |
+	Then Rory Hartman recieved notification: 'You are the winner!'
+	And All users, except Rory Hartman recieve notification: Rory Hartman is the winner!
+
+    #[Then("(I|.*) see(|s) buttons: (.*)")]
+
 # win game
+# undo
 
 Scenario: I can stop the game
 	When Rory Hartman decides to stop the game
-		And Rory Hartman say 'Yes'
-	Then The game is restarted
+		And Rory Hartman say 'yes'
+	Then The game is restarted for Rory Hartman
 
 Scenario: I choose not to stop the game
 	When Rory Hartman decides to stop the game
-		And Rory Hartman say 'Cancel'
-	Then The game is continued
+		And Rory Hartman say 'cancel'
+	Then The game is continued for Rory Hartman

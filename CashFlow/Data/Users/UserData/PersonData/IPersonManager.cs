@@ -102,21 +102,21 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
         if (!compact)
         {
-            description += AssetsDescription(person, user);
+            description += AssetsDescription(person.Assets, user);
             description += ExpensesDescription(person, user);
         }
 
-        return description;
+        return description.Trim();
     }
 
-    private string AssetsDescription(PersonDto person, IUser user)
+    private string AssetsDescription(List<AssetDto> personAssets, IUser user)
     {
-        if (!person.Assets.Any(a => !a.IsDeleted))
+        if (!personAssets.Any(a => !a.IsDeleted))
             return string.Empty;
 
         var assetsTerm = Terms.Get(56, user, "Assets");
         var assets = $"{Environment.NewLine}{Environment.NewLine}*{assetsTerm}:*{Environment.NewLine}";
-        assets += string.Join(Environment.NewLine, person.Assets
+        assets += string.Join(Environment.NewLine, personAssets
             .Where(a => !a.IsDeleted)
             .OrderBy(a => a.Type)
             .Select(a => $"• {GetAssetDescription(a, user)}"));
@@ -201,15 +201,17 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         var initialTerm = Terms.Get(65, user, "Initial");
         var currentTerm = Terms.Get(66, user, "Current");
         var targetTerm = Terms.Get(67, user, "Target");
+        var assets = person.Assets.Where(a => a.BigCircle).ToList();
 
-        return
+        var description =
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"{initialTerm} {cashFlowTerm}: {person.InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
             $"{currentTerm} {cashFlowTerm}: {person.CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
-            $"{targetTerm} {cashFlowTerm}: {person.TargetCashFlow.AsCurrency()}{Environment.NewLine}" +
-            //$"{person.Assets.BigCircleDescription}";
-            $"";
+            $"{targetTerm} {cashFlowTerm}: {person.TargetCashFlow.AsCurrency()}{Environment.NewLine}";
+        description += AssetsDescription(assets, user);
+
+        return description.Trim();
     }
 
     public void Delete(IUser user)
@@ -663,6 +665,9 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                             : asset.Mortgage > 0
                                 ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {mortgage}: {asset.Mortgage.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}"
                                 : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
+
+            AssetType.BigBusinessType =>
+                            $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {cashFlow}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.Boat => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"

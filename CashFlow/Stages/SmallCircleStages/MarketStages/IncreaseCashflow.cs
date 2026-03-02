@@ -3,6 +3,7 @@ using CashFlow.Data.Consts;
 using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
+using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
@@ -32,7 +33,7 @@ public class IncreaseCashflow(
             return;
         }
 
-        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser);
+        var assets = PersonManager.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Where(a => !a.IsDeleted);
 
         assets.ForEach(asset =>
         {

@@ -1,4 +1,5 @@
 ﻿using CashFlowBotTests.Extras;
+using System.Xml.Linq;
 using TechTalk.SpecFlow;
 
 namespace CashFlowBotTests.Steps;
@@ -15,19 +16,21 @@ public class StopGameSteps(StepsContext context) : BaseSteps(context)
         user.SendMessage("Stop game");
     }
 
-    [Then("The game is restarted")]
-    public void CheckGameIsRestarted()
+    [Then("The game is restarted for (me|.*)")]
+    public void CheckGameIsRestarted(string name)
     {
-        var reply = User.GetReply();
+        var user = GetUser(name);
+        var reply = user.GetReply();
 
         Assert.That(reply.Message, Is.EqualTo("Choose your *profession*"));
     }
 
-    [Then("The game is continued")]
-    public void CheckGameIsContinued()
+    [Then("The game is continued for (me|.*)")]
+    public void CheckGameIsContinued(string name)
     {
-        var reply = User.GetReply();
+        var user = GetUser(name);
+        var reply = user.GetReply();
 
-        Assert.That(reply.Message, Does.StartWith($"*Profession:* {User.Profession}"));
+        Assert.That(reply.Message, Does.StartWith($"*Profession:* {user.Profession}"));
     }
 }

@@ -30,10 +30,7 @@ Scenario: Can give money to friend on Small Circle
 
 Scenario: Can give money to friend
 	When Haroon Stephens pays $1000 to Ela Lynch
-	Then All users recieve notification:
-"""
-Haroon Stephens transferred $1,000 to Ela Lynch.
-"""
+	Then All users recieve notification: Haroon Stephens transferred $1,000 to Ela Lynch.
 	And Balance by users is:
 		| Name            | Balance  |
 		| Haroon Stephens | $7,950   |
@@ -91,10 +88,7 @@ Scenario: Can rollback payment from a friend
 
 Scenario: Can pay money to bank
 	When Haroon Stephens pays $1000 to bank
-	Then All users recieve notification:
-"""
-Haroon Stephens transferred $1,000 to Bank.
-"""
+	Then All users recieve notification: Haroon Stephens transferred $1,000 to Bank.
 	And Balance by users is:
 		| Name            | Balance  |
 		| Haroon Stephens | $7,950   |

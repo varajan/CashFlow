@@ -110,7 +110,6 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
 
             case var m when person.ReadyForBigCircle && MessageEquals(m, 1, "Go to Big Circle"):
                 person.InitialCashFlow = person.Assets.Sum(a => a.CashFlow) / 10 * 1000;
-                person.CurrentCashFlow = person.InitialCashFlow;
                 person.TargetCashFlow = person.InitialCashFlow + 50_000;
                 person.Cash += person.InitialCashFlow;
                 person.BigCircle = true;

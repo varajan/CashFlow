@@ -18,8 +18,7 @@ public class BigCircleTests : StagesBaseTest
     {
         BigCircle = true,
         Cash = cash,
-        //CashFlow = 5_000,
-        CurrentCashFlow = paycheck,
+        InitialCashFlow = paycheck,
         TargetCashFlow = 1_000_000,
     };
 

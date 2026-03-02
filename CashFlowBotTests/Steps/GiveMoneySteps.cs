@@ -7,6 +7,7 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class GiveMoneySteps(StepsContext context) : BaseSteps(context)
 {
+    [Scope(Feature = "GiveMoney")]
     [When("(.*) pays (.*) to (.*)")]
     public void PayMoney(string from, string amount, string to)
     {
@@ -16,17 +17,32 @@ public class GiveMoneySteps(StepsContext context) : BaseSteps(context)
         user.SendMessage(amount);
     }
 
-    [Then("All users recieve notification:")]
-    public void CheckNotification(string notification)
+    [Then("All users recieve notification: (.*)")]
+    public void CheckNotification(string notification) => CheckNotification(Context.Users, notification);
+
+    [Then("All users, except (.*) recieve notification: (.*)")]
+    public void CheckNotification(string name, string notification)
+    {
+        var user = GetUser(name);
+        var users = Context.Users.Where(u => u.Name != name).ToList();
+        var prevReply = user.GetReply(indexFromEnd: 1).Message;
+        var lastReply = user.GetReply(indexFromEnd: 0).Message;
+
+        CheckNotification(users, notification);
+        Assert.That(new[] { prevReply, lastReply }, Does.Not.Contain(notification),
+            $"{name} received unexpected notification");
+    }
+
+    private static void CheckNotification(List<User> users, string notification)
     {
         Assert.Multiple(() =>
         {
-            foreach (var user in Context.Users)
+            foreach (var user in users)
             {
                 var prevReply = user.GetReply(indexFromEnd: 1).Message;
                 var lastReply = user.GetReply(indexFromEnd: 0).Message;
                 Assert.That(new[] { prevReply, lastReply }, Does.Contain(notification),
-                    $"User {user.Name} did not receive expected notification");
+                    $"{user.Name} did not receive expected notification");
             }
         });
     }

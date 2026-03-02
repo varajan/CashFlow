@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Data.DTOs;
 
@@ -23,7 +24,7 @@ public class PersonDto
     public int CashFlow => Salary + Income + TotalExpenses;
     public int TotalExpenses => Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
 
-    public int CurrentCashFlow { get; set; }
+    public int CurrentCashFlow => InitialCashFlow + Assets.Where(a => a.BigCircle && !a.IsDeleted).Sum(a => a.CashFlow);
     public int TargetCashFlow { get; set; }
 
     public List<AssetDto> Assets { get; set; } = [];
