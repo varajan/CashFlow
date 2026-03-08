@@ -91,6 +91,7 @@ public class CashFlowBot
                 : GetStartSage(message, user, users);
 
             await stage.HandleMessage(message.Text.Trim());
+            await stage.NextStage.BeforeStage();
             await stage.NextStage.SetButtons();
         }
         catch (Exception e)

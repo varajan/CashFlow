@@ -51,9 +51,20 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     public override async Task BeforeStage()
     {
         var person = PersonManager.Read(CurrentUser);
-        if (person.CurrentCashFlow < person.TargetCashFlow || person.IsWinning)
+
+        if (person.CurrentCashFlow < person.TargetCashFlow && !person.IsWinning)
         {
-            person.IsWinning = person.CurrentCashFlow >= person.TargetCashFlow;
+            return;
+        }
+
+        if (person.CurrentCashFlow >= person.TargetCashFlow && person.IsWinning)
+        {
+            return;
+        }
+
+        if (person.CurrentCashFlow < person.TargetCashFlow && person.IsWinning)
+        {
+            person.IsWinning = false;
             PersonManager.Update(person);
             return;
         }

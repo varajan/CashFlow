@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 
 namespace CashFlow.Data.DTOs;
 

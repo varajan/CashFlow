@@ -60,6 +60,10 @@ public class BigCircleTests : StagesBaseTest
         });
     }
 
+
+    [Test]
+    public async Task BigCircle_BeforeStage_NotifyNone_2_3() => throw new Exception("Cover other cases");
+
     [Test]
     public async Task BigCircle_BeforeStage_NotifyNone()
     {

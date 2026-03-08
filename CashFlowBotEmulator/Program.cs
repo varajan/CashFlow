@@ -46,7 +46,10 @@ async Task HandleUpdateAsync(int chatId, string message)
             : GetStartSage(message, user, users);
 
         await stage.HandleMessage(message);
+        await stage.NextStage.BeforeStage();
         await stage.NextStage.SetButtons();
+
+        Console.WriteLine($"Received a message from {user.Name}: {message}");
     }
     catch (Exception e)
     {

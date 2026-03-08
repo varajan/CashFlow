@@ -9,6 +9,7 @@ public class Start(ITermsService termsService, IPersonManager personManager) : B
 {
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;
+    public override Task BeforeStage() => NextStage.BeforeStage();
 
     public override IStage NextStage
     {
