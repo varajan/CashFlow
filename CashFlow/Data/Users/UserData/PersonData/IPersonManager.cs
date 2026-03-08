@@ -22,7 +22,6 @@ public interface IPersonManager
     bool IsHistoryEmpty(IUser user);
     string HistoryTopFive(IUser user, IUser currentUser);
     void RollbackHistory(PersonDto person, HistoryDto record);
-    void ClearHistory(IUser user);
 
     List<AssetDto> ReadAllAssets(AssetType type, IUser user);
     void CreateAsset(IUser user, AssetDto asset);
@@ -73,7 +72,8 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         DataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
     }
 
-    public void Update(PersonDto person) => DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
+    public void Update(PersonDto person) => 
+        DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
 
     public bool Exists(IUser user)
     {
@@ -85,6 +85,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public PersonDto Read(IUser user)
     {
+        user.LastActive = DateTime.Now;
         var personData = DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}");
 
         return string.IsNullOrEmpty(personData)
@@ -95,7 +96,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public string GetDescription(IUser user, bool compact = true)
     {
         var person = Read(user);
-        user.LastActive = DateTime.Now;
         var description = person.BigCircle
             ? BigCircleDescription(person, user)
             : SmallCircleDescription(person, user);
@@ -216,6 +216,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     public void Delete(IUser user)
     {
+        DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
         DataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
         // assets?
         // liabilities?
@@ -462,8 +463,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         //CreditsReduced = false;
         //Bankruptcy = CashFlow < 0;
     }
-
-    public void ClearHistory(IUser user) => DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
 
     private string GetDescription(ActionType Action, long value, IUser user, long assetId)
     {

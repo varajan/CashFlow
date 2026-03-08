@@ -9,7 +9,7 @@ public class BaseSteps(StepsContext context)
     protected readonly StepsContext Context = context;
     protected User User => GetUser("I");
 
-    protected User GetUser(string name) => name.Equals("I") || name.Equals("My")
+    protected User GetUser(string name) => name.Equals("I") || name.Equals("My") || name.Equals("me")
         ? Context.Users.First()
         : Context.Users.First(u => u.Name.Equals(name));
 }
@@ -52,6 +52,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     public void StartGame(string role)
     {
         User.SendMessage(User.Name);
+        User.StopCurrentGame();
         User.SendMessage("en");
         User.SendMessage(role);
 

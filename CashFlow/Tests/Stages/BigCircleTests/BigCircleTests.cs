@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
@@ -60,16 +61,11 @@ public class BigCircleTests : StagesBaseTest
         });
     }
 
-
     [Test]
-    public async Task BigCircle_BeforeStage_NotifyNone_2_3() => throw new Exception("Cover other cases");
-
-    [Test]
-    public async Task BigCircle_BeforeStage_NotifyNone()
+    public async Task BigCircle_BeforeStage_NoWinner_NotifyNone()
     {
         // Arrange
         var testStage = GetTestStage();
-        var message = $"{CurrentUserMock.Object.Name} is the winner!";
         var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
 
         // Act
@@ -77,6 +73,26 @@ public class BigCircleTests : StagesBaseTest
 
         // Assert
         activeUsers.ForEach(u => u.Verify(u => u.Notify(It.IsAny<string>()), Times.Never));
+    }
+
+    [Test]
+    public async Task BigCircle_BeforeStage_RollbackWinTransaction_NotifyNone()
+    {
+        // Arrange
+        var person = Person.Clone();
+        person.IsWinning = true;
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+
+        var testStage = GetTestStage();
+        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+
+        // Act
+        await testStage.BeforeStage();
+
+        // Assert
+        activeUsers.ForEach(u => u.Verify(u => u.Notify(It.IsAny<string>()), Times.Never));
+
+        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinning == false)), Times.Once);
     }
 
     [Test]

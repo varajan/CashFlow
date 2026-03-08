@@ -4,6 +4,7 @@ using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlowBotEmulator;
+using System.Globalization;
 
 ServicesProvider.Init();
 
@@ -24,10 +25,12 @@ while (true)
 
     if (message == "RESET")
     {
-        DataBase.Execute("DELETE FROM Users");
-        DataBase.Execute("DELETE FROM Persons");
-        DataBase.Execute("DELETE FROM History");
-        Thread.Sleep(200);
+        var lastActive = DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
+        DataBase.Execute($"UPDATE Users SET LastActive = '{lastActive}'");
+        //DataBase.Execute("DELETE FROM Users");
+        //DataBase.Execute("DELETE FROM Persons");
+        //DataBase.Execute("DELETE FROM History");
+        Thread.Sleep(300);
         continue;
     }
 
@@ -48,8 +51,6 @@ async Task HandleUpdateAsync(int chatId, string message)
         await stage.HandleMessage(message);
         await stage.NextStage.BeforeStage();
         await stage.NextStage.SetButtons();
-
-        Console.WriteLine($"Received a message from {user.Name}: {message}");
     }
     catch (Exception e)
     {

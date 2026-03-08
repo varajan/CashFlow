@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
@@ -13,7 +14,6 @@ public class WinGameTests : StagesBaseTest
     {
         BigCircle = true,
         Cash = 500_000,
-        //CashFlow = 5_000,
         InitialCashFlow = 500_000,
         TargetCashFlow = 500_000,
     };
@@ -53,9 +53,13 @@ public class WinGameTests : StagesBaseTest
     }
 
     [Test]
-    public async Task WinGame_BeforeStage_NotifyOthers()
+    public async Task WinGame_BeforeStage_NotifyOthers([Values] bool alreadyNotified)
     {
         // Arrange
+        var person = Person.Clone();
+        person.IsWinning = alreadyNotified;
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+
         var testStage = GetTestStage();
         var message = $"{CurrentUserMock.Object.Name} is the winner!";
         var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u));
@@ -65,11 +69,11 @@ public class WinGameTests : StagesBaseTest
 
         // Assert
         CurrentUserMock.Verify(x => x.Notify(It.IsAny<string>()), Times.Never);
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
+        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), alreadyNotified ? Times.Never : Times.Once));
 
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.IsWinning == true)),
-            Times.Once);
+            alreadyNotified ? Times.Never : Times.Once);
     }
 
     [TestCase("Paycheck")]

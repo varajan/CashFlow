@@ -12,21 +12,26 @@ public class EmulationNotifyService(long chatId) : INotifyService
 
     public Task SetButtons(IStage stage)
     {
-        var @object = new { stage.Message, stage.Buttons, DateTime = DateTime.UtcNow };
-        File.AppendAllText(FileName, $"\n{@object.Serialize()}");
-        return Task.CompletedTask;
+        Task setButtons()
+        {
+            var @object = new { stage.Message, stage.Buttons, DateTime = DateTime.UtcNow };
+            File.AppendAllText(FileName, $"\n{@object.Serialize()}");
+            return Task.CompletedTask;
+        }
+
+        return _retryPolicy.ExecuteAsync(setButtons);
     }
 
     public Task Notify(string message)
     {
-        var @object = new { Message = message, DateTime = DateTime.UtcNow };
-        var appendFile = () =>
+        Task notify()
         {
+            var @object = new { Message = message, DateTime = DateTime.UtcNow };
             File.AppendAllText(FileName, $"\n{@object.Serialize()}");
             return Task.CompletedTask;
-        };
+        }
 
-        return _retryPolicy.ExecuteAsync(appendFile);
+        return _retryPolicy.ExecuteAsync(notify);
     }
 
     private static readonly AsyncRetryPolicy _retryPolicy =

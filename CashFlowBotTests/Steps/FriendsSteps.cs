@@ -16,6 +16,7 @@ public class FriendsSteps(StepsContext context) : BaseSteps(context)
 
             var user = new User(name);
             user.SendMessage(name);
+            user.StopCurrentGame();
             user.SendMessage("en");
             user.SendMessage(role);
 
