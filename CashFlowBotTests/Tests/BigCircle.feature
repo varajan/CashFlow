@@ -1,5 +1,5 @@
-﻿#@non-parallel
-#@do-cleanup
+﻿@non-parallel
+@do-cleanup
 
 Feature: BigCircle
 
@@ -170,10 +170,22 @@ Scenario: I can win the game
 	Then Rory Hartman recieved notification: 'You are the winner!'
 	And All users, except Rory Hartman recieve notification: Rory Hartman is the winner!
 
-    #[Then("(I|.*) see(|s) buttons: (.*)")]
+Scenario: I can stop the game after my victory
+	When Rory Hartman buys big businesses:
+	| Title              | Price   | Cashflow |
+	| Gold mine          | 100,000 |   25,000 |
+	| 60-plex            | 100,000 |   25,000 |
+	And Rory Hartman say 'Stop game'
+	And Rory Hartman say 'yes'
+	Then The game is restarted for Rory Hartman
 
-# win game
-# undo
+Scenario: I can undo last actions after my victory
+	When Rory Hartman buys big businesses:
+	| Title              | Price   | Cashflow |
+	| Gold mine          | 100,000 |   25,000 |
+	| 60-plex            | 100,000 |   25,000 |
+	But Rory Hartman rollbacks last action
+	Then The game is continued for Rory Hartman
 
 Scenario: I can stop the game
 	When Rory Hartman decides to stop the game
