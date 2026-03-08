@@ -50,10 +50,6 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
             new() { Type = Liability.Taxes, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
             new() { Type = Liability.Mortgage, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
             new() { Type = Liability.Bank_Loan, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
-            //new() { Name = "Loan No1", FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
-            //new() { Name = "Loan No2", FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
-            //new() { Name = "Loan No3", FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
-            //new() { Name = "Loan No4", FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
         };
 
         PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(new PersonDto { Liabilities = liabilities });

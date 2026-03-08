@@ -40,11 +40,6 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     {
         var defaults = Persons.Get(profession);
 
-        //Clear();
-        //DataBase.Execute($"INSERT INTO Persons " +
-        //           "(ID, Profession, Salary, Cash, SmallRealEstate, ReadyForBigCircle, BigCircle, InitialCashFlow, Bankruptcy, CreditsReduced) " +
-        //           $"VALUES ({userId}, '', '', '', '', '', '', '', 0, 0)");
-
         Delete(user);
 
         var person = new PersonDto
@@ -56,16 +51,75 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             PerChild = defaults.Expenses.PerChild,
         };
 
-    person.Liabilities =
-        [
-            new() { Type = Liability.Taxes, Name = Liability.Taxes.AsString(), FullAmount = 0 /*defaults.Liabilities.Taxes*/, Cashflow = -defaults.Expenses.Taxes },
-            new() { Type = Liability.Mortgage, Name = Liability.Mortgage.AsString(), FullAmount = defaults.Liabilities.Mortgage, Cashflow = -defaults.Expenses.Mortgage },
-            new() { Type = Liability.School_Loan, Name = Liability.School_Loan.AsString(), FullAmount = defaults.Liabilities.SchoolLoan, Cashflow = -defaults.Expenses.SchoolLoan },
-            new() { Type = Liability.Car_Loan, Name = Liability.Car_Loan.AsString(), FullAmount = defaults.Liabilities.CarLoan, Cashflow = -defaults.Expenses.CarLoan },
-            new() { Type = Liability.Credit_Card, Name = Liability.Credit_Card.AsString(), FullAmount = defaults.Liabilities.CreditCard, Cashflow = -defaults.Expenses.CreditCard },
-            new() { Type = Liability.Bank_Loan, Name = Liability.Bank_Loan.AsString(), FullAmount = defaults.Liabilities.BankLoan, Cashflow = -defaults.Expenses.BankLoan, AllowsPartialPayment = true },
-            new() { Type = Liability.Others, Name = Liability.Others.AsString(), FullAmount = 0 /*defaults.Liabilities.Others*/, Cashflow = -defaults.Expenses.Others },
-            new() { Type = Liability.Small_Credit, Name = Liability.Small_Credit.AsString(), FullAmount = defaults.Liabilities.SmallCredits, Cashflow = -defaults.Expenses.SmallCredits },
+        person.Liabilities =
+            [
+            new()
+            {
+                Type = Liability.Taxes,
+                Name = Liability.Taxes.AsString(),
+                FullAmount = 0,
+                Cashflow = -defaults.Expenses.Taxes
+            },
+
+            new()
+            {
+                Type = Liability.Mortgage,
+                Name = Liability.Mortgage.AsString(),
+                FullAmount = defaults.Liabilities.Mortgage,
+                Cashflow = -defaults.Expenses.Mortgage
+            },
+
+            new()
+            {
+                Type = Liability.School_Loan,
+                Name = Liability.School_Loan.AsString(),
+                FullAmount = defaults.Liabilities.SchoolLoan,
+                Cashflow = -defaults.Expenses.SchoolLoan
+            },
+
+            new()
+            {
+                Type = Liability.Car_Loan,
+                Name = Liability.Car_Loan.AsString(),
+                IsBankruptcyDivisible = true,
+                FullAmount = defaults.Liabilities.CarLoan,
+                Cashflow = -defaults.Expenses.CarLoan
+            },
+
+            new()
+                {
+                Type = Liability.Credit_Card,
+                Name = Liability.Credit_Card.AsString(),
+                IsBankruptcyDivisible = true,
+                FullAmount = defaults.Liabilities.CreditCard,
+                Cashflow = -defaults.Expenses.CreditCard
+            },
+
+            new()
+            {
+                Type = Liability.Bank_Loan,
+                Name = Liability.Bank_Loan.AsString(),
+                FullAmount = defaults.Liabilities.BankLoan,
+                Cashflow = -defaults.Expenses.BankLoan,
+                AllowsPartialPayment = true
+            },
+
+            new()
+            {
+                Type = Liability.Others,
+                Name = Liability.Others.AsString(),
+                FullAmount = 0,
+                Cashflow = -defaults.Expenses.Others
+            },
+
+            new()
+            {
+                Type = Liability.Small_Credit,
+                Name = Liability.Small_Credit.AsString(),
+                IsBankruptcyDivisible = true,
+                FullAmount = defaults.Liabilities.SmallCredits,
+                Cashflow = -defaults.Expenses.SmallCredits
+            },
         ];
 
         person.Cash += person.CashFlow;
