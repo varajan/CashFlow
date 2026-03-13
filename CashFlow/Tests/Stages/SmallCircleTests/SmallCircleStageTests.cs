@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
@@ -30,7 +31,7 @@ public class SmallCircleStageTests : StagesBaseTest
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
     [Test]
-    public void SmallCircle_Question_and_Buttons([Values] bool isHistoryEmpty, [Values] bool isReadyForBigCircle)//, int income, int expenses)
+    public void SmallCircle_Question_and_Buttons([Values] bool isHistoryEmpty, [Values] bool isReadyForBigCircle)
     {
         // Arrange
         var testStage = GetTestStage();
@@ -41,7 +42,7 @@ public class SmallCircleStageTests : StagesBaseTest
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
         PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
-        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(CurrentUserMock.Object)).Returns(isReadyForBigCircle);
+        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(It.IsAny<PersonDto>())).Returns(isReadyForBigCircle);
         PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns(description);
 
         // Act
@@ -171,6 +172,8 @@ public class SmallCircleStageTests : StagesBaseTest
 
         testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(-downsizeAmount);
+        PersonManagerMock.Setup(p => p.GetTotalExpenses(testPerson)).Returns(-downsizeAmount);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -199,6 +202,8 @@ public class SmallCircleStageTests : StagesBaseTest
 
         testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(-downsizeAmount);
+        PersonManagerMock.Setup(p => p.GetTotalExpenses(testPerson)).Returns(-downsizeAmount);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -279,6 +284,7 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(cashFlow);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -305,6 +311,7 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(cashFlow);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -346,18 +353,18 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Assets = assets;
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(CurrentUserMock.Object)).Returns(true);
+        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(testPerson)).Returns(true);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
+
         PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.InitialCashFlow == initialCashFlow &&
             pr.BigCircle == true &&
             pr.Cash == TestPerson.Cash + initialCashFlow &&
-            pr.CurrentCashFlow == initialCashFlow &&
             pr.TargetCashFlow == initialCashFlow + 50_000)), Times.Once);
         PersonManagerMock.Verify(x => x.AddHistory(ActionType.GoToBigCircle, initialCashFlow, CurrentUserMock.Object), Times.Once);
     }

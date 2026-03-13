@@ -17,12 +17,6 @@ public class PersonDto
     public int PerChild { get; set; }
     public int Children { get; set; }
 
-    public int BoatPayment => Assets.Where(a => !a.IsDeleted).FirstOrDefault(a => a.Type == AssetType.Boat)?.CashFlow ?? 0;
-    public int Income => Assets.Where(a => !a.IsDeleted).Sum(a => a.Qtty * a.CashFlow) - BoatPayment;
-    public int CashFlow => Salary + Income + TotalExpenses;
-    public int TotalExpenses => Liabilities.Sum(l => l.Cashflow) - Children * PerChild;
-
-    public int CurrentCashFlow => InitialCashFlow + Assets.Where(a => a.BigCircle && !a.IsDeleted).Sum(a => a.CashFlow);
     public int TargetCashFlow { get; set; }
 
     public List<AssetDto> Assets { get; set; } = [];

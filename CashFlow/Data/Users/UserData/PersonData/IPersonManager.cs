@@ -15,7 +15,12 @@ public interface IPersonManager
     string GetDescription(IUser user, bool compact = true);
     void Delete(IUser user);
     void Update(IUser user, LiabilityDto liability);
-    bool IsReadyForBigCircle(IUser user);
+    bool IsReadyForBigCircle(PersonDto person);
+    int GetBoatPayment(PersonDto person);
+    int GetIncome(PersonDto person);
+    int GetTotalExpenses(PersonDto person);
+    int GetSmallCircleCashflow(PersonDto person);
+    int GetBigCircleCashflow(PersonDto person);
 
     void AddHistory(ActionType type, long value, IUser user);
     void AddHistory(ActionType type, long value, IUser user, long assetId);
@@ -123,18 +128,19 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             },
         ];
 
-        person.Cash += person.CashFlow;
+        person.Cash += GetSmallCircleCashflow(person);
         DataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
     }
 
-    public bool IsReadyForBigCircle(IUser user)
-    {
-        var person = Read(user);
-        return person.Income > Math.Abs(person.TotalExpenses);
-    }
+    public bool IsReadyForBigCircle(PersonDto person) => GetIncome(person) > Math.Abs(GetTotalExpenses(person));
 
-    public void Update(PersonDto person) => 
-        DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
+    public int GetBoatPayment(PersonDto person) => person.Assets.Where(a => !a.IsDeleted).FirstOrDefault(a => a.Type == AssetType.Boat)?.CashFlow ?? 0;
+    public int GetIncome(PersonDto person) => person.Assets.Where(a => !a.IsDeleted).Sum(a => a.Qtty * a.CashFlow) - GetBoatPayment(person);
+    public int GetSmallCircleCashflow(PersonDto person) => person.Salary + GetIncome(person) + GetTotalExpenses(person);
+    public int GetTotalExpenses(PersonDto person) => person.Liabilities.Sum(l => l.Cashflow) - person.Children * person.PerChild;
+    public int GetBigCircleCashflow(PersonDto person) => person.InitialCashFlow + person.Assets.Where(a => a.BigCircle && !a.IsDeleted).Sum(a => a.CashFlow);
+
+    public void Update(PersonDto person) => DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
 
     public bool Exists(IUser user)
     {
@@ -249,9 +255,9 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
-            $"*{incomeTerm}:* {person.Income.AsCurrency()}{Environment.NewLine}" +
-            $"*{expensesTerm}:* {(-person.TotalExpenses).AsCurrency()}{Environment.NewLine}" +
-            $"*{cashFlowTerm}:* {person.CashFlow.AsCurrency()}";
+            $"*{incomeTerm}:* {GetIncome(person).AsCurrency()}{Environment.NewLine}" +
+            $"*{expensesTerm}:* {(-GetTotalExpenses(person)).AsCurrency()}{Environment.NewLine}" +
+            $"*{cashFlowTerm}:* {GetSmallCircleCashflow(person).AsCurrency()}";
     }
 
     private string BigCircleDescription(PersonDto person, IUser user)
@@ -268,7 +274,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
             $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"{initialTerm} {cashFlowTerm}: {person.InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
-            $"{currentTerm} {cashFlowTerm}: {person.CurrentCashFlow.AsCurrency()}{Environment.NewLine}" +
+            $"{currentTerm} {cashFlowTerm}: {GetBigCircleCashflow(person).AsCurrency()}{Environment.NewLine}" +
             $"{targetTerm} {cashFlowTerm}: {person.TargetCashFlow.AsCurrency()}{Environment.NewLine}";
         description += AssetsDescription(assets, user);
 

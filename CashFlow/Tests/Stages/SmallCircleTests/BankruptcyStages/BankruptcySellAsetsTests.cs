@@ -35,7 +35,11 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
+    public void Setup()
+    {
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
+        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(It.IsAny<PersonDto>())).Returns(-1_000);
+    }
 
     [Test]
     public void BankruptcySellAssets_Question_and_Buttons()
@@ -44,7 +48,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         var testStage = GetTestStage();
         var message = @"*You're out of money.*
 Bank Loan: *$3,000*
-Cashflow: *-$1,130*
+Cashflow: *-$1,000*
 Cash: *$100*
 #1 - *Asset 3* - Price: $4,500, Cashflow: $30
 #2 - *Asset 1* - Price: $500, Cashflow: $10

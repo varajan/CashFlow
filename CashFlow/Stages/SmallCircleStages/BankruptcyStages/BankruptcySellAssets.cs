@@ -24,7 +24,7 @@ public class BankruptcySellAssets(ITermsService termsService, IPersonManager per
 
             var message = $"*{Terms.Get(126, CurrentUser, "You're out of money.")}*";
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
-            message += Environment.NewLine + $"{cashFlow}: *{Person.CashFlow.AsCurrency()}*";
+            message += Environment.NewLine + $"{cashFlow}: *{PersonManager.GetSmallCircleCashflow(Person).AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
 
             foreach (var asset in Assets)

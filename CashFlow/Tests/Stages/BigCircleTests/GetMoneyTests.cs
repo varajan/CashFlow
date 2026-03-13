@@ -10,7 +10,9 @@ namespace CashFlow.Tests.Stages.BigCircleTests;
 public class GetMoneyTests : StagesBaseTest
 {
     private const int CashAmount = 1_000_000;
-    private PersonDto Person => new()
+    private const int CashFlow = 500_000;
+
+    private static PersonDto Person => new()
     {
         BigCircle = true,
         Cash = CashAmount,
@@ -19,7 +21,11 @@ public class GetMoneyTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup()
+    {
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(CashFlow);
+    }
 
     [Test]
     public void GetMoney_Question_and_Buttons()
@@ -40,7 +46,7 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.Multiple(() =>
         {
-            Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{Person.CurrentCashFlow.AsCurrency()}*. How much should you get?"));
+            Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{CashFlow.AsCurrency()}*. How much should you get?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
     }

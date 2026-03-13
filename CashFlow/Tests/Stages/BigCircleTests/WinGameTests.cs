@@ -10,7 +10,7 @@ namespace CashFlow.Tests.Stages.BigCircleTests;
 [TestFixture]
 public class WinGameTests : StagesBaseTest
 {
-    private PersonDto Person => new()
+    private static PersonDto Person => new()
     {
         BigCircle = true,
         Cash = 500_000,
@@ -19,7 +19,11 @@ public class WinGameTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup()
+    {
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(Person.TargetCashFlow);
+    }
 
     [Test]
     public void WinGame_Question_and_Buttons()

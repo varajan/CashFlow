@@ -14,7 +14,9 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager)
         {
             var person = PersonManager.Read(CurrentUser);
             return Terms.Get(0, CurrentUser, "Your Cashflow is *{0}*. How much should you get?",
-                person.BigCircle ? person.CurrentCashFlow.AsCurrency() : person.CashFlow.AsCurrency());
+                person.BigCircle
+                ? PersonManager.GetBigCircleCashflow(person).AsCurrency()
+                : PersonManager.GetSmallCircleCashflow(person).AsCurrency());
         }
     }
 
@@ -28,13 +30,13 @@ public class GetMoney(ITermsService termsService, IPersonManager personManager)
                 50_000.AsCurrency(),
                 100_000.AsCurrency(),
                 200_000.AsCurrency(),
-                person.CurrentCashFlow.AsCurrency()
+                PersonManager.GetBigCircleCashflow(person).AsCurrency()
             ]
             : [
                 1_000.AsCurrency(),
                 2_000.AsCurrency(),
                 5_000.AsCurrency(),
-                person.CashFlow.AsCurrency()
+                PersonManager.GetSmallCircleCashflow(person).AsCurrency()
             ];
 
             return buttons.Distinct().Append(Cancel);

@@ -15,7 +15,8 @@ public class BigCircleTests : StagesBaseTest
 {
     private const int cash = 1_000_000;
     private const int paycheck = 500_000;
-    private PersonDto Person => new()
+
+    private static PersonDto Person => new()
     {
         BigCircle = true,
         Cash = cash,
@@ -24,7 +25,11 @@ public class BigCircleTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup()
+    {
+        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(paycheck);
+    }
 
     [Test]
     public void BigCircle_Question_and_Buttons()
