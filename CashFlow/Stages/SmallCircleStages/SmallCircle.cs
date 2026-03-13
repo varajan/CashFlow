@@ -22,7 +22,7 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
         get
         {
             var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
-            var isReadyForBigCircle = PersonManager.Read(CurrentUser).ReadyForBigCircle;
+            var isReadyForBigCircle = PersonManager.IsReadyForBigCircle(CurrentUser);
 
             List<string> buttons = isHistoryEmpty
                 ? [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends")]
@@ -46,8 +46,9 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
     {
         var person = PersonManager.Read(CurrentUser);
         var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
+        var isReadyForBigCircle = PersonManager.IsReadyForBigCircle(CurrentUser);
 
-        if (person.ReadyForBigCircle)
+        if (isReadyForBigCircle)
         {
             var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
             OtherUsers.Where(x => x.IsActive).ForEach(u => u.Notify(notifyMessage));
@@ -108,7 +109,7 @@ public class SmallCircle(ITermsService termsService, IPersonManager personManage
                 NextStage = New<SendMoney>();
                 return;
 
-            case var m when person.ReadyForBigCircle && MessageEquals(m, 1, "Go to Big Circle"):
+            case var m when isReadyForBigCircle && MessageEquals(m, 1, "Go to Big Circle"):
                 person.InitialCashFlow = person.Assets.Sum(a => a.CashFlow) / 10 * 1000;
                 person.TargetCashFlow = person.InitialCashFlow + 50_000;
                 person.Cash += person.InitialCashFlow;

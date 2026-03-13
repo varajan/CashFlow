@@ -15,6 +15,7 @@ public interface IPersonManager
     string GetDescription(IUser user, bool compact = true);
     void Delete(IUser user);
     void Update(IUser user, LiabilityDto liability);
+    bool IsReadyForBigCircle(IUser user);
 
     void AddHistory(ActionType type, long value, IUser user);
     void AddHistory(ActionType type, long value, IUser user, long assetId);
@@ -124,6 +125,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
         person.Cash += person.CashFlow;
         DataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
+    }
+
+    public bool IsReadyForBigCircle(IUser user)
+    {
+        var person = Read(user);
+        return person.Income > Math.Abs(person.TotalExpenses);
     }
 
     public void Update(PersonDto person) => 
