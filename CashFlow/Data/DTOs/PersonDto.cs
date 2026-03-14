@@ -1,6 +1,4 @@
-﻿using CashFlow.Data.Consts;
-
-namespace CashFlow.Data.DTOs;
+﻿namespace CashFlow.Data.DTOs;
 
 public class PersonDto
 {
@@ -22,34 +20,4 @@ public class PersonDto
 
     public List<AssetDto> Assets { get; set; } = [];
     public List<LiabilityDto> Liabilities { get; set; } = [];
-
-    public void GetCredit(int amount)
-    {
-        Cash += amount;
-        UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
-    }
-
-    public void DeleteLiability(Liability type)
-    {
-        Liabilities = [.. Liabilities.Where(l => l.Type != type)];
-    }
-
-    public void UpdateLiability(Liability type, int cashFlow, int ammount)
-    {
-        var idx = Liabilities.FindIndex(l => l.Type == type);
-
-        if (idx >= 0)
-        {
-            var liability = Liabilities[idx];
-            liability.Cashflow += cashFlow;
-            liability.FullAmount += ammount;
-            liability.Deleted = false;
-            Liabilities[idx] = liability;
-        }
-        else
-        {
-            var liability = new LiabilityDto { Type = type, Cashflow = cashFlow, FullAmount = ammount };
-            Liabilities.Add(liability);
-        }
-    }
 }
