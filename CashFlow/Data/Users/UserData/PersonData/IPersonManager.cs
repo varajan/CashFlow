@@ -1,6 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
+using CashFlow.Infrastructure;
 using CashFlow.Interfaces;
 using MoreLinq;
 
@@ -37,16 +38,22 @@ public interface IPersonManager
     string GetAssetDescription(AssetDto asset, IUser user);
 }
 
-public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonManager
+public class PersonManager(IPersonRepository personRepository, IDataBase dataBase, ITermsService terms) : IPersonManager
 {
     private ITermsService Terms { get; } = terms;
-    private IDataBase DataBase { get; }  = dataBase;
+    private IDataBase DataBase { get; } = dataBase;
+    private IPersonRepository PersonRepository { get; } = personRepository;
+
+    public bool Exists(IUser user) => PersonRepository.Exists(user.Id);
+    public void Update(PersonDto person) => PersonRepository.Save(person);
+    public PersonDto Read(IUser user) => PersonRepository.Get(user.Id);
+    public void Delete(IUser user) => PersonRepository.Delete(user.Id);
 
     public void Create(string profession, IUser user)
     {
         var defaults = Persons.Get(profession);
 
-        Delete(user);
+        PersonRepository.Delete(user.Id);
 
         var person = new PersonDto
         {
@@ -129,7 +136,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         ];
 
         person.Cash += GetSmallCircleCashflow(person);
-        DataBase.Execute($"INSERT INTO Persons (ID, PersonData) VALUES ({user.Id}, '{person.Serialize()}')");
+        PersonRepository.Save(person);
     }
 
     public bool IsReadyForBigCircle(PersonDto person) => GetIncome(person) > Math.Abs(GetTotalExpenses(person));
@@ -140,29 +147,9 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     public int GetTotalExpenses(PersonDto person) => person.Liabilities.Sum(l => l.Cashflow) - person.Children * person.PerChild;
     public int GetBigCircleCashflow(PersonDto person) => person.InitialCashFlow + person.Assets.Where(a => a.BigCircle && !a.IsDeleted).Sum(a => a.CashFlow);
 
-    public void Update(PersonDto person) => DataBase.Execute($"UPDATE Persons SET PersonData = '{person.Serialize()}' WHERE ID = {person.Id}");
-
-    public bool Exists(IUser user)
-    {
-        var sql = $"SELECT * FROM Persons WHERE ID = {user.Id}";
-        var data = DataBase.GetRows(sql);
-
-        return data.Any();
-    }
-
-    public PersonDto Read(IUser user)
-    {
-        user.LastActive = DateTime.Now;
-        var personData = DataBase.GetValue($"SELECT PersonData FROM Persons WHERE ID = {user.Id}");
-
-        return string.IsNullOrEmpty(personData)
-            ? default
-            : personData.Deserialize<PersonDto>();
-    }
-
     public string GetDescription(IUser user, bool compact = true)
     {
-        var person = Read(user);
+        var person = PersonRepository.Get(user.Id);
         var description = person.BigCircle
             ? BigCircleDescription(person, user)
             : SmallCircleDescription(person, user);
@@ -281,21 +268,12 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
         return description.Trim();
     }
 
-    public void Delete(IUser user)
-    {
-        DataBase.Execute($"DELETE FROM History WHERE UserID = {user.Id}");
-        DataBase.Execute($"DELETE FROM Persons WHERE ID = {user.Id}");
-        // assets?
-        // liabilities?
-        // history?
-    }
-
     public void Update(IUser user, LiabilityDto liability)
     {
-        var person = Read(user);
+        var person = PersonRepository.Get(user.Id);
         var index = person.Liabilities.FindIndex(l => l.Name == liability.Name);
         person.Liabilities[index] = liability;
-        Update(person);
+        PersonRepository.Save(person);
     }
 
     #region History
@@ -499,7 +477,7 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
                 throw new Exception($"<{record.Action}> ???");
         }
 
-        Update(person);
+        PersonRepository.Save(person);
         DataBase.Execute($"DELETE FROM History WHERE UserId = {record.UserId} AND Id = {record.Date.Ticks}");
     }
 
@@ -628,16 +606,16 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
 
     #region Assets
 
-    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => Read(user).Assets.Where(a => a.Type == type).ToList();
+    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => PersonRepository.Get(user.Id).Assets.Where(a => a.Type == type).ToList();
 
-    public AssetDto ReadAsset(long id, IUser user) => Read(user).Assets.First(a => a.Id == id);
+    public AssetDto ReadAsset(long id, IUser user) => PersonRepository.Get(user.Id).Assets.First(a => a.Id == id);
 
     public void CreateAsset(IUser user, AssetDto asset)
     {
-        var person = Read(user);
+        var person = PersonRepository.Get(user.Id);
         asset.Id = person.Assets.Any() ? person.Assets.Max(a => a.Id) + 1 : 1;
         person.Assets.Add(asset);
-        Update(person);
+        PersonRepository.Save(person);
 
 
         //int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
@@ -667,31 +645,31 @@ public class PersonManager(IDataBase dataBase, ITermsService terms) : IPersonMan
     {
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
         person.Assets[index].IsDeleted = true;
-        Update(person);
+        PersonRepository.Save(person);
     }
 
     public void DeleteAsset(IUser user, AssetDto asset)
     {
-        var person = Read(user);
+        var person = PersonRepository.Get(user.Id);
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
         person.Assets[index].IsDeleted = true;
-        Update(person);
+        PersonRepository.Save(person);
     }
 
     public void RestoreAsset(PersonDto person, AssetDto asset)
     {
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
         person.Assets[index].IsDeleted = false;
-        Update(person);
+        PersonRepository.Save(person);
     }
 
     public void UpdateAsset(IUser user, AssetDto asset)
     {
-        var person = Read(user);
+        var person = PersonRepository.Get(user.Id);
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
         person.Assets[index] = asset;
 
-        Update(person);
+        PersonRepository.Save(person);
     }
 
     public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)

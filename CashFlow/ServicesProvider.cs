@@ -1,6 +1,7 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Infrastructure;
 using CashFlow.Interfaces;
 using CashFlow.Loggers;
 using CashFlow.Stages;
@@ -30,6 +31,7 @@ public static class ServicesProvider
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITermsService, TermsService>();
         services.AddSingleton<IAvailableAssets, AvailableAssets>();
+        services.AddSingleton<IPersonRepository, PersonRepository>();
         services.AddSingleton<IPersonManager, PersonManager>();
 
         services.AddTransient<Start>();

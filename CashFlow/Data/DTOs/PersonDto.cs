@@ -5,6 +5,7 @@ namespace CashFlow.Data.DTOs;
 public class PersonDto
 {
     public long Id { get; set; }
+    public DateTime LastActive { get; set; }
     public string Profession { get; set; }
     public int Salary { get; set; }
     public int Cash { get; set; }
