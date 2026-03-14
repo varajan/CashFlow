@@ -184,7 +184,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
                 break;
 
             case ActionType.BankruptcySellAsset:
-                person.Cash -= asset.BancrupcySellPrice;
+                person.Cash -= asset.GetBancrupcySellPrice();
                 person.Bankruptcy = true;
                 AssetService.Restore(person, asset);
                 break;

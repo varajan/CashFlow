@@ -31,8 +31,8 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
                 i++;
                 message += Environment.NewLine +
                     (asset.CashFlow == 0
-                    ? $"#{i} - *{asset.Title}* - {price}: {asset.BancrupcySellPrice.AsCurrency()}"
-                    : $"#{i} - *{asset.Title}* - {price}: {asset.BancrupcySellPrice.AsCurrency()}, {cashFlow}: {(asset.Qtty * asset.CashFlow).AsCurrency()}");
+                    ? $"#{i} - *{asset.Title}* - {price}: {asset.GetBancrupcySellPrice().AsCurrency()}"
+                    : $"#{i} - *{asset.Title}* - {price}: {asset.GetBancrupcySellPrice().AsCurrency()}, {cashFlow}: {(asset.Qtty * asset.CashFlow).AsCurrency()}");
             }
 
             return message;
@@ -73,12 +73,12 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
             var asset = assets[item - 1];
             asset.IsDeleted = true;
-            person.Cash += asset.BancrupcySellPrice;
+            person.Cash += asset.GetBancrupcySellPrice();
 
             PersonManager.UpdateAsset(CurrentUser, asset);
             PersonManager.Update(person);
 
-            var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.BancrupcySellPrice.AsCurrency()}";
+            var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.GetBancrupcySellPrice().AsCurrency()}";
             await CurrentUser.Notify(message);
         }
     }
