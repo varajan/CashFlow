@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
@@ -22,27 +21,33 @@ public class SmallCircleStageTests : StagesBaseTest
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
-    }
+    public void Setup() => PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
 
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    [Test]
-    public void SmallCircle_Question_and_Buttons([Values] bool isHistoryEmpty, [Values] bool isReadyForBigCircle)
+    [TestCase(true, false, 0, 100)]
+    [TestCase(false, false, 100, 100)]
+    [TestCase(true, true, 101, 100)]
+    [TestCase(false, false, 0, 0)]
+    public void SmallCircle_Question_and_Buttons(bool isHistoryEmpty, bool isReadyForBigCircle, int income, int expenses)
     {
         // Arrange
         var testStage = GetTestStage();
-        var description = $"{TestPerson.Id} has {TestPerson.Cash}";
+        var testPerson = TestPerson.Clone();
+        var description = $"{testPerson.Id} has {testPerson.Cash}";
+        var assets = new List<AssetDto> { new() { Id = 1, Qtty = 1, CashFlow = income } };
+
+        testPerson.Assets = assets;
+        testPerson.Children = 1;
+        testPerson.PerChild = expenses;
 
         List<string> buttons = isHistoryEmpty ? ["Show my Data", "Friends"] : ["Show my Data", "Friends", "History"];
         buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
         PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
-        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(It.IsAny<PersonDto>())).Returns(isReadyForBigCircle);
+        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
         PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns(description);
 
         // Act
@@ -172,8 +177,6 @@ public class SmallCircleStageTests : StagesBaseTest
 
         testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(-downsizeAmount);
-        PersonManagerMock.Setup(p => p.GetTotalExpenses(testPerson)).Returns(-downsizeAmount);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -202,8 +205,6 @@ public class SmallCircleStageTests : StagesBaseTest
 
         testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(-downsizeAmount);
-        PersonManagerMock.Setup(p => p.GetTotalExpenses(testPerson)).Returns(-downsizeAmount);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -284,7 +285,6 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(cashFlow);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -311,7 +311,6 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(cashFlow);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -353,7 +352,6 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Assets = assets;
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(x => x.IsReadyForBigCircle(testPerson)).Returns(true);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");

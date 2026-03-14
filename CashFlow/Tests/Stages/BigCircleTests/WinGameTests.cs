@@ -19,11 +19,7 @@ public class WinGameTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
-        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(Person.TargetCashFlow);
-    }
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
 
     [Test]
     public void WinGame_Question_and_Buttons()

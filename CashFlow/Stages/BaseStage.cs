@@ -77,7 +77,7 @@ public abstract class BaseStage : IStage
         PersonManager.Update(person);
         await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
 
-        var isCashFlowPositive = PersonManager.GetSmallCircleCashflow(person) >= 0;
+        var isCashFlowPositive = person.GetSmallCircleCashflow() >= 0;
         if (isCashFlowPositive)
         {
             await CurrentUser.Notify(Terms.Get(130, CurrentUser, "You have paid off your debts, you can continue."));

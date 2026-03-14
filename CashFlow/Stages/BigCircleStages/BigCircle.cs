@@ -16,10 +16,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
         {
             var person = PersonManager.Read(CurrentUser);
 
-            var x1 = PersonManager.GetBigCircleCashflow(person);
-            var x2 = person.TargetCashFlow;
-
-            return PersonManager.GetBigCircleCashflow(person) >= person.TargetCashFlow
+            return person.GetBigCircleCashflow() >= person.TargetCashFlow
                 ? Terms.Get(73, CurrentUser, "You are the winner!")
                 : PersonManager.GetDescription(CurrentUser);
         }
@@ -31,7 +28,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
         {
             var person = PersonManager.Read(CurrentUser);
 
-            return PersonManager.GetBigCircleCashflow(person) >= person.TargetCashFlow
+            return person.GetBigCircleCashflow() >= person.TargetCashFlow
             ? [
                 Terms.Get(2, CurrentUser, "History"),
                 Terms.Get(41, CurrentUser, "Stop Game"),
@@ -55,17 +52,17 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     {
         var person = PersonManager.Read(CurrentUser);
 
-        if (PersonManager.GetBigCircleCashflow(person) < person.TargetCashFlow && !person.IsWinning)
+        if (person.GetBigCircleCashflow() < person.TargetCashFlow && !person.IsWinning)
         {
             return;
         }
 
-        if (PersonManager.GetBigCircleCashflow(person) >= person.TargetCashFlow && person.IsWinning)
+        if (person.GetBigCircleCashflow() >= person.TargetCashFlow && person.IsWinning)
         {
             return;
         }
 
-        if (PersonManager.GetBigCircleCashflow(person) < person.TargetCashFlow && person.IsWinning)
+        if (person.GetBigCircleCashflow() < person.TargetCashFlow && person.IsWinning)
         {
             person.IsWinning = false;
             PersonManager.Update(person);
@@ -85,7 +82,7 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
     {
         var person = PersonManager.Read(CurrentUser);
 
-        if (PersonManager.GetBigCircleCashflow(person) >= person.TargetCashFlow)
+        if (person.GetBigCircleCashflow() >= person.TargetCashFlow)
         {
             await HandleWinGame(message);
             return;
@@ -120,9 +117,9 @@ public class BigCircle(ITermsService termsService, IPersonManager personManager)
 
         if (MessageEquals(message, 79, "Paycheck"))
         {
-            person.Cash += PersonManager.GetBigCircleCashflow(person);
+            person.Cash += person.GetBigCircleCashflow();
             PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.GetMoney, PersonManager.GetBigCircleCashflow(person), CurrentUser);
+            PersonManager.AddHistory(ActionType.GetMoney, person.GetBigCircleCashflow(), CurrentUser);
             NextStage = New<BigCircle>();
             return;
         }

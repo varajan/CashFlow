@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.BankruptcyStages;
 [TestFixture]
 public class BankruptcySellAsetsTests : StagesBaseTest
 {
-    private List<AssetDto> Assets =>
+    private static List<AssetDto> Assets =>
     [
         new AssetDto { Id = 1, Qtty = 1, Title = "Asset 1", Price = 1_000, CashFlow = 10, IsDeleted = false, Type = AssetType.Business },
         new AssetDto { Id = 2, Qtty = 2, Title = "Asset 2", Price = 2_000, CashFlow = 20, IsDeleted = true , Type = AssetType.RealEstate },
@@ -20,13 +20,13 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         new AssetDto { Id = 4, Qtty = 4, Title = "Asset 4", Price = 4_000, CashFlow = 20, IsDeleted = false, Type = AssetType.RealEstate },
     ];
 
-    private List<LiabilityDto> Liabilities =
+    private static List<LiabilityDto> Liabilities =
     [
         new() { Type = Liability.Bank_Loan, FullAmount = 3_000, Cashflow = -300, IsBankruptcyDivisible = false },
         new() { Type = Liability.Car_Loan, FullAmount = 10_000, Cashflow = -450, IsBankruptcyDivisible = true },
     ];
 
-    private PersonDto TestPerson => new()
+    private static PersonDto TestPerson => new()
     {
         Cash = 100,
         Salary = -500,
@@ -35,11 +35,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(It.IsAny<PersonDto>())).Returns(-1_000);
-    }
+    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
 
     [Test]
     public void BankruptcySellAssets_Question_and_Buttons()
@@ -48,7 +44,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         var testStage = GetTestStage();
         var message = @"*You're out of money.*
 Bank Loan: *$3,000*
-Cashflow: *-$1,000*
+Cashflow: *-$1,130*
 Cash: *$100*
 #1 - *Asset 3* - Price: $4,500, Cashflow: $30
 #2 - *Asset 1* - Price: $500, Cashflow: $10

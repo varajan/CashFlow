@@ -21,11 +21,7 @@ public class GetMoneyTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
-        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(CashFlow);
-    }
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
 
     [Test]
     public void GetMoney_Question_and_Buttons()

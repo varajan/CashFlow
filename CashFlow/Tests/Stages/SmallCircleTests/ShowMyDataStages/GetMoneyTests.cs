@@ -21,7 +21,6 @@ public class GetMoneyTests : StagesBaseTest
         var testStage = GetTestStage();
         var testPerson = new PersonDto { Salary = cashFlow };
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(cashFlow);
 
         // Act
 
@@ -64,10 +63,9 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var amount = message.AsCurrency();
-        var testPerson = new PersonDto { Salary = cashAmount };
+        var testPerson = new PersonDto { Cash = cashAmount, Salary = -cashAmount };
 
         PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetSmallCircleCashflow(testPerson)).Returns(amount);
 
         // Act
         await testStage.HandleMessage(message);

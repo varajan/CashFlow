@@ -25,11 +25,7 @@ public class BigCircleTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
-        PersonManagerMock.Setup(x => x.GetBigCircleCashflow(It.IsAny<PersonDto>())).Returns(paycheck);
-    }
+    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
 
     [Test]
     public void BigCircle_Question_and_Buttons()
