@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
-using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
@@ -10,29 +9,29 @@ namespace CashFlow.Stages;
 public abstract class BaseStage : IStage
 {
     public string Name => GetType().FullName;
-    public IUser CurrentUser { get; private set; }
-    public IList<IUser> OtherUsers { get; set; }
+    public ICashFlowUser CurrentUser { get; private set; }
+    public IList<ICashFlowUser> OtherUsers { get; set; }
     public virtual string Message => default;
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
-    protected ITermsService Terms { get; }
-    protected IPersonManager PersonManager { get; }
+    protected ITermsRepository Terms { get; }
+    protected IPersonService PersonManager { get; }
 
-    public BaseStage(ITermsService termsService, IPersonManager personManager)
+    public BaseStage(ITermsRepository termsService, IPersonService personManager)
     {
         Terms = termsService;
         PersonManager = personManager;
         NextStage = this;
     }
 
-    public IStage SetCurrentUser(IUser user)
+    public IStage SetCurrentUser(ICashFlowUser user)
     {
         CurrentUser = user;
         CurrentUser.StageName = Name;
         return this;
     }
 
-    public IStage SetAllUsers(IList<IUser> users)
+    public IStage SetAllUsers(IList<ICashFlowUser> users)
     {
         OtherUsers = users;
         return this;
@@ -42,7 +41,7 @@ public abstract class BaseStage : IStage
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => CurrentUser.SetButtons(this);
 
-    public static IStage GetCurrentStage(IList<IUser> otherUsers, IUser currentUser)
+    public static IStage GetCurrentStage(IList<ICashFlowUser> otherUsers, ICashFlowUser currentUser)
     {
         var stage = Type.GetType(currentUser.StageName);
         if (stage is null) throw new Exception($"<{stage}> stage not found!");

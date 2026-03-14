@@ -3,42 +3,9 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Data.Users.UserData.PersonData;
+namespace CashFlow.Data.Services;
 
-public enum Circle
-{
-    Small,
-    Big,
-    Both
-}
-
-public interface IPersonManager
-{
-    bool Exists(IUser user);
-    void Create(string profession, IUser user);
-    void Update(PersonDto person);
-    PersonDto Read(IUser user);
-
-    string GetDescription(IUser user, bool compact = true);
-    void Delete(IUser user);
-    void Update(IUser user, LiabilityDto liability);
-
-    void AddHistory(ActionType type, long value, IUser user);
-    void AddHistory(ActionType type, long value, IUser user, long assetId);
-    List<HistoryDto> ReadHistory(IUser user);
-    bool IsHistoryEmpty(IUser user);
-    string HistoryTopFive(IUser user, IUser currentUser);
-    void RollbackHistory(PersonDto person, HistoryDto record);
-
-    List<AssetDto> ReadAllAssets(AssetType type, IUser user);
-    void CreateAsset(IUser user, AssetDto asset);
-    void DeleteAsset(IUser user, AssetDto asset);
-    void UpdateAsset(IUser user, AssetDto asset);
-    void SellAsset(AssetDto asset, ActionType action, int price, IUser user);
-    string GetAssetDescription(AssetDto asset, IUser user);
-}
-
-public class PersonManager(IPersonRepository personRepository, IDataBase dataBase, ITermsService terms) : IPersonManager
+public class PersonService(IPersonRepository personRepository, IDataBase dataBase, ITermsRepository terms) : IPersonService
 {
     private IPersonRepository PersonRepository { get; } = personRepository;
     private AssetService AssetService => new(PersonRepository);
@@ -46,16 +13,17 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
     private DescriptionService PersonDescriptionService => new(terms, AssetService);
 
 
-    public bool Exists(IUser user) => PersonRepository.Exists(user.Id);
+    public bool Exists(ICashFlowUser user) => PersonRepository.Exists(user.Id);
     public void Update(PersonDto person) => PersonRepository.Save(person);
-    public PersonDto Read(IUser user) => PersonRepository.Get(user.Id);
-    public void Delete(IUser user) => PersonRepository.Delete(user.Id);
+    public PersonDto Read(ICashFlowUser user) => PersonRepository.Get(user.Id);
+    public void Delete(ICashFlowUser user) => PersonRepository.Delete(user.Id);
 
-    public void Create(string profession, IUser user)
+    public void Create(string profession, ICashFlowUser user)
     {
         var defaults = Persons.Get(profession);
 
-        PersonRepository.Delete(user.Id);
+        if (PersonRepository.Exists(user.Id))
+            PersonRepository.Delete(user.Id);
 
         var person = new PersonDto
         {
@@ -141,13 +109,13 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
         PersonRepository.Save(person);
     }
 
-    public string GetDescription(IUser user, bool compact = true)
+    public string GetDescription(ICashFlowUser user, bool compact = true)
     {
         var person = PersonRepository.Get(user.Id);
         return PersonDescriptionService.GetDescription(user, person, compact);
     }
 
-    public void Update(IUser user, LiabilityDto liability)
+    public void Update(ICashFlowUser user, LiabilityDto liability)
     {
         var person = PersonRepository.Get(user.Id);
         var index = person.Liabilities.FindIndex(l => l.Name == liability.Name);
@@ -155,25 +123,19 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
         PersonRepository.Save(person);
     }
 
-    #region History
 
-    public void AddHistory(ActionType type, long value, IUser user) => HistoryService.AddRecord(type, value, user, 0);
-    public void AddHistory(ActionType type, long value, IUser user, long assetId) => HistoryService.AddRecord(type, value, user, assetId);
-    public bool IsHistoryEmpty(IUser user) => HistoryService.IsHistoryEmpty(user.Id);
-    public List<HistoryDto> ReadHistory(IUser user) => HistoryService.ReadHistory(user.Id);
-    public string HistoryTopFive(IUser user, IUser currentUser) => HistoryService.GetTopFive(user, currentUser);
+    public void AddHistory(ActionType type, long value, ICashFlowUser user) => HistoryService.AddRecord(type, value, user, 0);
+    public void AddHistory(ActionType type, long value, ICashFlowUser user, long assetId) => HistoryService.AddRecord(type, value, user, assetId);
+    public bool IsHistoryEmpty(ICashFlowUser user) => HistoryService.IsHistoryEmpty(user.Id);
+    public List<HistoryDto> ReadHistory(ICashFlowUser user) => HistoryService.ReadHistory(user.Id);
+    public string HistoryTopFive(ICashFlowUser user, ICashFlowUser currentUser) => HistoryService.GetTopFive(user, currentUser);
     public void RollbackHistory(PersonDto person, HistoryDto record) => HistoryService.RollbackRecord(person, record);
 
-    #endregion
 
-    #region Assets
-
-    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => AssetService.GetAll(type, user);
-    public void CreateAsset(IUser user, AssetDto asset) => AssetService.Create(user, asset);
-    public void DeleteAsset(IUser user, AssetDto asset) => AssetService.Delete(user, asset);
-    public void UpdateAsset(IUser user, AssetDto asset) => AssetService.Update(user, asset);
-    public void SellAsset(AssetDto asset, ActionType action, int price, IUser user) => AssetService.Sell(asset, action, price, user);
-    public string GetAssetDescription(AssetDto asset, IUser user) => PersonDescriptionService.GetAssetDescription(asset, user);
-
-    #endregion
+    public List<AssetDto> ReadAllAssets(AssetType type, ICashFlowUser user) => AssetService.GetAll(type, user);
+    public void CreateAsset(ICashFlowUser user, AssetDto asset) => AssetService.Create(user, asset);
+    public void DeleteAsset(ICashFlowUser user, AssetDto asset) => AssetService.Delete(user, asset);
+    public void UpdateAsset(ICashFlowUser user, AssetDto asset) => AssetService.Update(user, asset);
+    public void SellAsset(AssetDto asset, ActionType action, int price, ICashFlowUser user) => AssetService.Sell(asset, action, price, user);
+    public string GetAssetDescription(AssetDto asset, ICashFlowUser user) => PersonDescriptionService.GetAssetDescription(asset, user);
 }

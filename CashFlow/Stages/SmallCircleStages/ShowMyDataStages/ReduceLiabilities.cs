@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class ReduceLiabilities(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     private IEnumerable<LiabilityDto> Liabilities => PersonManager.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
 

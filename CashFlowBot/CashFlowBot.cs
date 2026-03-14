@@ -1,6 +1,5 @@
 ﻿using CashFlow;
 using CashFlow.Data.Users;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
@@ -17,7 +16,7 @@ public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
-    private static IPersonManager PersonManager => ServicesProvider.Get<IPersonManager>();
+    private static IPersonService PersonManager => ServicesProvider.Get<IPersonService>();
 
     private static string BotToken
     {
@@ -103,7 +102,7 @@ public class CashFlowBot
         }
     }
 
-    private static IStage GetStartSage(Message message, IUser user, List<IUser> users)
+    private static IStage GetStartSage(Message message, ICashFlowUser user, List<ICashFlowUser> users)
     {
         var userName = $"{message.From?.FirstName} {message.From?.LastName}".Trim();
         userName = string.IsNullOrEmpty(userName) ? message.From?.Username : userName;
@@ -118,11 +117,11 @@ public class CashFlowBot
         return start;
     }
 
-    private static List<IUser> GetOtherUsers(ITelegramBotClient bot, IUser currentUser) =>
+    private static List<ICashFlowUser> GetOtherUsers(ITelegramBotClient bot, ICashFlowUser currentUser) =>
         DataBase
             .GetColumn("SELECT ID FROM Users")
             .ToLong()
             .Where(x => x != currentUser.Id)
-            .Select(x => (IUser)new CashFlowUsersUser(DataBase, PersonManager, new TelegramBotNotifyService(bot, x), x))
+            .Select(x => (ICashFlowUser)new CashFlowUsersUser(DataBase, PersonManager, new TelegramBotNotifyService(bot, x), x))
             .ToList();
 }

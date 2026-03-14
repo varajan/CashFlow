@@ -1,17 +1,18 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Interfaces;
 
-namespace CashFlow.Data.Users.UserData.PersonData;
+namespace CashFlow.Data.Services;
 
 public class AssetService(IPersonRepository personRepository)
 {
     private IPersonRepository PersonRepository { get; } = personRepository;
 
-    public List<AssetDto> GetAll(AssetType type, IUser user) => PersonRepository.Get(user.Id).Assets.Where(a => a.Type == type).ToList();
+    public List<AssetDto> GetAll(AssetType type, ICashFlowUser user) => PersonRepository.Get(user.Id).Assets.Where(a => a.Type == type).ToList();
 
-    public AssetDto Get(long id, IUser user) => PersonRepository.Get(user.Id).Assets.First(a => a.Id == id);
+    public AssetDto Get(long id, ICashFlowUser user) => PersonRepository.Get(user.Id).Assets.First(a => a.Id == id);
 
-    public void Create(IUser user, AssetDto asset)
+    public void Create(ICashFlowUser user, AssetDto asset)
     {
         var person = PersonRepository.Get(user.Id);
         asset.Id = person.Assets.Any() ? person.Assets.Max(a => a.Id) + 1 : 1;
@@ -26,7 +27,7 @@ public class AssetService(IPersonRepository personRepository)
         PersonRepository.Save(person);
     }
 
-    public void Delete(IUser user, AssetDto asset)
+    public void Delete(ICashFlowUser user, AssetDto asset)
     {
         var person = PersonRepository.Get(user.Id);
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
@@ -41,7 +42,7 @@ public class AssetService(IPersonRepository personRepository)
         PersonRepository.Save(person);
     }
 
-    public void Update(IUser user, AssetDto asset)
+    public void Update(ICashFlowUser user, AssetDto asset)
     {
         var person = PersonRepository.Get(user.Id);
         var index = person.Assets.FindIndex(a => a.Id == asset.Id);
@@ -50,7 +51,7 @@ public class AssetService(IPersonRepository personRepository)
         PersonRepository.Save(person);
     }
 
-    public void Sell(AssetDto asset, ActionType action, int price, IUser user)
+    public void Sell(AssetDto asset, ActionType action, int price, ICashFlowUser user)
     {
         asset.SellPrice = price;
         asset.MarkedToSell = false;

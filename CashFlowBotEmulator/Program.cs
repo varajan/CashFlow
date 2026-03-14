@@ -1,6 +1,5 @@
 ﻿using CashFlow;
 using CashFlow.Data.Users;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
@@ -11,8 +10,8 @@ ServicesProvider.Init();
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();
 var PersonRepository = ServicesProvider.Get<IPersonRepository>();
-var PersonManager = ServicesProvider.Get<IPersonManager>();
-var TermsService = ServicesProvider.Get<ITermsService>();
+var PersonManager = ServicesProvider.Get<IPersonService>();
+var TermsService = ServicesProvider.Get<ITermsRepository>();
 
 while (true)
 {
@@ -59,7 +58,7 @@ async Task HandleUpdateAsync(int chatId, string message)
     }
 }
 
-static IStage GetStartSage(string userName, IUser user, List<IUser> users)
+static IStage GetStartSage(string userName, ICashFlowUser user, List<ICashFlowUser> users)
 {
     user.Create();
     user.Name = userName;
@@ -71,12 +70,12 @@ static IStage GetStartSage(string userName, IUser user, List<IUser> users)
     return start;
 }
 
-List<IUser> GetOtherUsers(IUser currentUser) =>
+List<ICashFlowUser> GetOtherUsers(ICashFlowUser currentUser) =>
     DataBase
         .GetColumn("SELECT ID FROM Users")
         .ToLong()
         .Where(x => x != currentUser.Id)
-        .Select(x => (IUser)new CashFlowUsersUser(DataBase, PersonManager, new EmulationNotifyService(x), x))
+        .Select(x => (ICashFlowUser)new CashFlowUsersUser(DataBase, PersonManager, new EmulationNotifyService(x), x))
         .ToList();
 
 static bool TryReadFirstFile(out int chatId, out string message, out string file)

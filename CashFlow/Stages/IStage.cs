@@ -1,16 +1,16 @@
-﻿using CashFlow.Data.Users;
+﻿using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
 public interface IStage
 {
-    IUser CurrentUser { get; }
+    ICashFlowUser CurrentUser { get; }
     string Name { get; }
     string Message { get; }
     IEnumerable<string> Buttons { get; }
     IStage NextStage { get; }
-    IStage SetCurrentUser(IUser user);
-    IStage SetAllUsers(IList<IUser> users);
+    IStage SetCurrentUser(ICashFlowUser user);
+    IStage SetAllUsers(IList<ICashFlowUser> users);
 
     Task BeforeStage();
     Task HandleMessage(string message);

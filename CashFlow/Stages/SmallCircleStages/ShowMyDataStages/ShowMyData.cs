@@ -1,11 +1,10 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ShowMyData(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class ShowMyData(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => PersonManager.GetDescription(CurrentUser, false);
 

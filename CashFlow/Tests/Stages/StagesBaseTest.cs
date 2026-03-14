@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data;
+using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using Moq;
@@ -10,13 +9,13 @@ namespace CashFlow.Tests.Stages;
 
 public abstract class StagesBaseTest
 {
-    protected Mock<IUser> CurrentUserMock;
-    protected List<IUser> OtherUsers;
-    protected Mock<IAvailableAssets> AvailableAssetsMock;
-    protected Mock<IPersonManager> PersonManagerMock;
-    protected Mock<ITermsService> TermsServiceMock;
+    protected Mock<ICashFlowUser> CurrentUserMock;
+    protected List<ICashFlowUser> OtherUsers;
+    protected Mock<IAvailableAssetsRepository> AvailableAssetsMock;
+    protected Mock<IPersonService> PersonManagerMock;
+    protected Mock<ITermsRepository> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
-    protected Mock<IAvailableAssets> AssetsMock;
+    protected Mock<IAvailableAssetsRepository> AssetsMock;
 
     protected abstract IStage GetTestStage();
 
@@ -27,11 +26,11 @@ public abstract class StagesBaseTest
     {
         ServicesProvider.Init();
 
-        AvailableAssetsMock = new Mock<IAvailableAssets>();
-        PersonManagerMock = new Mock<IPersonManager>();
-        TermsServiceMock = new Mock<ITermsService>();
+        AvailableAssetsMock = new Mock<IAvailableAssetsRepository>();
+        PersonManagerMock = new Mock<IPersonService>();
+        TermsServiceMock = new Mock<ITermsRepository>();
         LoggerMock = new Mock<ILogger>();
-        AssetsMock = new Mock<IAvailableAssets>();
+        AssetsMock = new Mock<IAvailableAssetsRepository>();
 
         CurrentUserMock = GetUserMock(10, "Test User", true, Circle.Small);
         OtherUsers =
@@ -47,8 +46,8 @@ public abstract class StagesBaseTest
             ];
 
         TermsServiceMock
-            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<IUser>(), It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns((int id, IUser user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<ICashFlowUser>(), It.IsAny<string>(), It.IsAny<object[]>()))
+            .Returns((int id, ICashFlowUser user, string defaultValue, object[] args) => string.Format(defaultValue, args));
     }
 
     [Test]
@@ -64,9 +63,9 @@ public abstract class StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
-    protected Mock<IUser> GetUserMock(long id, string name, bool isActive, Circle cirle)
+    protected Mock<ICashFlowUser> GetUserMock(long id, string name, bool isActive, Circle cirle)
     {
-        var user = new Mock<IUser>();
+        var user = new Mock<ICashFlowUser>();
         user.SetupGet(u => u.Id).Returns(id);
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);

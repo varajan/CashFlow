@@ -1,18 +1,17 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyAmount(
-    IPersonManager personManager,
-    ITermsService termsService,
-    IAvailableAssets availableAssets) : BaseStage(termsService, personManager)
+    IPersonService personManager,
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets) : BaseStage(termsService, personManager)
 {
-    private IAvailableAssets AvailableAssets { get; } = availableAssets;
+    private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

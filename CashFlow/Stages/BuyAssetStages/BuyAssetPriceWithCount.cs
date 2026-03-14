@@ -1,6 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -9,9 +7,9 @@ namespace CashFlow.Stages.BuyAssetStages;
 public class BuyAssetPriceWithCount<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager) : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager) : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);

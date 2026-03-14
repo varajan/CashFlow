@@ -1,11 +1,10 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class SendMoney(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 

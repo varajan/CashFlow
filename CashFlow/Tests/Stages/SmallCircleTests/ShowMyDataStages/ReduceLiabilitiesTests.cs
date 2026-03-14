@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
@@ -89,7 +89,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.IsAny<LiabilityDto>()), Times.Never);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Never);
         CurrentUserMock.Verify(u => u.Notify($"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
     }
 
@@ -105,7 +105,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.IsAny<LiabilityDto>()), Times.Never);
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Never);
         CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
     }
 

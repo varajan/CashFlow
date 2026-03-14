@@ -1,15 +1,13 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAssetPrice(
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager,
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager,
     params AssetType[] assetTypes) : BaseStage(termsService, personManager)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
@@ -38,7 +36,7 @@ public class SellAssetPrice(
         _ => throw new NotImplementedException(),
     };
 
-    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message
     {

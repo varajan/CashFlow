@@ -1,15 +1,13 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Data;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoinsCount(
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager) : BuyCoins(termsService, availableAssets, personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager) : BuyCoins(termsService, availableAssets, personManager)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

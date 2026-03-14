@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DataBase;
+using CashFlow.Data.Repositories;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Loggers;
@@ -10,7 +11,7 @@ public static class Persons
 {
     private static ILogger logger = new FileLogger();
     private static IDataBase dataBase = new SQLiteDataBase(logger);
-    private static ITermsService Terms => new TermsService(dataBase);
+    private static ITermsRepository Terms => new TermsRepository(dataBase);
 
     public class DefaultPerson
     {

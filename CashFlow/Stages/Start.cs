@@ -1,11 +1,10 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Stages.BigCircleStages;
+﻿using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Start(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class Start(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;

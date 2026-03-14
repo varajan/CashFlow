@@ -1,15 +1,14 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Data;
+namespace CashFlow.Data.Repositories;
 
-public class TermsService(IDataBase dataBase) : ITermsService
+public class TermsRepository(IDataBase dataBase) : ITermsRepository
 {
     private readonly IDataBase _dataBase = dataBase;
 
-    public string Get(int id, IUser user, string defaultValue = null, params object[] args) => Get(id, user.Language, defaultValue, args);
+    public string Get(int id, ICashFlowUser user, string defaultValue = null, params object[] args) => Get(id, user.Language, defaultValue, args);
 
     public string Get(int id, Language language, string defaultValue = null, params object[] args)
     {

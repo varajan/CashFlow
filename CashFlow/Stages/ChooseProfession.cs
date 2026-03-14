@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages;
@@ -7,7 +6,7 @@ using System.Text;
 
 namespace CashFlow.Stages;
 
-public class ChooseProfession(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class ChooseProfession(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(28, CurrentUser, "Choose your *profession*");
     public override IEnumerable<string> Buttons => Professions.Append(Terms.Get(139, CurrentUser, "Random"));

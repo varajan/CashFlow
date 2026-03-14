@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesConfirm(ITermsService termsService, IPersonManager personManager)
+public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonService personManager)
     : ConfirmStage(termsService, personManager, 3, "Are you sure want to stop current game?")
 {
     public override string Message

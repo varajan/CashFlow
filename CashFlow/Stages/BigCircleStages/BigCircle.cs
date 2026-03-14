@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
@@ -8,7 +7,7 @@ using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BigCircle(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class BigCircle(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message
     {

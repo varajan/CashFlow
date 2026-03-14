@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using Moq;
@@ -35,7 +35,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(TestPerson);
+    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(TestPerson);
 
     [Test]
     public void BankruptcySellAssets_Question_and_Buttons()
@@ -108,7 +108,7 @@ Cash: *$100*
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
         PersonManagerMock.Verify(p => p.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
-        PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<IUser>()), Times.Never);
+        PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<ICashFlowUser>()), Times.Never);
     }
 
     [Test]
@@ -141,7 +141,7 @@ Cash: *$100*
         assets.Skip(1).ForEach(a => a.IsDeleted = true);
         person.Assets = assets;
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(person);
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(person);
 
         // Act
         await testStage.HandleMessage("#1");

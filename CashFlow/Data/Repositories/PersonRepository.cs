@@ -2,16 +2,7 @@
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Data.Users.UserData.PersonData;
-
-public interface IPersonRepository
-{
-    PersonDto Get(long userId);
-    List<PersonDto> GetAll();
-    void Save(PersonDto person, DateTime? lastActive = null);
-    void Delete(long userId);
-    bool Exists(long userId);
-}
+namespace CashFlow.Data.Repositories;
 
 public class PersonRepository(IDataBase dataBase) : IPersonRepository
 {

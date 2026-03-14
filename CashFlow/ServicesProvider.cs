@@ -1,6 +1,6 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.DataBase;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.DataBase;
+using CashFlow.Data.Repositories;
+using CashFlow.Data.Services;
 using CashFlow.Interfaces;
 using CashFlow.Loggers;
 using CashFlow.Stages;
@@ -28,10 +28,10 @@ public static class ServicesProvider
         var services = new ServiceCollection();
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
-        services.AddSingleton<ITermsService, TermsService>();
-        services.AddSingleton<IAvailableAssets, AvailableAssets>();
+        services.AddSingleton<ITermsRepository, TermsRepository>();
+        services.AddSingleton<IAvailableAssetsRepository, AvailableAssetsRepository>();
         services.AddSingleton<IPersonRepository, PersonRepository>();
-        services.AddSingleton<IPersonManager, PersonManager>();
+        services.AddSingleton<IPersonService, PersonService>();
 
         services.AddTransient<Start>();
         services.AddTransient<SmallCircle>();

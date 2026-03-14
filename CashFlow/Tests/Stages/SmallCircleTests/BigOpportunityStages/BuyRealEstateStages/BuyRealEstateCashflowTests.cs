@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
@@ -71,7 +71,7 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
             PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyRealEstate,
                 cashflow.AsCurrency(),
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+                It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
                 Asset.Id
             ), Times.Once);
         });

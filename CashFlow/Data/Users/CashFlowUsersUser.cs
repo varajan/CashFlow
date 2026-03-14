@@ -1,12 +1,12 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Stages;
 using CashFlow.Interfaces;
-using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Data.Repositories;
 
 namespace CashFlow.Data.Users;
 
-public class CashFlowUsersUser(IDataBase dataBase, IPersonManager personManager, INotifyService notifyService, long id)
-    : BaseDataModel(dataBase, id, "Users"), IUser
+public class CashFlowUsersUser(IDataBase dataBase, IPersonService personManager, INotifyService notifyService, long id)
+    : BaseDbRepository(dataBase, id, "Users"), ICashFlowUser
 {
     public bool Exists => DataBase.GetColumn($"SELECT ID FROM {Table} WHERE ID = {Id}").Any();
     public Stage Stage { get => throw new Exception(); set => throw new Exception(); }

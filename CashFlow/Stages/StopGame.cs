@@ -1,9 +1,8 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Interfaces;
+﻿using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class StopGame(ITermsService termsService, IPersonManager personManager)
+public class StopGame(ITermsRepository termsService, IPersonService personManager)
     : ConfirmStage(termsService, personManager, 3, "Are you sure want to stop current game?")
 {
     protected override Task OnConfirmed()

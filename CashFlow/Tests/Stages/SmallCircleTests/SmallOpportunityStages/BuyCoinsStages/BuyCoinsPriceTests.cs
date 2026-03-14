@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
@@ -24,7 +24,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([Asset]);
         PersonManagerMock
             .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<IUser, AssetDto>((user, dto) =>
+            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -93,7 +93,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
             PersonManagerMock.Verify(x => x.AddHistory(
                 ActionType.BuyCoins,
                 Asset.Qtty,
-                It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+                It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
                 Asset.Id
             ), Times.Once);
         });
@@ -132,7 +132,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
             PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
             PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyCoins,
                 asset.Qtty,
-                It.IsAny<IUser>(),
+                It.IsAny<ICashFlowUser>(),
                 asset.Id), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
     }

@@ -1,15 +1,13 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCreditCard(ITermsService termsService, IAvailableAssets availableAssets, IPersonManager personManager)
+public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager)
     : BaseStage(termsService, personManager)
 {
-    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

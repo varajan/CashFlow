@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
@@ -25,7 +25,7 @@ public class BuyStocksCountTests : StagesBaseTest
         AssetsList = [];
         PersonManagerMock
             .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<IUser, AssetDto>((user, dto) =>
+            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -108,7 +108,7 @@ public class BuyStocksCountTests : StagesBaseTest
         PersonManagerMock.Verify(x => x.AddHistory(
             ActionType.BuyStocks,
             count.AsCurrency(),
-            It.Is<IUser>(x => x.Id == CurrentUserMock.Object.Id),
+            It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
             Asset.Id
         ), Times.Once);
     }

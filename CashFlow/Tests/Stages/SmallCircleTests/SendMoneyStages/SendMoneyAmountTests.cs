@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using Moq;
@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
 [TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
 {
-    private IUser Recipient => OtherUsers.Last(u => u.IsActive && u.Description.Contains("Small"));
+    private ICashFlowUser Recipient => OtherUsers.Last(u => u.IsActive && u.Description.Contains("Small"));
     private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
     private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };

@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
@@ -8,7 +7,7 @@ using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesAmount(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

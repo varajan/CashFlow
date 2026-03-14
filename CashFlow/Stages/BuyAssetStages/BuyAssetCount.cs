@@ -1,7 +1,5 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -11,9 +9,9 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager)
     : BuyAsset<TCreditStage>(assetName, assetType, termsService, availableAssets, personManager)
         where TCreditStage : BaseStage
         where TCashFlowStage : BaseStage

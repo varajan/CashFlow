@@ -1,6 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -9,16 +7,16 @@ namespace CashFlow.Stages.BuyAssetStages;
 public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>(
     AssetType assetName,
     AssetType assetType,
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager)
      : BaseStage(termsService, personManager)
         where TNextStage : BaseStage
         where TCreditStage : BaseStage
 {
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
-    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
     
     public override string Message => Terms.Get(10, CurrentUser, "What is the first payment?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);

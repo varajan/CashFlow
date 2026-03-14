@@ -1,14 +1,13 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAsset<TNextStage>(
-    ITermsService termsService,
-    IPersonManager personManager,
+    ITermsRepository termsService,
+    IPersonService personManager,
     params AssetType[] assetTypes)
     : BaseStage(termsService, personManager) where TNextStage : BaseStage
 {

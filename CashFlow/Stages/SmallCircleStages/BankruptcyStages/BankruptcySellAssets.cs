@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class BankruptcySellAssets(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     private PersonDto Person => PersonManager.Read(CurrentUser);
     private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);

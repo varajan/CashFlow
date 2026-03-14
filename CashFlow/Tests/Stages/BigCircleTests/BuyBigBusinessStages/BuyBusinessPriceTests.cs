@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
+using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
@@ -24,7 +24,7 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
         PersonManagerMock
             .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<IUser, AssetDto>((user, dto) =>
+            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }

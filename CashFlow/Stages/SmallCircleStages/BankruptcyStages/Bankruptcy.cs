@@ -1,9 +1,8 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Interfaces;
+﻿using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class Bankruptcy(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class Bankruptcy(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(129, CurrentUser, "You are bankrupt. Game is over.");
 

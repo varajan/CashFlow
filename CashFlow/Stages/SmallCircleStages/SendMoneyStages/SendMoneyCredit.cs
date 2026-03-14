@@ -1,15 +1,13 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyCredit(
-    IPersonManager personManager,
-    ITermsService termsService,
-    IAvailableAssets availableAssets) : SendMoneyAmount(personManager, termsService, availableAssets)
+    IPersonService personManager,
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets) : SendMoneyAmount(personManager, termsService, availableAssets)
 {
     public override string Message
     {

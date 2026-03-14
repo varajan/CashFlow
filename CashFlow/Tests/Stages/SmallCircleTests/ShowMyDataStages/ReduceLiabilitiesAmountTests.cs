@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
@@ -60,14 +60,14 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.Is<LiabilityDto>(l =>
             l.Type == Liability.Taxes &&
             l.MarkedForReduction == false)),
         Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<IUser>(), It.Is<LiabilityDto>(l =>
+        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.Is<LiabilityDto>(l =>
             l.Type == Liability.Mortgage &&
             l.MarkedForReduction == false)),
         Times.Once);

@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
@@ -78,7 +78,7 @@ public class ShowMyDataTests : StagesBaseTest
         var liabilities = new List<LiabilityDto> { new() { FullAmount = 1 } };
         var testPerson = new PersonDto { Liabilities = haveLiabilities ? liabilities : [] };
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<IUser>())).Returns(testPerson);
+        PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Reduce Liabilities");
@@ -119,7 +119,7 @@ public class ShowMyDataTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
         CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<IUser>()), Times.Exactly(payed));
+        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<ICashFlowUser>()), Times.Exactly(payed));
         PersonManagerMock.Verify(x => x.AddHistory(ActionType.Charity, amount, CurrentUserMock.Object), Times.Exactly(payed));
 
         PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Exactly(payed));

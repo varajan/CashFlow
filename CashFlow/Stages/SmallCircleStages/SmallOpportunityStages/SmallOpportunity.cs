@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class SmallOpportunity(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class SmallOpportunity(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
     public override IEnumerable<string> Buttons =>

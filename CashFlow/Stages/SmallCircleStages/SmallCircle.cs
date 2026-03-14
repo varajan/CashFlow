@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.BigCircleStages;
@@ -13,7 +12,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class SmallCircle(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => PersonManager.GetDescription(CurrentUser);
 

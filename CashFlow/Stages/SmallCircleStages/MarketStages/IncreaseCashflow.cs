@@ -1,6 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
@@ -8,11 +6,11 @@ using MoreLinq;
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class IncreaseCashflow(
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager) : BaseStage(termsService, personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager) : BaseStage(termsService, personManager)
 {
-    protected IAvailableAssets AvailableAssets { get; } = availableAssets;
+    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
 

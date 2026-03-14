@@ -1,6 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -9,9 +7,9 @@ namespace CashFlow.Stages.BuyAssetStages;
 public abstract class BuyAssetWithCashflowCredit<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     public override string Message

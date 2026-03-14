@@ -1,9 +1,9 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Stages;
 
-namespace CashFlow.Data.Users;
+namespace CashFlow.Interfaces;
 
-public interface IUser
+public interface ICashFlowUser
 {
     long Id { get; }
     string Name { get; set; }

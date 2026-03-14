@@ -1,17 +1,17 @@
 ﻿using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Data;
+namespace CashFlow.Data.Repositories;
 
-public abstract class BaseDataModel
+public abstract class BaseDbRepository
 {
     protected IDataBase DataBase { get; }
     public long Id { get; }
     protected string Table { get; }
 
-    public BaseDataModel(IDataBase dataBase, long id, string table) => (DataBase, Id, Table) = (dataBase, id, table);
+    public BaseDbRepository(IDataBase dataBase, long id, string table) => (DataBase, Id, Table) = (dataBase, id, table);
 
-    protected ITermsService Terms => new TermsService(DataBase);
+    protected ITermsRepository Terms => new TermsRepository(DataBase);
 
     protected string Get(string column) => DataBase.GetValue($"SELECT {column} FROM {Table} WHERE ID = {Id}");
     protected int GetInt(string column) => Get(column).ToInt();

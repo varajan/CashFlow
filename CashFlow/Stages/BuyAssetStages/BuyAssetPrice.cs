@@ -1,7 +1,5 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -11,9 +9,9 @@ public abstract class BuyAssetPrice<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager)
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;

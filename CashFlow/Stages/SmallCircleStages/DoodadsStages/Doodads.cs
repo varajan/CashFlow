@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class Doodads(ITermsService termsService, IPersonManager personManager)
+public class Doodads(ITermsRepository termsService, IPersonService personManager)
     : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");

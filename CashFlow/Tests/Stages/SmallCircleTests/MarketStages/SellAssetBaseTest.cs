@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
+using CashFlow.Interfaces;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
@@ -24,7 +24,7 @@ public abstract class SellAssetBaseTest : StagesBaseTest
         };
 
         PersonManagerMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))
-            .Returns((AssetDto asset, IUser user) => $"{asset.Title} Text");
+            .Returns((AssetDto asset, ICashFlowUser user) => $"{asset.Title} Text");
 
         int id = 0;
         foreach (var type in assetTypes)

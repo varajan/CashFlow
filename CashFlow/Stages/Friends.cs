@@ -1,13 +1,11 @@
-﻿using CashFlow.Data.Users;
-using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Extensions;
+﻿using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class Friends(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
-    private IList<IUser> ActiveUsers => OtherUsers.Where(x => x.IsActive).ToList();
+    private IList<ICashFlowUser> ActiveUsers => OtherUsers.Where(x => x.IsActive).ToList();
 
     public override string Message
     {

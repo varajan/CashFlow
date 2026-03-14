@@ -1,11 +1,10 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetMoney(ITermsService termsService, IPersonManager personManager)
+public class GetMoney(ITermsRepository termsService, IPersonService personManager)
     : BaseStage(termsService, personManager)
 {
     public override string Message

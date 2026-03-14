@@ -1,11 +1,10 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetCredit(ITermsService termsService, IPersonManager personManager) : BaseStage(termsService, personManager)
+public class GetCredit(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
     public override IEnumerable<string> Buttons => ["1000", "2000", "5000", "10 000", "20 000", Cancel];

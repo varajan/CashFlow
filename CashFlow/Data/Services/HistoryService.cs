@@ -4,7 +4,7 @@ using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
 
-namespace CashFlow.Data.Users.UserData.PersonData;
+namespace CashFlow.Data.Services;
 
 public class HistoryService(IDataBase dataBase, IPersonRepository personRepository, DescriptionService personDescriptionService)
 {
@@ -12,7 +12,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
     private AssetService AssetService => new(PersonRepository);
     private IPersonRepository PersonRepository { get; } = personRepository;
 
-    public void AddRecord(ActionType type, long value, IUser user, long assetId)
+    public void AddRecord(ActionType type, long value, ICashFlowUser user, long assetId)
     {
         var record = new HistoryDto
         {
@@ -37,7 +37,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
         return result;
     }
 
-    public string GetTopFive(IUser user, IUser currentUser)
+    public string GetTopFive(ICashFlowUser user, ICashFlowUser currentUser)
     {
         var records = ReadHistory(user.Id);
         records.Reverse();

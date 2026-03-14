@@ -1,15 +1,13 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
-using CashFlow.Data.Users.UserData.PersonData;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class SellStocks(ITermsService termsService, IPersonManager personManager)
+public class SellStocks(ITermsRepository termsService, IPersonService personManager)
     : SellAsset<SellStocksPrice>(termsService, personManager, AssetType.Stock) { }
 
 public class SellStocksPrice(
-    ITermsService termsService,
-    IAvailableAssets availableAssets,
-    IPersonManager personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Stock) { }
+    ITermsRepository termsService,
+    IAvailableAssetsRepository availableAssets,
+    IPersonService personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.Stock) { }
