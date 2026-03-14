@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Users.UserData.HistoryData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
@@ -99,7 +98,6 @@ public class SendMoneyTests : StagesBaseTest
         var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
 
         var testStage = GetTestStage();
-        var historyMock = new Mock<IHistory>();
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
