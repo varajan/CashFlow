@@ -44,6 +44,7 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
     private ITermsService Terms { get; } = terms;
     private IDataBase DataBase { get; } = dataBase;
     private IPersonRepository PersonRepository { get; } = personRepository;
+    private AssetService AssetService => new(PersonRepository);
 
     public bool Exists(IUser user) => PersonRepository.Exists(user.Id);
     public void Update(PersonDto person) => PersonRepository.Save(person);
@@ -389,7 +390,7 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.BuyLand:
             case ActionType.StartCompany:
                 person.Cash += asset.Price - asset.Mortgage;
-                DeleteAsset(person, asset);
+                AssetService.Delete(person, asset);
                 break;
 
             case ActionType.IncreaseCashFlow:
@@ -400,19 +401,19 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.SellBusiness:
             case ActionType.SellLand:
                 person.Cash -= asset.SellPrice - asset.Mortgage;
-                RestoreAsset(person, asset);
+                AssetService.Restore(person, asset);
                 break;
 
             case ActionType.BuyStocks:
             case ActionType.BuyCoins:
                 person.Cash += asset.Price * asset.Qtty;
-                DeleteAsset(person, asset);
+                AssetService.Delete(person, asset);
                 break;
 
             case ActionType.SellStocks:
             case ActionType.SellCoins:
                 person.Cash -= asset.Qtty * asset.SellPrice;
-                RestoreAsset(person, asset);
+                AssetService.Restore(person, asset);
                 break;
 
             case ActionType.Stocks1To2:
@@ -430,14 +431,14 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.BuyBoat:
                 person.Cash += 1_000;
                 person.DeleteLiability(Liability.Boat_Loan);
-                DeleteAsset(person, boat);
+                AssetService.Delete(person, boat);
                 break;
 
             case ActionType.PayOffBoat:
                 person.Cash += amount;
                 boat.CashFlow = -340;
                 person.UpdateLiability(Liability.Boat_Loan, boat.CashFlow, boat.Mortgage);
-                RestoreAsset(person, boat);
+                AssetService.Restore(person, boat);
                 break;
 
             case ActionType.Bankruptcy:
@@ -447,7 +448,7 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.BankruptcySellAsset:
                 person.Cash -= asset.BancrupcySellPrice;
                 person.Bankruptcy = true;
-                RestoreAsset(person, asset);
+                AssetService.Restore(person, asset);
                 break;
 
             case ActionType.BankruptcyDebtRestructuring:
@@ -544,12 +545,12 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.StartCompany:
             case ActionType.BuyCoins:
                 var buyAsset = Terms.Get((int)Action, user, "Buy Asset");
-                var asset = ReadAsset(assetId, user);
+                var asset = AssetService.Get(assetId, user);
                 var description = GetAssetDescription(asset, user);
                 return $"{buyAsset}. {description}";
 
             case ActionType.IncreaseCashFlow:
-                var smallBusiness = ReadAsset(assetId, user);
+                var smallBusiness = AssetService.Get(assetId, user);
                 var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cashflow");
                 return $"*{smallBusiness.Title}* - {increaseCashFlow}. {value.AsCurrency()}";
 
@@ -560,7 +561,7 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.SellCoins:
             case ActionType.BankruptcySellAsset:
                 var sellAsset = Terms.Get((int)Action, user, "Sell Asset");
-                var assetToSell = ReadAsset(assetId, user);
+                var assetToSell = AssetService.Get(assetId, user);
                 var sellDescription = GetAssetDescription(assetToSell, user);
 
                 return $"{sellAsset}. {sellDescription}";
@@ -568,7 +569,7 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
             case ActionType.Stocks1To2:
             case ActionType.Stocks2To1:
                 var multiply = Terms.Get((int)Action, user, "Multiply Stocks");
-                var stock = ReadAsset(assetId, user);
+                var stock = AssetService.Get(assetId, user);
                 var stockDescription = GetAssetDescription(stock, user);
 
                 return $"{multiply}. {stockDescription}";
@@ -599,81 +600,11 @@ public class PersonManager(IPersonRepository personRepository, IDataBase dataBas
 
     #region Assets
 
-    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => PersonRepository.Get(user.Id).Assets.Where(a => a.Type == type).ToList();
-
-    public AssetDto ReadAsset(long id, IUser user) => PersonRepository.Get(user.Id).Assets.First(a => a.Id == id);
-
-    public void CreateAsset(IUser user, AssetDto asset)
-    {
-        var person = PersonRepository.Get(user.Id);
-        asset.Id = person.Assets.Any() ? person.Assets.Max(a => a.Id) + 1 : 1;
-        person.Assets.Add(asset);
-        PersonRepository.Save(person);
-
-
-        //int newId = DataBase.GetValue("SELECT MAX(AssetID) FROM Assets").ToInt() + 1;
-        //var sql = $@"
-        //    INSERT INTO Assets (Id, UserId, Type, Title, Price, SellPrice, Qtty, Mortgage, CashFlow, BigCircle, IsDraft, IsDeleted)
-        //    VALUES
-        //    (
-        //        {newId},
-        //        {asset.UserId},
-        //        {(int)asset.Type},
-        //        '{asset.Title.Replace("'", "''")}',
-        //        {asset.Price},
-        //        {asset.SellPrice},
-        //        {asset.Qtty},
-        //        {asset.Mortgage},
-        //        {asset.CashFlow},
-        //        {asset.BigCircle},
-        //        {(asset.IsDraft ? 1 : 0)},
-        //        {(asset.IsDeleted ? 1 : 0)}
-        //    );";
-        //DataBase.Execute(sql);
-
-        ////return Read(newId, asset.UserId);
-    }
-
-    public void DeleteAsset(PersonDto person, AssetDto asset)
-    {
-        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
-        person.Assets[index].IsDeleted = true;
-        PersonRepository.Save(person);
-    }
-
-    public void DeleteAsset(IUser user, AssetDto asset)
-    {
-        var person = PersonRepository.Get(user.Id);
-        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
-        person.Assets[index].IsDeleted = true;
-        PersonRepository.Save(person);
-    }
-
-    public void RestoreAsset(PersonDto person, AssetDto asset)
-    {
-        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
-        person.Assets[index].IsDeleted = false;
-        PersonRepository.Save(person);
-    }
-
-    public void UpdateAsset(IUser user, AssetDto asset)
-    {
-        var person = PersonRepository.Get(user.Id);
-        var index = person.Assets.FindIndex(a => a.Id == asset.Id);
-        person.Assets[index] = asset;
-
-        PersonRepository.Save(person);
-    }
-
-    public void SellAsset(AssetDto asset, ActionType action, int price, IUser user)
-    {
-        asset.SellPrice = price;
-        asset.MarkedToSell = false;
-
-        UpdateAsset(user, asset);
-        DeleteAsset(user, asset);
-        //AddHistory(action, asset.Id, user);
-    }
+    public List<AssetDto> ReadAllAssets(AssetType type, IUser user) => AssetService.GetAll(type, user);
+    public void CreateAsset(IUser user, AssetDto asset) => AssetService.Create(user, asset);
+    public void DeleteAsset(IUser user, AssetDto asset) => AssetService.Delete(user, asset);
+    public void UpdateAsset(IUser user, AssetDto asset) => AssetService.Update(user, asset);
+    public void SellAsset(AssetDto asset, ActionType action, int price, IUser user) => AssetService.Sell(asset, action, price, user);
 
     public string GetAssetDescription(AssetDto asset, IUser user)
     {

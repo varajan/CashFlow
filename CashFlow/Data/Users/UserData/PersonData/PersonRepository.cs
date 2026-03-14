@@ -51,9 +51,6 @@ public class PersonRepository(IDataBase dataBase) : IPersonRepository
     {
         DataBase.Execute($"DELETE FROM History WHERE UserID = {userId}");
         DataBase.Execute($"DELETE FROM Persons WHERE ID = {userId}");
-        // assets?
-        // liabilities?
-        // history?
     }
 
     public bool Exists(long userId)
