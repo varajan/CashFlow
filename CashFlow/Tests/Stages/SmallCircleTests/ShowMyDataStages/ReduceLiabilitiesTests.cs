@@ -22,7 +22,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(TestPerson);
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(TestPerson);
 
     [Test]
     public void ReduceLiabilities_Question_and_Buttons()
@@ -57,7 +57,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         var testPerson = TestPerson.Clone();
         testPerson.Cash = cash;
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage(message);
@@ -65,7 +65,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
 
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
+        PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.MarkedForReduction == true)),
             Times.Once);
     }
@@ -82,15 +82,15 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         var testPerson = TestPerson.Clone();
         testPerson.Cash = cash;
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage(message);
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Never);
-        CurrentUserMock.Verify(u => u.Notify($"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
     }
 
     [TestCase("Liability")]
@@ -105,11 +105,10 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Never);
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new ReduceLiabilities(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new ReduceLiabilities(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -4,8 +4,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetMoney(ITermsRepository termsService, IPersonService personManager)
-    : BaseStage(termsService, personManager)
+public class GetMoney(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message
     {

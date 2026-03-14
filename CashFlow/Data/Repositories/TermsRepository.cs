@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -8,7 +9,7 @@ public class TermsRepository(IDataBase dataBase) : ITermsRepository
 {
     private readonly IDataBase _dataBase = dataBase;
 
-    public string Get(int id, ICashFlowUser user, string defaultValue = null, params object[] args) => Get(id, user.Language, defaultValue, args);
+    public string Get(int id, UserDto user, string defaultValue = null, params object[] args) => Get(id, user.Language, defaultValue, args);
 
     public string Get(int id, Language language, string defaultValue = null, params object[] args)
     {

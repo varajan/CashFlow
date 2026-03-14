@@ -19,7 +19,7 @@ public class WinGameTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(Person);
 
     [Test]
     public void WinGame_Question_and_Buttons()
@@ -58,20 +58,21 @@ public class WinGameTests : StagesBaseTest
         // Arrange
         var person = Person.Clone();
         person.IsWinning = alreadyNotified;
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
-        var message = $"{CurrentUserMock.Object.Name} is the winner!";
-        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u));
+        var message = $"{CurrentUser.Name} is the winner!";
+        var activeUsers = OtherUsers.Where(u => u.IsActive());
 
         // Act
         await testStage.BeforeStage();
 
         // Assert
-        CurrentUserMock.Verify(x => x.Notify(It.IsAny<string>()), Times.Never);
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), alreadyNotified ? Times.Never : Times.Once));
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Never);
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), alreadyNotified ? Times.Never : Times.Once));
+
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.IsWinning == true)),
             alreadyNotified ? Times.Never : Times.Once);
     }
@@ -112,7 +113,6 @@ public class WinGameTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
     }
 
-    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

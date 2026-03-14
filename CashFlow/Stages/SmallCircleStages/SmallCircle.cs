@@ -12,7 +12,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class SmallCircle(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => PersonManager.GetDescription(CurrentUser);
 
@@ -49,7 +49,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         if (person.IsReadyForBigCircle())
         {
             var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
-            OtherUsers.Where(x => x.IsActive).ForEach(u => u.Notify(notifyMessage));
+            OtherUsers.Where(x => x.IsActive()).ForEach(u => u.Notify(notifyMessage));
         }
 
         switch (message)
@@ -59,7 +59,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
                 return;
 
             case var m when MessageEquals(m, 140, "Friends"):
-                var users = OtherUsers.Where(x => x.IsActive).ToList();
+                var users = OtherUsers.Where(x => x.IsActive()).ToList();
                 if (users.Any())
                 {
                     NextStage = New<Friends>();

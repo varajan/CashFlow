@@ -7,7 +7,8 @@ using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BigCircle(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class BigCircle(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message
     {
@@ -71,7 +72,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         person.IsWinning = true;
         PersonManager.Update(person);
 
-        var users = OtherUsers.Where(x => x.IsActive).ToList();
+        var users = OtherUsers.Where(x => x.IsActive()).ToList();
         var message = Terms.Get(148, CurrentUser, "{0} is the winner!", CurrentUser.Name);
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);

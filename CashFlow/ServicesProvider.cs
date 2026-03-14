@@ -23,13 +23,15 @@ public static class ServicesProvider
 {
     public static IServiceProvider Instance { get; private set; }
 
-    public static void Init()
+    public static void Init(INotifyService notifyService = null, IPersonRepository personRepository = null)
     {
         var services = new ServiceCollection();
+
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITermsRepository, TermsRepository>();
         services.AddSingleton<IAvailableAssetsRepository, AvailableAssetsRepository>();
+        services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IPersonRepository, PersonRepository>();
         services.AddSingleton<IPersonService, PersonService>();
 
@@ -121,6 +123,9 @@ public static class ServicesProvider
         services.AddTransient<BuyBigBusinessPrice>();
         services.AddTransient<BuyBigBusinessFirstPayment>();
         services.AddTransient<BuyBigBusinessCashFlow>();
+
+        if (notifyService is not null) services.AddSingleton(notifyService);
+        if (personRepository is not null) services.AddSingleton(personRepository);
 
         Instance = services.BuildServiceProvider();
     }

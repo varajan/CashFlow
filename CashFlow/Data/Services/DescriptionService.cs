@@ -10,7 +10,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
     private ITermsRepository Terms { get; } = terms;
     private AssetService AssetService { get; } = assetService;
 
-    public string GetDescription(ICashFlowUser user, PersonDto person, bool compact = true)
+    public string GetDescription(UserDto user, PersonDto person, bool compact = true)
     {
         var description = person.BigCircle
             ? BigCircleDescription(person, user)
@@ -25,7 +25,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         return description.Trim();
     }
 
-    private string AssetsDescription(List<AssetDto> personAssets, ICashFlowUser user)
+    private string AssetsDescription(List<AssetDto> personAssets, UserDto user)
     {
         if (!personAssets.Any(a => !a.IsDeleted))
             return string.Empty;
@@ -40,7 +40,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         return assets;
     }
 
-    private string ExpensesDescription(PersonDto person, ICashFlowUser user)
+    private string ExpensesDescription(PersonDto person, UserDto user)
     {
         var expensesTerm = Terms.Get(54, user, "Expenses");
         var taxesTerm = Terms.Get(58, user, "Taxes");
@@ -91,7 +91,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         return Math.Abs(liability);
     }
 
-    private string SmallCircleDescription(PersonDto person, ICashFlowUser user)
+    private string SmallCircleDescription(PersonDto person, UserDto user)
     {
         var professionTerm = Terms.Get(50, user, "Profession");
         var cashTerm = Terms.Get(51, user, "Cash");
@@ -109,7 +109,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
             $"*{cashFlowTerm}:* {person.GetSmallCircleCashflow().AsCurrency()}";
     }
 
-    private string BigCircleDescription(PersonDto person, ICashFlowUser user)
+    private string BigCircleDescription(PersonDto person, UserDto user)
     {
         var professionTerm = Terms.Get(50, user, "Profession");
         var cashTerm = Terms.Get(51, user, "Cash");
@@ -130,7 +130,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         return description.Trim();
     }
 
-    public string GetDescription(ActionType Action, long value, ICashFlowUser user, long assetId)
+    public string GetDescription(ActionType Action, long value, UserDto user, long assetId)
     {
         switch (Action)
         {
@@ -223,7 +223,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         }
     }
 
-    public string GetAssetDescription(AssetDto asset, ICashFlowUser user)
+    public string GetAssetDescription(AssetDto asset, UserDto user)
     {
         var mortgage = Terms.Get(43, user, "Mortgage");
         var price = Terms.Get(64, user, "Price");
@@ -270,5 +270,5 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         };
     }
 
-    public string NoRecordsFound(ICashFlowUser user) => Terms.Get(111, user, "No records found.");
+    public string NoRecordsFound(UserDto user) => Terms.Get(111, user, "No records found.");
 }

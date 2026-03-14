@@ -11,14 +11,14 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
 [TestFixture]
 public class IncreaseCashflowTests : SellAssetBaseTest
 {
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
     private static readonly List<string> AvailableValues = ["$100", "$500", "$1,000",];
 
     [SetUp]
     public void IncreaseCashFlowSetup()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.IncreaseCashFlow)).Returns(AvailableValues);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 
     [Test]
@@ -49,8 +49,8 @@ public class IncreaseCashflowTests : SellAssetBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<IncreaseCashflow>());
-        CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid value. Try again."), Times.Once);
+        PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
     }
 
     [TestCase("1")]
@@ -70,21 +70,21 @@ public class IncreaseCashflowTests : SellAssetBaseTest
         Assets.Where(a => a.Type == AssetType.SmallBusinessType)
             .ForEach(asset =>
             {
-                PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a =>
+                PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(a =>
                     a.Id == asset.Id &&
                     a.CashFlow == assetCashflow[a.Id] + value.AsCurrency()))
                     , Times.Once);
 
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.IncreaseCashFlow, value.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
+                PersonServiceMock.Verify(x => x.AddHistory(ActionType.IncreaseCashFlow, value.AsCurrency(), CurrentUser, asset.Id), Times.Once);
             });
 
-        CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
     protected override IStage GetTestStage() => new IncreaseCashflow(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

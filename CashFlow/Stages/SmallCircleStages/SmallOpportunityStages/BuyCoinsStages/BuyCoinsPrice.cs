@@ -8,7 +8,8 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStage
 public class BuyCoinsPrice(
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager) : BuyCoins(termsService, availableAssets, personManager)
+    IPersonService personManager,
+    IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
     public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);

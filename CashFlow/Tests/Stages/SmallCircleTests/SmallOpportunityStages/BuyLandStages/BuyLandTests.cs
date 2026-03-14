@@ -15,7 +15,7 @@ public class BuyLandTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.LandTitle, It.IsAny<Language>())).Returns(Names);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUser)).Returns([]);
     }
 
     [Test]
@@ -60,18 +60,17 @@ public class BuyLandTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyLandPrice>());
 
-        PersonManagerMock.Verify(a => a.CreateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.CreateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.Title == name &&
                 x.Qtty == 1 &&
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.Land &&
                 x.IsDraft)
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyLand(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BuyLand(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

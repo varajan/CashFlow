@@ -3,11 +3,12 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class SellRealEstate(ITermsRepository termsService, IPersonService personManager)
-    : SellAsset<SellRealEstatePrice>(termsService, personManager, AssetType.RealEstate) { }
+public class SellRealEstate(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : SellAsset<SellRealEstatePrice>(termsService, personManager, userRepository, AssetType.RealEstate) { }
 
 public class SellRealEstatePrice(
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager) : SellAssetPrice(termsService, availableAssets, personManager, AssetType.RealEstate)
+    IPersonService personManager,
+    IUserRepository userRepository) : SellAssetPrice(termsService, availableAssets, personManager, userRepository, AssetType.RealEstate)
 { }

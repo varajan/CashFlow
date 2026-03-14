@@ -11,8 +11,9 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     ActionType actionType,
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
+    IPersonService personManager,
+    IUserRepository userRepository)
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
 

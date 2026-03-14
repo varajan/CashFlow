@@ -7,7 +7,8 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStage
 public class BuyCoinsCredit(
     ITermsRepository termsService,
     IAvailableAssetsRepository assets,
-    IPersonService personManager) : BuyCoinsPrice(termsService, assets, personManager)
+    IPersonService personManager,
+    IUserRepository userRepository) : BuyCoinsPrice(termsService, assets, personManager, userRepository)
 {
     public override string Message
     {

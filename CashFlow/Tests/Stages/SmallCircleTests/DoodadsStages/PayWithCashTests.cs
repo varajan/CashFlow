@@ -49,7 +49,7 @@ public class PayWithCashTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<PayWithCash>());
-        CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid value. Try again."), Times.Once);
     }
 
     [TestCase(0, 10, 1000)]
@@ -63,7 +63,7 @@ public class PayWithCashTests : StagesBaseTest
 
         var creditMessage = string.Format("You've taken {0} from bank.", credit.AsCurrency());
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash });
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Id = CurrentUser.Id, Cash = cash });
 
         // Act
         await testStage.HandleMessage($"{amount}");
@@ -71,19 +71,19 @@ public class PayWithCashTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
-            person.Id == CurrentUserMock.Object.Id &&
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
+            person.Id == CurrentUser.Id &&
             person.Cash == cash + credit - amount
         )), Times.AtLeastOnce);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.PayMoney, amount, CurrentUserMock.Object), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < amount ? 1 : 0));
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, amount, CurrentUser), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, creditMessage), Times.Exactly(cash < amount ? 1 : 0));
     }
 
     protected override IStage GetTestStage() => new PayWithCash(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

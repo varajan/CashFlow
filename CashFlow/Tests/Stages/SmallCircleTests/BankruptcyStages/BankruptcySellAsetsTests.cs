@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using Moq;
@@ -35,7 +34,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(TestPerson);
+    public void Setup() => PersonServiceMock.Setup(p => p.Read(It.IsAny<UserDto>())).Returns(TestPerson);
 
     [Test]
     public void BankruptcySellAssets_Question_and_Buttons()
@@ -88,9 +87,9 @@ Cash: *$100*
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash + Assets.First().Price / 2)), Times.Once);
-        PersonManagerMock.Verify(p => p.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.Title == "Asset 1" && a.IsDeleted)), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify($"Sale for debts: Asset 1, Price: $500"), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash + Assets.First().Price / 2)), Times.Once);
+        PersonServiceMock.Verify(p => p.UpdateAsset(CurrentUser, It.Is<AssetDto>(a => a.Title == "Asset 1" && a.IsDeleted)), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"Sale for debts: Asset 1, Price: $500"), Times.Once);
     }
 
     [TestCase("0")]
@@ -106,9 +105,9 @@ Cash: *$100*
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        PersonManagerMock.Verify(p => p.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
-        PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<ICashFlowUser>()), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonServiceMock.Verify(p => p.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
+        PersonServiceMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<UserDto>()), Times.Never);
     }
 
     [Test]
@@ -124,9 +123,9 @@ Cash: *$100*
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash - Liabilities[0].FullAmount + Assets[2].Price / 2)), Times.Exactly(2));
-        PersonManagerMock.Verify(p => p.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.Title == "Asset 3" && a.IsDeleted)), Times.Once);
-        PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, bankLoanAmount, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash - Liabilities[0].FullAmount + Assets[2].Price / 2)), Times.Exactly(2));
+        PersonServiceMock.Verify(p => p.UpdateAsset(CurrentUser, It.Is<AssetDto>(a => a.Title == "Asset 3" && a.IsDeleted)), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, bankLoanAmount, CurrentUser), Times.Once);
     }
 
     [Test]
@@ -141,7 +140,7 @@ Cash: *$100*
         assets.Skip(1).ForEach(a => a.IsDeleted = true);
         person.Assets = assets;
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(person);
+        PersonServiceMock.Setup(p => p.Read(It.IsAny<UserDto>())).Returns(person);
 
         // Act
         await testStage.HandleMessage("#1");
@@ -150,7 +149,6 @@ Cash: *$100*
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
     }
 
-    protected override IStage GetTestStage() => new BankruptcySellAssets(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BankruptcySellAssets(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

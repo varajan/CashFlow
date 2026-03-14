@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
 public class BuyBigBusinessPriceTests : StagesBaseTest
 {
     private static readonly string[] Prices = ["$100,000", "$500,000"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.BigBusinessType, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.BigBusinessType, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -21,10 +21,10 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessBuyPrice)).Returns(Prices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
-        PersonManagerMock
-            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([Asset]);
+        PersonServiceMock
+            .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
+            .Callback<UserDto, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -77,14 +77,14 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 
     protected override IStage GetTestStage() => new BuyBigBusinessPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

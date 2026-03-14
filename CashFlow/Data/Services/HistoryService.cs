@@ -12,7 +12,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
     private AssetService AssetService => new(PersonRepository);
     private IPersonRepository PersonRepository { get; } = personRepository;
 
-    public void AddRecord(ActionType type, long value, ICashFlowUser user, long assetId)
+    public void AddRecord(ActionType type, long value, UserDto user, long assetId)
     {
         var record = new HistoryDto
         {
@@ -37,7 +37,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
         return result;
     }
 
-    public string GetTopFive(ICashFlowUser user, ICashFlowUser currentUser)
+    public string GetTopFive(UserDto user, UserDto currentUser)
     {
         var records = ReadHistory(user.Id);
         records.Reverse();

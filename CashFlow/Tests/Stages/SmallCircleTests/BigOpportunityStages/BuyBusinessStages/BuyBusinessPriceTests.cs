@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.BigOpportunityStages.BuyBusines
 public class BuyBusinessPriceTests : StagesBaseTest
 {
     private static readonly string[] Prices = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.Business, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Business, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -21,10 +21,10 @@ public class BuyBusinessPriceTests : StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BusinessBuyPrice)).Returns(Prices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([Asset]);
-        PersonManagerMock
-            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUser)).Returns([Asset]);
+        PersonServiceMock
+            .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
+            .Callback<UserDto, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -77,11 +77,10 @@ public class BuyBusinessPriceTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessFirstPayment>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
+            PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBusinessPrice(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BuyBusinessPrice(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

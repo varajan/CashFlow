@@ -47,7 +47,7 @@ public class ChooseProfessionTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        PersonManagerMock.Verify(p => p.Create(It.IsAny<string>(), CurrentUserMock.Object));
+        PersonServiceMock.Verify(p => p.Create(It.IsAny<string>(), CurrentUser));
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class ChooseProfessionTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        PersonManagerMock.Verify(p => p.Create("Teacher", CurrentUserMock.Object));
+        PersonServiceMock.Verify(p => p.Create("Teacher", CurrentUser));
     }
 
     [Test]
@@ -95,7 +95,6 @@ public class ChooseProfessionTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new ChooseProfession(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new ChooseProfession(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

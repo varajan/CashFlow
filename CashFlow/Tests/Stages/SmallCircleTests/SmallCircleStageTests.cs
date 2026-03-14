@@ -18,10 +18,10 @@ namespace CashFlow.Tests.Stages.SmallCircleTests;
 [TestFixture]
 public class SmallCircleStageTests : StagesBaseTest
 {
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 100 };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+    public void Setup() => PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
 
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
@@ -46,9 +46,9 @@ public class SmallCircleStageTests : StagesBaseTest
         buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
-        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns(description);
+        PersonServiceMock.Setup(x => x.IsHistoryEmpty(CurrentUser)).Returns(isHistoryEmpty);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.GetDescription(CurrentUser, true)).Returns(description);
 
         // Act
 
@@ -79,9 +79,10 @@ public class SmallCircleStageTests : StagesBaseTest
         // Arrange
         if (noActiveUsers)
         {
-            OtherUsers = OtherUsers.Where(x => !x.IsActive).ToList();
+            OtherUsers = OtherUsers.Where(x => !x.IsActive()).ToList();
+            UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
         }
-        
+
         var testStage = GetTestStage();
         var expectedNextStage = noActiveUsers ? typeof(SmallCircle) : typeof(Friends);
 
@@ -93,7 +94,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         if (noActiveUsers)
         {
-            CurrentUserMock.Verify(u => u.Notify("There are no other players."), Times.Once);
+            NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "There are no other players."), Times.Once);
         }
     }
 
@@ -104,7 +105,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expectedNextStage = isHistoryEmpty ? typeof(SmallCircle) : typeof(History);
 
-        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(isHistoryEmpty);
+        PersonServiceMock.Setup(x => x.IsHistoryEmpty(CurrentUser)).Returns(isHistoryEmpty);
 
         // Act
         await testStage.HandleMessage("history");
@@ -176,7 +177,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
         testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -184,12 +185,12 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
-        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(It.Is<string>(msg => Regex.IsMatch(msg, @"You've taken .* from bank\."))), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.Is<string>(msg => Regex.IsMatch(msg, @"You've taken .* from bank\."))), Times.Never);
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Id == TestPerson.Id && pr.Cash == TestPerson.Cash - downsizeAmount)), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUser), Times.Once);
     }
 
     [Test]
@@ -204,7 +205,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
 
         testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Downsize");
@@ -212,13 +213,13 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
-        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.Id == TestPerson.Id &&
             pr.Cash == TestPerson.Cash + creditAmount - downsizeAmount)),
             Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.Downsize, downsizeAmount, CurrentUser), Times.Once);
     }
 
     [TestCase(0)]
@@ -233,7 +234,7 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Profession = "Parent";
         testPerson.Children = children;
         testPerson.PerChild = 50;
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         var expenses = testPerson.PerChild * (children + 1);
         var message = $"{testPerson.Profession}, you have {expenses.AsCurrency()} children expenses and {children+1} children.";
@@ -244,9 +245,9 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
-        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Children == children + 1)), Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Child, children + 1, CurrentUserMock.Object), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.Children == children + 1)), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.Child, children + 1, CurrentUser), Times.Once);
     }
 
     [TestCase(3)]
@@ -259,7 +260,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.Profession = "Parent";
         testPerson.Children = children;
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("baby");
@@ -267,9 +268,9 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
-        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonServiceMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUser), Times.Never);
     }
 
     [TestCase(0, 0)]
@@ -284,7 +285,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -292,13 +293,13 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.Id == TestPerson.Id &&
             pr.Bankruptcy == false &&
             pr.Cash == cashAmount + cashFlow)),
             Times.Once);
 
-        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{cashFlow.AsCurrency()}*"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"Ok, you've got *{cashFlow.AsCurrency()}*"), Times.Once);
     }
 
     [TestCase(-2, 1)]
@@ -310,7 +311,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         testPerson.Salary = cashFlow;
         testPerson.Cash = cashAmount;
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Paycheck");
@@ -318,9 +319,9 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
 
-        PersonManagerMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUserMock.Object), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify("Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
+        PersonServiceMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUser), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
     }
 
     [Test]
@@ -351,7 +352,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         testPerson.Assets = assets;
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");
@@ -359,12 +360,12 @@ public class SmallCircleStageTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.InitialCashFlow == initialCashFlow &&
             pr.BigCircle == true &&
             pr.Cash == TestPerson.Cash + initialCashFlow &&
             pr.TargetCashFlow == initialCashFlow + 50_000)), Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.GoToBigCircle, initialCashFlow, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.GoToBigCircle, initialCashFlow, CurrentUser), Times.Once);
     }
 
     [Test]
@@ -373,14 +374,14 @@ public class SmallCircleStageTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var testPerson = TestPerson.Clone();
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Go to Big Circle");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
     }
 
     [Test]
@@ -396,7 +397,6 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
     }
 
-    protected override IStage GetTestStage() => new SmallCircle(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new SmallCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksSt
 [TestFixture]
 public class SellStocksPriceTests : StagesBaseTest
 {
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
     private static readonly List<string> AvailablePrices = [ "$100", "$500", "$1,000", ];
 
     private static List<AssetDto> Assets =>
@@ -25,9 +25,9 @@ public class SellStocksPriceTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns(Assets);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns(Assets);
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.StockPrice)).Returns(AvailablePrices);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 
     [Test]
@@ -62,8 +62,8 @@ public class SellStocksPriceTests : StagesBaseTest
 
         assets.Where(a => a.MarkedToSell).ForEach(asset =>
         {
-            PersonManagerMock.Verify(a => a.UpdateAsset(
-                CurrentUserMock.Object,
+            PersonServiceMock.Verify(a => a.UpdateAsset(
+                CurrentUser,
                 It.Is<AssetDto>(x =>
                     x.Title == asset.Title &&
                     x.Type == AssetType.Stock &&
@@ -83,9 +83,9 @@ public class SellStocksPriceTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
-        CurrentUserMock.Verify(u => u.Notify("Invalid price value. Try again."), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
-        PersonManagerMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUserMock.Object), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid price value. Try again."), Times.Once);
+        PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
+        PersonServiceMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUser), Times.Never);
     }
 
     [TestCase("1")]
@@ -109,19 +109,19 @@ public class SellStocksPriceTests : StagesBaseTest
             {
                 payedAmmount += asset.Qtty * price.AsCurrency();
 
-                PersonManagerMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object), Times.Once);
-                PersonManagerMock.Verify(x => x.AddHistory(ActionType.SellStocks, price.AsCurrency(), CurrentUserMock.Object, asset.Id), Times.Once);
-                PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id)), Times.Exactly(2));
+                PersonServiceMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), ActionType.SellStocks, price.AsCurrency(), CurrentUser), Times.Once);
+                PersonServiceMock.Verify(x => x.AddHistory(ActionType.SellStocks, price.AsCurrency(), CurrentUser, asset.Id), Times.Once);
+                PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id)), Times.Exactly(2));
             });
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Exactly(2));
-        CurrentUserMock.Verify(u => u.Notify("Done."), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id && x.Cash == TestPerson.Cash + payedAmmount)), Times.Exactly(2));
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
     protected override IStage GetTestStage() => new SellStocksPrice(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

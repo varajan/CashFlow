@@ -11,14 +11,14 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealE
 public class BuyRealEstateFirstPaymentTests : StagesBaseTest
 {
     private static readonly string[] FirstPayments = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.RealEstate, Price = 10_000, Qtty = 1, IsDraft = true };
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 10_000 };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.RealEstate, Price = 10_000, Qtty = 1, IsDraft = true };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 10_000 };
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([Asset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([Asset]);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateSmallFirstPayment)).Returns(FirstPayments);
     }
 
@@ -64,7 +64,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         var price = Asset.Price;
         var mortgage = price - firstPayment.AsCurrency();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage(firstPayment);
@@ -73,8 +73,8 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCashFlow>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(
-                CurrentUserMock.Object,
+            PersonServiceMock.Verify(a => a.UpdateAsset(
+                CurrentUser,
                 It.Is<AssetDto>(x =>
                     x.Price == price &&
                     x.Mortgage == mortgage &&
@@ -94,8 +94,8 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         var asset = Asset.Clone();
         asset.Price = firstPayment;
 
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([asset]);
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage($"${firstPayment}");
@@ -104,11 +104,10 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
-            PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
+            PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
         });
     }
 
-    protected override IStage GetTestStage() => new BuySmallRealEstateFirstPayment(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BuySmallRealEstateFirstPayment(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

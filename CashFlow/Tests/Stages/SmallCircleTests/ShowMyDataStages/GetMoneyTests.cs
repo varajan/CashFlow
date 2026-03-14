@@ -20,7 +20,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var testPerson = new PersonDto { Salary = cashFlow };
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
 
@@ -40,7 +40,7 @@ public class GetMoneyTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var amount = message.AsCurrency();
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Cash = cashAmount });
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Cash = cashAmount });
 
         // Act
         await testStage.HandleMessage(message);
@@ -48,12 +48,12 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.Bankruptcy == false &&
             pr.Cash == cashAmount + amount)),
             Times.Once);
 
-        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{amount.AsCurrency()}*"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"Ok, you've got *{amount.AsCurrency()}*"), Times.Once);
     }
 
     [TestCase("-100", 99)]
@@ -65,7 +65,7 @@ public class GetMoneyTests : StagesBaseTest
         var amount = message.AsCurrency();
         var testPerson = new PersonDto { Cash = cashAmount, Salary = -cashAmount };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage(message);
@@ -73,12 +73,11 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
 
-        PersonManagerMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUserMock.Object), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify("Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
+        PersonServiceMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUser), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

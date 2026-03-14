@@ -21,7 +21,7 @@ public class GetMoneyTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(Person);
 
     [Test]
     public void GetMoney_Question_and_Buttons()
@@ -62,12 +62,12 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.Bankruptcy == false &&
             pr.Cash == CashAmount + amount)),
             Times.Once);
 
-        CurrentUserMock.Verify(u => u.Notify($"Ok, you've got *{amount.AsCurrency()}*"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"Ok, you've got *{amount.AsCurrency()}*"), Times.Once);
     }
 
     [TestCase("-$100,000")]
@@ -85,11 +85,10 @@ public class GetMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<GetMoney>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        CurrentUserMock.Verify(u => u.Notify($"Invalid value. Try again."), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"Invalid value. Try again."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

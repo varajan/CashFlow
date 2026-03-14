@@ -21,7 +21,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
     private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(It.IsAny<ICashFlowUser>())).Returns(TestPerson);
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(It.IsAny<UserDto>())).Returns(TestPerson);
 
     [Test]
     public void ReduceLiabilitiesConfirm_Question_and_Buttons()
@@ -54,15 +54,15 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonManagerMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.ReduceLiability, It.IsAny<long>(), CurrentUser), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Exactly(2));
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.Is<LiabilityDto>(l =>
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.Is<LiabilityDto>(l =>
             l.Type == Liability.Car_Loan &&
             l.MarkedForReduction == false)),
         Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<ICashFlowUser>(), It.Is<LiabilityDto>(l =>
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.Is<LiabilityDto>(l =>
             l.Type == Liability.Boat_Loan &&
             l.MarkedForReduction == false)),
         Times.Once);
@@ -83,7 +83,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
         var liability = liabilities.First();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage("Yes");
@@ -91,8 +91,8 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
+        PersonServiceMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
 
@@ -111,7 +111,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
         var liability = liabilities.First();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage("Yes");
@@ -119,12 +119,11 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonManagerMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(CurrentUserMock.Object,
+        PersonServiceMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new ReduceLiabilitiesConfirm(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new ReduceLiabilitiesConfirm(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

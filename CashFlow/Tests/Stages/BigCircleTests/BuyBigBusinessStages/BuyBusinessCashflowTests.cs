@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
@@ -12,15 +11,15 @@ namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
 public class BuyBigBusinessCashflowTests : StagesBaseTest
 {
     private static readonly string[] CashFlows = ["$1,000", "$5,000"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.BigBusinessType, Price = 10_000, Qtty = 1, IsDraft = true };
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 10_000 };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.BigBusinessType, Price = 10_000, Qtty = 1, IsDraft = true };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 10_000 };
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(CashFlows);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([Asset]);
     }
 
     [Test]
@@ -49,7 +48,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
         var person = new PersonDto { Cash = 10_000 };
         var personCash = person.Cash - Asset.Price - Asset.Mortgage;
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage(cashflow);
@@ -59,18 +58,18 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-            PersonManagerMock.Verify(a => a.UpdateAsset(
-                CurrentUserMock.Object,
+            PersonServiceMock.Verify(a => a.UpdateAsset(
+                CurrentUser,
                 It.Is<AssetDto>(x =>
                     x.CashFlow == cashflow.AsCurrency() &&
                     x.IsDraft == false)),
                 Times.Once);
 
-            PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
-            PersonManagerMock.Verify(x => x.AddHistory(
+            PersonServiceMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
+            PersonServiceMock.Verify(x => x.AddHistory(
                 ActionType.BuyBusiness,
                 cashflow.AsCurrency(),
-                It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
+                It.Is<UserDto>(x => x.Id == CurrentUser.Id),
                 Asset.Id
             ), Times.Once);
         });
@@ -79,7 +78,7 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyBigBusinessCashFlow(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+            PersonServiceMock.Object,
+            UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -40,7 +40,7 @@ public class GetCreditTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<GetCredit>());
-        CurrentUserMock.Verify(u => u.Notify("Invalid amount. The amount must be a multiple of 1000"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid amount. The amount must be a multiple of 1000"), Times.Once);
     }
 
     [TestCase("1000")]
@@ -50,9 +50,9 @@ public class GetCreditTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var initialCash = 300;
-        var person = new PersonDto() { Id = CurrentUserMock.Object.Id, Cash = initialCash };
+        var person = new PersonDto() { Id = CurrentUser.Id, Cash = initialCash };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage(amount);
@@ -60,9 +60,9 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.Notify($"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(
+        PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == person.Id &&
             x.Cash == initialCash + amount.AsCurrency())
@@ -85,11 +85,11 @@ public class GetCreditTests : StagesBaseTest
         var initialLoanCashflow = -500;
         var person = new PersonDto()
         {
-            Id = CurrentUserMock.Object.Id,
+            Id = CurrentUser.Id,
             Cash = initialCash,
             Liabilities = [new() { Type = Liability.Bank_Loan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage(amount);
@@ -97,9 +97,9 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        CurrentUserMock.Verify(u => u.Notify($"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(
+        PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == person.Id &&
             x.Cash == initialCash + amount.AsCurrency())
@@ -111,7 +111,6 @@ public class GetCreditTests : StagesBaseTest
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }
 
-    protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

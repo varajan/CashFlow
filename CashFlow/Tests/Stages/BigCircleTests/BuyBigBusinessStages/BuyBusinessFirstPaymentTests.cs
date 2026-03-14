@@ -11,14 +11,14 @@ namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
 public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
 {
     private static readonly string[] FirstPayments = ["$10,000", "$50,000"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.BigBusinessType, Price = 100_000, Qtty = 1, IsDraft = true };
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 200_000 };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.BigBusinessType, Price = 100_000, Qtty = 1, IsDraft = true };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 200_000 };
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUserMock.Object)).Returns([Asset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([Asset]);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(FirstPayments);
     }
 
@@ -70,8 +70,8 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
-            PersonManagerMock.Verify(a => a.UpdateAsset(
-                CurrentUserMock.Object,
+            PersonServiceMock.Verify(a => a.UpdateAsset(
+                CurrentUser,
                 It.Is<AssetDto>(x =>
                     x.Price == price &&
                     x.Mortgage == mortgage &&
@@ -92,14 +92,14 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(u => u.Notify("You don't have enough money."), Times.Once);
-        PersonManagerMock.Verify(p => p.DeleteAsset(CurrentUserMock.Object, It.Is<AssetDto>(a => a.IsDraft)), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You don't have enough money."), Times.Once);
+        PersonServiceMock.Verify(p => p.DeleteAsset(CurrentUser, It.Is<AssetDto>(a => a.IsDraft)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new BuyBigBusinessFirstPayment(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+            PersonServiceMock.Object,
+            UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

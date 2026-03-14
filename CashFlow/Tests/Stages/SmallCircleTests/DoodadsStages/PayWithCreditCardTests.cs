@@ -48,7 +48,7 @@ public class PayWithCreditCardTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<PayWithCreditCard>());
-        CurrentUserMock.Verify(u => u.Notify("Invalid value. Try again."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid value. Try again."), Times.Once);
     }
 
     [TestCase("2000")]
@@ -62,7 +62,7 @@ public class PayWithCreditCardTests : StagesBaseTest
         var initialExpenses = -10;
         var testPerson = new PersonDto
         {
-            Id = CurrentUserMock.Object.Id,
+            Id = CurrentUser.Id,
             Cash = 5000,
             Liabilities =
             [
@@ -81,7 +81,7 @@ public class PayWithCreditCardTests : StagesBaseTest
             ],
         };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage(amount);
@@ -89,19 +89,19 @@ public class PayWithCreditCardTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
-            person.Id == CurrentUserMock.Object.Id &&
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
+            person.Id == CurrentUser.Id &&
             person.Liabilities.First(l => l.Type == Liability.Credit_Card).FullAmount == initialCredit + amount.AsCurrency() &&
             person.Liabilities.First(l => l.Type == Liability.Credit_Card).Cashflow == initialExpenses - 0.03 * amount.AsCurrency()
         )), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUser), Times.Once);
     }
 
     protected override IStage GetTestStage() => new PayWithCreditCard(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

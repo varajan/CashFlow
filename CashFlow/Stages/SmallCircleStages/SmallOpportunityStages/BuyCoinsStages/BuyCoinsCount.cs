@@ -7,7 +7,8 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStage
 public class BuyCoinsCount(
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager) : BuyCoins(termsService, availableAssets, personManager)
+    IPersonService personManager,
+    IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
     public override string Message => Terms.Get(21, CurrentUser, "How much?");
 

@@ -74,8 +74,8 @@ public class DoodadsTests : StagesBaseTest
             340.AsCurrency());
         var creditMessage = string.Format("You've taken {0} from bank.", firstPayment.AsCurrency());
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(new PersonDto { Id = CurrentUserMock.Object.Id, Cash = cash });
-        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Id = CurrentUser.Id, Cash = cash });
+        PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Buy a boat");
@@ -83,22 +83,22 @@ public class DoodadsTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(a => a.CreateAsset(CurrentUserMock.Object, It.Is<AssetDto>(asset =>
-            asset.UserId == CurrentUserMock.Object.Id &&
+        PersonServiceMock.Verify(a => a.CreateAsset(CurrentUser, It.Is<AssetDto>(asset =>
+            asset.UserId == CurrentUser.Id &&
             asset.CashFlow == -340 &&
             asset.Price == 18_000 &&
             asset.Mortgage == 17_000 &&
             asset.IsDraft == false
         )), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
-            person.Id == CurrentUserMock.Object.Id &&
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
+            person.Id == CurrentUser.Id &&
             person.Cash == endCash
         )), Times.AtLeastOnce);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.BuyBoat, 18_000, CurrentUserMock.Object), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(botMessage), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.BuyBoat, 18_000, CurrentUser), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, botMessage), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, creditMessage), Times.Exactly(cash < firstPayment ? 1 : 0));
     }
 
     [Test]
@@ -107,7 +107,7 @@ public class DoodadsTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
-        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object))
+        PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser))
             .Returns([new AssetDto { Type = AssetType.Boat }]);
 
         // Act
@@ -115,12 +115,11 @@ public class DoodadsTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(u => u.Notify("You already have a boat."), Times.Once);
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You already have a boat."), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonServiceMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUser), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new Doodads(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new Doodads(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

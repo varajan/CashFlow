@@ -1,9 +1,10 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class Market(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class Market(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
 

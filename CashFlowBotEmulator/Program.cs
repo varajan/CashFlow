@@ -1,17 +1,19 @@
 ﻿using CashFlow;
-using CashFlow.Data.Users;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlowBotEmulator;
+using CashFlow.Data.Repositories;
 
-ServicesProvider.Init();
+ServicesProvider.Init(new EmulationNotifyService());
 
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();
 var PersonRepository = ServicesProvider.Get<IPersonRepository>();
 var PersonManager = ServicesProvider.Get<IPersonService>();
 var TermsService = ServicesProvider.Get<ITermsRepository>();
+var UserRepository = new UserRepository(DataBase);
 
 while (true)
 {
@@ -36,16 +38,14 @@ while (true)
     HandleUpdateAsync(chatId, message).GetAwaiter().GetResult();
 }
 
-async Task HandleUpdateAsync(int chatId, string message)
+async Task HandleUpdateAsync(long chatId, string message)
 {
     try
     {
-        var notifyService = new EmulationNotifyService(chatId);
-        var user = new CashFlowUsersUser(DataBase, PersonManager, notifyService, chatId);
-        var users = GetOtherUsers(user);
-        var stage = user.Exists
-            ? BaseStage.GetCurrentStage(users, user)
-            : GetStartSage(message, user, users);
+        var user = UserRepository.Get(chatId);
+        var stage = user is null || user.StageName is null
+            ? GetStartSage(chatId, message)
+            : BaseStage.GetCurrentStage(user);
 
         await stage.HandleMessage(message);
         await stage.NextStage.BeforeStage();
@@ -58,25 +58,18 @@ async Task HandleUpdateAsync(int chatId, string message)
     }
 }
 
-static IStage GetStartSage(string userName, ICashFlowUser user, List<ICashFlowUser> users)
+IStage GetStartSage(long chatId, string userName)
 {
-    user.Create();
-    user.Name = userName;
+    var user = new UserDto
+    {
+        Id = chatId,
+        Name = userName,
+    };
 
-    var start = ServicesProvider.Get<ChooseLanguage>()
-        .SetCurrentUser(user)
-        .SetAllUsers(users);
+    UserRepository.Save(user);
 
-    return start;
+    return ServicesProvider.Get<ChooseLanguage>().SetCurrentUser(user);
 }
-
-List<ICashFlowUser> GetOtherUsers(ICashFlowUser currentUser) =>
-    DataBase
-        .GetColumn("SELECT ID FROM Users")
-        .ToLong()
-        .Where(x => x != currentUser.Id)
-        .Select(x => (ICashFlowUser)new CashFlowUsersUser(DataBase, PersonManager, new EmulationNotifyService(x), x))
-        .ToList();
 
 static bool TryReadFirstFile(out int chatId, out string message, out string file)
 {

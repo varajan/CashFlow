@@ -11,13 +11,13 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoins
 public class BuyCoinsCountTests : StagesBaseTest
 {
     private static readonly string[] Counts = ["1", "2", "5"];
-    private AssetDto Asset => new() { UserId = CurrentUserMock.Object.Id, Type = AssetType.Coin, IsDraft = true };
+    private AssetDto Asset => new() { UserId = CurrentUser.Id, Type = AssetType.Coin, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(Counts);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
     }
 
     [Test]
@@ -66,8 +66,8 @@ public class BuyCoinsCountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.Qtty == count.ToInt() &&
                 x.Type == AssetType.Coin &&
@@ -75,7 +75,6 @@ public class BuyCoinsCountTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyCoinsCount(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BuyCoinsCount(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

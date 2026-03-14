@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using Moq;
 
@@ -16,7 +17,7 @@ public class HistoryTests : StagesBaseTest
     ];
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.ReadHistory(CurrentUserMock.Object)).Returns(Records);
+    public void Setup() => PersonServiceMock.Setup(x => x.ReadHistory(CurrentUser)).Returns(Records);
 
     [Test]
     public void History_Question_and_Buttons()
@@ -44,8 +45,8 @@ public class HistoryTests : StagesBaseTest
         var history = "No records found.";
         var buttons = new List<string> { "Main menu" };
 
-        PersonManagerMock.Setup(x => x.ReadHistory(CurrentUserMock.Object)).Returns([]);
-        PersonManagerMock.Setup(x => x.IsHistoryEmpty(CurrentUserMock.Object)).Returns(true);
+        PersonServiceMock.Setup(x => x.ReadHistory(CurrentUser)).Returns([]);
+        PersonServiceMock.Setup(x => x.IsHistoryEmpty(CurrentUser)).Returns(true);
 
         // Act
 
@@ -69,7 +70,7 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
     }
 
     [Test]
@@ -84,7 +85,7 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Never);
     }
 
     [Test]
@@ -99,9 +100,9 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<History>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.First().Date)), Times.Once);
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
@@ -109,8 +110,8 @@ public class HistoryTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock
-            .SetupSequence(x => x.ReadHistory(CurrentUserMock.Object))
+        PersonServiceMock
+            .SetupSequence(x => x.ReadHistory(CurrentUser))
             .Returns([Records.Last()])
             .Returns([])
             .Returns([]);
@@ -121,12 +122,11 @@ public class HistoryTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
-        PersonManagerMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify("No records found."), Times.Once);
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.IsAny<HistoryDto>()), Times.Once);
+        PersonServiceMock.Verify(x => x.RollbackHistory(It.IsAny<PersonDto>(), It.Is<HistoryDto>(x => x.Date == Records.Last().Date)), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "No records found."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

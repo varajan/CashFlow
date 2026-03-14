@@ -4,8 +4,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager)
-    : BaseStage(termsService, personManager)
+public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 

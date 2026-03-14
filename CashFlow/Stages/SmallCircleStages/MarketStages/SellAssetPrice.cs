@@ -8,7 +8,8 @@ public class SellAssetPrice(
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    params AssetType[] assetTypes) : BaseStage(termsService, personManager)
+    IUserRepository userRepository,
+    params AssetType[] assetTypes) : BaseStage(termsService, personManager, userRepository)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 

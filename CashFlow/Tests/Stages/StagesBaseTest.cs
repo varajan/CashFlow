@@ -1,5 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
@@ -9,10 +8,13 @@ namespace CashFlow.Tests.Stages;
 
 public abstract class StagesBaseTest
 {
-    protected Mock<ICashFlowUser> CurrentUserMock;
-    protected List<ICashFlowUser> OtherUsers;
+    protected UserDto CurrentUser;
+    protected List<UserDto> OtherUsers;
     protected Mock<IAvailableAssetsRepository> AvailableAssetsMock;
-    protected Mock<IPersonService> PersonManagerMock;
+    protected Mock<IPersonService> PersonServiceMock;
+    protected Mock<INotifyService> NotifyServiceMock;
+    protected Mock<IUserRepository> UserRepositoryMock;
+    protected Mock<IPersonRepository> PersonRepositoryMock;
     protected Mock<ITermsRepository> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssetsRepository> AssetsMock;
@@ -24,30 +26,35 @@ public abstract class StagesBaseTest
     [SetUp]
     public void SetUp()
     {
-        ServicesProvider.Init();
-
         AvailableAssetsMock = new Mock<IAvailableAssetsRepository>();
-        PersonManagerMock = new Mock<IPersonService>();
+        UserRepositoryMock = new Mock<IUserRepository>();
+        PersonServiceMock = new Mock<IPersonService>();
+        PersonRepositoryMock = new Mock<IPersonRepository>();
         TermsServiceMock = new Mock<ITermsRepository>();
+        NotifyServiceMock = new Mock<INotifyService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssetsRepository>();
 
-        CurrentUserMock = GetUserMock(10, "Test User", true, Circle.Small);
+        ServicesProvider.Init(NotifyServiceMock.Object, PersonRepositoryMock.Object);
+
+        CurrentUser = GetUser(10, "Test User", true, Circle.Small);
         OtherUsers =
             [
-                GetUserMock(1, "1st Active on Small Circle", true, Circle.Small).Object,
-                GetUserMock(2, "1st Active on Big Circle", true, Circle.Big).Object,
-                GetUserMock(3, "1st Inactive on Small Circle", false, Circle.Small).Object,
-                GetUserMock(4, "1st Inactive on Big Circle", false, Circle.Big).Object,
-                GetUserMock(5, "2nd Active on Small Circle", true, Circle.Small).Object,
-                GetUserMock(6, "2nd Active on Big Circle", true, Circle.Big).Object,
-                GetUserMock(7, "2nd Inactive on Small Circle", false, Circle.Small).Object,
-                GetUserMock(8, "2nd Inactive on Big Circle", false, Circle.Big).Object,
+                GetUser(1, "1st Active on Small Circle", true, Circle.Small),
+                GetUser(2, "1st Active on Big Circle", true, Circle.Big),
+                GetUser(3, "1st Inactive on Small Circle", false, Circle.Small),
+                GetUser(4, "1st Inactive on Big Circle", false, Circle.Big),
+                GetUser(5, "2nd Active on Small Circle", true, Circle.Small),
+                GetUser(6, "2nd Active on Big Circle", true, Circle.Big),
+                GetUser(7, "2nd Inactive on Small Circle", false, Circle.Small),
+                GetUser(8, "2nd Inactive on Big Circle", false, Circle.Big),
             ];
 
+        UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
+
         TermsServiceMock
-            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<ICashFlowUser>(), It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns((int id, ICashFlowUser user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<object[]>()))
+            .Returns((int id, UserDto user, string defaultValue, object[] args) => string.Format(defaultValue, args));
     }
 
     [Test]
@@ -63,16 +70,25 @@ public abstract class StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
-    protected Mock<ICashFlowUser> GetUserMock(long id, string name, bool isActive, Circle cirle)
+    protected UserDto GetUser(long id, string name, bool isActive, Circle cirle)
     {
-        var user = new Mock<ICashFlowUser>();
-        user.SetupGet(u => u.Id).Returns(id);
-        user.SetupGet(u => u.IsActive).Returns(isActive);
-        user.SetupGet(u => u.Name).Returns(name);
-        user.SetupGet(u => u.Description).Returns($"{name} at {cirle} circle");
+        var user = new UserDto
+        {
+            Id = id,
+            Name = name
+        };
 
-        var testPerson = new PersonDto { Id = id, Cash = 100, BigCircle = cirle == Circle.Big };
-        PersonManagerMock.Setup(p => p.Read(user.Object)).Returns(testPerson);
+        var testPerson = new PersonDto
+        {
+            Id = id,
+            Cash = 100,
+            BigCircle = cirle == Circle.Big,
+            LastActive = isActive ? DateTime.Now : DateTime.Now.AddHours(-1)
+        };
+
+        UserRepositoryMock.Setup(r => r.Get(id)).Returns(user);
+        PersonServiceMock.Setup(p => p.Read(user)).Returns(testPerson);
+        PersonRepositoryMock.Setup(p => p.Get(id)).Returns(testPerson);
 
         return user;
     }

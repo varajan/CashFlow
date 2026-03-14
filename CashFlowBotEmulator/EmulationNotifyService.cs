@@ -6,28 +6,30 @@ using Polly.Retry;
 
 namespace CashFlowBotEmulator;
 
-public class EmulationNotifyService(long chatId) : INotifyService
+public class EmulationNotifyService : INotifyService
 {
-    private string FileName => $"{chatId}.msg";
+    private static string FileName(long userId) => $"{userId}.msg";
 
-    public Task SetButtons(IStage stage)
+    public Task SetButtons(long userId, IStage stage)
     {
         Task setButtons()
         {
+            var fileName = FileName(userId);
             var @object = new { stage.Message, stage.Buttons, DateTime = DateTime.UtcNow };
-            File.AppendAllText(FileName, $"\n{@object.Serialize()}");
+            File.AppendAllText(fileName, $"\n{@object.Serialize()}");
             return Task.CompletedTask;
         }
 
         return _retryPolicy.ExecuteAsync(setButtons);
     }
 
-    public Task Notify(string message)
+    public Task Notify(long userId, string message)
     {
         Task notify()
         {
+            var fileName = FileName(userId);
             var @object = new { Message = message, DateTime = DateTime.UtcNow };
-            File.AppendAllText(FileName, $"\n{@object.Serialize()}");
+            File.AppendAllText(fileName, $"\n{@object.Serialize()}");
             return Task.CompletedTask;
         }
 

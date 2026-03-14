@@ -11,21 +11,21 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksSt
 [TestFixture]
 public class BuyStocksCountTests : StagesBaseTest
 {
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 50, Type = AssetType.Stock, IsDraft = true };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Price = 50, Type = AssetType.Stock, IsDraft = true };
     
     private List<AssetDto> AssetsList = [];
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns([Asset]);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
 
         AssetsList = [];
-        PersonManagerMock
-            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
+        PersonServiceMock
+            .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
+            .Callback<UserDto, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -47,15 +47,15 @@ public class BuyStocksCountTests : StagesBaseTest
 
         var asset = new AssetDto
         {
-            UserId = CurrentUserMock.Object.Id,
+            UserId = CurrentUser.Id,
             Type = AssetType.Stock,
             Price = price,
             IsDraft = true
         };
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns([asset]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([asset]);
 
-        var person = new PersonDto() { Id = CurrentUserMock.Object.Id, Cash = cash };
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(person);
+        var person = new PersonDto() { Id = CurrentUser.Id, Cash = cash };
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);
 
         // Act
 
@@ -103,12 +103,12 @@ public class BuyStocksCountTests : StagesBaseTest
         Assert.That(AssetsList[1].Qtty, Is.EqualTo(count.AsCurrency()));
         Assert.That(AssetsList[1].IsDraft, Is.False);
 
-        PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
+        PersonServiceMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(
+        PersonServiceMock.Verify(x => x.AddHistory(
             ActionType.BuyStocks,
             count.AsCurrency(),
-            It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
+            It.Is<UserDto>(x => x.Id == CurrentUser.Id),
             Asset.Id
         ), Times.Once);
     }
@@ -126,13 +126,13 @@ public class BuyStocksCountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCredit>());
 
-        PersonManagerMock.Verify(m => m.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
+        PersonServiceMock.Verify(m => m.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
     }
 
     protected override IStage GetTestStage() => new BuyStocksCount(
         TermsServiceMock.Object,
         AvailableAssetsMock.Object,
-        PersonManagerMock.Object)
-    .SetCurrentUser(CurrentUserMock.Object)
-    .SetAllUsers(OtherUsers);
+        PersonServiceMock.Object,
+        UserRepositoryMock.Object)
+    .SetCurrentUser(CurrentUser);
 }

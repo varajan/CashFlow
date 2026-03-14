@@ -16,7 +16,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expected = personExists ? typeof(Start) : typeof(ChooseLanguage);
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
+        PersonServiceMock.Setup(x => x.Exists(CurrentUser)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage("cancel");
@@ -32,7 +32,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var languages = new List<string> { "EN", "DE", "UA" };
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
+        PersonServiceMock.Setup(x => x.Exists(CurrentUser)).Returns(personExists);
         if (personExists) languages.Add("Cancel");
 
         // Act
@@ -52,7 +52,7 @@ public class ChooseLanguageTests : StagesBaseTest
         var testStage = GetTestStage();
         var expected = personExists ? typeof(Start) : typeof(ChooseLanguage);
 
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
+        PersonServiceMock.Setup(x => x.Exists(CurrentUser)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage("IT");
@@ -66,7 +66,7 @@ public class ChooseLanguageTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(x => x.Exists(CurrentUserMock.Object)).Returns(personExists);
+        PersonServiceMock.Setup(x => x.Exists(CurrentUser)).Returns(personExists);
 
         // Act
         await testStage.HandleMessage($"{language}");
@@ -75,7 +75,6 @@ public class ChooseLanguageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
-    protected override IStage GetTestStage() => new ChooseLanguage(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new ChooseLanguage(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

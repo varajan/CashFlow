@@ -1,16 +1,15 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.DTOs;
 
 namespace CashFlow.Stages;
 
 public interface IStage
 {
-    ICashFlowUser CurrentUser { get; }
+    UserDto CurrentUser { get; }
     string Name { get; }
     string Message { get; }
     IEnumerable<string> Buttons { get; }
     IStage NextStage { get; }
-    IStage SetCurrentUser(ICashFlowUser user);
-    IStage SetAllUsers(IList<ICashFlowUser> users);
+    IStage SetCurrentUser(UserDto user);
 
     Task BeforeStage();
     Task HandleMessage(string message);

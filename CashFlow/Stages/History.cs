@@ -1,9 +1,10 @@
 ﻿using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class History(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class History(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => Records.Any()
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))

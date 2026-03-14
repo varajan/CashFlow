@@ -5,7 +5,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class ReduceLiabilities(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     private IEnumerable<LiabilityDto> Liabilities => PersonManager.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
 

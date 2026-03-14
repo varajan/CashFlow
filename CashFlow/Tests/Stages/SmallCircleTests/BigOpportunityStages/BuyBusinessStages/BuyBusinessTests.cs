@@ -15,7 +15,7 @@ public class BuyBusinessTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.BusinessType, It.IsAny<Language>())).Returns(Names);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.BusinessType, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BusinessType, CurrentUser)).Returns([]);
     }
 
     [Test]
@@ -60,18 +60,18 @@ public class BuyBusinessTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessPrice>());
 
-        PersonManagerMock.Verify(a => a.CreateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.CreateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.Title == title &&
                 x.Qtty == 1 &&
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.Business &&
                 x.IsDraft)
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyBusiness(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() =>
+        new BuyBusiness(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

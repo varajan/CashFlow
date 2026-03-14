@@ -23,8 +23,8 @@ public abstract class SellAssetBaseTest : StagesBaseTest
             AssetType.SmallBusinessType
         };
 
-        PersonManagerMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUserMock.Object))
-            .Returns((AssetDto asset, ICashFlowUser user) => $"{asset.Title} Text");
+        PersonServiceMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUser))
+            .Returns((AssetDto asset, UserDto user) => $"{asset.Title} Text");
 
         int id = 0;
         foreach (var type in assetTypes)
@@ -35,7 +35,7 @@ public abstract class SellAssetBaseTest : StagesBaseTest
                 new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No3", CashFlow = 100 * id, MarkedToSell = false },
             ];
 
-            PersonManagerMock.Setup(a => a.ReadAllAssets(type, CurrentUserMock.Object)).Returns(assetsOfType);
+            PersonServiceMock.Setup(a => a.ReadAllAssets(type, CurrentUser)).Returns(assetsOfType);
             Assets.AddRange(assetsOfType);
         }
     }

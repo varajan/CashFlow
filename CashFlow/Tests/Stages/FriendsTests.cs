@@ -1,4 +1,5 @@
-﻿using CashFlow.Stages;
+﻿using CashFlow.Extensions;
+using CashFlow.Stages;
 using Moq;
 
 namespace CashFlow.Tests.Stages;
@@ -12,7 +13,8 @@ public class FriendsTests : StagesBaseTest
     public void Friends_Question_and_Buttons(bool onSmall, bool onBig)
     {
         // Arrange
-        OtherUsers = OtherUsers.Where(u => u.IsActive && (u.Name.Contains("Big") == onBig || u.Name.Contains("Small") == onSmall)).ToList();
+        OtherUsers = OtherUsers.Where(u => u.IsActive() && (u.Name.Contains("Big") == onBig || u.Name.Contains("Small") == onSmall)).ToList();
+        UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
 
         var testStage = GetTestStage();
         var buttons = OtherUsers.Select(u => u.Name).Append("Cancel");
@@ -33,19 +35,19 @@ public class FriendsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var testUser = OtherUsers.First(u => u.IsActive);
+        var testUser = OtherUsers.First(u => u.IsActive());
         var description = $"{testUser.Name} description";
         var top5 = $"{testUser.Name} history";
 
-        PersonManagerMock.Setup(p => p.GetDescription(testUser, true)).Returns(description);
-        PersonManagerMock.Setup(p => p.HistoryTopFive(testUser, CurrentUserMock.Object)).Returns(top5);
+        PersonServiceMock.Setup(p => p.GetDescription(testUser, true)).Returns(description);
+        PersonServiceMock.Setup(p => p.HistoryTopFive(testUser, CurrentUser)).Returns(top5);
 
         // Act
         await testStage.HandleMessage(testUser.Name.ToLower());
 
         // Assert
-        CurrentUserMock.Verify(u => u.Notify(description), Times.Once);
-        CurrentUserMock.Verify(u => u.Notify(top5), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, description), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, top5), Times.Once);
     }
 
     [Test]
@@ -53,17 +55,16 @@ public class FriendsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var testUser = OtherUsers.First(u => !u.IsActive);
+        var testUser = OtherUsers.First(u => !u.IsActive());
 
         // Act
         await testStage.HandleMessage(testUser.Name.ToLower());
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Friends>());
-        CurrentUserMock.Verify(u => u.Notify(It.IsAny<string>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new Friends(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new Friends(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

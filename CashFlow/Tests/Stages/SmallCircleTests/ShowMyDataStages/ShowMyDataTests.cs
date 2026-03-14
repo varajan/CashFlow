@@ -1,6 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
@@ -26,8 +26,8 @@ public class ShowMyDataTests : StagesBaseTest
             "Main menu",
         };
 
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, true)).Returns("Compact description");
-        PersonManagerMock.Setup(p => p.GetDescription(CurrentUserMock.Object, false)).Returns(description);
+        PersonServiceMock.Setup(p => p.GetDescription(CurrentUser, true)).Returns("Compact description");
+        PersonServiceMock.Setup(p => p.GetDescription(CurrentUser, false)).Returns(description);
 
         // Act
 
@@ -78,7 +78,7 @@ public class ShowMyDataTests : StagesBaseTest
         var liabilities = new List<LiabilityDto> { new() { FullAmount = 1 } };
         var testPerson = new PersonDto { Liabilities = haveLiabilities ? liabilities : [] };
 
-        PersonManagerMock.Setup(p => p.Read(It.IsAny<ICashFlowUser>())).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(It.IsAny<UserDto>())).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Reduce Liabilities");
@@ -104,32 +104,31 @@ public class ShowMyDataTests : StagesBaseTest
         var amount = (cashFlow + salary) / 10;
         var testPerson = new PersonDto
         {
-            Id = CurrentUserMock.Object.Id,
+            Id = CurrentUser.Id,
             Cash = cash,
             Salary = salary,
             Assets = [ new() { CashFlow = cashFlow } ],
         };
 
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(testPerson);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
         await testStage.HandleMessage("Charity - Pay 10%");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(u => u.Notify(message), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<ICashFlowUser>()), Times.Exactly(payed));
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.Charity, amount, CurrentUserMock.Object), Times.Exactly(payed));
+        PersonServiceMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), It.IsAny<UserDto>()), Times.Exactly(payed));
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.Charity, amount, CurrentUser), Times.Exactly(payed));
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Exactly(payed));
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash - amount)), Times.Exactly(payed));
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Exactly(payed));
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash - amount)), Times.Exactly(payed));
     }
 
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    protected override IStage GetTestStage() => new ShowMyData(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new ShowMyData(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

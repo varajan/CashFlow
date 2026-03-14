@@ -31,7 +31,7 @@ public class StopGameTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Delete(CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(p => p.Delete(CurrentUser), Times.Once);
     }
 
     [Test]
@@ -46,10 +46,9 @@ public class StopGameTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(p => p.Delete(CurrentUserMock.Object), Times.Never);
+        PersonServiceMock.Verify(p => p.Delete(CurrentUser), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new StopGame(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new StopGame(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

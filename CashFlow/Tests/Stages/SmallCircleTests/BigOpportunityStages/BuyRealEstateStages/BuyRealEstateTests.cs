@@ -15,7 +15,7 @@ public class BuyRealEstateTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.RealEstateBigType, It.IsAny<Language>())).Returns(Names);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstateBigType, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstateBigType, CurrentUser)).Returns([]);
     }
 
     [Test]
@@ -60,18 +60,17 @@ public class BuyRealEstateTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBigRealEstatePrice>());
 
-        PersonManagerMock.Verify(a => a.CreateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.CreateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.Title == title &&
                 x.Qtty == 1 &&
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.RealEstate &&
                 x.IsDraft)
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyBigRealEstate(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BuyBigRealEstate(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

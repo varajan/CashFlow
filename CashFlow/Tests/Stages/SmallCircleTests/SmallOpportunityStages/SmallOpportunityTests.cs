@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
@@ -14,7 +15,7 @@ public class SmallOpportunityTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([]);
     }
 
     [Test]
@@ -76,7 +77,7 @@ public class SmallOpportunityTests : StagesBaseTest
 
         if (hasStocks)
         {
-            PersonManagerMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUserMock.Object)).Returns([new AssetDto()]);
+            PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([new AssetDto()]);
         }
 
         // Act
@@ -85,7 +86,7 @@ public class SmallOpportunityTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
 
-        CurrentUserMock.Verify(u => u.Notify("You have no stocks."), Times.Exactly(hasStocks ? 0 : 1));
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no stocks."), Times.Exactly(hasStocks ? 0 : 1));
     }
 
     [Test]
@@ -101,7 +102,6 @@ public class SmallOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallOpportunity>());
     }
 
-    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new SmallOpportunity(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

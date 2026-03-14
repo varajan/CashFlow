@@ -1,6 +1,6 @@
 ﻿using CashFlow;
-using CashFlow.Data.Users;
-using CashFlow.Extensions;
+using CashFlow.Data.DTOs;
+using CashFlow.Data.Repositories;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using System.Diagnostics;
@@ -16,7 +16,7 @@ public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
-    private static IPersonService PersonManager => ServicesProvider.Get<IPersonService>();
+    private static UserRepository UserRepository => new(DataBase);
 
     private static string BotToken
     {
@@ -46,11 +46,13 @@ public class CashFlowBot
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 
-        ServicesProvider.Init();
 
         var botClient = new TelegramBotClient(BotToken);
         using var cts = new CancellationTokenSource();
         var receiverOptions = new ReceiverOptions { AllowedUpdates = [] };
+        var notifyService = new TelegramBotNotifyService(botClient);
+
+        ServicesProvider.Init(notifyService);
 
         botClient.StartReceiving(
             updateHandler: HandleUpdateAsync,
@@ -84,12 +86,10 @@ public class CashFlowBot
 
         try
         {
-            var notifyService = new TelegramBotNotifyService(bot, message.Chat.Id);
-            var user = new CashFlowUsersUser(DataBase, PersonManager, notifyService, message.Chat.Id);
-            var users = GetOtherUsers(bot, user);
-            var stage = user.Exists
-                ? BaseStage.GetCurrentStage(users, user)
-                : GetStartSage(message, user, users);
+            var user = UserRepository.Get(message.Chat.Id);
+            var stage = user is null || user.StageName is null
+                ? GetStartSage(message)
+                : BaseStage.GetCurrentStage(user);
 
             await stage.HandleMessage(message.Text.Trim());
             await stage.NextStage.BeforeStage();
@@ -102,26 +102,18 @@ public class CashFlowBot
         }
     }
 
-    private static IStage GetStartSage(Message message, ICashFlowUser user, List<ICashFlowUser> users)
+    private static IStage GetStartSage(Message message)
     {
         var userName = $"{message.From?.FirstName} {message.From?.LastName}".Trim();
         userName = string.IsNullOrEmpty(userName) ? message.From?.Username : userName;
+        var user = new UserDto
+        {
+            Id = message.Chat.Id,
+            Name = userName,
+        };
 
-        user.Create();
-        user.Name = userName;
+        UserRepository.Save(user);
 
-        var start = ServicesProvider.Get<ChooseLanguage>()
-            .SetCurrentUser(user)
-            .SetAllUsers(users);
-
-        return start;
+        return ServicesProvider.Get<ChooseLanguage>().SetCurrentUser(user);
     }
-
-    private static List<ICashFlowUser> GetOtherUsers(ITelegramBotClient bot, ICashFlowUser currentUser) =>
-        DataBase
-            .GetColumn("SELECT ID FROM Users")
-            .ToLong()
-            .Where(x => x != currentUser.Id)
-            .Select(x => (ICashFlowUser)new CashFlowUsersUser(DataBase, PersonManager, new TelegramBotNotifyService(bot, x), x))
-            .ToList();
 }

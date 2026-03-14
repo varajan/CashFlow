@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
@@ -39,8 +40,8 @@ public class SellBusinessTests : SellAssetBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellBusiness>());
-        CurrentUserMock.Verify(c => c.Notify("Invalid business number."), Times.Once);
-        CurrentUserMock.Verify(c => c.Notify(It.IsAny<string>()), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid business number."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
     }
 
     [Test]
@@ -56,11 +57,10 @@ public class SellBusinessTests : SellAssetBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellBusinessPrice>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
+        PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Once);
+        PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellBusiness(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new SellBusiness(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -8,7 +8,8 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class IncreaseCashflow(
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager) : BaseStage(termsService, personManager)
+    IPersonService personManager,
+    IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 

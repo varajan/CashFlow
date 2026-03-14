@@ -11,13 +11,13 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksSt
 public class BuyStocksPriceTests : StagesBaseTest
 {
     private static readonly string[] Prices = ["$10", "$50"];
-    private AssetDto Asset => new() { Id = 123, Title = "Stock", UserId = CurrentUserMock.Object.Id, Type = AssetType.Stock, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, Title = "Stock", UserId = CurrentUser.Id, Type = AssetType.Stock, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.StockPrice)).Returns(Prices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
     }
 
     [Test]
@@ -70,8 +70,8 @@ public class BuyStocksPriceTests : StagesBaseTest
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCount>());
 
-            PersonManagerMock.Verify(m => m.UpdateAsset(
-                CurrentUserMock.Object,
+            PersonServiceMock.Verify(m => m.UpdateAsset(
+                CurrentUser,
                 It.Is<AssetDto>(x => x.Id == Asset.Id && x.Price == price.AsCurrency() && x.Qtty == 0)
             ), Times.Once);
         });
@@ -80,7 +80,7 @@ public class BuyStocksPriceTests : StagesBaseTest
     protected override IStage GetTestStage() => new BuyStocksPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+            PersonServiceMock.Object,
+            UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -10,14 +10,14 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.BigOpportunityStages.BuyBusines
 [TestFixture]
 public class BuyBusinessCreditTests : StagesBaseTest
 {
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 300 };
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Price = 10_000, Mortgage = 8_500, Qtty = 1, Type = AssetType.Business, IsDraft = true };
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Price = 10_000, Mortgage = 8_500, Qtty = 1, Type = AssetType.Business, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([Asset]);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 
     [Test]
@@ -32,14 +32,14 @@ public class BuyBusinessCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(a => a.DeleteAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.Business)
         ), Times.Once);
 
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
@@ -86,14 +86,14 @@ public class BuyBusinessCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyBusinessCashFlow>());
 
-        CurrentUserMock.Verify(u => u.Notify($"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
-        PersonManagerMock.Verify(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
     }
 
     protected override IStage GetTestStage() => new BuyBusinessCredit(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+            PersonServiceMock.Object,
+            UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

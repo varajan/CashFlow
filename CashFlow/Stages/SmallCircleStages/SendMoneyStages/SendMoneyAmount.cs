@@ -1,5 +1,4 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
@@ -9,7 +8,8 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoneyAmount(
     IPersonService personManager,
     ITermsRepository termsService,
-    IAvailableAssetsRepository availableAssets) : BaseStage(termsService, personManager)
+    IAvailableAssetsRepository availableAssets,
+    IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
@@ -80,7 +80,7 @@ public class SendMoneyAmount(
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
         var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
-                .Where(x => x.IsActive)
+                .Where(x => x.IsActive())
                 .Append(CurrentUser)
                 .ToList();
 

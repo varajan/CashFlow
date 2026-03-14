@@ -4,6 +4,6 @@ namespace CashFlow.Interfaces;
 
 public interface INotifyService
 {
-    Task SetButtons(IStage stage);
-    Task Notify(string message);
+    Task SetButtons(long userId, IStage stage);
+    Task Notify(long userId, string message);
 }

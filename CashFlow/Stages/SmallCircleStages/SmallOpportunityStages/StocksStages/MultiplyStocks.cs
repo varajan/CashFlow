@@ -1,16 +1,17 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class StocksMultiply(ITermsRepository termsService, IPersonService personManager)
-    : MultiplyStocks(ActionType.Stocks1To2, termsService, personManager) { }
+public class StocksMultiply(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : MultiplyStocks(ActionType.Stocks1To2, termsService, personManager, userRepository) { }
 
-public class StocksReduce(ITermsRepository termsService, IPersonService personManager)
-    : MultiplyStocks(ActionType.Stocks2To1, termsService, personManager) { }
+public class StocksReduce(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : MultiplyStocks(ActionType.Stocks2To1, termsService, personManager, userRepository) { }
 
-public abstract class MultiplyStocks(ActionType actionType, ITermsRepository termsService, IPersonService personManager)
-    : BaseStage(termsService, personManager)
+public abstract class MultiplyStocks(ActionType actionType, ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     protected ActionType ActionType { get; } = actionType;
 

@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ShowMyData(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class ShowMyData(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => PersonManager.GetDescription(CurrentUser, false);
 

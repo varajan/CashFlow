@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
@@ -22,7 +23,7 @@ public class MarketTests : StagesBaseTest
             AssetType.SmallBusinessType
         };
 
-        assetTypes.ForEach(t => PersonManagerMock.Setup(a => a.ReadAllAssets(t, CurrentUserMock.Object)).Returns([new AssetDto()]));
+        assetTypes.ForEach(t => PersonServiceMock.Setup(a => a.ReadAllAssets(t, CurrentUser)).Returns([new AssetDto()]));
     }
 
     [Test]
@@ -72,14 +73,14 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Real Estate");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(x => x.Notify("You have no properties."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no properties."), Times.Once);
     }
 
     [Test]
@@ -87,14 +88,14 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Land");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(x => x.Notify("You have no Land."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no Land."), Times.Once);
     }
 
     [Test]
@@ -102,15 +103,15 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([]);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUser)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(x => x.Notify("You have no Business."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no Business."), Times.Once);
     }
 
     [Test]
@@ -118,7 +119,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusiness, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -132,7 +133,7 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Business");
@@ -146,14 +147,14 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Sell Coins");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(x => x.Notify("You have no coins."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no coins."), Times.Once);
     }
 
     [Test]
@@ -161,14 +162,14 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Increase cash flow");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        CurrentUserMock.Verify(x => x.Notify("You have no small Business."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no small Business."), Times.Once);
     }
 
     [Test]
@@ -184,7 +185,6 @@ public class MarketTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Market>());
     }
 
-    protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

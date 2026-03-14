@@ -11,8 +11,9 @@ public abstract class BuyAssetCashFlow<TNextStage>(
     ActionType actionType,
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager) where TNextStage : BaseStage
+    IPersonService personManager,
+    IUserRepository userRepository)
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");

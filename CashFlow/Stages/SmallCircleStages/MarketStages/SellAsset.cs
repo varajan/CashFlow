@@ -8,8 +8,9 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class SellAsset<TNextStage>(
     ITermsRepository termsService,
     IPersonService personManager,
+    IUserRepository userRepository,
     params AssetType[] assetTypes)
-    : BaseStage(termsService, personManager) where TNextStage : BaseStage
+    : BaseStage(termsService, personManager, userRepository) where TNextStage : BaseStage
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 

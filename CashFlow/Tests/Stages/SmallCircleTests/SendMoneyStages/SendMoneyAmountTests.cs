@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using Moq;
@@ -12,17 +11,17 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
 [TestFixture]
 public class SendMoneyAmountTests : StagesBaseTest
 {
-    private ICashFlowUser Recipient => OtherUsers.Last(u => u.IsActive && u.Description.Contains("Small"));
-    private PersonDto TestPerson => new() { Id = CurrentUserMock.Object.Id, Cash = 100 };
+    private UserDto Recipient => OtherUsers.Last(u => u.IsActive() && u.Name.Contains("Small"));
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 100 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
-    private AssetDto TransferAsset => new() { UserId = CurrentUserMock.Object.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
+    private AssetDto TransferAsset => new() { UserId = CurrentUser.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
 
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([TransferAsset]);
-        PersonManagerMock.Setup(p => p.Read(CurrentUserMock.Object)).Returns(TestPerson);
-        PersonManagerMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([TransferAsset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
+        PersonServiceMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
     }
 
     [Test]
@@ -37,14 +36,14 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonManagerMock.Verify(a => a.DeleteAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
@@ -87,9 +86,9 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
-        CurrentUserMock.Verify(x => x.Notify("Invalid value. Try again."), Times.Once, "Message to user should be sent");
-        PersonManagerMock.Verify(x => x.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid value. Try again."), Times.Once, "Message to user should be sent");
+        PersonServiceMock.Verify(x => x.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     [Test]
@@ -97,8 +96,8 @@ public class SendMoneyAmountTests : StagesBaseTest
     {
         // Arrange
         var transferAmount = 100;
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, Recipient.Name, transferAmount.AsCurrency());
-        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency());
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         var testStage = GetTestStage();
 
@@ -110,37 +109,37 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        PersonManagerMock.Verify(a => a.DeleteAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(
+        PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
             x.Cash == TestPerson.Cash - transferAmount)
             ), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(
+        PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == RecipientPerson.Id &&
             x.Cash == RecipientPerson.Cash + transferAmount)
             ), Times.Once);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Once);
 
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), Times.Once));
     }
 
     [Test]
@@ -149,11 +148,11 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUserMock.Object)).Returns([transferAsset]);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([transferAsset]);
 
         var transferAmount = 100;
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUserMock.Object.Name, "Bank", transferAmount.AsCurrency());
-        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, "Bank", transferAmount.AsCurrency());
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         var testStage = GetTestStage();
 
@@ -165,33 +164,33 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        PersonManagerMock.Verify(a => a.DeleteAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Type == AssetType.Transfer)
         ), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(
+        PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
             x.Id == TestPerson.Id &&
             x.Cash == TestPerson.Cash - transferAmount)
             ), Times.Once);
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(x =>x.Id == RecipientPerson.Id)), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x =>x.Id == RecipientPerson.Id)), Times.Never);
 
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUserMock.Object), Times.Once);
-        PersonManagerMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Never);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Never);
 
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(message), Times.Once));
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), Times.Once));
     }
 
     [Test]
@@ -207,21 +206,21 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyCredit>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.UserId == TestPerson.Id &&
                 x.Qtty == transferAmount &&
                 x.Type == AssetType.Transfer)
             ), Times.Once);
 
-        PersonManagerMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
     protected override IStage GetTestStage() => new SendMoneyAmount(
-        PersonManagerMock.Object,
+        PersonServiceMock.Object,
         TermsServiceMock.Object,
-        AvailableAssetsMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+        AvailableAssetsMock.Object,
+        UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

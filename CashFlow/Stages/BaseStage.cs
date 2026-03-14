@@ -9,31 +9,30 @@ namespace CashFlow.Stages;
 public abstract class BaseStage : IStage
 {
     public string Name => GetType().FullName;
-    public ICashFlowUser CurrentUser { get; private set; }
-    public IList<ICashFlowUser> OtherUsers { get; set; }
+    public UserDto CurrentUser { get; private set; }
     public virtual string Message => default;
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
     protected ITermsRepository Terms { get; }
     protected IPersonService PersonManager { get; }
+    protected IUserRepository UserRepository { get; }
 
-    public BaseStage(ITermsRepository termsService, IPersonService personManager)
+    public IList<UserDto> OtherUsers => [.. UserRepository.GetAll().Where(u => u.Id != CurrentUser.Id)];
+
+    public BaseStage(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
     {
         Terms = termsService;
         PersonManager = personManager;
+        UserRepository = userRepository;
         NextStage = this;
     }
 
-    public IStage SetCurrentUser(ICashFlowUser user)
+    public IStage SetCurrentUser(UserDto user)
     {
         CurrentUser = user;
         CurrentUser.StageName = Name;
-        return this;
-    }
-
-    public IStage SetAllUsers(IList<ICashFlowUser> users)
-    {
-        OtherUsers = users;
+        var UserRepository = ServicesProvider.Get<IUserRepository>();
+        UserRepository.Save(CurrentUser);
         return this;
     }
 
@@ -41,22 +40,20 @@ public abstract class BaseStage : IStage
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => CurrentUser.SetButtons(this);
 
-    public static IStage GetCurrentStage(IList<ICashFlowUser> otherUsers, ICashFlowUser currentUser)
+    public static IStage GetCurrentStage(UserDto currentUser)
     {
         var stage = Type.GetType(currentUser.StageName);
         if (stage is null) throw new Exception($"<{stage}> stage not found!");
 
         var currentStage = (IStage)ServicesProvider.Get(stage);
 
-        return currentStage
-            .SetCurrentUser(currentUser)
-            .SetAllUsers(otherUsers);
+        return currentStage.SetCurrentUser(currentUser);
     }
 
     protected IStage New<T>() where T : BaseStage
     {
         var stage = (IStage)ServicesProvider.Get<T>();
-        return stage.SetCurrentUser(CurrentUser).SetAllUsers(OtherUsers);
+        return stage.SetCurrentUser(CurrentUser);
     }
 
     protected async Task ProcessBankruptcy(PersonDto person)

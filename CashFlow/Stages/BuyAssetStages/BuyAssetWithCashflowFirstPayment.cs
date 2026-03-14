@@ -9,8 +9,9 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     AssetType assetType,
     ITermsRepository termsService,
     IAvailableAssetsRepository availableAssets,
-    IPersonService personManager)
-     : BaseStage(termsService, personManager)
+    IPersonService personManager,
+    IUserRepository userRepository)
+     : BaseStage(termsService, personManager, userRepository)
         where TNextStage : BaseStage
         where TCreditStage : BaseStage
 {

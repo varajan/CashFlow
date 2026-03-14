@@ -1,10 +1,12 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(ITermsRepository termsService, IPersonService personManager) : BaseStage(termsService, personManager)
+public class SendMoney(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => Terms.Get(147, CurrentUser, "Whom?");
 
@@ -14,7 +16,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
         {
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers
-                .Where(x => x.IsActive && PersonManager.Read(x) is { BigCircle: false })
+                .Where(x => x.IsActive() && PersonManager.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
                 .ToList();
 
@@ -31,7 +33,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
         }
 
         if (MessageEquals(message, 149, "Bank") ||
-            OtherUsers.Any(x => x.IsActive && PersonManager.Read(x) is { BigCircle: false } && x.Name == message))
+            OtherUsers.Any(x => x.IsActive() && PersonManager.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto
             {

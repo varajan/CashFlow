@@ -6,18 +6,18 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace CashFlowBot;
 
-public class TelegramBotNotifyService(ITelegramBotClient bot, long chatId) : INotifyService
+public class TelegramBotNotifyService(ITelegramBotClient bot) : INotifyService
 {
-    public async Task SetButtons(IStage stage)
+    public async Task SetButtons(long userId, IStage stage)
     {
         if (stage.Message is null || stage.Buttons.Count() == 0) return;
 
         var buttonsInRow = stage.Buttons.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = GetButtons([.. stage.Buttons], buttonsInRow);
-        await bot.SendMessage(chatId, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
+        await bot.SendMessage(userId, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
-    public async Task Notify(string message) => await bot.SendMessage(chatId, message, parseMode: ParseMode.Markdown);
+    public async Task Notify(long userId, string message) => await bot.SendMessage(userId, message, parseMode: ParseMode.Markdown);
 
     private static ReplyKeyboardMarkup GetButtons(string[] buttons, int inRow)
     {
@@ -36,7 +36,7 @@ public class TelegramBotNotifyService(ITelegramBotClient bot, long chatId) : INo
             if (x.Count == 1) { rkm.Keyboard = rkm.Keyboard.Append([x[0]]); }
         }
 
-        rkm.Keyboard = rkm.Keyboard.Append(new KeyboardButton[] { last });
+        rkm.Keyboard = rkm.Keyboard.Append([last]);
 
         return rkm;
     }

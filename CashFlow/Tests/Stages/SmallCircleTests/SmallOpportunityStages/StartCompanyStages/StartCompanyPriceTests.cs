@@ -12,7 +12,7 @@ namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCom
 public class StartCompanyPriceTests: StagesBaseTest
 {
     private static readonly string[] CompanyPrices = ["$100", "$500"];
-    private AssetDto Asset => new() { Id = 123, UserId = CurrentUserMock.Object.Id, Type = AssetType.SmallBusinessType, IsDraft = true };
+    private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.SmallBusinessType, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
 
@@ -21,10 +21,10 @@ public class StartCompanyPriceTests: StagesBaseTest
     {
         AssetsList = [];
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.SmallBusinessBuyPrice)).Returns(CompanyPrices);
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUserMock.Object)).Returns([Asset]);
-        PersonManagerMock
-            .Setup(a => a.UpdateAsset(CurrentUserMock.Object, It.IsAny<AssetDto>()))
-            .Callback<ICashFlowUser, AssetDto>((user, dto) =>
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([Asset]);
+        PersonServiceMock
+            .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
+            .Callback<UserDto, AssetDto>((user, dto) =>
                 AssetsList.Add(dto.Clone())
             );
     }
@@ -72,7 +72,7 @@ public class StartCompanyPriceTests: StagesBaseTest
         var person = new PersonDto { Cash = 10_000 };
         var personCash = person.Cash - price.AsCurrency();
 
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage(price);
@@ -88,12 +88,12 @@ public class StartCompanyPriceTests: StagesBaseTest
             Assert.That(AssetsList[1].Price, Is.EqualTo(price.AsCurrency()));
             Assert.That(AssetsList[1].IsDraft, Is.False);
 
-            PersonManagerMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
+            PersonServiceMock.Verify(m => m.Update(It.Is<PersonDto>(x => x.Cash == personCash)), Times.Once);
 
-            PersonManagerMock.Verify(x => x.AddHistory(
+            PersonServiceMock.Verify(x => x.AddHistory(
                     ActionType.StartCompany,
                     price.AsCurrency(),
-                    It.Is<ICashFlowUser>(x => x.Id == CurrentUserMock.Object.Id),
+                    It.Is<UserDto>(x => x.Id == CurrentUser.Id),
                     Asset.Id
                 ), Times.Once);
         });
@@ -111,8 +111,8 @@ public class StartCompanyPriceTests: StagesBaseTest
 
         asset.Price = price;
 
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUserMock.Object)).Returns([asset]);
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
         await testStage.HandleMessage($"${price}");
@@ -126,10 +126,10 @@ public class StartCompanyPriceTests: StagesBaseTest
             Assert.That(AssetsList[0].Price, Is.EqualTo(price));
             Assert.That(AssetsList[0].IsDraft, Is.True);
 
-            PersonManagerMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
-            PersonManagerMock.Verify(x => x.AddHistory(ActionType.StartCompany,
+            PersonServiceMock.Verify(m => m.Update(It.IsAny<PersonDto>()), Times.Exactly(creditIsNeeded ? 0 : 1));
+            PersonServiceMock.Verify(x => x.AddHistory(ActionType.StartCompany,
                 price,
-                It.IsAny<ICashFlowUser>(),
+                It.IsAny<UserDto>(),
                 asset.Id), Times.Exactly(creditIsNeeded ? 0 : 1));
         });
     }
@@ -137,7 +137,7 @@ public class StartCompanyPriceTests: StagesBaseTest
     protected override IStage GetTestStage() => new StartCompanyPrice(
             TermsServiceMock.Object,
             AvailableAssetsMock.Object,
-            PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+            PersonServiceMock.Object,
+            UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }

@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using Moq;
@@ -19,7 +20,7 @@ public class SellStocksTests: StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonManagerMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUserMock.Object)).Returns(Assets);
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns(Assets);
     }
 
     [Test]
@@ -50,7 +51,7 @@ public class SellStocksTests: StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocks>());
-        CurrentUserMock.Verify(c => c.Notify("Invalid stocks name."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid stocks name."), Times.Once);
     }
 
     [TestCaseSource(nameof(Assets))]
@@ -66,8 +67,8 @@ public class SellStocksTests: StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
 
-        PersonManagerMock.Verify(a => a.UpdateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
                 x.Title == asset.Title &&
                 x.Type == AssetType.Stock &&
@@ -75,7 +76,6 @@ public class SellStocksTests: StagesBaseTest
         ), Times.Exactly(assetsCount));
     }
 
-    protected override IStage GetTestStage() => new SellStocks(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() =>
+        new SellStocks(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object).SetCurrentUser(CurrentUser);
 }

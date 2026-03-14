@@ -25,7 +25,7 @@ public class BigCircleTests : StagesBaseTest
     };
 
     [SetUp]
-    public void Setup() => PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(Person);
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(Person);
 
     [Test]
     public void BigCircle_Question_and_Buttons()
@@ -33,8 +33,8 @@ public class BigCircleTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
-        var smallCircleDescription = $"{CurrentUserMock.Object.Name} at SmallCircle!";
-        var bigCircleDescription = $"{CurrentUserMock.Object.Name} at BigCircle!";
+        var smallCircleDescription = $"{CurrentUser.Name} at SmallCircle!";
+        var bigCircleDescription = $"{CurrentUser.Name} at BigCircle!";
         var buttons = new[]
         {
             "Paycheck",
@@ -49,8 +49,8 @@ public class BigCircleTests : StagesBaseTest
             "Stop Game",
         };
 
-        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object, false)).Returns(smallCircleDescription);
-        PersonManagerMock.Setup(x => x.GetDescription(CurrentUserMock.Object, true)).Returns(bigCircleDescription);
+        PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, false)).Returns(smallCircleDescription);
+        PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, true)).Returns(bigCircleDescription);
 
         // Act
 
@@ -67,13 +67,13 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         // Act
         await testStage.BeforeStage();
 
         // Assert
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(It.IsAny<string>()), Times.Never));
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Never));
     }
 
     [Test]
@@ -82,18 +82,18 @@ public class BigCircleTests : StagesBaseTest
         // Arrange
         var person = Person.Clone();
         person.IsWinning = true;
-        PersonManagerMock.Setup(x => x.Read(CurrentUserMock.Object)).Returns(person);
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive).Select(u => Mock.Get(u)).Append(CurrentUserMock);
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         // Act
         await testStage.BeforeStage();
 
         // Assert
-        activeUsers.ForEach(u => u.Verify(u => u.Notify(It.IsAny<string>()), Times.Never));
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Never));
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinning == false)), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinning == false)), Times.Once);
     }
 
     [Test]
@@ -108,8 +108,8 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash + paycheck)), Times.Once);
-        PersonManagerMock.Verify(p => p.AddHistory(ActionType.GetMoney, paycheck, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash + paycheck)), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.GetMoney, paycheck, CurrentUser), Times.Once);
     }
 
     [TestCase("Divorce", ActionType.Divorce, 1)]
@@ -127,8 +127,8 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
 
-        PersonManagerMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash - lostMoney)), Times.Once);
-        PersonManagerMock.Verify(p => p.AddHistory(action, lostMoney, CurrentUserMock.Object), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == cash - lostMoney)), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(action, lostMoney, CurrentUser), Times.Once);
     }
 
     [TestCase("Get Money", typeof(GetMoney))]
@@ -160,10 +160,10 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
 
-        PersonManagerMock.Verify(a => a.CreateAsset(
-            CurrentUserMock.Object,
+        PersonServiceMock.Verify(a => a.CreateAsset(
+            CurrentUser,
             It.Is<AssetDto>(x =>
-                x.UserId == CurrentUserMock.Object.Id &&
+                x.UserId == CurrentUser.Id &&
                 x.Type == AssetType.Transfer &&
                 x.IsDraft &&
                 x.Title == "Bank")
@@ -183,8 +183,8 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
 
-        PersonManagerMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
-        PersonManagerMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUserMock.Object), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<PersonDto>()), Times.Never);
+        PersonServiceMock.Verify(p => p.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUser), Times.Never);
     }
 
     [Test]
@@ -203,7 +203,6 @@ public class BigCircleTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonManagerMock.Object)
-        .SetCurrentUser(CurrentUserMock.Object)
-        .SetAllUsers(OtherUsers);
+    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
+        .SetCurrentUser(CurrentUser);
 }
