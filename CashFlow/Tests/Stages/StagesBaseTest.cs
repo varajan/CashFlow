@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.PersonData;
-//using CashFlow.Infrastructure;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using Moq;
@@ -15,7 +14,6 @@ public abstract class StagesBaseTest
     protected List<IUser> OtherUsers;
     protected Mock<IAvailableAssets> AvailableAssetsMock;
     protected Mock<IPersonManager> PersonManagerMock;
-    //protected Mock<IPersonRepository> PersonRepositoryMock;
     protected Mock<ITermsService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
     protected Mock<IAvailableAssets> AssetsMock;
@@ -31,7 +29,6 @@ public abstract class StagesBaseTest
 
         AvailableAssetsMock = new Mock<IAvailableAssets>();
         PersonManagerMock = new Mock<IPersonManager>();
-        //PersonRepositoryMock = new Mock<IPersonRepository>();
         TermsServiceMock = new Mock<ITermsService>();
         LoggerMock = new Mock<ILogger>();
         AssetsMock = new Mock<IAvailableAssets>();
@@ -70,12 +67,6 @@ public abstract class StagesBaseTest
     protected Mock<IUser> GetUserMock(long id, string name, bool isActive, Circle cirle)
     {
         var user = new Mock<IUser>();
-        var person = new Mock<IPerson>();
-        var assets = new Mock<IAssets>();
-
-        person.SetupGet(p => p.Circle).Returns(cirle);
-        person.SetupGet(p => p.Assets).Returns(assets.Object);
-
         user.SetupGet(u => u.Id).Returns(id);
         user.SetupGet(u => u.IsActive).Returns(isActive);
         user.SetupGet(u => u.Name).Returns(name);

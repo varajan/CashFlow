@@ -1,14 +1,14 @@
 ﻿using CashFlow.Data.DTOs;
-using CashFlow.Data.Users;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
-namespace CashFlow.Infrastructure;
+namespace CashFlow.Data.Users.UserData.PersonData;
 
 public interface IPersonRepository
 {
     PersonDto Get(long userId);
-    void Save(PersonDto person);
+    List<PersonDto> GetAll();
+    void Save(PersonDto person, DateTime? lastActive = null);
     void Delete(long userId);
     bool Exists(long userId);
 }
@@ -16,6 +16,13 @@ public interface IPersonRepository
 public class PersonRepository(IDataBase dataBase) : IPersonRepository
 {
     private IDataBase DataBase { get; } = dataBase;
+
+    public List<PersonDto> GetAll()
+    {
+        var sql = $"SELECT PersonData FROM Persons";
+        var data = DataBase.GetRows(sql);
+        return data.Select(row => row["PersonData"].ToString().Deserialize<PersonDto>()).ToList();
+    }
 
     public PersonDto Get(long userId)
     {
@@ -26,9 +33,9 @@ public class PersonRepository(IDataBase dataBase) : IPersonRepository
             : personData.Deserialize<PersonDto>();
     }
 
-    public void Save(PersonDto person)
+    public void Save(PersonDto person, DateTime? lastActive = null)
     {
-        person.LastActive = DateTime.Now;
+        person.LastActive = lastActive ?? DateTime.Now;
 
         if (Exists(person.Id))
         {

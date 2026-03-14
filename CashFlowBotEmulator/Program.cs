@@ -1,15 +1,18 @@
 ﻿using CashFlow;
 using CashFlow.Data.Users;
+using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlowBotEmulator;
-using System.Globalization;
 
 ServicesProvider.Init();
 
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();
+var PersonRepository = ServicesProvider.Get<IPersonRepository>();
+var PersonManager = ServicesProvider.Get<IPersonManager>();
+var TermsService = ServicesProvider.Get<ITermsService>();
 
 while (true)
 {
@@ -25,11 +28,8 @@ while (true)
 
     if (message == "RESET")
     {
-        var lastActive = DateTime.Now.AddHours(-1).ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture);
-        DataBase.Execute($"UPDATE Users SET LastActive = '{lastActive}'");
-        //DataBase.Execute("DELETE FROM Users");
-        //DataBase.Execute("DELETE FROM Persons");
-        //DataBase.Execute("DELETE FROM History");
+        var lastActive = DateTime.Now.AddHours(-1);
+        PersonRepository.GetAll().ForEach(x => PersonRepository.Save(x, lastActive));
         Thread.Sleep(300);
         continue;
     }
@@ -42,7 +42,7 @@ async Task HandleUpdateAsync(int chatId, string message)
     try
     {
         var notifyService = new EmulationNotifyService(chatId);
-        var user = new CashFlowUsersUser(DataBase, notifyService, chatId);
+        var user = new CashFlowUsersUser(DataBase, PersonManager, notifyService, chatId);
         var users = GetOtherUsers(user);
         var stage = user.Exists
             ? BaseStage.GetCurrentStage(users, user)
@@ -76,7 +76,7 @@ List<IUser> GetOtherUsers(IUser currentUser) =>
         .GetColumn("SELECT ID FROM Users")
         .ToLong()
         .Where(x => x != currentUser.Id)
-        .Select(x => (IUser)new CashFlowUsersUser(DataBase, new EmulationNotifyService(x), x))
+        .Select(x => (IUser)new CashFlowUsersUser(DataBase, PersonManager, new EmulationNotifyService(x), x))
         .ToList();
 
 static bool TryReadFirstFile(out int chatId, out string message, out string file)

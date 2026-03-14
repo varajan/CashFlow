@@ -1,14 +1,15 @@
-﻿using CashFlow.Extensions;
-using CashFlow.Stages;
+﻿using CashFlow;
 using CashFlow.Data.Users;
+using CashFlow.Data.Users.UserData.PersonData;
+using CashFlow.Extensions;
+using CashFlow.Interfaces;
+using CashFlow.Stages;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using System.Text.RegularExpressions;
-using CashFlow;
-using CashFlow.Interfaces;
 
 namespace CashFlowBot;
 
@@ -16,6 +17,7 @@ public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
+    private static IPersonManager PersonManager => ServicesProvider.Get<IPersonManager>();
 
     private static string BotToken
     {
@@ -84,7 +86,7 @@ public class CashFlowBot
         try
         {
             var notifyService = new TelegramBotNotifyService(bot, message.Chat.Id);
-            var user = new CashFlowUsersUser(DataBase, notifyService, message.Chat.Id);
+            var user = new CashFlowUsersUser(DataBase, PersonManager, notifyService, message.Chat.Id);
             var users = GetOtherUsers(bot, user);
             var stage = user.Exists
                 ? BaseStage.GetCurrentStage(users, user)
@@ -121,6 +123,6 @@ public class CashFlowBot
             .GetColumn("SELECT ID FROM Users")
             .ToLong()
             .Where(x => x != currentUser.Id)
-            .Select(x => (IUser)new CashFlowUsersUser(DataBase, new TelegramBotNotifyService(bot, x), x))
+            .Select(x => (IUser)new CashFlowUsersUser(DataBase, PersonManager, new TelegramBotNotifyService(bot, x), x))
             .ToList();
 }

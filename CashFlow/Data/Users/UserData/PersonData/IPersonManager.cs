@@ -1,11 +1,17 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Infrastructure;
 using CashFlow.Interfaces;
 using MoreLinq;
 
 namespace CashFlow.Data.Users.UserData.PersonData;
+
+public enum Circle
+{
+    Small,
+    Big,
+    Both
+}
 
 public interface IPersonManager
 {

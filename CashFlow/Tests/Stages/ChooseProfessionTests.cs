@@ -1,5 +1,4 @@
-﻿using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Stages;
+﻿using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages;
 using Moq;
 
@@ -42,7 +41,6 @@ public class ChooseProfessionTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var personMock = new Mock<IPerson>();
 
         // Act
         await testStage.HandleMessage("random");

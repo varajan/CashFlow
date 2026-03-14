@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data;
 using CashFlow.Data.DataBase;
 using CashFlow.Data.Users.UserData.PersonData;
-using CashFlow.Infrastructure;
 using CashFlow.Interfaces;
 using CashFlow.Loggers;
 using CashFlow.Stages;

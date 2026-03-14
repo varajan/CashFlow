@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Data.Users;
 using CashFlow.Data.Users.UserData.HistoryData;
-using CashFlow.Data.Users.UserData.PersonData;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
@@ -104,7 +103,6 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var historyMock = new Mock<IHistory>();
-        CurrentUserMock.SetupGet(u => u.History_OBSOLETE).Returns(historyMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
@@ -161,7 +159,6 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var historyMock = new Mock<IHistory>();
-        CurrentUserMock.SetupGet(u => u.History_OBSOLETE).Returns(historyMock.Object);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
@@ -206,9 +203,6 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAmount = 101;
         var testStage = GetTestStage();
-        var personMock = new Mock<IPerson>();
-
-        personMock.SetupGet(p => p.Cash).Returns(100);
 
         // Act
         await testStage.HandleMessage($"{transferAmount}");
