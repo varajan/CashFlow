@@ -7,7 +7,7 @@ using CashFlow.Data.Repositories;
 using CashFlowBotEmulator;
 
 ServicesProvider.AddApplicationServices();
-ServicesProvider.Add(new EmulationNotifyService());
+ServicesProvider.Add<INotifyService>(new EmulationNotifyService());
 
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();

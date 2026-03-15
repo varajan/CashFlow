@@ -48,7 +48,7 @@ Scenario: Can give money to friend
 • Get $1,000
 """
 
-Scenario: Can rollback payment to a friend
+Scenario: Can rollback payment to friend
 	When Haroon Stephens pays $1000 to Ela Lynch
 		But Haroon Stephens rollbacks last action
 	Then Balance by users is:
@@ -67,7 +67,7 @@ Scenario: Can rollback payment to a friend
 • Get $1,000
 """
 
-Scenario: Can rollback payment from a friend
+Scenario: Can rollback payment from friend
 	When Haroon Stephens pays $1000 to Ela Lynch
 		But Ela Lynch rollbacks last action
 	Then Balance by users is:
@@ -101,7 +101,7 @@ Scenario: Can pay money to bank
 • Pay $1,000
 """
 
-Scenario: Can rollback payment to a bank
+Scenario: Can rollback payment to bank
 	When Haroon Stephens pays $1000 to bank
 		But Haroon Stephens rollbacks last action
 	Then Balance by users is:
