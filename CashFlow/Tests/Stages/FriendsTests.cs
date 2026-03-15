@@ -65,6 +65,5 @@ public class FriendsTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new Friends(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<Friends>();
 }

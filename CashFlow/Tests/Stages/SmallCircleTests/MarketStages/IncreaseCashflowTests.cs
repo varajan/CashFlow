@@ -15,7 +15,7 @@ public class IncreaseCashflowTests : SellAssetBaseTest
     private static readonly List<string> AvailableValues = ["$100", "$500", "$1,000",];
 
     [SetUp]
-    public void IncreaseCashFlowSetup()
+    public void TestSetUp()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.IncreaseCashFlow)).Returns(AvailableValues);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
@@ -81,10 +81,5 @@ public class IncreaseCashflowTests : SellAssetBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new IncreaseCashflow(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<IncreaseCashflow>();
 }

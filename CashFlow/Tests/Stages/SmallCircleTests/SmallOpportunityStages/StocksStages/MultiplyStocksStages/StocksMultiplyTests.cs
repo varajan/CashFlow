@@ -89,6 +89,5 @@ public class StocksMultiplyTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new StocksMultiply(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<StocksMultiply>();
 }

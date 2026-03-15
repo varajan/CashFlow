@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
 using Moq;
 
 namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;

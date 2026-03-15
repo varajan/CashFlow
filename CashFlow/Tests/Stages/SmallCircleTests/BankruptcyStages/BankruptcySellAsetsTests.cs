@@ -149,6 +149,5 @@ Cash: *$100*
         Assert.That(testStage.NextStage, Is.TypeOf<Bankruptcy>());
     }
 
-    protected override IStage GetTestStage() => new BankruptcySellAssets(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BankruptcySellAssets>();
 }

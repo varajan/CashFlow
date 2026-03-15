@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
@@ -77,10 +76,5 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBigRealEstateCashFlow(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigRealEstateCashFlow>();
 }

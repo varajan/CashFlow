@@ -120,6 +120,5 @@ public class DoodadsTests : StagesBaseTest
         PersonServiceMock.Verify(x => x.AddHistory(It.IsAny<ActionType>(), It.IsAny<long>(), CurrentUser), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new Doodads(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<Doodads>();
 }

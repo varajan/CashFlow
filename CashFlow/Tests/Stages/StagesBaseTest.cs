@@ -17,7 +17,6 @@ public abstract class StagesBaseTest
     protected Mock<IPersonRepository> PersonRepositoryMock;
     protected Mock<ITermsRepository> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
-    protected Mock<IAvailableAssetsRepository> AssetsMock;
 
     protected abstract IStage GetTestStage();
 
@@ -26,6 +25,26 @@ public abstract class StagesBaseTest
     [SetUp]
     public void SetUp()
     {
+        InitMocks();
+        InitTestUsers();
+        InitServiceProvider();
+    }
+
+    [Test]
+    public virtual async Task Stage_CanBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+    }
+
+    private void InitMocks()
+    {
         AvailableAssetsMock = new Mock<IAvailableAssetsRepository>();
         UserRepositoryMock = new Mock<IUserRepository>();
         PersonServiceMock = new Mock<IPersonService>();
@@ -33,10 +52,14 @@ public abstract class StagesBaseTest
         TermsServiceMock = new Mock<ITermsRepository>();
         NotifyServiceMock = new Mock<INotifyService>();
         LoggerMock = new Mock<ILogger>();
-        AssetsMock = new Mock<IAvailableAssetsRepository>();
 
-        ServicesProvider.Init(NotifyServiceMock.Object, PersonRepositoryMock.Object);
+        TermsServiceMock
+            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<object[]>()))
+            .Returns((int id, UserDto user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+    }
 
+    private void InitTestUsers()
+    {
         CurrentUser = GetUser(10, "Test User", true, Circle.Small);
         OtherUsers =
             [
@@ -51,23 +74,18 @@ public abstract class StagesBaseTest
             ];
 
         UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
-
-        TermsServiceMock
-            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns((int id, UserDto user, string defaultValue, object[] args) => string.Format(defaultValue, args));
     }
 
-    [Test]
-    public virtual async Task Stage_CanBeCanceled()
+    private void InitServiceProvider()
     {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-        await testStage.HandleMessage("Cancel");
-
-        // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+        ServicesProvider.AddApplicationServices();
+        ServicesProvider.AddMock(LoggerMock);
+        ServicesProvider.AddMock(PersonServiceMock);
+        ServicesProvider.AddMock(TermsServiceMock);
+        ServicesProvider.AddMock(NotifyServiceMock);
+        ServicesProvider.AddMock(AvailableAssetsMock);
+        ServicesProvider.AddMock(PersonRepositoryMock);
+        ServicesProvider.AddMock(UserRepositoryMock);
     }
 
     protected UserDto GetUser(long id, string name, bool isActive, Circle cirle)
@@ -92,4 +110,7 @@ public abstract class StagesBaseTest
 
         return user;
     }
+
+    protected IStage GetStage<T>() where T : BaseStage
+        => ((T)ServicesProvider.Get(typeof(T))).SetCurrentUser(CurrentUser);
 }

@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
@@ -18,8 +17,8 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
         AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateSmallCashFlow)).Returns(CashFlows);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([Asset]);
     }
 
@@ -77,10 +76,5 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuySmallRealEstateCashFlow(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuySmallRealEstateCashFlow>();
 }

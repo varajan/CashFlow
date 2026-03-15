@@ -113,6 +113,5 @@ public class WinGameTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BigCircle>());
     }
 
-    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BigCircle>();
 }

@@ -217,10 +217,5 @@ public class SendMoneyAmountTests : StagesBaseTest
         PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
-    protected override IStage GetTestStage() => new SendMoneyAmount(
-        PersonServiceMock.Object,
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SendMoneyAmount>();
 }

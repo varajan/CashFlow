@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using Moq;
@@ -76,6 +75,5 @@ public class SellStocksTests: StagesBaseTest
         ), Times.Exactly(assetsCount));
     }
 
-    protected override IStage GetTestStage() =>
-        new SellStocks(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object).SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellStocks>();
 }

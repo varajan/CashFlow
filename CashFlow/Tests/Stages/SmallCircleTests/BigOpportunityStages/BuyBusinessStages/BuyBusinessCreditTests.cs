@@ -90,10 +90,5 @@ public class BuyBusinessCreditTests : StagesBaseTest
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new BuyBusinessCredit(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBusinessCredit>();
 }

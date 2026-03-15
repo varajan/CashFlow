@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
@@ -59,6 +58,5 @@ public class SellLandTests : SellAssetBaseTest
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellLand(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellLand>();
 }

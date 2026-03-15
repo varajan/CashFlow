@@ -31,7 +31,6 @@ public abstract class BaseStage : IStage
     {
         CurrentUser = user;
         CurrentUser.StageName = Name;
-        var UserRepository = ServicesProvider.Get<IUserRepository>();
         UserRepository.Save(CurrentUser);
         return this;
     }

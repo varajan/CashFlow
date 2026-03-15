@@ -90,10 +90,5 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new BuyBigRealEstateCredit(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigRealEstateCredit>();
 }

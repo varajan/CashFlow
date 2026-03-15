@@ -13,10 +13,7 @@ public class SendMoneyTests : StagesBaseTest
     private AssetDto Asset => new() { UserId = CurrentUser.Id, Type = AssetType.Transfer, IsDraft = true };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([Asset]);
-    }
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([Asset]);
 
     [Test]
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
@@ -178,6 +175,5 @@ public class SendMoneyTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new SendMoney(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SendMoney>();
 }

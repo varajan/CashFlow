@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
@@ -124,6 +123,5 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new ReduceLiabilitiesConfirm(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<ReduceLiabilitiesConfirm>();
 }

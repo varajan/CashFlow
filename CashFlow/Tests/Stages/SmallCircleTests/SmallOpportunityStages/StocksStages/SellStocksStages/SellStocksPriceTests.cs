@@ -118,10 +118,5 @@ public class SellStocksPriceTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellStocksPrice(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellStocksPrice>();
 }

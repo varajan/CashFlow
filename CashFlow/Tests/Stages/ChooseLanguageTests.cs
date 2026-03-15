@@ -75,6 +75,5 @@ public class ChooseLanguageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
-    protected override IStage GetTestStage() => new ChooseLanguage(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<ChooseLanguage>();
 }

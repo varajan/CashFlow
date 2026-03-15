@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
@@ -129,6 +128,5 @@ public class ShowMyDataTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    protected override IStage GetTestStage() => new ShowMyData(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<ShowMyData>();
 }

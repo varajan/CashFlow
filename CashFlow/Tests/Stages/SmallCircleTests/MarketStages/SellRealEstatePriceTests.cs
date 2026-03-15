@@ -114,10 +114,5 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellRealEstatePrice(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellRealEstatePrice>();
 }

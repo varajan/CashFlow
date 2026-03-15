@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
@@ -137,10 +136,5 @@ public class BuyCoinsPriceTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyCoinsPrice(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyCoinsPrice>();
 }

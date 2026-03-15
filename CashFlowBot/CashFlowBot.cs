@@ -52,7 +52,9 @@ public class CashFlowBot
         var receiverOptions = new ReceiverOptions { AllowedUpdates = [] };
         var notifyService = new TelegramBotNotifyService(botClient);
 
-        ServicesProvider.Init(notifyService);
+        ServicesProvider.AddApplicationServices();
+        //ServicesProvider.Add(notifyService);
+        //ServicesProvider.Build();
 
         botClient.StartReceiving(
             updateHandler: HandleUpdateAsync,

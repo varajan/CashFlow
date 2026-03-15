@@ -95,6 +95,5 @@ public class ChooseProfessionTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new ChooseProfession(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<ChooseProfession>();
 }

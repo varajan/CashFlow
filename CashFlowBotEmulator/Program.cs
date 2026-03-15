@@ -3,10 +3,11 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
-using CashFlowBotEmulator;
 using CashFlow.Data.Repositories;
+using CashFlowBotEmulator;
 
-ServicesProvider.Init(new EmulationNotifyService());
+ServicesProvider.AddApplicationServices();
+ServicesProvider.Add(new EmulationNotifyService());
 
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();

@@ -49,6 +49,5 @@ public class StopGameTests : StagesBaseTest
         PersonServiceMock.Verify(p => p.Delete(CurrentUser), Times.Never);
     }
 
-    protected override IStage GetTestStage() => new StopGame(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<StopGame>();
 }

@@ -16,7 +16,6 @@ public class BuyStocksTests : StagesBaseTest
     public void Setup()
     {
         AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.Stock, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([]);
     }
 
     [Test]
@@ -71,6 +70,5 @@ public class BuyStocksTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyStocks(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyStocks>();
 }

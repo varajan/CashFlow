@@ -52,6 +52,5 @@ public class BankruptcyTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
     }
 
-    protected override IStage GetTestStage() => new Bankruptcy(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<Bankruptcy>();
 }

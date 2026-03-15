@@ -108,6 +108,5 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuySmallRealEstateFirstPayment(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuySmallRealEstateFirstPayment>();
 }

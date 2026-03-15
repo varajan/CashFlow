@@ -77,10 +77,5 @@ public class BuyStocksPriceTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyStocksPrice(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyStocksPrice>();
 }

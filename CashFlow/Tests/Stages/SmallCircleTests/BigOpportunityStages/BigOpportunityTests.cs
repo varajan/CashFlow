@@ -67,6 +67,5 @@ public class BigOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BigOpportunity>());
     }
 
-    protected override IStage GetTestStage() => new BigOpportunity(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BigOpportunity>();
 }

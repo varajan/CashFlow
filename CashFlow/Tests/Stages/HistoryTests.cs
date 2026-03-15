@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using Moq;
 
@@ -127,6 +126,5 @@ public class HistoryTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "No records found."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new History(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<History>();
 }

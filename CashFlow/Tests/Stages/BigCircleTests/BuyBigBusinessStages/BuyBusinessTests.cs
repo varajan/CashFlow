@@ -71,6 +71,5 @@ public class BuyBigBusinessTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyBigBusiness(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigBusiness>();
 }

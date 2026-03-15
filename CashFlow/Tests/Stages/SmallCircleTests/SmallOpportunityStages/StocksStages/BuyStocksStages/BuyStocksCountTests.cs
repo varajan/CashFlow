@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Interfaces;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
@@ -13,7 +12,7 @@ public class BuyStocksCountTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Price = 50, Type = AssetType.Stock, IsDraft = true };
-    
+
     private List<AssetDto> AssetsList = [];
 
     [SetUp]
@@ -129,10 +128,5 @@ public class BuyStocksCountTests : StagesBaseTest
         PersonServiceMock.Verify(m => m.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Id == Asset.Id && x.Qtty == count && x.IsDraft)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyStocksCount(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-    .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyStocksCount>();
 }

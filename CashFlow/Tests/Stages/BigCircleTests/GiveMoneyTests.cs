@@ -8,7 +8,6 @@ using MoreLinq;
 
 namespace CashFlow.Tests.Stages.BigCircleTests;
 
-
 [TestFixture]
 public class SendMoneyTests : StagesBaseTest
 {
@@ -158,10 +157,5 @@ public class SendMoneyTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You don't have enough money."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SendMoneyAmount(
-        PersonServiceMock.Object,
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SendMoneyAmount>();
 }

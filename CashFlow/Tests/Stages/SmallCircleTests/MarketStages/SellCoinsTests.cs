@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
@@ -60,6 +59,5 @@ public class SellCoinsTests : SellAssetBaseTest
             x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellCoins(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellCoins>();
 }

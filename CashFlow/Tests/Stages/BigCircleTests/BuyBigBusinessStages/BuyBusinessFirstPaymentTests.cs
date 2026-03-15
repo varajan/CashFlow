@@ -96,10 +96,5 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         PersonServiceMock.Verify(p => p.DeleteAsset(CurrentUser, It.Is<AssetDto>(a => a.IsDraft)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyBigBusinessFirstPayment(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigBusinessFirstPayment>();
 }

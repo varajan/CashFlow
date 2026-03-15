@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
@@ -185,6 +184,5 @@ public class MarketTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Market>());
     }
 
-    protected override IStage GetTestStage() => new Market(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<Market>();
 }

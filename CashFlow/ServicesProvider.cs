@@ -16,17 +16,18 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CashFlow;
 
 public static class ServicesProvider
 {
     public static IServiceProvider Instance { get; private set; }
+    private static readonly ServiceCollection services = new();
 
-    public static void Init(INotifyService notifyService = null, IPersonRepository personRepository = null)
+    public static void AddApplicationServices()
     {
-        var services = new ServiceCollection();
-
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITermsRepository, TermsRepository>();
@@ -123,10 +124,21 @@ public static class ServicesProvider
         services.AddTransient<BuyBigBusinessPrice>();
         services.AddTransient<BuyBigBusinessFirstPayment>();
         services.AddTransient<BuyBigBusinessCashFlow>();
+        
+        Instance = services.BuildServiceProvider();
+    }
 
-        if (notifyService is not null) services.AddSingleton(notifyService);
-        if (personRepository is not null) services.AddSingleton(personRepository);
+    public static void AddMock<T>(Mock<T> mock) where T : class
+    {
+        var implementation = mock.Object;
+        services.RemoveAll<T>();
+        services.AddSingleton(typeof(T), implementation);
+        Instance = services.BuildServiceProvider();
+    }
 
+    public static void Add<TImplementation>(TImplementation implemenation) where TImplementation : class
+    {
+        services.AddSingleton(implemenation);
         Instance = services.BuildServiceProvider();
     }
 

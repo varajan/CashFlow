@@ -203,6 +203,5 @@ public class BigCircleTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    protected override IStage GetTestStage() => new BigCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BigCircle>();
 }

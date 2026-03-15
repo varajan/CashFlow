@@ -111,6 +111,5 @@ public class GetCreditTests : StagesBaseTest
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }
 
-    protected override IStage GetTestStage() => new GetCredit(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<GetCredit>();
 }

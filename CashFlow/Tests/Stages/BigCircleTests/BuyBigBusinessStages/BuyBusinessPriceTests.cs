@@ -1,7 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
-using CashFlow.Interfaces;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
@@ -81,10 +80,5 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBigBusinessPrice(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigBusinessPrice>();
 }

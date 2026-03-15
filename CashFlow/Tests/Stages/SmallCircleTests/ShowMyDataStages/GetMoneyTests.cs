@@ -78,6 +78,5 @@ public class GetMoneyTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new GetMoney(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<GetMoney>();
 }

@@ -80,10 +80,5 @@ public class PayWithCashTests : StagesBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, creditMessage), Times.Exactly(cash < amount ? 1 : 0));
     }
 
-    protected override IStage GetTestStage() => new PayWithCash(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<PayWithCash>();
 }

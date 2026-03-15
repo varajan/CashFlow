@@ -105,10 +105,5 @@ public class BuyLandCreditTests : StagesBaseTest
             ), Times.Exactly(2));
     }
 
-    protected override IStage GetTestStage() => new BuyLandCredit(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyLandCredit>();
 }

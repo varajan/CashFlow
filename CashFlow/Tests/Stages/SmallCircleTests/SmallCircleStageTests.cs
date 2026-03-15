@@ -397,6 +397,5 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
     }
 
-    protected override IStage GetTestStage() => new SmallCircle(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SmallCircle>();
 }

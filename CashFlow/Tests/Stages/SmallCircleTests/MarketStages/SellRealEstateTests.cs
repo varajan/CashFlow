@@ -58,6 +58,5 @@ public class SellRealEstateTests : SellAssetBaseTest
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Title.Contains(index) && x.MarkedToSell)), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellRealEstate(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellRealEstate>();
 }

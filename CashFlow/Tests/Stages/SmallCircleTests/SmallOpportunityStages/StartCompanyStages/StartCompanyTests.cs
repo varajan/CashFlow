@@ -71,6 +71,5 @@ public class StartCompanyTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new StartCompany(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<StartCompany>();
 }

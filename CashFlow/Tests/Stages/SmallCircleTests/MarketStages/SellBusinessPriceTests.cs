@@ -15,7 +15,7 @@ public class SellBusinessPriceTests : SellAssetBaseTest
     private static readonly List<string> AvailablePrices = ["$100", "$500", "$1,000",];
 
     [SetUp]
-    public void PricesSetup()
+    public void TestSetUp()
     {
         AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.BusinessSellPrice)).Returns(AvailablePrices);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
@@ -107,10 +107,5 @@ public class SellBusinessPriceTests : SellAssetBaseTest
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Done."), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new SellBusinessPrice(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<SellBusinessPrice>();
 }

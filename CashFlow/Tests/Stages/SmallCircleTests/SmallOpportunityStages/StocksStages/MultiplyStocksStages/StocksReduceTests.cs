@@ -89,6 +89,5 @@ public class StocksReduceTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new StocksReduce(TermsServiceMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<StocksReduce>();
 }

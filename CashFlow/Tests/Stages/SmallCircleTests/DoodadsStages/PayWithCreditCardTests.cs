@@ -98,10 +98,5 @@ public class PayWithCreditCardTests : StagesBaseTest
         PersonServiceMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUser), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new PayWithCreditCard(
-        TermsServiceMock.Object,
-        AvailableAssetsMock.Object,
-        PersonServiceMock.Object,
-        UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<PayWithCreditCard>();
 }

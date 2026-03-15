@@ -75,10 +75,5 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
         });
     }
 
-    protected override IStage GetTestStage() => new BuyBigBusinessCashFlow(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyBigBusinessCashFlow>();
 }

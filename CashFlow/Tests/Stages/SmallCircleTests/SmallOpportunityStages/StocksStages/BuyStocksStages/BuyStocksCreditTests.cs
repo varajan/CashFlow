@@ -105,10 +105,5 @@ public class BuyStocksCreditTests : StagesBaseTest
             ), Times.Exactly(2));
     }
 
-    protected override IStage GetTestStage() => new BuyStocksCredit(
-            TermsServiceMock.Object,
-            AvailableAssetsMock.Object,
-            PersonServiceMock.Object,
-            UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyStocksCredit>();
 }

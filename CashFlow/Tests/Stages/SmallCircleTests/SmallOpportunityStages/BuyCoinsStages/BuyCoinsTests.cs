@@ -70,6 +70,5 @@ public class BuyCoinsTests : StagesBaseTest
         ), Times.Once);
     }
 
-    protected override IStage GetTestStage() => new BuyCoins(TermsServiceMock.Object, AvailableAssetsMock.Object, PersonServiceMock.Object, UserRepositoryMock.Object)
-        .SetCurrentUser(CurrentUser);
+    protected override IStage GetTestStage() => GetStage<BuyCoins>();
 }
