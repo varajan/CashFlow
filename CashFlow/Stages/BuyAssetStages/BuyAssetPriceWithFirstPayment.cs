@@ -18,11 +18,11 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -35,7 +35,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
         }
 
         asset.Price = number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
         NextStage = New<TNextStage>();
     }
 }

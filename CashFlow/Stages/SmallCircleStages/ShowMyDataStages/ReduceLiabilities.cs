@@ -7,13 +7,13 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 public class ReduceLiabilities(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    private IEnumerable<LiabilityDto> Liabilities => PersonManager.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
+    private IEnumerable<LiabilityDto> Liabilities => PersonService.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
 
     public override string Message
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
             var cashTerm = Terms.Get(51, CurrentUser, "Cash");
             var monthly = Terms.Get(42, CurrentUser, "monthly");
             var message = "";
@@ -43,7 +43,7 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var liability = person
             .Liabilities
             .FirstOrDefault(l => !l.Deleted && MessageEquals(message, (int)l.Type, l.Type.AsString()));
@@ -63,7 +63,7 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
         }
 
         liability.MarkedForReduction = true;
-        PersonManager.Update(CurrentUser, liability);
+        PersonService.Update(CurrentUser, liability);
 
         NextStage = liability.AllowsPartialPayment ? New<ReduceLiabilitiesAmount>() : New<ReduceLiabilitiesConfirm>();
     }

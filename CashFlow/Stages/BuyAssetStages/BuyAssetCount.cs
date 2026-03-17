@@ -24,8 +24,8 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
-            var person = PersonManager.Read(CurrentUser);
+            var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var person = PersonService.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
 
             return upToQtty == 0
@@ -38,8 +38,8 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     {
         get
         {
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
-            var person = PersonManager.Read(CurrentUser);
+            var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var person = PersonService.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
             int upTo50 = upToQtty / 50 * 50;
             var isSimple = asset.Price < 1000;
@@ -70,11 +70,11 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
     public async override Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -87,9 +87,9 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
         }
 
         asset.Qtty = number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         if (person.Cash < asset.Qtty * asset.Price)
         {
             NextStage = New<TCreditStage>();
@@ -108,14 +108,14 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         person.Cash -= asset.Price * asset.Qtty;
-        PersonManager.Update(person);
+        PersonService.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        PersonManager.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
+        PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

@@ -12,7 +12,7 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
     {
         get
         {
-            var liability = PersonManager.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
+            var liability = PersonService.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
             var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
             var type = Terms.Get((int)liability.Type, CurrentUser, liability.Type.AsString());
 
@@ -22,13 +22,13 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
 
     protected override Task OnDismiss()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         person.Liabilities
             .Where(liability => liability.MarkedForReduction)
             .ForEach(liability =>
             {
                 liability.MarkedForReduction = false;
-                PersonManager.Update(CurrentUser, liability);
+                PersonService.Update(CurrentUser, liability);
             });
 
         NextStage = New<ReduceLiabilities>();
@@ -38,7 +38,7 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
 
     protected override Task OnConfirmed()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var liability = person.Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         var amount = liability.FullAmount;
 
@@ -46,7 +46,7 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         {
             var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
             boat.CashFlow = 0;
-            PersonManager.UpdateAsset(CurrentUser, boat);
+            PersonService.UpdateAsset(CurrentUser, boat);
         }
 
         liability.Cashflow = 0;
@@ -55,11 +55,11 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         liability.Deleted = true;
         person.Cash -= amount;
         
-        PersonManager.Update(person);
-        PersonManager.Update(CurrentUser, liability);
-        PersonManager.AddHistory((ActionType)liability.Type, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.Update(CurrentUser, liability);
+        PersonService.AddHistory((ActionType)liability.Type, amount, CurrentUser);
 
-        NextStage = PersonManager.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
+        NextStage = PersonService.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
             ? New<Start>()
             : New<ReduceLiabilities>();
 

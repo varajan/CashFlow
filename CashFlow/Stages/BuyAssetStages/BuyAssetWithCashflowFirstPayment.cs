@@ -24,11 +24,11 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -43,12 +43,12 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         asset.Mortgage = asset.Price - number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         if (person.Cash < number && asset.Type == AssetType.BigBusinessType)
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
         }
 

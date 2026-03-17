@@ -28,10 +28,10 @@ public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRe
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         person.UpdateLiability(Liability.Credit_Card, -(int)(amount * 0.03), amount);
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.MicroCredit, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.MicroCredit, amount, CurrentUser);
         NextStage = New<Start>();
     }
 }

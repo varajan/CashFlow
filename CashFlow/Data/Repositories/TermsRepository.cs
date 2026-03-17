@@ -16,4 +16,10 @@ public class TermsRepository(IDataBase dataBase) : ITermsRepository
         var term = _dataBase.GetValue($"SELECT Term FROM Terms WHERE ID = {id} AND Language = '{language}'").NullIfEmpty() ?? $"#{id}#{defaultValue}#";
         return string.Format(term, args);
     }
+
+    public string Translate(string term, Language language = Language.EN)
+    {
+        var id = _dataBase.GetValue($"SELECT ID FROM Terms WHERE Term = '{term}'");
+        return Get(id.ToInt(), language);
+    }
 }

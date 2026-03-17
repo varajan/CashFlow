@@ -14,11 +14,11 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
                 ? Terms.Get(73, CurrentUser, "You are the winner!")
-                : PersonManager.GetDescription(CurrentUser);
+                : PersonService.GetDescription(CurrentUser);
         }
     }
 
@@ -26,7 +26,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
             ? [
@@ -50,7 +50,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
 
     public override async Task BeforeStage()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (person.GetBigCircleCashflow() < person.TargetCashFlow && !person.IsWinning)
         {
@@ -65,12 +65,12 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         if (person.GetBigCircleCashflow() < person.TargetCashFlow && person.IsWinning)
         {
             person.IsWinning = false;
-            PersonManager.Update(person);
+            PersonService.Update(person);
             return;
         }
 
         person.IsWinning = true;
-        PersonManager.Update(person);
+        PersonService.Update(person);
 
         var users = OtherUsers.Where(x => x.IsActive()).ToList();
         var message = Terms.Get(148, CurrentUser, "{0} is the winner!", CurrentUser.Name);
@@ -80,7 +80,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
 
     public override async Task HandleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (person.GetBigCircleCashflow() >= person.TargetCashFlow)
         {
@@ -113,13 +113,13 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
 
     private async Task HandleBigCircleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (MessageEquals(message, 79, "Paycheck"))
         {
             person.Cash += person.GetBigCircleCashflow();
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.GetMoney, person.GetBigCircleCashflow(), CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.GetMoney, person.GetBigCircleCashflow(), CurrentUser);
             NextStage = New<BigCircle>();
             return;
         }
@@ -140,7 +140,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
                 IsDraft = true,
             };
 
-            PersonManager.CreateAsset(CurrentUser, transfer);
+            PersonService.CreateAsset(CurrentUser, transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }
@@ -149,8 +149,8 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         {
             var amount = person.Cash;
             person.Cash -= amount;
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.Divorce, amount, CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.Divorce, amount, CurrentUser);
             await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
             return;
         }
@@ -159,8 +159,8 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.TaxAudit, amount, CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.TaxAudit, amount, CurrentUser);
             await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
             return;
         }
@@ -169,8 +169,8 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.Lawsuit, amount, CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.Lawsuit, amount, CurrentUser);
             await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
             return;
         }

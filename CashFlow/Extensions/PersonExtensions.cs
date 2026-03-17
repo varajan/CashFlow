@@ -23,7 +23,7 @@ public static class PersonExtensions
         person.Liabilities = [.. person.Liabilities.Where(l => l.Type != type)];
     }
 
-    public static void UpdateLiability(this PersonDto person, Liability type, int cashFlow, int ammount)
+    public static void UpdateLiability(this PersonDto person, Liability type, int cashFlow, int amount)
     {
         var idx = person.Liabilities.FindIndex(l => l.Type == type);
 
@@ -31,14 +31,30 @@ public static class PersonExtensions
         {
             var liability = person.Liabilities[idx];
             liability.Cashflow += cashFlow;
-            liability.FullAmount += ammount;
+            liability.FullAmount += amount;
             liability.Deleted = false;
             person.Liabilities[idx] = liability;
         }
         else
         {
-            var liability = new LiabilityDto { Type = type, Cashflow = cashFlow, FullAmount = ammount };
+            var liability = new LiabilityDto { Type = type, Cashflow = cashFlow, FullAmount = amount };
             person.Liabilities.Add(liability);
         }
     }
+
+    public static void UpdateLiability(this PersonDto person, LiabilityDto liability)
+    {
+        var idx = person.Liabilities.FindIndex(l => l.Type == liability.Type);
+
+        if (idx >= 0)
+        {
+            person.Liabilities[idx] = liability;
+        }
+        else
+        {
+            person.Liabilities.Add(liability);
+        }
+    }
+
+    public static LiabilityDto GetLiability(this PersonDto person, Liability type) => person.Liabilities.FirstOrDefault(l => l.Type == type);
 }

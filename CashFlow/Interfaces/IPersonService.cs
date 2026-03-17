@@ -10,6 +10,7 @@ public interface IPersonService
     void Update(PersonDto person);
     PersonDto Read(UserDto user);
 
+    List<string> GetAllProfessions();
     string GetDescription(UserDto user, bool compact = true);
     void Delete(UserDto user);
     void Update(UserDto user, LiabilityDto liability);

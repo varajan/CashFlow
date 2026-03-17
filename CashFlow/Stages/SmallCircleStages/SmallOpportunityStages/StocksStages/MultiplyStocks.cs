@@ -18,7 +18,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITermsRepository ter
     public override string Message => Terms.Get(7, CurrentUser, "Title:");
 
     public override IEnumerable<string> Buttons =>
-        PersonManager
+        PersonService
             .ReadAllAssets(AssetType.Stock, CurrentUser)
             .Select(x => x.Title)
             .Distinct()
@@ -32,7 +32,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITermsRepository ter
             return;
         }
 
-        var stocks = PersonManager.ReadAllAssets(AssetType.Stock, CurrentUser)
+        var stocks = PersonService.ReadAllAssets(AssetType.Stock, CurrentUser)
             .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
 
@@ -46,8 +46,8 @@ public abstract class MultiplyStocks(ActionType actionType, ITermsRepository ter
         stocks.ForEach(asset =>
         {
             asset.Qtty = (int)(asset.Qtty * k);
-            PersonManager.UpdateAsset(CurrentUser, asset);
-            PersonManager.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
+            PersonService.UpdateAsset(CurrentUser, asset);
+            PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
         });
 
         NextStage = New<Start>();

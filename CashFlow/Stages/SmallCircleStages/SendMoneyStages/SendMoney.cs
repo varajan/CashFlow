@@ -16,7 +16,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
         {
             var bank = Terms.Get(149, CurrentUser, "Bank");
             var users = OtherUsers
-                .Where(x => x.IsActive() && PersonManager.Read(x) is { BigCircle: false })
+                .Where(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
                 .ToList();
 
@@ -33,7 +33,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
         }
 
         if (MessageEquals(message, 149, "Bank") ||
-            OtherUsers.Any(x => x.IsActive() && PersonManager.Read(x) is { BigCircle: false } && x.Name == message))
+            OtherUsers.Any(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto
             {
@@ -43,7 +43,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
                 IsDraft = true,
             };
 
-            PersonManager.CreateAsset(CurrentUser, transfer);
+            PersonService.CreateAsset(CurrentUser, transfer);
             NextStage = New<SendMoneyAmount>();
             return;
         }

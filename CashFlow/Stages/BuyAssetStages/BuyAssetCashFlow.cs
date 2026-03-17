@@ -21,24 +21,24 @@ public abstract class BuyAssetCashFlow<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
 
         asset.CashFlow = message.AsCurrency();
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
         
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;
         person.Cash -= amount;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType, asset.CashFlow, CurrentUser, asset.Id);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType, asset.CashFlow, CurrentUser, asset.Id);
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
 
         NextStage = New<Start>();

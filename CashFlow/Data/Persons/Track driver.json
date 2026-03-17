@@ -1,0 +1,97 @@
+{
+    "Profession": "Track driver",
+    "Salary": 2500,
+    "Cash": 1630,
+    "BigCircle": false,
+    "IsWinning": false,
+    "InitialCashFlow": 0,
+    "Bankruptcy": false,
+    "CreditsReduced": false,
+    "PerChild": 140,
+    "Children": 0,
+    "TargetCashFlow": 0,
+    "Assets": [
+    ],
+    "Liabilities": [
+        {
+            "IsBankruptcyDivisible": false,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 0,
+            "Cashflow": -460,
+            "Type": 58,
+            "Name": "Taxes"
+        },
+        {
+            "IsBankruptcyDivisible": false,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 38000,
+            "Cashflow": -400,
+            "Type": 43,
+            "Name": "Mortgage"
+        },
+        {
+            "IsBankruptcyDivisible": false,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 0,
+            "Cashflow": 0,
+            "Type": 44,
+            "Name": "School Loan"
+        },
+        {
+            "IsBankruptcyDivisible": true,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 4000,
+            "Cashflow": -80,
+            "Type": 45,
+            "Name": "Car Loan"
+        },
+        {
+            "IsBankruptcyDivisible": true,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 2000,
+            "Cashflow": -60,
+            "Type": 46,
+            "Name": "Credit Card"
+        },
+        {
+            "IsBankruptcyDivisible": false,
+            "AllowsPartialPayment": true,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 0,
+            "Cashflow": 0,
+            "Type": 47,
+            "Name": "Bank Loan"
+        },
+        {
+            "IsBankruptcyDivisible": false,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 0,
+            "Cashflow": -570,
+            "Type": 60,
+            "Name": "Others"
+        },
+        {
+            "IsBankruptcyDivisible": true,
+            "AllowsPartialPayment": false,
+            "MarkedForReduction": false,
+            "Deleted": false,
+            "FullAmount": 1000,
+            "Cashflow": -50,
+            "Type": 92,
+            "Name": "Small Credit"
+        }
+    ]
+}

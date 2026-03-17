@@ -38,6 +38,13 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     [Then ("(I|.*) say(|s) '(.*)'")]
     public void Say(string name, string _, string text) => GetUser(name).SendMessage(text);
 
+    [Then("My last message contains '(.*)'")]
+    public void CheckLastMessage(string expected)
+    {
+        var reply = User.GetReply();
+        Assert.That(reply.Message, Does.Contain(expected));
+    }
+
     [Then("(I|.*) see(|s) buttons: (.*)")]
     public void CheckButtons(string name, string _, string buttonNames)
     {

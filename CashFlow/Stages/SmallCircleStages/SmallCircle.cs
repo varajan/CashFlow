@@ -14,14 +14,14 @@ namespace CashFlow.Stages.SmallCircleStages;
 
 public class SmallCircle(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => PersonManager.GetDescription(CurrentUser);
+    public override string Message => PersonService.GetDescription(CurrentUser);
 
     public override List<string> Buttons
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
-            var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
+            var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
 
             List<string> buttons = isHistoryEmpty
                 ? [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends")]
@@ -43,8 +43,8 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
     public async override Task HandleMessage(string message)
     {
-        var person = PersonManager.Read(CurrentUser);
-        var isHistoryEmpty = PersonManager.IsHistoryEmpty(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
+        var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
 
         if (person.IsReadyForBigCircle())
         {
@@ -113,8 +113,8 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
                 person.Cash += person.InitialCashFlow;
                 person.BigCircle = true;
 
-                PersonManager.Update(person);
-                PersonManager.AddHistory(ActionType.GoToBigCircle, person.InitialCashFlow, CurrentUser);
+                PersonService.Update(person);
+                PersonService.AddHistory(ActionType.GoToBigCircle, person.InitialCashFlow, CurrentUser);
                 NextStage = New<BigCircle>();
                 return;
         }
@@ -122,7 +122,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
     private async Task Downsize()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var expenses = -1 * person.GetTotalExpenses();
         var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
         await CurrentUser.Notify(info);
@@ -134,18 +134,18 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
             var loanInfo = Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency());
 
             person.GetCredit(credit);
-            PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
+            PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
             await CurrentUser.Notify(loanInfo);
         }
 
         person.Cash -= expenses;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.Downsize, expenses, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.Downsize, expenses, CurrentUser);
     }
 
     private async Task Baby()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (person.Children == 3)
         {
@@ -154,8 +154,8 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         }
 
         person.Children++;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.Child, person.Children, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.Child, person.Children, CurrentUser);
 
         var termId = person.Children == 1 ? 20 : 25;
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
@@ -166,7 +166,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
     private async Task GetMoney()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var amount = person.GetSmallCircleCashflow();
 
         var bankruptcy = amount < 0 && person.Cash + amount < 0;
@@ -177,8 +177,8 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         }
 
         person.Cash += amount;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.GetMoney, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
     }

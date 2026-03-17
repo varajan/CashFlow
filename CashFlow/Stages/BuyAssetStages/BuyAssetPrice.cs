@@ -21,11 +21,11 @@ public abstract class BuyAssetPrice<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -38,9 +38,9 @@ public abstract class BuyAssetPrice<TNextStage>(
         }
 
         asset.Price = number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         if (person.Cash < asset.Price)
         {
             NextStage = New<TNextStage>();
@@ -53,15 +53,15 @@ public abstract class BuyAssetPrice<TNextStage>(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         person.Cash -= asset.Price;
-        PersonManager.Update(person);
+        PersonService.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        PersonManager.AddHistory(ActionType, asset.Price, CurrentUser, asset.Id);
+        PersonService.AddHistory(ActionType, asset.Price, CurrentUser, asset.Id);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

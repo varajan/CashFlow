@@ -24,10 +24,10 @@ public class GetCredit(ITermsRepository termsService, IPersonService personManag
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         person.GetCredit(number);
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.Credit, number, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.Credit, number, CurrentUser);
         await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", number.AsCurrency()));
         NextStage = New<Start>();
     }

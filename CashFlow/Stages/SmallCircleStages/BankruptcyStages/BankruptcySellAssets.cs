@@ -7,7 +7,7 @@ namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    private PersonDto Person => PersonManager.Read(CurrentUser);
+    private PersonDto Person => PersonService.Read(CurrentUser);
     private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);
     private IEnumerable<AssetDto> Assets => Person.Assets.Where(a => !a.IsDeleted).OrderBy(x => x.Type);
 
@@ -75,8 +75,8 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
             asset.IsDeleted = true;
             person.Cash += asset.GetBancrupcySellPrice();
 
-            PersonManager.UpdateAsset(CurrentUser, asset);
-            PersonManager.Update(person);
+            PersonService.UpdateAsset(CurrentUser, asset);
+            PersonService.Update(person);
 
             var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.GetBancrupcySellPrice().AsCurrency()}";
             await CurrentUser.Notify(message);
@@ -99,9 +99,9 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
         liability.FullAmount -= amount;
         liability.Deleted = liability.FullAmount == 0;
 
-        PersonManager.Update(person);
-        PersonManager.Update(CurrentUser, liability);
-        PersonManager.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.Update(CurrentUser, liability);
+        PersonService.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
         return Task.CompletedTask;
     }
 }

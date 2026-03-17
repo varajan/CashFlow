@@ -20,12 +20,12 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
 
     public override async Task HandleMessage(string message)
     {
-        var noSmallBusiness = PersonManager.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Count == 0;
+        var noSmallBusiness = PersonService.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Count == 0;
 
         switch (message)
         {
             case var m when MessageEquals(m, 38, "Sell Real Estate"):
-                var noRealEstate = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser).Count == 0;
+                var noRealEstate = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).Count == 0;
                 if (noRealEstate)
                 {
                     await CurrentUser.Notify(Terms.Get(15, CurrentUser, "You have no properties."));
@@ -37,7 +37,7 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 return;
 
             case var m when MessageEquals(m, 98, "Sell Land"):
-                var noLand = PersonManager.ReadAllAssets(AssetType.Land, CurrentUser).Count == 0;
+                var noLand = PersonService.ReadAllAssets(AssetType.Land, CurrentUser).Count == 0;
                 if (noLand)
                 {
                     await CurrentUser.Notify(Terms.Get(100, CurrentUser, "You have no Land."));
@@ -49,7 +49,7 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 return;
 
             case var m when MessageEquals(m, 75, "Sell Business"):
-                var noBusiness = PersonManager.ReadAllAssets(AssetType.Business, CurrentUser).Count == 0;
+                var noBusiness = PersonService.ReadAllAssets(AssetType.Business, CurrentUser).Count == 0;
                 if (noBusiness && noSmallBusiness)
                 {
                     await CurrentUser.Notify(Terms.Get(77, CurrentUser, "You have no Business."));
@@ -61,7 +61,7 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 return;
 
             case var m when MessageEquals(m, 120, "Sell Coins"):
-                var noCoins = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).Count == 0;
+                var noCoins = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Count == 0;
                 if (noCoins)
                 {
                     await CurrentUser.Notify(Terms.Get(121, CurrentUser, "You have no coins."));

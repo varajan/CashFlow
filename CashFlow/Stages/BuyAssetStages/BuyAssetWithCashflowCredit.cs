@@ -17,8 +17,8 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
-            var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+            var person = PersonService.Read(CurrentUser);
+            var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
             var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
             return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
@@ -29,23 +29,23 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         switch (message)
         {
             case var m when MessageEquals(m, 6, "Cancel"):
-                PersonManager.DeleteAsset(CurrentUser, asset);
+                PersonService.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 
             case var m when MessageEquals(m, 34, "Get Credit"):
-                var person = PersonManager.Read(CurrentUser);
+                var person = PersonService.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 person.GetCredit(credit);
-                PersonManager.Update(person);
-                PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
+                PersonService.Update(person);
+                PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
                 await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
 
                 NextStage = New<TNextStage>();

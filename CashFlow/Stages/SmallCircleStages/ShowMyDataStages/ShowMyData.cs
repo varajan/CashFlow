@@ -6,7 +6,7 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 public class ShowMyData(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => PersonManager.GetDescription(CurrentUser, false);
+    public override string Message => PersonService.GetDescription(CurrentUser, false);
 
     public override List<string> Buttons =>
     [
@@ -51,7 +51,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
 
     private async Task ReduceLiabilities()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         if (person.Liabilities.Any(l => l.FullAmount > 0))
         {
             NextStage = New<ReduceLiabilities>();
@@ -64,7 +64,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
 
     private async Task Charity()
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var amount = (person.Assets.Sum(a => a.CashFlow) + person.Salary) / 10;
 
         if (person.Cash < amount)
@@ -75,8 +75,8 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
         }
 
         person.Cash -= amount;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.Charity, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.Charity, amount, CurrentUser);
 
         var message = Terms.Get(91, CurrentUser, "You've payed {0}, now you can use two dice in next 3 turns.", amount.AsCurrency());
         await CurrentUser.Notify(message);

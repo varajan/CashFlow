@@ -18,7 +18,7 @@ public class SellAsset<TNextStage>(
     {
         get
         {
-            var assetNames = Assets.Select((a, i) => $"*#{i + 1}* {PersonManager.GetAssetDescription(a, CurrentUser)}").Join(Environment.NewLine);
+            var assetNames = Assets.Select((a, i) => $"*#{i + 1}* {PersonService.GetAssetDescription(a, CurrentUser)}").Join(Environment.NewLine);
 
             if (AssetTypes.Contains(AssetType.Land))
             {
@@ -62,7 +62,7 @@ public class SellAsset<TNextStage>(
         }
     }
 
-    private List<AssetDto> Assets => AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser).Where(a => !a.IsDeleted)).ToList();
+    private List<AssetDto> Assets => AssetTypes.SelectMany(type => PersonService.ReadAllAssets(type, CurrentUser).Where(a => !a.IsDeleted)).ToList();
 
     public override async Task HandleMessage(string message)
     {
@@ -110,7 +110,7 @@ public class SellAsset<TNextStage>(
 
         var asset = Assets[index - 1];
         asset.MarkedToSell = true;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
         return true;
     }
 
@@ -140,7 +140,7 @@ public class SellAsset<TNextStage>(
         assets.ForEach(asset =>
         {
             asset.MarkedToSell = true;
-            PersonManager.UpdateAsset(CurrentUser, asset);
+            PersonService.UpdateAsset(CurrentUser, asset);
         });
 
         return true;

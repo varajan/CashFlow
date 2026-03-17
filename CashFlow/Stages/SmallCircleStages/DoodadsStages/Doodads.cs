@@ -47,20 +47,20 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
     {
         const int firstPayment = 1_000;
 
-        var boat = PersonManager.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
+        var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
             await CurrentUser.Notify(Terms.Get(113, CurrentUser, "You already have a boat."));
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (person.Cash < firstPayment)
         {
             person.GetCredit(firstPayment);
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
             await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", firstPayment.AsCurrency()));
         }
 
@@ -78,9 +78,9 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
         person.Cash -= firstPayment;
         person.UpdateLiability(Liability.Boat_Loan, boat.CashFlow, boat.Mortgage);
 
-        PersonManager.Update(person);
-        PersonManager.CreateAsset(CurrentUser, boat);
-        PersonManager.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
+        PersonService.Update(person);
+        PersonService.CreateAsset(CurrentUser, boat);
+        PersonService.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
         var message = Terms.Get(117, CurrentUser,
             "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",

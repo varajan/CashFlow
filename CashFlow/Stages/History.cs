@@ -12,7 +12,7 @@ public class History(ITermsRepository termsService, IPersonService personManager
 
     public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
 
-    private List<HistoryDto> Records => PersonManager.ReadHistory(CurrentUser);
+    private List<HistoryDto> Records => PersonService.ReadHistory(CurrentUser);
     private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
     private string MainMenu => Terms.Get(102, CurrentUser, "Main menu");
 
@@ -26,9 +26,9 @@ public class History(ITermsRepository termsService, IPersonService personManager
 
         if (MessageEquals(message, 109, "Rollback last action"))
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
 
-            PersonManager.RollbackHistory(person, Records.Last());
+            PersonService.RollbackHistory(person, Records.Last());
         }
 
         if (Records.Count == 0)

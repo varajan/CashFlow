@@ -7,7 +7,7 @@ public class StopGame(ITermsRepository termsService, IPersonService personManage
 {
     protected override Task OnConfirmed()
     {
-        PersonManager.Delete(CurrentUser);
+        PersonService.Delete(CurrentUser);
         NextStage = New<Start>();
 
         return Task.CompletedTask;

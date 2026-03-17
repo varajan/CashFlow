@@ -7,6 +7,25 @@ namespace CashFlow.Tests.Stages;
 [TestFixture]
 public class ChooseProfessionTests : StagesBaseTest
 {
+    private static readonly List<string> DefaultProfessions =
+    [
+        "Business manager",
+        "Car mechanic",
+        "Doctor",
+        "Engineer",
+        "Janitor",
+        "Lawyer",
+        "Nurse",
+        "Pilot",
+        "Police officer",
+        "Secretary",
+        "Teacher",
+        "Track driver"
+    ];
+
+    [SetUp]
+    public void Setup() => PersonServiceMock.Setup(p => p.GetAllProfessions()).Returns(DefaultProfessions);
+
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
@@ -69,6 +88,7 @@ public class ChooseProfessionTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var buttons = new List<string>(DefaultProfessions) { "Random" };
 
         // Act
 
@@ -76,22 +96,7 @@ public class ChooseProfessionTests : StagesBaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testStage.Message, Is.EqualTo("Choose your *profession*"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
-            {
-                "Business manager",
-                "Car mechanic",
-                "Doctor",
-                "Engineer",
-                "Janitor",
-                "Lawyer",
-                "Nurse",
-                "Pilot",
-                "Police officer",
-                "Secretary",
-                "Teacher",
-                "Track driver",
-                "Random"
-            }));
+            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
         });
     }
 

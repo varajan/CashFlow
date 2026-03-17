@@ -30,11 +30,11 @@ public class BuyCoinsPrice(
             return;
         }
 
-        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Single(x => x.IsDraft);
         asset.Price = number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         if (person.Cash < asset.Price * asset.Qtty)
         {
             NextStage = New<BuyCoinsCredit>();
@@ -47,15 +47,15 @@ public class BuyCoinsPrice(
 
     protected async Task CompleteTransaction(AssetDto asset)
     {
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         person.Cash -= asset.Price * asset.Qtty;
-        PersonManager.Update(person);
+        PersonService.Update(person);
 
         asset.IsDraft = false;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
-        PersonManager.AddHistory(ActionType.BuyCoins, asset.Qtty, CurrentUser, asset.Id);
+        PersonService.AddHistory(ActionType.BuyCoins, asset.Qtty, CurrentUser, asset.Id);
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
     }

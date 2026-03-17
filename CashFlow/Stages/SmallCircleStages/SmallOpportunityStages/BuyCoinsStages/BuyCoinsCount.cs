@@ -32,9 +32,9 @@ public class BuyCoinsCount(
             return;
         }
 
-        var asset = PersonManager.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
         asset.Qtty = number;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
         NextStage = New<BuyCoinsPrice>();
     }

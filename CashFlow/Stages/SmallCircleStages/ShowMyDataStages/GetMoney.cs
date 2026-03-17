@@ -11,7 +11,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
             return Terms.Get(0, CurrentUser, "Your Cashflow is *{0}*. How much should you get?",
                 person.BigCircle
                 ? person.GetBigCircleCashflow().AsCurrency()
@@ -23,7 +23,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
             List<string> buttons = person.BigCircle
             ? [
                 50_000.AsCurrency(),
@@ -50,7 +50,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
         var amount = message.AsCurrency();
 
         if (person.BigCircle && amount <=0)
@@ -67,8 +67,8 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
         }
 
         person.Cash += amount;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.GetMoney, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
         await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
         NextStage = New<Start>();

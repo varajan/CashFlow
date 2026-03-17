@@ -24,6 +24,22 @@ public class PersonRepository(IDataBase dataBase) : IPersonRepository
             : personData.Deserialize<PersonDto>();
     }
 
+    public List<string> GetAllProfessions()
+    {
+        var path = $"{AppDomain.CurrentDomain.BaseDirectory}/Data/Persons";
+        var professions = Directory.GetFiles(path, "*.json").Select(Path.GetFileNameWithoutExtension).ToList();
+        return professions;
+    }
+
+    public PersonDto GetDefault(string profession, long userId)
+    {
+        var json = $"{AppDomain.CurrentDomain.BaseDirectory}/Data/Persons/{profession}.json";
+        var person = File.ReadAllText(json).Deserialize<PersonDto>();
+        person.Id = userId;
+
+        return person;
+    }
+
     public void Save(PersonDto person, DateTime? lastActive = null)
     {
         person.LastActive = lastActive ?? DateTime.Now;

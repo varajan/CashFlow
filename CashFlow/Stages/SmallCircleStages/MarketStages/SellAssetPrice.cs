@@ -45,7 +45,7 @@ public class SellAssetPrice(
         {
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                var count = PersonManager.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell)
+                var count = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell)
                     .Title
                     .GetApartmentsCount();
 
@@ -62,14 +62,14 @@ public class SellAssetPrice(
 
     public override async Task HandleMessage(string message)
     {
-        var assets = AssetTypes.SelectMany(type => PersonManager.ReadAllAssets(type, CurrentUser)).Where(a => a.MarkedToSell).ToList();
+        var assets = AssetTypes.SelectMany(type => PersonService.ReadAllAssets(type, CurrentUser)).Where(a => a.MarkedToSell).ToList();
 
         if (IsCanceled(message))
         {
             assets.ForEach(a =>
             {
                 a.MarkedToSell = false;
-                PersonManager.UpdateAsset(CurrentUser, a);
+                PersonService.UpdateAsset(CurrentUser, a);
             });
 
             NextStage = New<Start>();
@@ -85,13 +85,13 @@ public class SellAssetPrice(
 
         assets.ForEach(asset =>
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
             var count = asset.Type == AssetType.RealEstate ? asset.Title.GetApartmentsCount() : asset.Qtty;
             person.Cash += price * count - asset.Mortgage;
 
-            PersonManager.Update(person);
-            PersonManager.SellAsset(asset, ActionType, price, CurrentUser);
-            PersonManager.AddHistory(ActionType, price, CurrentUser, asset.Id);
+            PersonService.Update(person);
+            PersonService.SellAsset(asset, ActionType, price, CurrentUser);
+            PersonService.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 
         await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));

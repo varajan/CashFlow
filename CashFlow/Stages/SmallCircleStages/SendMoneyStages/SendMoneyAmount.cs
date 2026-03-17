@@ -19,7 +19,7 @@ public class SendMoneyAmount(
     {
         get
         {
-            var person = PersonManager.Read(CurrentUser);
+            var person = PersonService.Read(CurrentUser);
 
             return
                 person.BigCircle
@@ -30,12 +30,12 @@ public class SendMoneyAmount(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonManager.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
-        var person = PersonManager.Read(CurrentUser);
+        var asset = PersonService.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
+        var person = PersonService.Read(CurrentUser);
 
         if (IsCanceled(message))
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             return;
         }
@@ -49,7 +49,7 @@ public class SendMoneyAmount(
         }
 
         asset.Qtty = amount;
-        PersonManager.UpdateAsset(CurrentUser, asset);
+        PersonService.UpdateAsset(CurrentUser, asset);
 
         if (!person.BigCircle && person.Cash < amount)
         {
@@ -59,7 +59,7 @@ public class SendMoneyAmount(
 
         if (person.BigCircle && person.Cash < amount)
         {
-            PersonManager.DeleteAsset(CurrentUser, asset);
+            PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
             await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
             return;
@@ -84,20 +84,20 @@ public class SendMoneyAmount(
                 .Append(CurrentUser)
                 .ToList();
 
-        var currentUserPerson = PersonManager.Read(CurrentUser);
+        var currentUserPerson = PersonService.Read(CurrentUser);
         currentUserPerson.Cash -= amount;
-        PersonManager.Update(currentUserPerson);
-        PersonManager.AddHistory(ActionType.PayMoney, amount, CurrentUser);
+        PersonService.Update(currentUserPerson);
+        PersonService.AddHistory(ActionType.PayMoney, amount, CurrentUser);
 
         if (friend is not null)
         {
-            var friendPerson = PersonManager.Read(friend);
+            var friendPerson = PersonService.Read(friend);
             friendPerson.Cash += amount;
-            PersonManager.Update(friendPerson);
-            PersonManager.AddHistory(ActionType.GetMoney, amount, friend);
+            PersonService.Update(friendPerson);
+            PersonService.AddHistory(ActionType.GetMoney, amount, friend);
         }
 
-        PersonManager.DeleteAsset(CurrentUser, asset);
+        PersonService.DeleteAsset(CurrentUser, asset);
 
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);

@@ -28,7 +28,7 @@ public class PayWithCash(ITermsRepository termsService, IAvailableAssetsReposito
             return;
         }
 
-        var person = PersonManager.Read(CurrentUser);
+        var person = PersonService.Read(CurrentUser);
 
         if (person.Cash < amount)
         {
@@ -36,14 +36,14 @@ public class PayWithCash(ITermsRepository termsService, IAvailableAssetsReposito
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
             person.GetCredit(credit);
-            PersonManager.Update(person);
-            PersonManager.AddHistory(ActionType.Credit, credit, CurrentUser);
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
             await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
         }
 
         person.Cash -= amount;
-        PersonManager.Update(person);
-        PersonManager.AddHistory(ActionType.PayMoney, amount, CurrentUser);
+        PersonService.Update(person);
+        PersonService.AddHistory(ActionType.PayMoney, amount, CurrentUser);
         NextStage = New<Start>();
     }
 }

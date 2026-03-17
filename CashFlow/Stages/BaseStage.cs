@@ -14,7 +14,7 @@ public abstract class BaseStage : IStage
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
     protected ITermsRepository Terms { get; }
-    protected IPersonService PersonManager { get; }
+    protected IPersonService PersonService { get; }
     protected IUserRepository UserRepository { get; }
 
     public IList<UserDto> OtherUsers => [.. UserRepository.GetAll().Where(u => u.Id != CurrentUser.Id)];
@@ -22,7 +22,7 @@ public abstract class BaseStage : IStage
     public BaseStage(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
     {
         Terms = termsService;
-        PersonManager = personManager;
+        PersonService = personManager;
         UserRepository = userRepository;
         NextStage = this;
     }
@@ -67,9 +67,9 @@ public abstract class BaseStage : IStage
         {
             liability.FullAmount /= 2;
             liability.Cashflow /= 2;
-            PersonManager.Update(CurrentUser, liability);
+            PersonService.Update(CurrentUser, liability);
         }
-        PersonManager.Update(person);
+        PersonService.Update(person);
         await CurrentUser.Notify(Terms.Get(134, CurrentUser, "Debt restructuring. Car loans, small loans and credit card halved."));
 
         var isCashFlowPositive = person.GetSmallCircleCashflow() >= 0;
@@ -82,7 +82,7 @@ public abstract class BaseStage : IStage
             return;
         }
 
-        PersonManager.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
+        PersonService.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
         NextStage = New<Bankruptcy>();
     }
 

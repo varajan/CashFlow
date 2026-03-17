@@ -23,7 +23,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
                 _connection = _connection.OpenAndReturn();
 
                 Directory
-                    .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/SQL")
+                    .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/Data/SQL")
                     .Where(file => file.ToLower().EndsWith(".sql"))
                     .OrderBy(x => x)
                     .Select(File.ReadAllText)

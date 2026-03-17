@@ -6,11 +6,12 @@ using MoreLinq;
 
 namespace CashFlow.Data.Services;
 
-public class HistoryService(IDataBase dataBase, IPersonRepository personRepository, DescriptionService personDescriptionService)
+public class HistoryService(IDataBase dataBase, IPersonRepository personRepository, DescriptionService personDescriptionService, ITermsRepository terms)
 {
     private IDataBase DataBase { get; } = dataBase;
     private AssetService AssetService => new(PersonRepository);
     private IPersonRepository PersonRepository { get; } = personRepository;
+    private ITermsRepository Terms { get; } = terms;
 
     public void AddRecord(ActionType type, long value, UserDto user, long assetId)
     {
@@ -52,7 +53,9 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
         var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
         var asset = person.Assets.Find(a => a.Id == (int)record.AssetId);
         var amount = (int)record.Value;
-        var defaults = Persons.Get(person.Profession);
+
+        var profession = Terms.Translate(person.Profession);
+        var defaults = PersonRepository.GetDefault(profession, person.Id);
 
         decimal percent;
         int expenses;
@@ -80,38 +83,40 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
 
             case ActionType.Mortgage:
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Mortgage, -defaults.Expenses.Mortgage, amount);
+                person.UpdateLiability(defaults.GetLiability(Liability.Mortgage));
                 break;
 
             case ActionType.SchoolLoan:
                 person.Cash += amount;
-                person.UpdateLiability(Liability.School_Loan, -defaults.Expenses.SchoolLoan, amount);
+                person.UpdateLiability(defaults.GetLiability(Liability.School_Loan));
                 break;
 
             case ActionType.CarLoan:
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Car_Loan, -defaults.Expenses.CarLoan, amount);
+                person.UpdateLiability(defaults.GetLiability(Liability.Car_Loan));
                 break;
 
             case ActionType.CreditCard:
-                percent = (decimal)defaults.Expenses.CreditCard / defaults.Liabilities.CreditCard;
+                var creditCard = defaults.GetLiability(Liability.Credit_Card);
+                percent = (decimal)creditCard.Cashflow / creditCard.FullAmount;
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Credit_Card, -expenses, amount);
+                person.UpdateLiability(Liability.Credit_Card, expenses, amount);
                 break;
 
             case ActionType.SmallCredit:
-                percent = (decimal)defaults.Expenses.SmallCredits / defaults.Liabilities.SmallCredits;
+                var smallCredit = defaults.GetLiability(Liability.Small_Credit);
+                percent = (decimal)smallCredit.Cashflow / smallCredit.FullAmount;
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Small_Credit, -expenses, amount);
+                person.UpdateLiability(Liability.Small_Credit, expenses, amount);
                 break;
 
             case ActionType.BankLoan:
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, -amount);
+                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
                 break;
 
             case ActionType.BankruptcyBankLoan:
@@ -119,7 +124,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
                 expenses = (int)(amount * percent);
 
                 person.Cash += amount;
-                person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+                person.UpdateLiability(Liability.Bank_Loan, amount / 10, amount);
                 person.Bankruptcy = true;
                 break;
 

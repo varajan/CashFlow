@@ -56,6 +56,10 @@ public abstract class StagesBaseTest
         TermsServiceMock
             .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<object[]>()))
             .Returns((int id, UserDto user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+
+        TermsServiceMock
+            .Setup(t => t.Translate(It.IsAny<string>(), It.IsAny<Language>()))
+            .Returns((string term, Language language) => term);
     }
 
     private void InitTestUsers()
