@@ -2,7 +2,7 @@
 using CashFlow.Interfaces;
 using System.Data.SQLite;
 
-namespace CashFlow.Data.DataBase;
+namespace CashFlow.Data;
 
 public class SQLiteDataBase(ILogger logger) : IDataBase
 {

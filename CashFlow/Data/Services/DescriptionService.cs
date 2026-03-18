@@ -99,9 +99,10 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         var incomeTerm = Terms.Get(53, user, "Income");
         var expensesTerm = Terms.Get(54, user, "Expenses");
         var cashFlowTerm = Terms.Get(55, user, "Cashflow");
+        var personProfession = Terms.Translate(person.Profession, user.Language);
 
         return
-            $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
+            $"*{professionTerm}:* {personProfession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"*{salaryTerm}:* {person.Salary.AsCurrency()}{Environment.NewLine}" +
             $"*{incomeTerm}:* {person.GetIncome().AsCurrency()}{Environment.NewLine}" +

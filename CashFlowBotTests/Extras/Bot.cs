@@ -22,6 +22,7 @@ public class Bot()
         File.WriteAllText(tmpFile, message);
         File.Move(tmpFile, finalFile);
         WaitForReply(chatId, lastReply);
+        Thread.Sleep(100);
     }
 
     private static void WaitForReply(long? chatId, MessageDto lastReply)
@@ -29,6 +30,7 @@ public class Bot()
         if (!chatId.HasValue) return;
 
         var stopwatch = Stopwatch.StartNew();
+
         while (stopwatch.Elapsed < TimeSpan.FromSeconds(5))
         {
             Thread.Sleep(100);

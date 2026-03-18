@@ -1,4 +1,4 @@
-﻿using CashFlow.Data.DataBase;
+﻿using CashFlow.Data;
 using CashFlow.Data.Repositories;
 using CashFlow.Data.Services;
 using CashFlow.Interfaces;
@@ -17,14 +17,13 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CashFlow;
 
 public static class ServicesProvider
 {
     public static IServiceProvider Instance { get; private set; }
-    private static readonly ServiceCollection services = new();
+    private static readonly ServiceCollection services = [];
 
     public static void AddApplicationServices()
     {
@@ -131,7 +130,6 @@ public static class ServicesProvider
     public static void AddMock<T>(Mock<T> mock) where T : class
     {
         var implementation = mock.Object;
-        services.RemoveAll<T>();
         services.AddSingleton(typeof(T), implementation);
         Instance = services.BuildServiceProvider();
     }

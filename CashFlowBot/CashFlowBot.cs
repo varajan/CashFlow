@@ -1,6 +1,5 @@
 ﻿using CashFlow;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Repositories;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using System.Diagnostics;
@@ -15,8 +14,7 @@ namespace CashFlowBot;
 public class CashFlowBot
 {
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
-    private static IDataBase DataBase => ServicesProvider.Get<IDataBase>();
-    private static UserRepository UserRepository => new(DataBase);
+    private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
     private static string BotToken
     {
