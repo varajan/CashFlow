@@ -10,7 +10,7 @@ public static class AssetExtensions
         return asset.Type switch
         {
             AssetType.Coin or AssetType.Stock => asset.Qtty * asset.Price / 2,
-            AssetType.LandTitle or AssetType.SmallBusinessType => asset.Price / 2,
+            AssetType.Land or AssetType.SmallBusinessType => asset.Price / 2,
             AssetType.RealEstate or AssetType.Business => (asset.Price - asset.Mortgage) / 2,
             AssetType.Boat => asset.CashFlow == 0 ? asset.Price / 2 : (asset.Price - asset.Mortgage) / 2,
             _ => 0,

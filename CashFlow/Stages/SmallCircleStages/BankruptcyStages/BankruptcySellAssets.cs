@@ -25,6 +25,11 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{Person.GetSmallCircleCashflow().AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
+            message += Environment.NewLine;
+            message += Environment.NewLine + Terms.Get(127, CurrentUser, "You have to sell your assets till you cash flow is positive.");
+            message += Environment.NewLine;
+            message += Environment.NewLine + Terms.Get(128, CurrentUser, "What asset do you want to sell?");
+            message += Environment.NewLine;
 
             foreach (var asset in Assets)
             {
