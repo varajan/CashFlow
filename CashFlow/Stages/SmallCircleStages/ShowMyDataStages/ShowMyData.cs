@@ -14,7 +14,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
         Terms.Get(34, CurrentUser, "Get Credit"),
         Terms.Get(90, CurrentUser, "Charity - Pay 10%"),
         Terms.Get(40, CurrentUser, "Reduce Liabilities"),
-        Terms.Get(41, CurrentUser, "Stop Game"),
+        StopGame,
         Terms.Get(102, CurrentUser, "Main menu"),
     ];
 

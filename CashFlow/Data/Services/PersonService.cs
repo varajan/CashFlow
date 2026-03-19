@@ -58,6 +58,6 @@ public class PersonService(IPersonRepository personRepository, IDataBase dataBas
     public void CreateAsset(UserDto user, AssetDto asset) => AssetService.Create(user, asset);
     public void DeleteAsset(UserDto user, AssetDto asset) => AssetService.Delete(user, asset);
     public void UpdateAsset(UserDto user, AssetDto asset) => AssetService.Update(user, asset);
-    public void SellAsset(AssetDto asset, ActionType action, int price, UserDto user) => AssetService.Sell(asset, action, price, user);
+    public void SellAsset(AssetDto asset, int price, UserDto user) => AssetService.Sell(asset, price, user);
     public string GetAssetDescription(AssetDto asset, UserDto user) => PersonDescriptionService.GetAssetDescription(asset, user);
 }

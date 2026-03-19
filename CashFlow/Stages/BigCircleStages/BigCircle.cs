@@ -29,10 +29,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
             var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
-            ? [
-                Terms.Get(2, CurrentUser, "History"),
-                Terms.Get(41, CurrentUser, "Stop Game"),
-            ]
+            ? [ History, StopGame ]
             : [
                 Terms.Get(79, CurrentUser, "Paycheck"),
                 Terms.Get(32, CurrentUser, "Get Money"),
@@ -42,8 +39,8 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
                 Terms.Get(71, CurrentUser, "Lawsuit"),
                 Terms.Get(74, CurrentUser, "Buy Business"),
                 Terms.Get(140, CurrentUser, "Friends"),
-                Terms.Get(2, CurrentUser, "History"),
-                Terms.Get(41, CurrentUser, "Stop Game"),
+                History,
+                StopGame,
             ];
         }
     }

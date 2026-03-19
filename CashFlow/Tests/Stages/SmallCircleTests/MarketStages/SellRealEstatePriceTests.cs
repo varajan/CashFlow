@@ -81,7 +81,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SellRealEstatePrice>());
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid price value. Try again."), Times.Once);
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
-        PersonServiceMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUser), Times.Never);
+        PersonServiceMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<int>(), CurrentUser), Times.Never);
     }
 
     [TestCase("2/1", 1, "$100")]
@@ -106,7 +106,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
             .ForEach(asset =>
             {
                 payedAmmount += count * price.AsCurrency();
-                PersonServiceMock.Verify(a => a.SellAsset(asset, ActionType.SellRealEstate, price.AsCurrency(), CurrentUser), Times.Once);
+                PersonServiceMock.Verify(a => a.SellAsset(asset, price.AsCurrency(), CurrentUser), Times.Once);
                 PersonServiceMock.Verify(x => x.AddHistory(ActionType.SellRealEstate, price.AsCurrency(), CurrentUser, asset.Id), Times.Once);
             });
 

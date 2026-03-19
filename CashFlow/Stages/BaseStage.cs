@@ -95,4 +95,6 @@ public abstract class BaseStage : IStage
     protected string No => Terms.Get(138, CurrentUser, "No");
     protected string Cancel => Terms.Get(6, CurrentUser, "Cancel");
     protected string GetCredit => Terms.Get(34, CurrentUser, "Get Credit");
+    protected string StopGame => Terms.Get(41, CurrentUser, "Stop Game");
+    protected string History => Terms.Get(2, CurrentUser, "History");
 }

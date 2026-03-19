@@ -51,7 +51,7 @@ public class AssetService(IPersonRepository personRepository)
         PersonRepository.Save(person);
     }
 
-    public void Sell(AssetDto asset, ActionType action, int price, UserDto user)
+    public void Sell(AssetDto asset, int price, UserDto user)
     {
         asset.SellPrice = price;
         asset.MarkedToSell = false;

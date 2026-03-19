@@ -85,7 +85,7 @@ public class SellStocksPriceTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SellStocksPrice>());
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid price value. Try again."), Times.Once);
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
-        PersonServiceMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<ActionType>(), It.IsAny<int>(), CurrentUser), Times.Never);
+        PersonServiceMock.Verify(a => a.SellAsset(It.IsAny<AssetDto>(), It.IsAny<int>(), CurrentUser), Times.Never);
     }
 
     [TestCase("1")]
@@ -109,7 +109,7 @@ public class SellStocksPriceTests : StagesBaseTest
             {
                 payedAmmount += asset.Qtty * price.AsCurrency();
 
-                PersonServiceMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), ActionType.SellStocks, price.AsCurrency(), CurrentUser), Times.Once);
+                PersonServiceMock.Verify(a => a.SellAsset(It.Is<AssetDto>(a => a.Id == asset.Id), price.AsCurrency(), CurrentUser), Times.Once);
                 PersonServiceMock.Verify(x => x.AddHistory(ActionType.SellStocks, price.AsCurrency(), CurrentUser, asset.Id), Times.Once);
                 PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == TestPerson.Id)), Times.Exactly(2));
             });

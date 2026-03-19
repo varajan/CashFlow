@@ -6,11 +6,7 @@ public class Bankruptcy(ITermsRepository termsService, IPersonService personMana
 {
     public override string Message => Terms.Get(129, CurrentUser, "You are bankrupt. Game is over.");
 
-    public override IEnumerable<string> Buttons =>
-    [
-        Terms.Get(41, CurrentUser, "Stop Game"),
-        Terms.Get(2, CurrentUser, "History")
-    ];
+    public override IEnumerable<string> Buttons => [ StopGame, History ];
 
     public override Task HandleMessage(string message)
     {

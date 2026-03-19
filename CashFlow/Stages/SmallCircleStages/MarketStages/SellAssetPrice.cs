@@ -90,7 +90,7 @@ public class SellAssetPrice(
             person.Cash += price * count - asset.Mortgage;
 
             PersonService.Update(person);
-            PersonService.SellAsset(asset, ActionType, price, CurrentUser);
+            PersonService.SellAsset(asset, price, CurrentUser);
             PersonService.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 

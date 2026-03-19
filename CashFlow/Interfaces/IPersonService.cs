@@ -26,6 +26,6 @@ public interface IPersonService
     void CreateAsset(UserDto user, AssetDto asset);
     void DeleteAsset(UserDto user, AssetDto asset);
     void UpdateAsset(UserDto user, AssetDto asset);
-    void SellAsset(AssetDto asset, ActionType action, int price, UserDto user);
+    void SellAsset(AssetDto asset, int price, UserDto user);
     string GetAssetDescription(AssetDto asset, UserDto user);
 }

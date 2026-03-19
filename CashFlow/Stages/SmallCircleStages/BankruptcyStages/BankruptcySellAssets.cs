@@ -5,7 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, personManager, userRepository)
 {
     private PersonDto Person => PersonService.Read(CurrentUser);
     private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);
@@ -56,12 +57,27 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
                 buttons.Add($"#{++i}");
             }
 
+            buttons.Add(StopGame);
+            buttons.Add(History);
+
             return buttons;
         }
     }
 
     public override async Task HandleMessage(string message)
     {
+        if (MessageEquals(message, 41, "Stop Game"))
+        {
+            NextStage = New<StopGame>();
+            return;
+        }
+
+        if (MessageEquals(message, 2, "History"))
+        {
+            NextStage = New<History>();
+            return;
+        }
+
         await SellAsset(Person, message.Trim().Replace("#", "").ToInt());
         await ReduceBankLoan(Person);
         await ProcessBankruptcy(Person);
@@ -75,17 +91,32 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
         {
             var price = Terms.Get(64, CurrentUser, "Price");
             var sellForDepbts = Terms.Get(131, CurrentUser, "Sale for debts");
-
             var asset = assets[item - 1];
-            asset.IsDeleted = true;
-            person.Cash += asset.GetBancrupcySellPrice();
+            var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 
-            PersonService.UpdateAsset(CurrentUser, asset);
+            person.Cash += bancrupcySellPrice;
             PersonService.Update(person);
+            PersonService.SellAsset(asset, bancrupcySellPrice, CurrentUser);
+            PersonService.AddHistory(ActionType.BankruptcySellAsset, bancrupcySellPrice, CurrentUser, asset.Id);
+            ReduceLiability(person, asset);
 
             var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.GetBancrupcySellPrice().AsCurrency()}";
             await CurrentUser.Notify(message);
         }
+    }
+
+    private void ReduceLiability(PersonDto person, AssetDto asset)
+    {
+        if (asset.Type != AssetType.Boat) return;
+
+        var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.Boat_Loan);
+
+        liability.Cashflow = 0;
+        liability.FullAmount = 0;
+        liability.Deleted = true;
+
+        PersonService.Update(CurrentUser, liability);
+        PersonService.AddHistory((ActionType)liability.Type, asset.CashFlow, CurrentUser);
     }
 
     private Task ReduceBankLoan(PersonDto person)
