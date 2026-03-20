@@ -3,6 +3,7 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
+using System;
 
 namespace CashFlow.Stages;
 
@@ -57,6 +58,13 @@ public abstract class BaseStage : IStage
 
     protected async Task ProcessBankruptcy(PersonDto person)
     {
+        if (person.Bankruptcy == false)
+        {
+            person.Bankruptcy = true;
+            PersonService.Update(person);
+            PersonService.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
+        }
+
         if (person.Assets.Any(a => !a.IsDeleted))
         {
             NextStage = New<BankruptcySellAssets>();
@@ -82,7 +90,6 @@ public abstract class BaseStage : IStage
             return;
         }
 
-        PersonService.AddHistory(ActionType.Bankruptcy, 0, CurrentUser);
         NextStage = New<Bankruptcy>();
     }
 

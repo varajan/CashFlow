@@ -1,6 +1,7 @@
 ﻿using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
 using CashFlow.Interfaces;
+using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 namespace CashFlow.Stages;
 
@@ -16,11 +17,18 @@ public class Start(ITermsRepository termsService, IPersonService personManager, 
         {
             if (PersonService.Exists(CurrentUser))
             {
-                var isBigCircle = PersonService.Read(CurrentUser).BigCircle;
+                var person = PersonService.Read(CurrentUser);
 
-                return isBigCircle
-                    ? New<BigCircle>()
-                    : New<SmallCircle>();
+                if (person.BigCircle)
+                    return New<BigCircle>();
+
+                if (person.Bankruptcy && person.Assets.Any(a => !a.IsDeleted))
+                    return New<BankruptcySellAssets>();
+
+                if (person.Bankruptcy)
+                    return New<Bankruptcy>();
+
+                return New<SmallCircle>();
             }
 
             return New<ChooseProfession>();

@@ -31,6 +31,7 @@ public class BankruptcySellAsetsTests : StagesBaseTest
         Salary = -500,
         Assets = Assets,
         Liabilities = Liabilities,
+        Bankruptcy = true
     };
 
     [SetUp]
