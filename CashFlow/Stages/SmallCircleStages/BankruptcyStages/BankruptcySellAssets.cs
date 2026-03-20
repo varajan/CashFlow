@@ -94,6 +94,7 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 
+            asset.IsDeleted = true;
             person.Cash += bancrupcySellPrice;
             PersonService.Update(person);
             PersonService.SellAsset(asset, bancrupcySellPrice, CurrentUser);
