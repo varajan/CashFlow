@@ -1,7 +1,4 @@
-﻿Feature: Bankruptcy
-
-# sell something and survive
-# sell everything and loose
+﻿Feature: Bankruptcy Sell Assets
 
 Background:
 	Given I am 'Sami Parker' user

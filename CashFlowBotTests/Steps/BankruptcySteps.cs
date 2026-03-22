@@ -21,6 +21,13 @@ public class BankruptcySteps(StepsContext context) : BaseSteps(context)
     }
 
     [Then("My last message is:")]
+    public void CheckLastMessageMultiLine(string expected)
+    {
+        var reply = User.GetReply();
+        Assert.That(reply.Message, Is.EqualTo(expected));
+    }
+
+    [Then("My last message is: (.*)")]
     public void CheckLastMessage(string expected)
     {
         var reply = User.GetReply();
