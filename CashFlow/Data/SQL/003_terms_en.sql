@@ -129,7 +129,7 @@
 (127, 'EN', 'You have to sell your assets till you cash flow is positive.'),
 (128, 'EN', 'What asset do you want to sell?'),
 (129, 'EN', 'You are bankrupt. Game is over.'),
-(130, 'EN', 'You have paid off your debts, you lose 3 turns and can continue.'),
+(130, 'EN', 'You have paid off your debts and can continue, but you must skip your next three turns.'),
 (131, 'EN', 'Sale for debts'),
 (132, 'EN', 'Debt restructuring'),
 (133, 'EN', 'Credit repayment in the amount of *{0}*'),

@@ -129,7 +129,7 @@
 (127, 'DE', 'Sie müssen Ihre Vermögenswerte verkaufen, bis Ihr Cashflow positiv ist.'),
 (128, 'DE', 'Welchen Vermögenswert möchten Sie verkaufen?'),
 (129, 'DE', 'Sie sind bankrott. Das Spiel ist vorbei.'),
-(130, 'DE', 'Du hast deine Schulden abbezahlt, verlierst 3 Runden und kannst weitermachen.'),
+(130, 'DE', 'Du hast deine Schulden abbezahlt und kannst weitermachen, musst aber die nächsten drei Runden aussetzen.'),
 (131, 'DE', 'Verkauf für Schulden'),
 (132, 'DE', 'Umschuldung'),
 (133, 'DE', 'Kreditrückzahlung in Höhe von *{0}*'),

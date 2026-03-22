@@ -138,7 +138,7 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory(ActionType.ReduceLiability, amount, CurrentUser);
+        PersonService.AddHistory(ActionType.BankLoan, amount, CurrentUser);
         return Task.CompletedTask;
     }
 }

@@ -19,10 +19,9 @@ Background:
 		And I buy businesses:
 		| Title    | Price  | First Payment | Monthly Cashflow |
 		| Car wash | 20,000 |         5,000 |              800 |
-
+	When I get a paycheck
 
 Scenario: I have to sell my assets to survive
-	When I get a paycheck
 	Then My last message is:
 """
 *You're out of money.*
@@ -45,8 +44,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell shares to survive
-	When I get a paycheck
-		And I sell OK4U asset
+	When I sell OK4U asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -68,8 +66,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell business to survive
-	When I get a paycheck
-		And I sell Car Wash asset
+	When I sell Car Wash asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -91,8 +88,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell Boat to survive
-	When I get a paycheck
-		And I sell Boat asset
+	When I sell Boat asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -114,8 +110,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell small business to survive
-	When I get a paycheck
-		And I sell Auto Tools asset
+	When I sell Auto Tools asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -137,8 +132,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell coins to survive
-	When I get a paycheck
-		And I sell Peso asset
+	When I sell Peso asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -160,8 +154,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell land to survive
-	When I get a paycheck
-		And I sell 10 Acrs asset
+	When I sell 10 Acrs asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -183,8 +176,7 @@ What asset do you want to sell?
 """
 
 Scenario: I sell real estate to survive
-	When I get a paycheck
-		And I sell 3/2 asset
+	When I sell 3/2 asset
 	Then My last message is:
 """
 *You're out of money.*
@@ -204,3 +196,7 @@ What asset do you want to sell?
 #6 - *10 Acrs* - Price: $5,000
 #7 - *2/1* - Price: $1,500, Cashflow: $160
 """
+
+Scenario: I sell everything to survive
+	When I sell all 8 assets
+	Then My last message is: You are bankrupt. Game is over.

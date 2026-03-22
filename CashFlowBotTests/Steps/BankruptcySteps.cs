@@ -1,5 +1,6 @@
 ﻿using CashFlow.Extensions;
 using CashFlowBotTests.Extras;
+using MoreLinq;
 using TechTalk.SpecFlow;
 
 namespace CashFlowBotTests.Steps;
@@ -20,6 +21,9 @@ public class BankruptcySteps(StepsContext context) : BaseSteps(context)
         User.SendMessage(button);
     }
 
+    [When(@"I sell all (\d+) assets")]
+    public void SellAssets(int count) => Enumerable.Range(0, count).ForEach(_ => SellAsset("#1"));
+
     [Then("My last message is:")]
     public void CheckLastMessageMultiLine(string expected)
     {
@@ -32,5 +36,13 @@ public class BankruptcySteps(StepsContext context) : BaseSteps(context)
     {
         var reply = User.GetReply();
         Assert.That(reply.Message, Is.EqualTo(expected));
+    }
+
+    [When("I pay (.*) to Bank")]
+    public void PayMoney(string amount)
+    {
+        User.SendMessage("Give money");
+        User.SendMessage("Bank");
+        User.SendMessage(amount);
     }
 }

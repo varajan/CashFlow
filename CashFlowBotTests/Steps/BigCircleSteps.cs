@@ -7,8 +7,9 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class BigCircleSteps(StepsContext context) : BaseSteps(context)
 {
-    [When("(.*) pays (.*)")]
-    public void Pay(string name, string amount)
+    [Scope(Feature = "BigCircle")]
+    [When("(.*) pay(s|) (.*)")]
+    public void Pay(string name, string _, string amount)
     {
         var user = GetUser(name);
         user.SendMessage("Give Money");
