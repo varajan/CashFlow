@@ -89,6 +89,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         Assert.That(reply.Message.Escape(), Is.EqualTo(expected.Escape()));
     }
 
+    [When(@"(My|.*) history data is following:")]
     [Then(@"(My|.*) history data is following:")]
     public void CheckHistory(string name, string expected)
     {

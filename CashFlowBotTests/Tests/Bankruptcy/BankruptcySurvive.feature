@@ -102,6 +102,22 @@ Scenario: Rollback bankruptcy actions
 		And I pay $400 to Bank
 	But I get a paycheck
 	And I sell 4-plex asset
+	And My history data is following:
+"""
+• Get credit: $5,000
+• Buy Real Estate. *4-plex* - Price: $100,000, Mortgage: $94,000, Cashflow: -$100
+• Get credit: $2,000
+• Downsize and paying $1,780
+• Get credit: $2,000
+• Downsize and paying $1,980
+• Get credit: $2,000
+• Downsize and paying $2,180
+• Pay $400
+• Bankruptcy
+• Sale for debts. *4-plex* - Price: $3,000
+• Reduce Liabilities. Bank Loan: $3,000
+• Debt restructuring
+"""
 	But I rollback last 4 actions
 	Then My Data is following:
 """

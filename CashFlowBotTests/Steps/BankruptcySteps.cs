@@ -8,6 +8,8 @@ namespace CashFlowBotTests.Steps;
 [Binding]
 public class BankruptcySteps(StepsContext context) : BaseSteps(context)
 {
+    private string BankruptcyMessage { get; set; }
+
     [When("I sell (.*) asset")]
     public void SellAsset(string title)
     {
@@ -45,4 +47,10 @@ public class BankruptcySteps(StepsContext context) : BaseSteps(context)
         User.SendMessage("Bank");
         User.SendMessage(amount);
     }
+
+    [When("I see bankruptcy message")]
+    public void RememberBankruptcyMessage() => BankruptcyMessage = User.GetReply().Message;
+
+    [Then("I see my bankruptcy message")]
+    public void CheckBankruptcyMessage() => Assert.That(User.GetReply().Message, Is.EqualTo(BankruptcyMessage));
 }

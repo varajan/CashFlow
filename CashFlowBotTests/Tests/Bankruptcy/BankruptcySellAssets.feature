@@ -21,6 +21,7 @@ Background:
 		| Car wash | 20,000 |         5,000 |              800 |
 	When I get a paycheck
 
+
 Scenario: I have to sell my assets to survive
 	Then My last message is:
 """

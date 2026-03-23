@@ -117,7 +117,7 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
         liability.Deleted = true;
 
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, asset.CashFlow, CurrentUser);
+        PersonService.AddHistory((ActionType)liability.Type, 0, CurrentUser);
     }
 
     private Task ReduceBankLoan(PersonDto person)
