@@ -109,6 +109,7 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
     private void ReduceLiability(PersonDto person, AssetDto asset)
     {
         if (asset.Type != AssetType.Boat) return;
+        if (asset.CashFlow == 0) return;
 
         var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.Boat_Loan);
 
