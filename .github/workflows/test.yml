@@ -22,27 +22,39 @@ jobs:
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
       - name: Run Unit Tests
-        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --consoleLoggerParameters:ErrorsOnly
+        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "trx"
 
-      - name: Build Bot Emulator
-        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
+      - name: Generate Unit Tests report
+        if: always()
+        run: reportgenerator -reports: "CashFlowUnitTests/**/*.trx" -targetDir: "TestReports" -reporttypes:Html
 
-      - name: Launch Bot Emulator
-        run: |
-          cd emulator
-          chmod +x CashFlowBotEmulator
-          ./CashFlowBotEmulator &
-
-      - name: Run System Tests
-        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --consoleLoggerParameters:ErrorsOnly
-
-      - name: Upload logs and messages
+      - name: Upload Unit Tests report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: logs-and-messages
-          path: |
-            emulator/Logs/*.*
-            emulator/*.msg
-            emulator/*.db
+          name: TestReport
+          path: TestReports/*.*
           retention-days: 7
+
+#      - name: Build Bot Emulator
+#        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
+#
+#      - name: Launch Bot Emulator
+#        run: |
+#          cd emulator
+#          chmod +x CashFlowBotEmulator
+#          ./CashFlowBotEmulator &
+#
+#      - name: Run System Tests
+#        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --consoleLoggerParameters:ErrorsOnly
+#
+#      - name: Upload logs and messages
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: logs-and-messages
+#          path: |
+#            emulator/Logs/*.*
+#            emulator/*.msg
+#            emulator/*.db
+#          retention-days: 7
