@@ -74,9 +74,6 @@ public class BigCircleTests : StagesBaseTest
 
         // Assert
         activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Never));
-
-        // DEBUG
-        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Once));
     }
 
     [Test]
