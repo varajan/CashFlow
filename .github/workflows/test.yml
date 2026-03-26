@@ -18,27 +18,30 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
-      - name: Install ReportGenerator
-        run: dotnet tool install --global dotnet-reportgenerator-globaltool
+#      - name: Install ReportGenerator
+#        run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
+#      - name: Run Unit Tests
+#        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "trx;LogFileName=UnitTests.trx"
+#
       - name: Run Unit Tests
-        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "trx;LogFileName=UnitTests.trx"
+        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
 
-      - name: Generate Unit Tests report
-        if: always()
-        run: |
-          export PATH="$PATH:$HOME/.dotnet/tools"
-          reportgenerator -reports:**/UnitTests.trx -targetDir:TestReports -reporttypes:Html
+#      - name: Generate Unit Tests report
+#        if: always()
+#        run: |
+#          export PATH="$PATH:$HOME/.dotnet/tools"
+#          reportgenerator -reports:**/UnitTests.trx -targetDir:TestReports -reporttypes:Html
 
       - name: Upload Unit Tests report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: TestReport
-          path: TestReports/
+          path: CashFlowUnitTests/
           retention-days: 7
 
 #      - name: Build Bot Emulator
