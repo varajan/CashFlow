@@ -353,4 +353,4 @@ MigrationBackup/
 publish/*
 build/*
 /CashFlowBotEmulator/emulator
-/CashFlowBotTests/**/*.feature.cs
+**/*.feature.cs

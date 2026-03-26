@@ -14,7 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotEmulator", "CashFlowBotEmulator\CashFlowBotEmulator.csproj", "{89656A7A-7924-4E03-8C61-31E564F9E704}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotTests", "CashFlowBotTests\CashFlowBotTests.csproj", "{1C5C3F58-639E-477F-BF9A-4B902EA3C519}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotSystemTests", "CashFlowBotSystemTests\CashFlowBotSystemTests.csproj", "{1C5C3F58-639E-477F-BF9A-4B902EA3C519}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowUnitTests", "CashFlowUnitTests\CashFlowUnitTests.csproj", "{8B632CCA-5020-4A63-B45F-600F696DB5E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +40,10 @@ Global
 		{1C5C3F58-639E-477F-BF9A-4B902EA3C519}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C5C3F58-639E-477F-BF9A-4B902EA3C519}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5C3F58-639E-477F-BF9A-4B902EA3C519}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
