@@ -31,7 +31,7 @@ jobs:
         if: always()
         run: |
           export PATH="$PATH:$HOME/.dotnet/tools"
-          reportgenerator -reports: "**/UnitTests.trx" -targetDir: "TestReports" -reporttypes:Html
+          reportgenerator -reports:**/UnitTests.trx -targetDir:TestReports -reporttypes:Html
 
       - name: Upload Unit Tests report
         if: always()
