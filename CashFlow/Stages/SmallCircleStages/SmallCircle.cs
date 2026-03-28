@@ -49,7 +49,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         if (person.IsReadyForBigCircle())
         {
             var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
-            OtherUsers.Where(x => x.IsActive()).ForEach(u => u.Notify(notifyMessage));
+            OtherUsers.Where(x => x.IsActive()).ForEach(async u => await u.Notify(notifyMessage));
         }
 
         switch (message)
@@ -60,7 +60,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
             case var m when MessageEquals(m, 140, "Friends"):
                 var users = OtherUsers.Where(x => x.IsActive()).ToList();
-                if (users.Any())
+                if (users.Count != 0)
                 {
                     NextStage = New<Friends>();
                     return;
@@ -160,8 +160,9 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         var termId = person.Children == 1 ? 20 : 25;
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
         var count = person.Children.ToString();
+        var personProfession = Terms.Translate(person.Profession, CurrentUser.Language);
 
-        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", person.Profession, childrenExpenses, count));
+        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", personProfession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
