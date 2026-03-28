@@ -24,7 +24,7 @@ while (true)
         continue;
     }
 
-    File.Delete(file);
+    File.Delete(file!);
 
     if (message == "EXIT") break;
 
@@ -36,7 +36,7 @@ while (true)
         continue;
     }
 
-    HandleUpdateAsync(chatId, message).GetAwaiter().GetResult();
+    HandleUpdateAsync(chatId, message!).GetAwaiter().GetResult();
 }
 
 async Task HandleUpdateAsync(long chatId, string message)
