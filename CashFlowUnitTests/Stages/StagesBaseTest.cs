@@ -1,10 +1,11 @@
-﻿using CashFlow.Data.Consts;
+﻿using CashFlow;
+using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages;
+namespace CashFlowUnitTests.Stages;
 
 public abstract class StagesBaseTest
 {

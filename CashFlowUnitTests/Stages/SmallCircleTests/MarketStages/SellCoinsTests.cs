@@ -3,7 +3,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.MarketStages;
 
 [TestFixture]
 public class SellCoinsTests : SellAssetBaseTest

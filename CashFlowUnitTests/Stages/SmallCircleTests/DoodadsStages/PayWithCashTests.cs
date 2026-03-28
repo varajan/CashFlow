@@ -3,9 +3,10 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.DoodadsStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
 
 [TestFixture]
 public class PayWithCashTests : StagesBaseTest

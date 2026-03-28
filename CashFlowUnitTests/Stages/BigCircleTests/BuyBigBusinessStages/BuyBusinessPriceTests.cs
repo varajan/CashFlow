@@ -5,7 +5,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
+namespace CashFlowUnitTests.Stages.BigCircleTests.BuyBigBusinessStages;
 
 [TestFixture]
 public class BuyBigBusinessPriceTests : StagesBaseTest

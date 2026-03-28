@@ -3,9 +3,10 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealEstateStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRealEstateStages;
 
 [TestFixture]
 public class BuyRealEstateCreditTests : StagesBaseTest

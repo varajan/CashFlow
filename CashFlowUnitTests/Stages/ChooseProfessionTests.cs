@@ -2,7 +2,7 @@
 using CashFlow.Stages.SmallCircleStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages;
+namespace CashFlowUnitTests.Stages;
 
 [TestFixture]
 public class ChooseProfessionTests : StagesBaseTest

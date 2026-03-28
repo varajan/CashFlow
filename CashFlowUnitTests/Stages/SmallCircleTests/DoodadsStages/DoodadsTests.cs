@@ -5,7 +5,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.DoodadsStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
 
 [TestFixture]
 public class DoodadsTests : StagesBaseTest

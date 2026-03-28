@@ -5,7 +5,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoinsStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCoinsStages;
 
 [TestFixture]
 public class BuyCoinsPriceTests : StagesBaseTest

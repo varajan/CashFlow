@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.SellStocksStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.SellStocksStages;
 
 [TestFixture]
 public class SellStocksPriceTests : StagesBaseTest

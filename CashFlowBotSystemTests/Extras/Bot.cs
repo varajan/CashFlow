@@ -4,7 +4,7 @@ using CashFlow.Extensions;
 using Polly;
 using Polly.Retry;
 
-namespace CashFlowBotTests.Extras;
+namespace CashFlowBotSystemTests.Extras;
 
 public class Bot()
 {

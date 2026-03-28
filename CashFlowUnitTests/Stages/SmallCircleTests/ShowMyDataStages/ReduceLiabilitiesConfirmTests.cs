@@ -4,7 +4,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.ShowMyDataStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;
 
 [TestFixture]
 public class ReduceLiabilitiesConfirmTests : StagesBaseTest

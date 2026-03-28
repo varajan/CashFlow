@@ -1,8 +1,8 @@
-﻿using CashFlowBotTests.Extras;
+﻿using CashFlowBotSystemTests.Extras;
 using MoreLinq;
 using TechTalk.SpecFlow;
 
-namespace CashFlowBotTests.Steps;
+namespace CashFlowBotSystemTests.Steps;
 
 [Binding]
 public class Downsize(StepsContext context) : BaseSteps(context)

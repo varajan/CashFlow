@@ -5,7 +5,7 @@ using CashFlow.Data.DTOs;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Extensions;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
 
 [TestFixture]
 public class SendMoneyTests : StagesBaseTest

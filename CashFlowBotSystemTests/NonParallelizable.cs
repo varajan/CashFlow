@@ -1,4 +1,4 @@
-﻿namespace CashFlowBotTests.Tests;
+﻿namespace CashFlowBotSystemTests.Tests;
 
 [NonParallelizable]
 public partial class BigCircleFeature { }

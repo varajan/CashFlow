@@ -5,7 +5,7 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.BigOpportunityStages.BuyRealEstateStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.BigOpportunityStages.BuyRealEstateStages;
 
 [TestFixture]
 public class BuyRealEstateFirstPaymentTests : StagesBaseTest

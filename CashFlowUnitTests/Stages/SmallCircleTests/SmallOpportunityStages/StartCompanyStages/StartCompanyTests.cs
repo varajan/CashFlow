@@ -2,9 +2,10 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
 
 [TestFixture]
 public class StartCompanyTests : StagesBaseTest

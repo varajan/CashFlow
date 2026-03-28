@@ -1,7 +1,8 @@
 ﻿using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
+using CashFlowUnitTests.Stages;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.BankruptcyStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.BankruptcyStages;
 
 [TestFixture]
 public class BankruptcyTests : StagesBaseTest

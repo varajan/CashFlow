@@ -6,7 +6,7 @@ using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.BankruptcyStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.BankruptcyStages;
 
 [TestFixture]
 public class BankruptcySellAsetsTests : StagesBaseTest

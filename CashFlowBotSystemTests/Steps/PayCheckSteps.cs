@@ -1,7 +1,7 @@
-﻿using CashFlowBotTests.Extras;
+﻿using CashFlowBotSystemTests.Extras;
 using TechTalk.SpecFlow;
 
-namespace CashFlowBotTests.Steps;
+namespace CashFlowBotSystemTests.Steps;
 
 [Binding]
 public class PayCheckSteps(StepsContext context) : BaseSteps(context)

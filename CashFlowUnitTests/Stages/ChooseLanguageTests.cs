@@ -1,7 +1,7 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Stages;
 
-namespace CashFlow.Tests.Stages;
+namespace CashFlowUnitTests.Stages;
 
 [TestFixture]
 public class ChooseLanguageTests : StagesBaseTest

@@ -3,9 +3,10 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.BigCircleTests.BuyBigBusinessStages;
+namespace CashFlowUnitTests.Stages.BigCircleTests.BuyBigBusinessStages;
 
 [TestFixture]
 public class BuyBigBusinessFirstPaymentTests : StagesBaseTest

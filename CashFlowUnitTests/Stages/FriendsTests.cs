@@ -2,7 +2,7 @@
 using CashFlow.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages;
+namespace CashFlowUnitTests.Stages;
 
 [TestFixture]
 public class FriendsTests : StagesBaseTest

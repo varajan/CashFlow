@@ -6,7 +6,7 @@ using CashFlow.Stages.SmallCircleStages.MarketStages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.MarketStages;
 
 [TestFixture]
 public class SellLandPriceTests : SellAssetBaseTest

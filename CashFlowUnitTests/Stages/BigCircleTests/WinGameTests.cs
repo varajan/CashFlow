@@ -2,10 +2,11 @@
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.BigCircleTests;
+namespace CashFlowUnitTests.Stages.BigCircleTests;
 
 [TestFixture]
 public class WinGameTests : StagesBaseTest

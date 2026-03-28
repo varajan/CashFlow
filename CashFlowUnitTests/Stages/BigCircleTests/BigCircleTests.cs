@@ -5,10 +5,11 @@ using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.BigCircleTests;
+namespace CashFlowUnitTests.Stages.BigCircleTests;
 
 [TestFixture]
 public class BigCircleTests : StagesBaseTest

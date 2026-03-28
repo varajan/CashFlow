@@ -2,10 +2,11 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.MarketStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.MarketStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.MarketStages;
 
 [TestFixture]
 public class MarketTests : StagesBaseTest

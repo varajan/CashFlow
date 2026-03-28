@@ -3,10 +3,11 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests.SendMoneyStages;
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
 
 [TestFixture]
 public class SendMoneyCreditTests : StagesBaseTest

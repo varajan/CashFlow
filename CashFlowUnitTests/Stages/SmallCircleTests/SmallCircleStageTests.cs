@@ -11,9 +11,10 @@ using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.SmallCircleTests;
+namespace CashFlowUnitTests.Stages.SmallCircleTests;
 
 [TestFixture]
 public class SmallCircleStageTests : StagesBaseTest

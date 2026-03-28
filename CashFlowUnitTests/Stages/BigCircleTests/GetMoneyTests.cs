@@ -2,9 +2,10 @@
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
+using CashFlowUnitTests.Stages;
 using Moq;
 
-namespace CashFlow.Tests.Stages.BigCircleTests;
+namespace CashFlowUnitTests.Stages.BigCircleTests;
 
 [TestFixture]
 public class GetMoneyTests : StagesBaseTest
