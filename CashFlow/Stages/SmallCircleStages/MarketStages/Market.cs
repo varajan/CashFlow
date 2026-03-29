@@ -13,8 +13,8 @@ public class Market(ITranslationService termsService, IPersonService personManag
         TranslationService.Get("Sell Real Estate", CurrentUser),
         TranslationService.Get("Sell Land", CurrentUser),
         TranslationService.Get("Sell Business", CurrentUser),
-        TranslationService.Get("Sell Coins", CurrentUser),
-        TranslationService.Get("Increase cash flow", CurrentUser),
+        TranslationService.Get(Terms.SellCoins, CurrentUser),
+        TranslationService.Get(Terms.IncreaseCashflow, CurrentUser),
         Cancel
     ];
 
@@ -60,11 +60,11 @@ public class Market(ITranslationService termsService, IPersonService personManag
                 NextStage = New<SellBusiness>();
                 return;
 
-            case var m when MessageEquals(m, "Sell Coins"):
+            case var m when MessageEquals(m, Terms.SellCoins):
                 var noCoins = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Count == 0;
                 if (noCoins)
                 {
-                    await CurrentUser.Notify(TranslationService.Get("You have no coins.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoCoins, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -72,7 +72,7 @@ public class Market(ITranslationService termsService, IPersonService personManag
                 NextStage = New<SellCoins>();
                 return;
 
-            case var m when MessageEquals(m, "Increase cash flow"):
+            case var m when MessageEquals(m, Terms.IncreaseCashflow):
                 if (noSmallBusiness)
                 {
                     await CurrentUser.Notify(TranslationService.Get(Terms.NoSmallBusiness, CurrentUser));

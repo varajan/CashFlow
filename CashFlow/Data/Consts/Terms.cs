@@ -142,6 +142,8 @@ public class Terms
     public const string StartCompany = "Start a company";
     public const string Boat = "Boat";
 
+    // vvv done
+
     public const string BoatBought = "You've bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}";
 
     public const string IncreaseCashflow = "Increase cash flow";
@@ -152,8 +154,6 @@ public class Terms
     public const string SellCoinsAsk = "What coins do you want to sell?";
     public const string InvalidCoins = "Invalid coins title.";
     public const string InvalidStockName = "Invalid stocks name.";
-
-    // vvv done
 
     public const string Bankruptcy = "Bankruptcy";
     public const string NoMoney = "You're out of money.";

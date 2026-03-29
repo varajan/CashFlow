@@ -37,7 +37,7 @@ public class SellAsset<TNextStage>(
 
             if (AssetTypes.Contains(AssetType.Coin))
             {
-                return TranslationService.Get("What coins do you want to sell?", CurrentUser);
+                return TranslationService.Get(Terms.SellCoinsAsk, CurrentUser);
             }
 
             if (AssetTypes.Contains(AssetType.Stock))
@@ -124,13 +124,13 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Coin))
             {
-                await CurrentUser.Notify(TranslationService.Get("Invalid coins title.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidCoins, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Stock))
             {
-                await CurrentUser.Notify(TranslationService.Get("Invalid stocks name.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidStockName, CurrentUser));
                 return false;
             }
 

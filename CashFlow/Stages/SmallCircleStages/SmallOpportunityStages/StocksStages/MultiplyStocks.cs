@@ -38,7 +38,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 
         if (stocks.Count == 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid stocks name.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidStockName, CurrentUser));
             return;
         }
 

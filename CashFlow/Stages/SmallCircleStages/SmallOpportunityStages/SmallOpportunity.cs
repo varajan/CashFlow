@@ -17,7 +17,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
         TranslationService.Get("Stocks ÷2", CurrentUser),
         TranslationService.Get("Buy Real Estate", CurrentUser),
         TranslationService.Get("Buy Land", CurrentUser),
-        TranslationService.Get("Buy coins", CurrentUser),
+        TranslationService.Get(Terms.BuyCoins, CurrentUser),
         TranslationService.Get("Start a company", CurrentUser),
         Cancel
     ];
@@ -70,7 +70,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                 NextStage = New<BuyLand>();
                 return;
 
-            case var m when MessageEquals(m, "Buy coins"):
+            case var m when MessageEquals(m, Terms.BuyCoins):
                 NextStage = New<BuyCoins>();
                 return;
 
