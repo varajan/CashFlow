@@ -9,8 +9,6 @@ public class FileLogger : ILogger
 
     public FileLogger() => Directory.CreateDirectory(LogDir);
 
-    public IList<string> GetTop30Records() => File.ReadAllLines(LogFile).Reverse().Take(30).Reverse().ToList();
-
     public void Log(Exception exception)
     {
         Log(exception.Message);
