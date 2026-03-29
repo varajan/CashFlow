@@ -8,7 +8,7 @@ public class ChooseProfession(ITranslationService termsService, IPersonService p
     : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get("Choose your *profession*", CurrentUser);
-    public override IEnumerable<string> Buttons => Professions.Append(TranslationService.Get("Pick random", CurrentUser));
+    public override IEnumerable<string> Buttons => Professions.Append(TranslationService.Get(Terms.PickRandom, CurrentUser));
 
     private IEnumerable<string> Professions => PersonService.GetAllProfessions()
         .Select(x => TranslationService.Get(x, CurrentUser.Language))
@@ -22,7 +22,7 @@ public class ChooseProfession(ITranslationService termsService, IPersonService p
             return Task.CompletedTask;
         }
 
-        var random = MessageEquals(message, "Pick random");
+        var random = MessageEquals(message, Terms.PickRandom);
         var profession = random
             ? Professions.Random()
             : Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));

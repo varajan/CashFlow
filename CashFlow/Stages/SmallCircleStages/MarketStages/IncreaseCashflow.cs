@@ -28,7 +28,7 @@ public class IncreaseCashflow(
         var cashflow = message.AsCurrency();
         if (cashflow <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 

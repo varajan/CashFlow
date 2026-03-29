@@ -58,7 +58,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                 NextStage = New<ShowMyData>();
                 return;
 
-            case var m when MessageEquals(m, "Friends"):
+            case var m when MessageEquals(m, Terms.Friends):
                 var users = OtherUsers.Where(x => x.IsActive()).ToList();
                 if (users.Count != 0)
                 {
@@ -67,7 +67,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                 }
                 else
                 {
-                    await CurrentUser.Notify(TranslationService.Get("There are no other players.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoPlayers, CurrentUser));
                     return;
                 }
 

@@ -55,7 +55,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
 
         if (person.BigCircle && amount <=0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 

@@ -14,8 +14,8 @@ public class Friends(ITranslationService termsService, IPersonService personMana
         {
             var NL = Environment.NewLine;
             var message = string.Empty;
-            var onSmall = TranslationService.Get("On Small circle:", CurrentUser);
-            var onBig = TranslationService.Get("On Big circle:", CurrentUser);
+            var onSmall = TranslationService.Get(Terms.SmallCircle, CurrentUser);
+            var onBig = TranslationService.Get(Terms.BigCircleLabel, CurrentUser);
 
             var onSmallCircle = ActiveUsers.Where(x => PersonService.Read(x).BigCircle == false).ToList();
             var onBigCircle = ActiveUsers.Where(x => PersonService.Read(x).BigCircle == true).ToList();

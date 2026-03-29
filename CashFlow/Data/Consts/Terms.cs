@@ -153,6 +153,8 @@ public class Terms
     public const string InvalidCoins = "Invalid coins title.";
     public const string InvalidStockName = "Invalid stocks name.";
 
+    // vvv done
+
     public const string Bankruptcy = "Bankruptcy";
     public const string NoMoney = "You're out of money.";
     public const string MustSellAssets = "You have to sell your assets till you cash flow is positive.";

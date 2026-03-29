@@ -22,14 +22,14 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
             var price = TranslationService.Get("Price", CurrentUser);
             var i = 0;
 
-            var message = $"*{TranslationService.Get("You're out of money.", CurrentUser)}*";
+            var message = $"*{TranslationService.Get(Terms.NoMoney, CurrentUser)}*";
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{Person.GetSmallCircleCashflow().AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
             message += Environment.NewLine;
-            message += Environment.NewLine + TranslationService.Get("You have to sell your assets till you cash flow is positive.", CurrentUser);
+            message += Environment.NewLine + TranslationService.Get(Terms.MustSellAssets, CurrentUser);
             message += Environment.NewLine;
-            message += Environment.NewLine + TranslationService.Get("What asset do you want to sell?", CurrentUser);
+            message += Environment.NewLine + TranslationService.Get(Terms.SellAssetAsk, CurrentUser);
             message += Environment.NewLine;
 
             foreach (var asset in Assets)
@@ -90,7 +90,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
         if (item > 0 && item <= assets.Count)
         {
             var price = TranslationService.Get("Price", CurrentUser);
-            var sellForDepbts = TranslationService.Get("Sale for debts", CurrentUser);
+            var sellForDepbts = TranslationService.Get(Terms.SaleForDebts, CurrentUser);
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 

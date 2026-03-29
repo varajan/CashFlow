@@ -44,7 +44,7 @@ public class SendMoneyAmount(
 
         if (amount <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -75,10 +75,10 @@ public class SendMoneyAmount(
 
     protected async Task Transfer(AssetDto asset)
     {
-        var bank = TranslationService.Get("Bank", CurrentUser);
+        var bank = TranslationService.Get(Terms.Bank, CurrentUser);
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = TranslationService.Get("{0} transferred {2} to {1}.", CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = TranslationService.Get(Terms.TransferMsg, CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(x => x.IsActive())
                 .Append(CurrentUser)

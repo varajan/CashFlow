@@ -75,7 +75,7 @@ public class Market(ITranslationService termsService, IPersonService personManag
             case var m when MessageEquals(m, "Increase cash flow"):
                 if (noSmallBusiness)
                 {
-                    await CurrentUser.Notify(TranslationService.Get("You have no small Business.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoSmallBusiness, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }

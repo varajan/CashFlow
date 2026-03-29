@@ -8,13 +8,13 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("Whom?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.Whom, CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            var bank = TranslationService.Get("Bank", CurrentUser);
+            var bank = TranslationService.Get(Terms.Bank, CurrentUser);
             var users = OtherUsers
                 .Where(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
@@ -32,7 +32,7 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        if (MessageEquals(message, "Bank") ||
+        if (MessageEquals(message, Terms.Bank) ||
             OtherUsers.Any(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto

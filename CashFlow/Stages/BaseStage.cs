@@ -75,7 +75,7 @@ public abstract class BaseStage : IStage
         var isCashFlowPositive = person.GetSmallCircleCashflow() >= 0;
         if (isCashFlowPositive)
         {
-            await CurrentUser.Notify(TranslationService.Get("You have paid off your debts and can continue, but you must skip your next three turns.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.DebtRecovered, CurrentUser));
 
             person.Bankruptcy = false;
             PersonService.Update(person);
@@ -98,7 +98,7 @@ public abstract class BaseStage : IStage
             PersonService.Update(CurrentUser, liability);
         }
         PersonService.Update(person);
-        await CurrentUser.Notify(TranslationService.Get("Debt restructuring. Car loans, small loans and credit card halved.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.DebtRestructDetails, CurrentUser));
         PersonService.AddHistory(ActionType.BankruptcyDebtRestructuring, 0, CurrentUser);
     }
 
@@ -108,7 +108,7 @@ public abstract class BaseStage : IStage
     protected bool IsCanceled(string message) => MessageEquals(message, "Cancel");
 
     protected string Yes => TranslationService.Get(Terms.Yes, CurrentUser);
-    protected string No => TranslationService.Get("No", CurrentUser);
+    protected string No => TranslationService.Get(Terms.No, CurrentUser);
     protected string Cancel => TranslationService.Get(Terms.Cancel, CurrentUser);
     protected string GetCredit => TranslationService.Get("Get Credit", CurrentUser);
     protected string StopGame => TranslationService.Get("Stop Game", CurrentUser);

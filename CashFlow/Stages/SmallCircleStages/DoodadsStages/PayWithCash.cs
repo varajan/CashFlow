@@ -24,7 +24,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 

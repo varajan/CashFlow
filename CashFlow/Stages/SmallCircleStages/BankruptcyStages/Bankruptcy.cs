@@ -4,7 +4,7 @@ namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 public class Bankruptcy(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("You are bankrupt. Game is over.", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.GameOver, CurrentUser);
 
     public override IEnumerable<string> Buttons => [ StopGame, History ];
 
