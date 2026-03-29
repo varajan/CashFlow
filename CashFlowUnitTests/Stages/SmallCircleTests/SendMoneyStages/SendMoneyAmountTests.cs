@@ -1,0 +1,222 @@
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
+using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using CashFlowUnitTests.Stages;
+using Moq;
+using MoreLinq;
+
+namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
+
+[TestFixture]
+public class SendMoneyAmountTests : StagesBaseTest
+{
+    private UserDto Recipient => OtherUsers.Last(u => u.IsActive() && u.Name.Contains("Small"));
+    private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 100 };
+    private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
+    private AssetDto TransferAsset => new() { UserId = CurrentUser.Id, Title = Recipient.Name, Type = AssetType.Transfer, IsDraft = true };
+
+    [SetUp]
+    public void Setup()
+    {
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([TransferAsset]);
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
+        PersonServiceMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_CanBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == CurrentUser.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+    }
+
+    [Test]
+    public void SendMoneyAmount_Question_and_Buttons()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
+            {
+                "$500",
+                "$1,000",
+                "$1,500",
+                "$2,000",
+                "$2,500",
+                "$3,000",
+                "$3,500",
+                "$4,000",
+                "Cancel"
+            }));
+        });
+    }
+
+    [TestCase("0")]
+    [TestCase("a")]
+    [TestCase("12a")]
+    public async Task SendMoneyAmount_InvalidAmount(string amount)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage(amount);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyAmount>());
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid value. Try again."), Times.Once, "Message to user should be sent");
+        PersonServiceMock.Verify(x => x.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_ToUser_AvailableAmount_TransferIsCompleted()
+    {
+        // Arrange
+        var transferAmount = 100;
+        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency());
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage($"{transferAmount}");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
+
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Qtty == transferAmount &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonServiceMock.Verify(p => p.Update(
+            It.Is<PersonDto>(x =>
+            x.Id == TestPerson.Id &&
+            x.Cash == TestPerson.Cash - transferAmount)
+            ), Times.Once);
+
+        PersonServiceMock.Verify(p => p.Update(
+            It.Is<PersonDto>(x =>
+            x.Id == RecipientPerson.Id &&
+            x.Cash == RecipientPerson.Cash + transferAmount)
+            ), Times.Once);
+
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Once);
+
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), Times.Once));
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_ToBank_AvailableAmount_TransferIsCompleted()
+    {
+        // Arrange
+        var transferAsset = TransferAsset;
+        transferAsset.Title = "Bank";
+        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([transferAsset]);
+
+        var transferAmount = 100;
+        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, "Bank", transferAmount.AsCurrency());
+        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage($"{transferAmount}");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<Start>());
+
+        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
+
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Qtty == transferAmount &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonServiceMock.Verify(a => a.DeleteAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Type == AssetType.Transfer)
+        ), Times.Once);
+
+        PersonServiceMock.Verify(p => p.Update(
+            It.Is<PersonDto>(x =>
+            x.Id == TestPerson.Id &&
+            x.Cash == TestPerson.Cash - transferAmount)
+            ), Times.Once);
+
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x =>x.Id == RecipientPerson.Id)), Times.Never);
+
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Never);
+
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), Times.Once));
+    }
+
+    [Test]
+    public async Task SendMoneyAmount_UnavailableAmount_MoveToCredit()
+    {
+        // Arrange
+        var transferAmount = 101;
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage($"{transferAmount}");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SendMoneyCredit>());
+
+        PersonServiceMock.Verify(a => a.UpdateAsset(
+            CurrentUser,
+            It.Is<AssetDto>(x =>
+                x.UserId == TestPerson.Id &&
+                x.Qtty == transferAmount &&
+                x.Type == AssetType.Transfer)
+            ), Times.Once);
+
+        PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
+    }
+
+    protected override IStage GetTestStage() => GetStage<SendMoneyAmount>();
+}

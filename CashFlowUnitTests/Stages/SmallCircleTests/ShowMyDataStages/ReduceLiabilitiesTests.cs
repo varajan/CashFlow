@@ -1,0 +1,112 @@
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
+using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
+using Moq;
+
+namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;
+
+[TestFixture]
+public class ReduceLiabilitiesTests : StagesBaseTest
+{
+    private readonly List<LiabilityDto> Liabilities =
+    [
+        new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = false },
+        new() { Type = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = false },
+        new() { Type = Liability.Mortgage, FullAmount = 0, Cashflow = -5100, AllowsPartialPayment = false, Deleted = true },
+        new() { Type = Liability.School_Loan, FullAmount = 0,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = true },
+    ];
+
+    private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
+
+    [SetUp]
+    public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(TestPerson);
+
+    [Test]
+    public void ReduceLiabilities_Question_and_Buttons()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var buttons = Liabilities.Where(l => !l.Deleted).Select(x => x.Type.AsString()).Append("Cancel");
+        var message = $"*Cash:* $50,250{NL}{NL}*Car Loan:* $50,000 - $5,100 monthly{NL}*Boat Loan:* $5,000 - $500 monthly";
+
+        // Act
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(testStage.Message, Is.EqualTo(message));
+            Assert.That(testStage.Buttons.ToList(), Is.EqualTo(buttons));
+        });
+    }
+
+    [TestCase("Car loan", 50_000)]
+    [TestCase("car Loan", 51_000)]
+    [TestCase("Boat Loan", 1_000)]
+    [TestCase("Boat Loan", 2_000)]
+    [TestCase("boat Loan", 5_000)]
+    [TestCase("Boat loan", 10_000)]
+    public async Task ReduceLiabilities_EnoughCash(string message, int cash)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+        var nextStage = liability.AllowsPartialPayment ? typeof(ReduceLiabilitiesAmount) : typeof(ReduceLiabilitiesConfirm);
+
+        var testPerson = TestPerson.Clone();
+        testPerson.Cash = cash;
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage(message);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
+
+        PersonServiceMock.Verify(p => p.Update(CurrentUser,
+            It.Is<LiabilityDto>(l => l.Type == liability.Type && l.MarkedForReduction == true)),
+            Times.Once);
+    }
+
+    [TestCase("Car Loan", 49_999, 50_000)]
+    [TestCase("Car Loan", 999, 50_000)]
+    [TestCase("Boat Loan", 999, 1000)]
+    [TestCase("Boat Loan", 500, 1000)]
+    public async Task ReduceLiabilities_NotEnoughCash(string message, int cash, int required)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+
+        var testPerson = TestPerson.Clone();
+        testPerson.Cash = cash;
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(testPerson);
+
+        // Act
+        await testStage.HandleMessage(message);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
+    }
+
+    [TestCase("Liability")]
+    [TestCase("Mortgage")]
+    public async Task ReduceLiabilities_InvalidValue(string message)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage(message);
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
+        PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Never);
+    }
+
+    protected override IStage GetTestStage() => GetStage<ReduceLiabilities>();
+}

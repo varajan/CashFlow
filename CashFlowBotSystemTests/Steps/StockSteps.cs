@@ -1,0 +1,38 @@
+﻿using CashFlowBotSystemTests.Extras;
+using TechTalk.SpecFlow;
+
+namespace CashFlowBotSystemTests.Steps;
+
+[Binding]
+public class StockSteps(StepsContext context) : BaseSteps(context)
+{
+    [Given(@"I buy (\d+) shares of '(.*)' stock with price (.*) each")]
+    [When(@"I buy (\d+) shares of '(.*)' stock with price (.*) each")]
+    public void BuyStocks(int count, string name, string price)
+    {
+        User.SendMessage("Small Opportunity");
+        User.SendMessage("Buy stocks");
+        User.SendMessage(name);
+        User.SendMessage(price);
+        User.SendMessage(count.ToString());
+    }
+
+    [Given(@"I sell '(.*)' stock with price (.*) each")]
+    [When(@"I sell '(.*)' stock with price (.*) each")]
+    public void SellStocks(string name, string price)
+    {
+        User.SendMessage("Small Opportunity");
+        User.SendMessage("Sell stocks");
+        User.SendMessage(name);
+        User.SendMessage(price);
+    }
+
+    [Given(@"I (multiply|divide) '(.*)' stocks")]
+    [When(@"I (multiply|divide) '(.*)' stocks")]
+    public void MultiplyStocks(string action, string name)
+    {
+        User.SendMessage("Small Opportunity");
+        User.SendMessage(action == "multiply" ? "Stocks x2" : "Stocks \u00F72");
+        User.SendMessage(name);
+    }
+}

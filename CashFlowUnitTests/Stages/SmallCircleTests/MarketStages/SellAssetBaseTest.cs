@@ -1,0 +1,42 @@
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
+using CashFlowUnitTests.Stages;
+using Moq;
+
+namespace CashFlowUnitTests.Stages.SmallCircleTests.MarketStages;
+
+public abstract class SellAssetBaseTest : StagesBaseTest
+{
+    protected static List<AssetDto> Assets;
+
+    [SetUp]
+    public void Setup()
+    {
+        Assets = [];
+        var assetTypes = new[]
+        {
+            AssetType.RealEstate,
+            AssetType.Land,
+            AssetType.Business,
+            AssetType.Coin,
+            AssetType.Stock,
+            AssetType.SmallBusinessType
+        };
+
+        PersonServiceMock.Setup(a => a.GetAssetDescription(It.IsAny<AssetDto>(), CurrentUser))
+            .Returns((AssetDto asset, UserDto user) => $"{asset.Title} Text");
+
+        int id = 0;
+        foreach (var type in assetTypes)
+        {
+            List<AssetDto> assetsOfType = [
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No1", CashFlow = 100 * id, MarkedToSell = false },
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No2", CashFlow = 100 * id, MarkedToSell = true },
+                new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No3", CashFlow = 100 * id, MarkedToSell = false },
+            ];
+
+            PersonServiceMock.Setup(a => a.ReadAllAssets(type, CurrentUser)).Returns(assetsOfType);
+            Assets.AddRange(assetsOfType);
+        }
+    }
+}

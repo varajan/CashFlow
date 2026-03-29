@@ -1,0 +1,104 @@
+﻿using CashFlow.Stages;
+using CashFlow.Stages.SmallCircleStages;
+using Moq;
+
+namespace CashFlowUnitTests.Stages;
+
+[TestFixture]
+public class ChooseProfessionTests : StagesBaseTest
+{
+    private static readonly List<string> DefaultProfessions =
+    [
+        "Business manager",
+        "Car mechanic",
+        "Doctor",
+        "Engineer",
+        "Janitor",
+        "Lawyer",
+        "Nurse",
+        "Pilot",
+        "Police officer",
+        "Secretary",
+        "Teacher",
+        "Track driver"
+    ];
+
+    [SetUp]
+    public void Setup() => PersonServiceMock.Setup(p => p.GetAllProfessions()).Returns(DefaultProfessions);
+
+    [Test, Ignore("Not applicable")]
+    public override Task Stage_CanBeCanceled() => Task.CompletedTask;
+
+    [Test]
+    public async Task ChooseProfession_CanNotBeCanceled()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("cancel");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<ChooseProfession>());
+    }
+
+    [Test]
+    public async Task ChooseProfession_CannotChooseInvalidProfession()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("Software Developer");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<ChooseProfession>());
+    }
+
+    [Test]
+    public async Task ChooseProfession_CanSelectRandom()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("random");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+        PersonServiceMock.Verify(p => p.Create(It.IsAny<string>(), CurrentUser));
+    }
+
+    [Test]
+    public async Task ChooseProfession_CanSelectProfession()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+        await testStage.HandleMessage("TeaCher");
+
+        // Assert
+        Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
+        PersonServiceMock.Verify(p => p.Create("Teacher", CurrentUser));
+    }
+
+    [Test]
+    public void ChooseProfession_CanSelectAnyProfession()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+        var buttons = new List<string>(DefaultProfessions) { "Random" };
+
+        // Act
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(testStage.Message, Is.EqualTo("Choose your *profession*"));
+            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+        });
+    }
+
+    protected override IStage GetTestStage() => GetStage<ChooseProfession>();
+}
