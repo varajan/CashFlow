@@ -12,7 +12,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
         get
         {
             var person = PersonService.Read(CurrentUser);
-            return Terms.Get("Your Cashflow is *{0}*. How much should you get?", CurrentUser,
+            return TranslationService.Get("Your Cashflow is *{0}*. How much should you get?", CurrentUser,
                 person.BigCircle
                 ? person.GetBigCircleCashflow().AsCurrency()
                 : person.GetSmallCircleCashflow().AsCurrency());
@@ -55,7 +55,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
 
         if (person.BigCircle && amount <=0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 
@@ -70,7 +70,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(Terms.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
         NextStage = New<Start>();
     }
 }

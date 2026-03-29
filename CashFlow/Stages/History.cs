@@ -8,13 +8,13 @@ public class History(ITranslationService termsService, IPersonService personMana
 {
     public override string Message => Records.Any()
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
-        : Terms.Get("No records found.", CurrentUser);
+        : TranslationService.Get("No records found.", CurrentUser);
 
     public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
 
     private List<HistoryDto> Records => PersonService.ReadHistory(CurrentUser);
-    private string Rollback => Terms.Get("Rollback last action", CurrentUser);
-    private string MainMenu => Terms.Get("Main menu", CurrentUser);
+    private string Rollback => TranslationService.Get("Rollback last action", CurrentUser);
+    private string MainMenu => TranslationService.Get("Main menu", CurrentUser);
 
     public async override Task HandleMessage(string message)
     {

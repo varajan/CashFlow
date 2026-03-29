@@ -8,13 +8,13 @@ namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 public class Doodads(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
 
     public override List<string> Buttons =>
     [
-        Terms.Get("Pay with Cash", CurrentUser),
-        Terms.Get("Pay with Credit Card", CurrentUser),
-        Terms.Get("Buy a boat", CurrentUser),
+        TranslationService.Get("Pay with Cash", CurrentUser),
+        TranslationService.Get("Pay with Credit Card", CurrentUser),
+        TranslationService.Get("Buy a boat", CurrentUser),
         Cancel
     ];
 
@@ -50,7 +50,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
         var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
-            await CurrentUser.Notify(Terms.Get("You already have a boat.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("You already have a boat.", CurrentUser));
             return;
         }
 
@@ -61,7 +61,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
             person.GetCredit(firstPayment);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
-            await CurrentUser.Notify(Terms.Get("You've taken {0} from bank.", CurrentUser, firstPayment.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, firstPayment.AsCurrency()));
         }
 
         boat = new AssetDto
@@ -82,7 +82,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
         PersonService.CreateAsset(CurrentUser, boat);
         PersonService.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
-        var message = Terms.Get("You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}", CurrentUser,
+        var message = TranslationService.Get("You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}", CurrentUser,
             boat.Price.AsCurrency(),
             firstPayment.AsCurrency(),
             Math.Abs(boat.CashFlow).AsCurrency());

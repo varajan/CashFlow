@@ -9,7 +9,7 @@ public class PayWithCreditCard(ITranslationService termsService, IAvailableAsset
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.MicroCreditAmount).Append(Cancel);
 
@@ -24,7 +24,7 @@ public class PayWithCreditCard(ITranslationService termsService, IAvailableAsset
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 

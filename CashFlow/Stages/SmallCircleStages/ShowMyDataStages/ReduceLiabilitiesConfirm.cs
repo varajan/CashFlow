@@ -13,8 +13,8 @@ public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonS
         get
         {
             var liability = PersonService.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
-            var reduceLiabilities = Terms.Get("Reduce Liabilities", CurrentUser);
-            var type = Terms.Get(liability.Type.AsString(), CurrentUser);
+            var reduceLiabilities = TranslationService.Get("Reduce Liabilities", CurrentUser);
+            var type = TranslationService.Get(liability.Type.AsString(), CurrentUser);
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }

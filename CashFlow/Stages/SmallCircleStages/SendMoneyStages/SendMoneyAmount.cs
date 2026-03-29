@@ -13,7 +13,7 @@ public class SendMoneyAmount(
 {
     private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
@@ -44,7 +44,7 @@ public class SendMoneyAmount(
 
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 
@@ -61,7 +61,7 @@ public class SendMoneyAmount(
         {
             PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
-            await CurrentUser.Notify(Terms.Get("You don't have enough money.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
             return;
         }
 
@@ -75,10 +75,10 @@ public class SendMoneyAmount(
 
     protected async Task Transfer(AssetDto asset)
     {
-        var bank = Terms.Get("Bank", CurrentUser);
+        var bank = TranslationService.Get("Bank", CurrentUser);
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = Terms.Get("{0} transferred {2} to {1}.", CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = TranslationService.Get("{0} transferred {2} to {1}.", CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(x => x.IsActive())
                 .Append(CurrentUser)

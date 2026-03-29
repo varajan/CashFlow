@@ -13,7 +13,7 @@ public class IncreaseCashflow(
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get("What is the cash flow?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.IncreaseCashFlow).Append(Cancel);
 
@@ -28,7 +28,7 @@ public class IncreaseCashflow(
         var cashflow = message.AsCurrency();
         if (cashflow <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 
@@ -41,7 +41,7 @@ public class IncreaseCashflow(
             PersonService.AddHistory(ActionType.IncreaseCashFlow, cashflow, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(Terms.Get("Done.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

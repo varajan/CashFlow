@@ -15,7 +15,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 {
     protected ActionType ActionType { get; } = actionType;
 
-    public override string Message => Terms.Get("Title:", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
 
     public override IEnumerable<string> Buttons =>
         PersonService
@@ -38,7 +38,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 
         if (stocks.Count == 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid stocks name.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid stocks name.", CurrentUser));
             return;
         }
 

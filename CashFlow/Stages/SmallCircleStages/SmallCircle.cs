@@ -24,17 +24,17 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
             var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
 
             List<string> buttons = isHistoryEmpty
-                ? [Terms.Get("Show my Data", CurrentUser), Terms.Get("Friends", CurrentUser)]
-                : [Terms.Get("Show my Data", CurrentUser), Terms.Get("Friends", CurrentUser), Terms.Get("History", CurrentUser)];
+                ? [TranslationService.Get("Show my Data", CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser)]
+                : [TranslationService.Get("Show my Data", CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser), TranslationService.Get(Terms.History, CurrentUser)];
 
-            buttons.AddRange([Terms.Get("Small Opportunity", CurrentUser), Terms.Get("Big Opportunity", CurrentUser)]);
-            buttons.AddRange([Terms.Get("Doodads", CurrentUser), Terms.Get("Market", CurrentUser)]);
-            buttons.AddRange([Terms.Get("Downsize", CurrentUser), Terms.Get("Baby", CurrentUser)]);
-            buttons.AddRange([Terms.Get("Paycheck", CurrentUser), Terms.Get("Give Money", CurrentUser)]);
+            buttons.AddRange([TranslationService.Get("Small Opportunity", CurrentUser), TranslationService.Get("Big Opportunity", CurrentUser)]);
+            buttons.AddRange([TranslationService.Get("Doodads", CurrentUser), TranslationService.Get("Market", CurrentUser)]);
+            buttons.AddRange([TranslationService.Get("Downsize", CurrentUser), TranslationService.Get("Baby", CurrentUser)]);
+            buttons.AddRange([TranslationService.Get(Terms.Paycheck, CurrentUser), TranslationService.Get(Terms.GiveMoney, CurrentUser)]);
 
             if (person.IsReadyForBigCircle())
             {
-                buttons.Add(Terms.Get("Go to Big Circle", CurrentUser));
+                buttons.Add(TranslationService.Get(Terms.BigCircle, CurrentUser));
             }
 
             return buttons;
@@ -48,7 +48,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
         if (person.IsReadyForBigCircle())
         {
-            var notifyMessage = Terms.Get("{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser, CurrentUser.Name);
+            var notifyMessage = TranslationService.Get("{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser, CurrentUser.Name);
             OtherUsers.Where(x => x.IsActive()).ForEach(async u => await u.Notify(notifyMessage));
         }
 
@@ -67,7 +67,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                 }
                 else
                 {
-                    await CurrentUser.Notify(Terms.Get("There are no other players.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get("There are no other players.", CurrentUser));
                     return;
                 }
 
@@ -124,14 +124,14 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
     {
         var person = PersonService.Read(CurrentUser);
         var expenses = -1 * person.GetTotalExpenses();
-        var info = Terms.Get("You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", CurrentUser, expenses.AsCurrency());
+        var info = TranslationService.Get("You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", CurrentUser, expenses.AsCurrency());
         await CurrentUser.Notify(info);
 
         if (person.Cash < expenses)
         {
             var delta = expenses - person.Cash;
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
-            var loanInfo = Terms.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency());
+            var loanInfo = TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency());
 
             person.GetCredit(credit);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
@@ -149,7 +149,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
         if (person.Children == 3)
         {
-            await CurrentUser.Notify(Terms.Get("You're lucky parent of three children. You don't need one more.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("You're lucky parent of three children. You don't need one more.", CurrentUser));
             return;
         }
 
@@ -162,9 +162,9 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
             : "{0}, you have {1} children expenses and {2} children.";
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
         var count = person.Children.ToString();
-        var personProfession = Terms.Get(person.Profession, CurrentUser.Language);
+        var personProfession = TranslationService.Get(person.Profession, CurrentUser.Language);
 
-        await CurrentUser.Notify(Terms.Get(termKey, CurrentUser, personProfession, childrenExpenses, count));
+        await CurrentUser.Notify(TranslationService.Get(termKey, CurrentUser, personProfession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
@@ -183,6 +183,6 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(Terms.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
     }
 }

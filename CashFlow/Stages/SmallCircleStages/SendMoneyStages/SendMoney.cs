@@ -8,13 +8,13 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get("Whom?", CurrentUser);
+    public override string Message => TranslationService.Get("Whom?", CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            var bank = Terms.Get("Bank", CurrentUser);
+            var bank = TranslationService.Get("Bank", CurrentUser);
             var users = OtherUsers
                 .Where(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
@@ -48,6 +48,6 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        await CurrentUser.Notify(Terms.Get("Not found.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get("Not found.", CurrentUser));
     }
 }

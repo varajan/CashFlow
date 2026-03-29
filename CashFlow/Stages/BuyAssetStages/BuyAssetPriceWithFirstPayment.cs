@@ -13,7 +13,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
     IUserRepository userRepository)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
-    public override string Message => Terms.Get("What is the price?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
@@ -30,7 +30,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid price value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 

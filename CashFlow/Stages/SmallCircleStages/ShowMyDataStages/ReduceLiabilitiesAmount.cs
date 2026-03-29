@@ -9,7 +9,7 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
@@ -48,13 +48,13 @@ public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonSe
         var amount = message.AsCurrency();
         if (amount % 1000 > 0 || amount < 1000)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid amount. The amount must be a multiple of 1000", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid amount. The amount must be a multiple of 1000", CurrentUser));
             return;
         }
 
         if (amount > person.Cash)
         {
-            await CurrentUser.Notify(Terms.Get("You don't have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get("You don't have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency()));
             return;
         }
 

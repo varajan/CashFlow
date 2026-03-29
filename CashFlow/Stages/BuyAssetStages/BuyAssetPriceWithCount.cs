@@ -13,7 +13,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
     IUserRepository userRepository)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
-    public override string Message => Terms.Get("What is the price?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public async override Task HandleMessage(string message)
@@ -31,7 +31,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid quantity value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid quantity value. Try again.", CurrentUser));
             return;
         }
 

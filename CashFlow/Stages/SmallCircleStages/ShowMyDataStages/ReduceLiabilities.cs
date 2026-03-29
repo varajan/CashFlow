@@ -14,13 +14,13 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
         get
         {
             var person = PersonService.Read(CurrentUser);
-            var cashTerm = Terms.Get("Cash", CurrentUser);
-            var monthly = Terms.Get("monthly", CurrentUser);
+            var cashTerm = TranslationService.Get("Cash", CurrentUser);
+            var monthly = TranslationService.Get("monthly", CurrentUser);
             var message = "";
 
             foreach (var liability in Liabilities)
             {
-                var name = Terms.Get(liability.Type.AsString(), CurrentUser);
+                var name = TranslationService.Get(liability.Type.AsString(), CurrentUser);
                 var fullAmount = liability.FullAmount;
                 var cashflow = Math.Abs(liability.Cashflow);
 
@@ -32,7 +32,7 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
     }
 
     public override IEnumerable<string> Buttons => Liabilities
-        .Select(l => Terms.Get(l.Type.AsString(), CurrentUser))
+        .Select(l => TranslationService.Get(l.Type.AsString(), CurrentUser))
         .Append(Cancel);
 
     public async override Task HandleMessage(string message)
@@ -56,7 +56,7 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
         var minPaymentAmount = liability.AllowsPartialPayment ? 1_000 : liability.FullAmount;
         if (person.Cash < minPaymentAmount)
         {
-            await CurrentUser.Notify(Terms.Get("You don't have {0}, but only {1}", CurrentUser,
+            await CurrentUser.Notify(TranslationService.Get("You don't have {0}, but only {1}", CurrentUser,
                 minPaymentAmount.AsCurrency(),
                 person.Cash.AsCurrency()));
             return;

@@ -10,12 +10,12 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
 
     public override List<string> Buttons =>
     [
-        Terms.Get("Get Money", CurrentUser),
-        Terms.Get("Get Credit", CurrentUser),
-        Terms.Get("Charity - Pay 10%", CurrentUser),
-        Terms.Get("Reduce Liabilities", CurrentUser),
+        TranslationService.Get(Terms.GetMoney, CurrentUser),
+        TranslationService.Get("Get Credit", CurrentUser),
+        TranslationService.Get("Charity - Pay 10%", CurrentUser),
+        TranslationService.Get("Reduce Liabilities", CurrentUser),
         StopGame,
-        Terms.Get("Main menu", CurrentUser),
+        TranslationService.Get("Main menu", CurrentUser),
     ];
 
     public async override Task HandleMessage(string message)
@@ -58,7 +58,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
             return;
         }
 
-        await CurrentUser.Notify(Terms.Get("You have no liabilities.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get("You have no liabilities.", CurrentUser));
         NextStage = New<Start>();
     }
 
@@ -69,7 +69,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
 
         if (person.Cash < amount)
         {
-            var notEnoughCashMsg = Terms.Get("You don't have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
+            var notEnoughCashMsg = TranslationService.Get("You don't have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
             await CurrentUser.Notify(notEnoughCashMsg);
             return;
         }
@@ -78,7 +78,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Charity, amount, CurrentUser);
 
-        var message = Terms.Get("You've payed {0}, now you can use two dice in next 3 turns.", CurrentUser, amount.AsCurrency());
+        var message = TranslationService.Get("You've payed {0}, now you can use two dice in next 3 turns.", CurrentUser, amount.AsCurrency());
         await CurrentUser.Notify(message);
     }
 }

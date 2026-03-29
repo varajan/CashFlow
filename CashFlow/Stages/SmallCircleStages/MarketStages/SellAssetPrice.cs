@@ -50,11 +50,11 @@ public class SellAssetPrice(
                     .GetApartmentsCount();
 
                 return count == 1
-                    ? Terms.Get("What is the price?", CurrentUser)
-                    : Terms.Get("You have *{0}* apartments. What is the price per one appartment?", CurrentUser, count);
+                    ? TranslationService.Get(Terms.AskPrice, CurrentUser)
+                    : TranslationService.Get("You have *{0}* apartments. What is the price per one appartment?", CurrentUser, count);
             }
 
-            return Terms.Get("What is the price?", CurrentUser);
+            return TranslationService.Get(Terms.AskPrice, CurrentUser);
         }
     }
 
@@ -79,7 +79,7 @@ public class SellAssetPrice(
         var price = message.AsCurrency();
         if (price <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid price value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -94,7 +94,7 @@ public class SellAssetPrice(
             PersonService.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(Terms.Get("Done.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

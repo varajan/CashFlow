@@ -8,17 +8,17 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 public class SmallOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
     public override IEnumerable<string> Buttons =>
     [
-        Terms.Get("Buy Stocks", CurrentUser),
-        Terms.Get("Sell Stocks", CurrentUser),
-        Terms.Get("Stocks x2", CurrentUser),
-        Terms.Get("Stocks ÷2", CurrentUser),
-        Terms.Get("Buy Real Estate", CurrentUser),
-        Terms.Get("Buy Land", CurrentUser),
-        Terms.Get("Buy coins", CurrentUser),
-        Terms.Get("Start a company", CurrentUser),
+        TranslationService.Get(Terms.BuyStocks, CurrentUser),
+        TranslationService.Get("Sell Stocks", CurrentUser),
+        TranslationService.Get("Stocks x2", CurrentUser),
+        TranslationService.Get("Stocks ÷2", CurrentUser),
+        TranslationService.Get("Buy Real Estate", CurrentUser),
+        TranslationService.Get("Buy Land", CurrentUser),
+        TranslationService.Get("Buy coins", CurrentUser),
+        TranslationService.Get("Start a company", CurrentUser),
         Cancel
     ];
 
@@ -39,7 +39,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
                 return;
 
             case var m when MessageEquals(m, "Stocks x2"):
@@ -49,7 +49,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
                 return;
 
             case var m when MessageEquals(m, "Stocks ÷2"):
@@ -59,7 +59,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
                 return;
 
             case var m when MessageEquals(m, "Buy Real Estate"):

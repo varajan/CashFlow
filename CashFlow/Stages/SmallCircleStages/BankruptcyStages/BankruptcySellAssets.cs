@@ -16,20 +16,20 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
     {
         get
         {
-            var cashFlow = Terms.Get("Cashflow", CurrentUser);
-            var cash = Terms.Get("Cash", CurrentUser);
-            var bankLoan = Terms.Get(Liability.Bank_Loan.AsString(), CurrentUser);
-            var price = Terms.Get("Price", CurrentUser);
+            var cashFlow = TranslationService.Get("Cashflow", CurrentUser);
+            var cash = TranslationService.Get("Cash", CurrentUser);
+            var bankLoan = TranslationService.Get(Liability.Bank_Loan.AsString(), CurrentUser);
+            var price = TranslationService.Get("Price", CurrentUser);
             var i = 0;
 
-            var message = $"*{Terms.Get("You're out of money.", CurrentUser)}*";
+            var message = $"*{TranslationService.Get("You're out of money.", CurrentUser)}*";
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{Person.GetSmallCircleCashflow().AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get("You have to sell your assets till you cash flow is positive.", CurrentUser);
+            message += Environment.NewLine + TranslationService.Get("You have to sell your assets till you cash flow is positive.", CurrentUser);
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get("What asset do you want to sell?", CurrentUser);
+            message += Environment.NewLine + TranslationService.Get("What asset do you want to sell?", CurrentUser);
             message += Environment.NewLine;
 
             foreach (var asset in Assets)
@@ -89,8 +89,8 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
 
         if (item > 0 && item <= assets.Count)
         {
-            var price = Terms.Get("Price", CurrentUser);
-            var sellForDepbts = Terms.Get("Sale for debts", CurrentUser);
+            var price = TranslationService.Get("Price", CurrentUser);
+            var sellForDepbts = TranslationService.Get("Sale for debts", CurrentUser);
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 

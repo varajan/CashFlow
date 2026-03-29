@@ -13,7 +13,7 @@ public abstract class BaseStage : IStage
     public virtual string Message => default;
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
-    protected ITranslationService Terms { get; }
+    protected ITranslationService TranslationService { get; }
     protected IPersonService PersonService { get; }
     protected IUserRepository UserRepository { get; }
 
@@ -21,7 +21,7 @@ public abstract class BaseStage : IStage
 
     public BaseStage(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     {
-        Terms = termsService;
+        TranslationService = termsService;
         PersonService = personManager;
         UserRepository = userRepository;
         NextStage = this;
@@ -75,7 +75,7 @@ public abstract class BaseStage : IStage
         var isCashFlowPositive = person.GetSmallCircleCashflow() >= 0;
         if (isCashFlowPositive)
         {
-            await CurrentUser.Notify(Terms.Get("You have paid off your debts and can continue, but you must skip your next three turns.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("You have paid off your debts and can continue, but you must skip your next three turns.", CurrentUser));
 
             person.Bankruptcy = false;
             PersonService.Update(person);
@@ -98,19 +98,19 @@ public abstract class BaseStage : IStage
             PersonService.Update(CurrentUser, liability);
         }
         PersonService.Update(person);
-        await CurrentUser.Notify(Terms.Get("Debt restructuring. Car loans, small loans and credit card halved.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get("Debt restructuring. Car loans, small loans and credit card halved.", CurrentUser));
         PersonService.AddHistory(ActionType.BankruptcyDebtRestructuring, 0, CurrentUser);
     }
 
     protected bool MessageEquals(string message, string value) =>
-        message.Equals(Terms.Get(value, CurrentUser), StringComparison.InvariantCultureIgnoreCase);
+        message.Equals(TranslationService.Get(value, CurrentUser), StringComparison.InvariantCultureIgnoreCase);
 
     protected bool IsCanceled(string message) => MessageEquals(message, "Cancel");
 
-    protected string Yes => Terms.Get("Yes", CurrentUser);
-    protected string No => Terms.Get("No", CurrentUser);
-    protected string Cancel => Terms.Get("Cancel", CurrentUser);
-    protected string GetCredit => Terms.Get("Get Credit", CurrentUser);
-    protected string StopGame => Terms.Get("Stop Game", CurrentUser);
-    protected string History => Terms.Get("History", CurrentUser);
+    protected string Yes => TranslationService.Get(Terms.Yes, CurrentUser);
+    protected string No => TranslationService.Get("No", CurrentUser);
+    protected string Cancel => TranslationService.Get(Terms.Cancel, CurrentUser);
+    protected string GetCredit => TranslationService.Get("Get Credit", CurrentUser);
+    protected string StopGame => TranslationService.Get("Stop Game", CurrentUser);
+    protected string History => TranslationService.Get(Terms.History, CurrentUser);
 }

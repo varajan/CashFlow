@@ -29,8 +29,8 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
             int upToQtty = person.Cash / asset.Price;
 
             return upToQtty == 0
-                ? Terms.Get("How much?", CurrentUser)
-                : Terms.Get("You can buy up to {0} stocks. How much stocks would you like to buy?", CurrentUser, upToQtty);
+                ? TranslationService.Get("How much?", CurrentUser)
+                : TranslationService.Get("You can buy up to {0} stocks. How much stocks would you like to buy?", CurrentUser, upToQtty);
         }
     }
 
@@ -82,7 +82,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid quantity value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid quantity value. Try again.", CurrentUser));
             return;
         }
 
@@ -117,6 +117,6 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
         PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(Terms.Get("Done.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

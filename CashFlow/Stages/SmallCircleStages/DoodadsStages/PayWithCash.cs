@@ -9,7 +9,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.SmallGiveMoney).Append(Cancel);
 
@@ -24,7 +24,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 
@@ -38,7 +38,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
             person.GetCredit(credit);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-            await CurrentUser.Notify(Terms.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
         }
 
         person.Cash -= amount;

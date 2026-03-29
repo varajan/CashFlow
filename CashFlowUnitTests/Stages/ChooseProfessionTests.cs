@@ -62,7 +62,7 @@ public class ChooseProfessionTests : StagesBaseTest
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("random");
+        await testStage.HandleMessage("Pick random");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
@@ -88,7 +88,7 @@ public class ChooseProfessionTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new List<string>(DefaultProfessions) { "Random" };
+        var buttons = new List<string>(DefaultProfessions) { "Pick random" };
 
         // Act
 

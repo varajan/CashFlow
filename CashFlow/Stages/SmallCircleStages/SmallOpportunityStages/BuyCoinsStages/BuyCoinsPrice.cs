@@ -11,7 +11,7 @@ public class BuyCoinsPrice(
     IPersonService personManager,
     IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
-    public override string Message => Terms.Get("What is the price?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
 
     public override async Task HandleMessage(string message)
@@ -26,7 +26,7 @@ public class BuyCoinsPrice(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid price value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -57,6 +57,6 @@ public class BuyCoinsPrice(
 
         PersonService.AddHistory(ActionType.BuyCoins, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(Terms.Get("Done.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

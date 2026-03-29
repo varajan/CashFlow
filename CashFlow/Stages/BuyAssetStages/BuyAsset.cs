@@ -19,7 +19,7 @@ public abstract class BuyAsset<TNextStage>(
 
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get("Title:", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets
         .GetAsText(AssetName, CurrentUser.Language)
         .OrderBy(x => x.Length)

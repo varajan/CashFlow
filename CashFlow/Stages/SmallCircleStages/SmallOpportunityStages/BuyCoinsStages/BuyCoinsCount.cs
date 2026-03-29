@@ -10,7 +10,7 @@ public class BuyCoinsCount(
     IPersonService personManager,
     IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
-    public override string Message => Terms.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets
         .GetAsText(AssetType.CoinCount, CurrentUser.Language)
@@ -28,7 +28,7 @@ public class BuyCoinsCount(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get("Invalid quantity value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get("Invalid quantity value. Try again.", CurrentUser));
             return;
         }
 

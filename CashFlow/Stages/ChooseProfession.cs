@@ -7,11 +7,11 @@ namespace CashFlow.Stages;
 public class ChooseProfession(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get("Choose your *profession*", CurrentUser);
-    public override IEnumerable<string> Buttons => Professions.Append(Terms.Get("Random", CurrentUser));
+    public override string Message => TranslationService.Get("Choose your *profession*", CurrentUser);
+    public override IEnumerable<string> Buttons => Professions.Append(TranslationService.Get("Pick random", CurrentUser));
 
     private IEnumerable<string> Professions => PersonService.GetAllProfessions()
-        .Select(x => Terms.Get(x, CurrentUser.Language))
+        .Select(x => TranslationService.Get(x, CurrentUser.Language))
         .OrderBy(x => x);
 
     public override Task HandleMessage(string message)
@@ -22,7 +22,7 @@ public class ChooseProfession(ITranslationService termsService, IPersonService p
             return Task.CompletedTask;
         }
 
-        var random = MessageEquals(message, "Random");
+        var random = MessageEquals(message, "Pick random");
         var profession = random
             ? Professions.Random()
             : Professions.FirstOrDefault(p => p.Equals(message.Trim(), StringComparison.OrdinalIgnoreCase));

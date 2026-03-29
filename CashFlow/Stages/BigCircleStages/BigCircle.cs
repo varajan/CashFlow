@@ -17,7 +17,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
-                ? Terms.Get("You are the winner!", CurrentUser)
+                ? TranslationService.Get(Terms.Winner, CurrentUser)
                 : PersonService.GetDescription(CurrentUser);
         }
     }
@@ -31,14 +31,14 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
             ? [ History, StopGame ]
             : [
-                Terms.Get("Paycheck", CurrentUser),
-                Terms.Get("Get Money", CurrentUser),
-                Terms.Get("Give Money", CurrentUser),
-                Terms.Get("Divorce", CurrentUser),
-                Terms.Get("Tax Audit", CurrentUser),
-                Terms.Get("Lawsuit", CurrentUser),
-                Terms.Get("Buy Business", CurrentUser),
-                Terms.Get("Friends", CurrentUser),
+                TranslationService.Get(Terms.Paycheck, CurrentUser),
+                TranslationService.Get(Terms.GetMoney, CurrentUser),
+                TranslationService.Get(Terms.GiveMoney, CurrentUser),
+                TranslationService.Get(Terms.Divorce, CurrentUser),
+                TranslationService.Get(Terms.TaxAudit, CurrentUser),
+                TranslationService.Get(Terms.Lawsuit, CurrentUser),
+                TranslationService.Get(Terms.BuyBusiness, CurrentUser),
+                TranslationService.Get(Terms.Friends, CurrentUser),
                 History,
                 StopGame,
             ];
@@ -70,7 +70,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
         PersonService.Update(person);
 
         var users = OtherUsers.Where(x => x.IsActive()).ToList();
-        var message = Terms.Get("{0} is the winner!", CurrentUser, CurrentUser.Name);
+        var message = TranslationService.Get(Terms.WinnerName, CurrentUser, CurrentUser.Name);
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);
     }
@@ -93,13 +93,13 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
 
     private Task HandleWinGame(string message)
     {
-        if (MessageEquals(message, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return Task.CompletedTask;
         }
 
-        if (MessageEquals(message, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return Task.CompletedTask;
@@ -112,7 +112,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
     {
         var person = PersonService.Read(CurrentUser);
 
-        if (MessageEquals(message, "Paycheck"))
+        if (MessageEquals(message, Terms.Paycheck))
         {
             person.Cash += person.GetBigCircleCashflow();
             PersonService.Update(person);
@@ -121,19 +121,19 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        if (MessageEquals(message, "Get Money"))
+        if (MessageEquals(message, Terms.GetMoney))
         {
             NextStage = New<GetMoney>();
             return;
         }
 
-        if (MessageEquals(message, "Give Money"))
+        if (MessageEquals(message, Terms.GiveMoney))
         {
             var transfer = new AssetDto
             {
                 UserId = CurrentUser.Id,
                 Type = AssetType.Transfer,
-                Title = "Bank",
+                Title = Terms.Bank,
                 IsDraft = true,
             };
 
@@ -142,55 +142,55 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        if (MessageEquals(message, "Divorce"))
+        if (MessageEquals(message, Terms.Divorce))
         {
             var amount = person.Cash;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Divorce, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get("You've lost {0}.", CurrentUser, amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, "Tax Audit"))
+        if (MessageEquals(message, Terms.TaxAudit))
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.TaxAudit, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get("You've lost {0}.", CurrentUser, amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, "Lawsuit"))
+        if (MessageEquals(message, Terms.Lawsuit))
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Lawsuit, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get("You've lost {0}.", CurrentUser, amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, "Buy Business"))
+        if (MessageEquals(message, Terms.BuyBusiness))
         {
             NextStage = New<BuyBigBusiness>();
             return;
         }
 
-        if (MessageEquals(message, "Friends"))
+        if (MessageEquals(message, Terms.Friends))
         {
             NextStage = New< Friends>();
             return;
         }
 
-        if (MessageEquals(message, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return;
         }
 
-        if (MessageEquals(message, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return;
