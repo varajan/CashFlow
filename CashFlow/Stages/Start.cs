@@ -5,7 +5,7 @@ using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 namespace CashFlow.Stages;
 
-public class Start(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class Start(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => NextStage.Message;
     public override IEnumerable<string> Buttons => NextStage.Buttons;

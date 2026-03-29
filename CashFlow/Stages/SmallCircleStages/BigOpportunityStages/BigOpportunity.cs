@@ -3,14 +3,14 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BigOpportunity(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class BigOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override string Message => Terms.Get("What do you want?", CurrentUser);
     public override IEnumerable<string> Buttons =>
     [
-        Terms.Get(37, CurrentUser, "Buy Real Estate"),
-        Terms.Get(74, CurrentUser, "Buy Business"),
-        Terms.Get(94, CurrentUser, "Buy Land"),
+        Terms.Get("Buy Real Estate", CurrentUser),
+        Terms.Get("Buy Business", CurrentUser),
+        Terms.Get("Buy Land", CurrentUser),
         Cancel
     ];
 
@@ -18,19 +18,19 @@ public class BigOpportunity(ITermsRepository termsService, IPersonService person
     {
         switch (message)
         {
-            case var m when MessageEquals(m, 37, "Buy Real Estate"):
+            case var m when MessageEquals(m, "Buy Real Estate"):
                 NextStage = New<BuyBigRealEstate>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, 74, "Buy Business"):
+            case var m when MessageEquals(m, "Buy Business"):
                 NextStage = New<BuyBusiness>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, 94, "Buy Land"):
+            case var m when MessageEquals(m, "Buy Land"):
                 NextStage = New<BuyLand>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, "Cancel"):
                 NextStage = New<Start>();
                 return Task.CompletedTask;
         }

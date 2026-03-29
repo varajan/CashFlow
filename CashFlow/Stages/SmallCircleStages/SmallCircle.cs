@@ -12,7 +12,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class SmallCircle(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => PersonService.GetDescription(CurrentUser);
 
@@ -24,17 +24,17 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
             var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
 
             List<string> buttons = isHistoryEmpty
-                ? [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends")]
-                : [Terms.Get(31, CurrentUser, "Show my Data"), Terms.Get(140, CurrentUser, "Friends"), Terms.Get(2, CurrentUser, "History")];
+                ? [Terms.Get("Show my Data", CurrentUser), Terms.Get("Friends", CurrentUser)]
+                : [Terms.Get("Show my Data", CurrentUser), Terms.Get("Friends", CurrentUser), Terms.Get("History", CurrentUser)];
 
-            buttons.AddRange([Terms.Get(81, CurrentUser, "Small Opportunity"), Terms.Get(84, CurrentUser, "Big Opportunity")]);
-            buttons.AddRange([Terms.Get(86, CurrentUser, "Doodads"), Terms.Get(85, CurrentUser, "Market")]);
-            buttons.AddRange([Terms.Get(80, CurrentUser, "Downsize"), Terms.Get(39, CurrentUser, "Baby")]);
-            buttons.AddRange([Terms.Get(79, CurrentUser, "Paycheck"), Terms.Get(33, CurrentUser, "Give Money")]);
+            buttons.AddRange([Terms.Get("Small Opportunity", CurrentUser), Terms.Get("Big Opportunity", CurrentUser)]);
+            buttons.AddRange([Terms.Get("Doodads", CurrentUser), Terms.Get("Market", CurrentUser)]);
+            buttons.AddRange([Terms.Get("Downsize", CurrentUser), Terms.Get("Baby", CurrentUser)]);
+            buttons.AddRange([Terms.Get("Paycheck", CurrentUser), Terms.Get("Give Money", CurrentUser)]);
 
             if (person.IsReadyForBigCircle())
             {
-                buttons.Add(Terms.Get(1, CurrentUser, "Go to Big Circle"));
+                buttons.Add(Terms.Get("Go to Big Circle", CurrentUser));
             }
 
             return buttons;
@@ -48,17 +48,17 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
         if (person.IsReadyForBigCircle())
         {
-            var notifyMessage = Terms.Get(68, CurrentUser, "{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser.Name);
+            var notifyMessage = Terms.Get("{0}'s income is greater, then expenses. {0} is ready for Big Circle.", CurrentUser, CurrentUser.Name);
             OtherUsers.Where(x => x.IsActive()).ForEach(async u => await u.Notify(notifyMessage));
         }
 
         switch (message)
         {
-            case var m when MessageEquals(m, 31, "Show my Data"):
+            case var m when MessageEquals(m, "Show my Data"):
                 NextStage = New<ShowMyData>();
                 return;
 
-            case var m when MessageEquals(m, 140, "Friends"):
+            case var m when MessageEquals(m, "Friends"):
                 var users = OtherUsers.Where(x => x.IsActive()).ToList();
                 if (users.Count != 0)
                 {
@@ -67,47 +67,47 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
                 }
                 else
                 {
-                    await CurrentUser.Notify(Terms.Get(141, CurrentUser, "There are no other players."));
+                    await CurrentUser.Notify(Terms.Get("There are no other players.", CurrentUser));
                     return;
                 }
 
-            case var m when !isHistoryEmpty && MessageEquals(m, 2, "History"):
+            case var m when !isHistoryEmpty && MessageEquals(m, "History"):
                 NextStage = New<History>();
                 return;
 
-            case var m when MessageEquals(m, 81, "Small Opportunity"):
+            case var m when MessageEquals(m, "Small Opportunity"):
                 NextStage = New<SmallOpportunity>();
                 return;
 
-            case var m when MessageEquals(m, 84, "Big Opportunity"):
+            case var m when MessageEquals(m, "Big Opportunity"):
                 NextStage = New<BigOpportunity>();
                 return;
 
-            case var m when MessageEquals(m, 80, "Downsize"):
+            case var m when MessageEquals(m, "Downsize"):
                 await Downsize();
                 return;
 
-            case var m when MessageEquals(m, 86, "Doodads"):
+            case var m when MessageEquals(m, "Doodads"):
                 NextStage = New<Doodads>();
                 return;
 
-            case var m when MessageEquals(m, 85, "Market"):
+            case var m when MessageEquals(m, "Market"):
                 NextStage = New<Market>();
                 return;
 
-            case var m when MessageEquals(m, 39, "Baby"):
+            case var m when MessageEquals(m, "Baby"):
                 await Baby();
                 return;
 
-            case var m when MessageEquals(m, 79, "Paycheck"):
+            case var m when MessageEquals(m, "Paycheck"):
                 await GetMoney();
                 return;
 
-            case var m when MessageEquals(m, 33, "Give Money"):
+            case var m when MessageEquals(m, "Give Money"):
                 NextStage = New<SendMoney>();
                 return;
 
-            case var m when person.IsReadyForBigCircle() && MessageEquals(m, 1, "Go to Big Circle"):
+            case var m when person.IsReadyForBigCircle() && MessageEquals(m, "Go to Big Circle"):
                 person.InitialCashFlow = person.Assets.Sum(a => a.CashFlow) / 10 * 1000;
                 person.TargetCashFlow = person.InitialCashFlow + 50_000;
                 person.Cash += person.InitialCashFlow;
@@ -124,14 +124,14 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
     {
         var person = PersonService.Read(CurrentUser);
         var expenses = -1 * person.GetTotalExpenses();
-        var info = Terms.Get(87, CurrentUser, "You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", expenses.AsCurrency());
+        var info = Terms.Get("You were fired. You've payed total amount of your expenses: {0} and lose 2 turns.", CurrentUser, expenses.AsCurrency());
         await CurrentUser.Notify(info);
 
         if (person.Cash < expenses)
         {
             var delta = expenses - person.Cash;
             var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
-            var loanInfo = Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency());
+            var loanInfo = Terms.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency());
 
             person.GetCredit(credit);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
@@ -149,7 +149,7 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
 
         if (person.Children == 3)
         {
-            await CurrentUser.Notify(Terms.Get(57, CurrentUser, "You're lucky parent of three children. You don't need one more."));
+            await CurrentUser.Notify(Terms.Get("You're lucky parent of three children. You don't need one more.", CurrentUser));
             return;
         }
 
@@ -157,12 +157,14 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Child, person.Children, CurrentUser);
 
-        var termId = person.Children == 1 ? 20 : 25;
+        var termKey = person.Children == 1
+            ? "{0}, you have {1} children expenses and {2} children."
+            : "{0}, you have {1} children expenses and {2} children.";
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
         var count = person.Children.ToString();
-        var personProfession = Terms.Translate(person.Profession, CurrentUser.Language);
+        var personProfession = Terms.Get(person.Profession, CurrentUser.Language);
 
-        await CurrentUser.Notify(Terms.Get(termId, CurrentUser, "{0}, you have {1} children expenses and {2} children.", personProfession, childrenExpenses, count));
+        await CurrentUser.Notify(Terms.Get(termKey, CurrentUser, personProfession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
@@ -181,6 +183,6 @@ public class SmallCircle(ITermsRepository termsService, IPersonService personMan
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
+        await CurrentUser.Notify(Terms.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
     }
 }

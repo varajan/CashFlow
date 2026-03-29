@@ -4,12 +4,12 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class PayWithCreditCard(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+    public override string Message => Terms.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.MicroCreditAmount).Append(Cancel);
 
@@ -24,7 +24,7 @@ public class PayWithCreditCard(ITermsRepository termsService, IAvailableAssetsRe
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 

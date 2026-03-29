@@ -5,16 +5,16 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class SendMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(147, CurrentUser, "Whom?");
+    public override string Message => Terms.Get("Whom?", CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
         get
         {
-            var bank = Terms.Get(149, CurrentUser, "Bank");
+            var bank = Terms.Get("Bank", CurrentUser);
             var users = OtherUsers
                 .Where(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
@@ -32,7 +32,7 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
             return;
         }
 
-        if (MessageEquals(message, 149, "Bank") ||
+        if (MessageEquals(message, "Bank") ||
             OtherUsers.Any(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto
@@ -48,6 +48,6 @@ public class SendMoney(ITermsRepository termsService, IPersonService personManag
             return;
         }
 
-        await CurrentUser.Notify(Terms.Get(145, CurrentUser, "Not found."));
+        await CurrentUser.Notify(Terms.Get("Not found.", CurrentUser));
     }
 }

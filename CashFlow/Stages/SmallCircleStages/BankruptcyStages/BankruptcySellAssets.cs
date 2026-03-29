@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class BankruptcySellAssets(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     private PersonDto Person => PersonService.Read(CurrentUser);
@@ -16,20 +16,20 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
     {
         get
         {
-            var cashFlow = Terms.Get(55, CurrentUser, "Cashflow");
-            var cash = Terms.Get(51, CurrentUser, "Cash");
-            var bankLoan = Terms.Get(47, CurrentUser, Liability.Bank_Loan.AsString());
-            var price = Terms.Get(64, CurrentUser, "Price");
+            var cashFlow = Terms.Get("Cashflow", CurrentUser);
+            var cash = Terms.Get("Cash", CurrentUser);
+            var bankLoan = Terms.Get(Liability.Bank_Loan.AsString(), CurrentUser);
+            var price = Terms.Get("Price", CurrentUser);
             var i = 0;
 
-            var message = $"*{Terms.Get(126, CurrentUser, "You're out of money.")}*";
+            var message = $"*{Terms.Get("You're out of money.", CurrentUser)}*";
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{Person.GetSmallCircleCashflow().AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get(127, CurrentUser, "You have to sell your assets till you cash flow is positive.");
+            message += Environment.NewLine + Terms.Get("You have to sell your assets till you cash flow is positive.", CurrentUser);
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get(128, CurrentUser, "What asset do you want to sell?");
+            message += Environment.NewLine + Terms.Get("What asset do you want to sell?", CurrentUser);
             message += Environment.NewLine;
 
             foreach (var asset in Assets)
@@ -66,13 +66,13 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
     public override async Task HandleMessage(string message)
     {
-        if (MessageEquals(message, 41, "Stop Game"))
+        if (MessageEquals(message, "Stop Game"))
         {
             NextStage = New<StopGame>();
             return;
         }
 
-        if (MessageEquals(message, 2, "History"))
+        if (MessageEquals(message, "History"))
         {
             NextStage = New<History>();
             return;
@@ -89,8 +89,8 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
         if (item > 0 && item <= assets.Count)
         {
-            var price = Terms.Get(64, CurrentUser, "Price");
-            var sellForDepbts = Terms.Get(131, CurrentUser, "Sale for debts");
+            var price = Terms.Get("Price", CurrentUser);
+            var sellForDepbts = Terms.Get("Sale for debts", CurrentUser);
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 

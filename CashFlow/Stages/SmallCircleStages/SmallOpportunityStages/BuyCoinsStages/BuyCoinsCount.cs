@@ -5,12 +5,12 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoinsCount(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+    public override string Message => Terms.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets
         .GetAsText(AssetType.CoinCount, CurrentUser.Language)
@@ -28,7 +28,7 @@ public class BuyCoinsCount(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(18, CurrentUser, "Invalid quantity value. Try again."));
+            await CurrentUser.Notify(Terms.Get("Invalid quantity value. Try again.", CurrentUser));
             return;
         }
 

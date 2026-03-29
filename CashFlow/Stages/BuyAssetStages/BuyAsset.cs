@@ -9,7 +9,7 @@ namespace CashFlow.Stages.BuyAssetStages;
 public abstract class BuyAsset<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository) where TNextStage : BaseStage
@@ -19,7 +19,7 @@ public abstract class BuyAsset<TNextStage>(
 
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get(7, CurrentUser, "Title:");
+    public override string Message => Terms.Get("Title:", CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets
         .GetAsText(AssetName, CurrentUser.Language)
         .OrderBy(x => x.Length)

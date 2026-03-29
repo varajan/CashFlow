@@ -4,27 +4,27 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class History(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class History(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => Records.Any()
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
-        : Terms.Get(111, CurrentUser, "No records found.");
+        : Terms.Get("No records found.", CurrentUser);
 
     public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
 
     private List<HistoryDto> Records => PersonService.ReadHistory(CurrentUser);
-    private string Rollback => Terms.Get(109, CurrentUser, "Rollback last action");
-    private string MainMenu => Terms.Get(102, CurrentUser, "Main menu");
+    private string Rollback => Terms.Get("Rollback last action", CurrentUser);
+    private string MainMenu => Terms.Get("Main menu", CurrentUser);
 
     public async override Task HandleMessage(string message)
     {
-        if (IsCanceled(message) || MessageEquals(message, 102, "Main menu"))
+        if (IsCanceled(message) || MessageEquals(message, "Main menu"))
         {
             NextStage = New<Start>();
             return;
         }
 
-        if (MessageEquals(message, 109, "Rollback last action"))
+        if (MessageEquals(message, "Rollback last action"))
         {
             var person = PersonService.Read(CurrentUser);
 

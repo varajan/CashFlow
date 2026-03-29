@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class Friends(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     private IList<UserDto> ActiveUsers => OtherUsers.Where(x => x.IsActive()).ToList();
 
@@ -14,8 +14,8 @@ public class Friends(ITermsRepository termsService, IPersonService personManager
         {
             var NL = Environment.NewLine;
             var message = string.Empty;
-            var onSmall = Terms.Get(142, CurrentUser, "On Small circle:");
-            var onBig = Terms.Get(143, CurrentUser, "On Big circle:");
+            var onSmall = Terms.Get("On Small circle:", CurrentUser);
+            var onBig = Terms.Get("On Big circle:", CurrentUser);
 
             var onSmallCircle = ActiveUsers.Where(x => PersonService.Read(x).BigCircle == false).ToList();
             var onBigCircle = ActiveUsers.Where(x => PersonService.Read(x).BigCircle == true).ToList();

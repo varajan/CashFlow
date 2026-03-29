@@ -7,13 +7,13 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyAmount(
     IPersonService personManager,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+    public override string Message => Terms.Get("How much?", CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
@@ -44,7 +44,7 @@ public class SendMoneyAmount(
 
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            await CurrentUser.Notify(Terms.Get("Invalid value. Try again.", CurrentUser));
             return;
         }
 
@@ -61,7 +61,7 @@ public class SendMoneyAmount(
         {
             PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
-            await CurrentUser.Notify(Terms.Get(5, CurrentUser, "You don't have enough money."));
+            await CurrentUser.Notify(Terms.Get("You don't have enough money.", CurrentUser));
             return;
         }
 
@@ -75,10 +75,10 @@ public class SendMoneyAmount(
 
     protected async Task Transfer(AssetDto asset)
     {
-        var bank = Terms.Get(149, CurrentUser, "Bank");
+        var bank = Terms.Get("Bank", CurrentUser);
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = Terms.Get(146, CurrentUser, "{0} transferred {2} to {1}.", CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = Terms.Get("{0} transferred {2} to {1}.", CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(x => x.IsActive())
                 .Append(CurrentUser)

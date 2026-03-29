@@ -5,7 +5,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ReduceLiabilities(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     private IEnumerable<LiabilityDto> Liabilities => PersonService.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
 
@@ -14,13 +14,13 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
         get
         {
             var person = PersonService.Read(CurrentUser);
-            var cashTerm = Terms.Get(51, CurrentUser, "Cash");
-            var monthly = Terms.Get(42, CurrentUser, "monthly");
+            var cashTerm = Terms.Get("Cash", CurrentUser);
+            var monthly = Terms.Get("monthly", CurrentUser);
             var message = "";
 
             foreach (var liability in Liabilities)
             {
-                var name = Terms.Get((int) liability.Type, CurrentUser, liability.Type.AsString());
+                var name = Terms.Get(liability.Type.AsString(), CurrentUser);
                 var fullAmount = liability.FullAmount;
                 var cashflow = Math.Abs(liability.Cashflow);
 
@@ -32,7 +32,7 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
     }
 
     public override IEnumerable<string> Buttons => Liabilities
-        .Select(l => Terms.Get((int)l.Type, CurrentUser, l.Type.AsString()))
+        .Select(l => Terms.Get(l.Type.AsString(), CurrentUser))
         .Append(Cancel);
 
     public async override Task HandleMessage(string message)
@@ -46,7 +46,7 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
         var person = PersonService.Read(CurrentUser);
         var liability = person
             .Liabilities
-            .FirstOrDefault(l => !l.Deleted && MessageEquals(message, (int)l.Type, l.Type.AsString()));
+            .FirstOrDefault(l => !l.Deleted && MessageEquals(message, l.Type.AsString()));
 
         if (liability is null)
         {
@@ -56,7 +56,7 @@ public class ReduceLiabilities(ITermsRepository termsService, IPersonService per
         var minPaymentAmount = liability.AllowsPartialPayment ? 1_000 : liability.FullAmount;
         if (person.Cash < minPaymentAmount)
         {
-            await CurrentUser.Notify(Terms.Get(23, CurrentUser, "You don't have {0}, but only {1}",
+            await CurrentUser.Notify(Terms.Get("You don't have {0}, but only {1}", CurrentUser,
                 minPaymentAmount.AsCurrency(),
                 person.Cash.AsCurrency()));
             return;

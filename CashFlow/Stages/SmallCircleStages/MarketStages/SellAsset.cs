@@ -6,7 +6,7 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAsset<TNextStage>(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IPersonService personManager,
     IUserRepository userRepository,
     params AssetType[] assetTypes)
@@ -22,27 +22,27 @@ public class SellAsset<TNextStage>(
 
             if (AssetTypes.Contains(AssetType.Land))
             {
-                return Terms.Get(99, CurrentUser, "What Land do you want to sell?{0}{1}", Environment.NewLine, assetNames);
+                return Terms.Get("What Land do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                return Terms.Get(99, CurrentUser, "What RealEstate do you want to sell?{0}{1}", Environment.NewLine, assetNames);
+                return Terms.Get("What RealEstate do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.ContainsAny(AssetType.Business, AssetType.SmallBusiness))
             {
-                return Terms.Get(99, CurrentUser, "What Business do you want to sell?{0}{1}", Environment.NewLine, assetNames);
+                return Terms.Get("What Business do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.Contains(AssetType.Coin))
             {
-                return Terms.Get(122, CurrentUser, "What coins do you want to sell?");
+                return Terms.Get("What coins do you want to sell?", CurrentUser);
             }
 
             if (AssetTypes.Contains(AssetType.Stock))
             {
-                return Terms.Get(27, CurrentUser, "What stocks do you want to sell?");
+                return Terms.Get("What stocks do you want to sell?", CurrentUser);
             }
 
             throw new NotImplementedException();
@@ -89,19 +89,19 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Land))
             {
-                await CurrentUser.Notify(Terms.Get(101, CurrentUser, "Invalid land number."));
+                await CurrentUser.Notify(Terms.Get("Invalid land number.", CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                await CurrentUser.Notify(Terms.Get(16, CurrentUser, "Invalid Real Estate number."));
+                await CurrentUser.Notify(Terms.Get("Invalid Real Estate number.", CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Business) || AssetTypes.Contains(AssetType.SmallBusinessType))
             {
-                await CurrentUser.Notify(Terms.Get(76, CurrentUser, "Invalid business number."));
+                await CurrentUser.Notify(Terms.Get("Invalid business number.", CurrentUser));
                 return false;
             }
 
@@ -124,13 +124,13 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Coin))
             {
-                await CurrentUser.Notify(Terms.Get(123, CurrentUser, "Invalid coins title."));
+                await CurrentUser.Notify(Terms.Get("Invalid coins title.", CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Stock))
             {
-                await CurrentUser.Notify(Terms.Get(124, CurrentUser, "Invalid stocks name."));
+                await CurrentUser.Notify(Terms.Get("Invalid stocks name.", CurrentUser));
                 return false;
             }
 

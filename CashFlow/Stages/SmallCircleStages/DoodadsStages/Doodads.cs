@@ -5,16 +5,16 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class Doodads(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class Doodads(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override string Message => Terms.Get("What do you want?", CurrentUser);
 
     public override List<string> Buttons =>
     [
-        Terms.Get(95, CurrentUser, "Pay with Cash"),
-        Terms.Get(96, CurrentUser, "Pay with Credit Card"),
-        Terms.Get(112, CurrentUser, "Buy a boat"),
+        Terms.Get("Pay with Cash", CurrentUser),
+        Terms.Get("Pay with Credit Card", CurrentUser),
+        Terms.Get("Buy a boat", CurrentUser),
         Cancel
     ];
 
@@ -28,15 +28,15 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
 
         switch (message)
         {
-            case var m when MessageEquals(m, 95, "Pay with Cash"):
+            case var m when MessageEquals(m, "Pay with Cash"):
                 NextStage = New<PayWithCash>();
                 return;
 
-            case var m when MessageEquals(m, 96, "Pay with Credit Card"):
+            case var m when MessageEquals(m, "Pay with Credit Card"):
                 NextStage = New<PayWithCreditCard>();
                 return;
 
-            case var m when MessageEquals(m, 112, "Buy a boat"):
+            case var m when MessageEquals(m, "Buy a boat"):
                 await BuyBoat();
                 NextStage = New<Start>();
                 return;
@@ -50,7 +50,7 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
         var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
-            await CurrentUser.Notify(Terms.Get(113, CurrentUser, "You already have a boat."));
+            await CurrentUser.Notify(Terms.Get("You already have a boat.", CurrentUser));
             return;
         }
 
@@ -61,7 +61,7 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
             person.GetCredit(firstPayment);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
-            await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", firstPayment.AsCurrency()));
+            await CurrentUser.Notify(Terms.Get("You've taken {0} from bank.", CurrentUser, firstPayment.AsCurrency()));
         }
 
         boat = new AssetDto
@@ -82,8 +82,7 @@ public class Doodads(ITermsRepository termsService, IPersonService personManager
         PersonService.CreateAsset(CurrentUser, boat);
         PersonService.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
-        var message = Terms.Get(117, CurrentUser,
-            "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
+        var message = Terms.Get("You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}", CurrentUser,
             boat.Price.AsCurrency(),
             firstPayment.AsCurrency(),
             Math.Abs(boat.CashFlow).AsCurrency());

@@ -5,7 +5,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : ConfirmStage(termsService, personManager, userRepository, 3, "Are you sure want to stop current game?")
 {
     public override string Message
@@ -13,8 +13,8 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         get
         {
             var liability = PersonService.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
-            var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
-            var type = Terms.Get((int)liability.Type, CurrentUser, liability.Type.AsString());
+            var reduceLiabilities = Terms.Get("Reduce Liabilities", CurrentUser);
+            var type = Terms.Get(liability.Type.AsString(), CurrentUser);
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }

@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoinsCredit(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository assets,
     IPersonService personManager,
     IUserRepository userRepository) : BuyCoinsPrice(termsService, assets, personManager, userRepository)
@@ -18,7 +18,7 @@ public class BuyCoinsCredit(
             var value = (asset.Qtty * asset.Price).AsCurrency();
             var cash = PersonService.Read(CurrentUser).Cash.AsCurrency();
 
-            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
+            return Terms.Get("You don''t have {0}, but only {1}", CurrentUser, value, cash);
         }
     }
 
@@ -30,12 +30,12 @@ public class BuyCoinsCredit(
 
         switch (message)
         {
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, "Cancel"):
                 PersonService.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, 34, "Get Credit"):
+            case var m when MessageEquals(m, "Get Credit"):
                 var person = PersonService.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
@@ -43,7 +43,7 @@ public class BuyCoinsCredit(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
+                await CurrentUser.Notify(Terms.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

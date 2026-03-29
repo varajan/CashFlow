@@ -16,7 +16,7 @@ public abstract class StagesBaseTest
     protected Mock<INotifyService> NotifyServiceMock;
     protected Mock<IUserRepository> UserRepositoryMock;
     protected Mock<IPersonRepository> PersonRepositoryMock;
-    protected Mock<ITermsRepository> TermsServiceMock;
+    protected Mock<ITranslationService> TermsServiceMock;
     protected Mock<ILogger> LoggerMock;
 
     protected abstract IStage GetTestStage();
@@ -50,17 +50,17 @@ public abstract class StagesBaseTest
         UserRepositoryMock = new Mock<IUserRepository>();
         PersonServiceMock = new Mock<IPersonService>();
         PersonRepositoryMock = new Mock<IPersonRepository>();
-        TermsServiceMock = new Mock<ITermsRepository>();
+        TermsServiceMock = new Mock<ITranslationService>();
         NotifyServiceMock = new Mock<INotifyService>();
         LoggerMock = new Mock<ILogger>();
 
         TermsServiceMock
-            .Setup(t => t.Get(It.IsAny<int>(), It.IsAny<UserDto>(), It.IsAny<string>(), It.IsAny<object[]>()))
-            .Returns((int id, UserDto user, string defaultValue, object[] args) => string.Format(defaultValue, args));
+            .Setup(t => t.Get(It.IsAny<string>(), It.IsAny<UserDto>(), It.IsAny<object[]>()))
+            .Returns((string value, UserDto _, object[] args) => string.Format(value, args));
 
         TermsServiceMock
-            .Setup(t => t.Translate(It.IsAny<string>(), It.IsAny<Language>()))
-            .Returns((string term, Language language) => term);
+            .Setup(t => t.Get(It.IsAny<string>(), It.IsAny<Language>(), It.IsAny<object[]>()))
+            .Returns((string value, Language _, object[] args) => string.Format(value, args));
     }
 
     private void InitTestUsers()

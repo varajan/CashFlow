@@ -7,13 +7,13 @@ namespace CashFlow.Stages.BuyAssetStages;
 public class BuyAssetPriceWithCount<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
-    public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
+    public override string Message => Terms.Get("What is the price?", CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public async override Task HandleMessage(string message)
@@ -31,7 +31,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(18, CurrentUser, "Invalid quantity value. Try again."));
+            await CurrentUser.Notify(Terms.Get("Invalid quantity value. Try again.", CurrentUser));
             return;
         }
 

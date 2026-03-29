@@ -9,14 +9,14 @@ public abstract class BuyAssetPrice<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
-    public override string Message => Terms.Get(8, CurrentUser, "What is the price?");
+    public override string Message => Terms.Get("What is the price?", CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
@@ -33,7 +33,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(9, CurrentUser, "Invalid price value. Try again."));
+            await CurrentUser.Notify(Terms.Get("Invalid price value. Try again.", CurrentUser));
             return;
         }
 
@@ -63,6 +63,6 @@ public abstract class BuyAssetPrice<TNextStage>(
 
         PersonService.AddHistory(ActionType, asset.Price, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+        await CurrentUser.Notify(Terms.Get("Done.", CurrentUser));
     }
 }

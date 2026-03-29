@@ -6,12 +6,12 @@ using MoreLinq;
 
 namespace CashFlow.Data.Services;
 
-public class HistoryService(IDataBase dataBase, IPersonRepository personRepository, DescriptionService personDescriptionService, ITermsRepository terms)
+public class HistoryService(IDataBase dataBase, IPersonRepository personRepository, DescriptionService personDescriptionService, ITranslationService terms)
 {
     private IDataBase DataBase { get; } = dataBase;
     private AssetService AssetService => new(PersonRepository);
     private IPersonRepository PersonRepository { get; } = personRepository;
-    private ITermsRepository Terms { get; } = terms;
+    private ITranslationService Terms { get; } = terms;
 
     public void AddRecord(ActionType type, long value, UserDto user, long assetId)
     {
@@ -54,7 +54,7 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
         var asset = person.Assets.Find(a => a.Id == (int)record.AssetId);
         var amount = (int)record.Value;
 
-        var profession = Terms.Translate(person.Profession);
+        var profession = Terms.Get(person.Profession);
         var defaults = PersonRepository.GetDefault(profession, person.Id);
 
         decimal percent;
