@@ -33,11 +33,11 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the first payment?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("-1")]
@@ -68,7 +68,7 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
         await testStage.HandleMessage(BuyPrice);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
             PersonServiceMock.Verify(a => a.UpdateAsset(
@@ -78,7 +78,7 @@ public class BuyBigBusinessFirstPaymentTests : StagesBaseTest
                     x.Mortgage == mortgage &&
                     x.IsDraft)),
                 Times.Once);
-        });
+        }
     }
 
     [Test]

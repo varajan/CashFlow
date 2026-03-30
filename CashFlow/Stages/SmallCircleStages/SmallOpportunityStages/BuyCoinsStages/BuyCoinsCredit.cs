@@ -18,7 +18,7 @@ public class BuyCoinsCredit(
             var value = (asset.Qtty * asset.Price).AsCurrency();
             var cash = PersonService.Read(CurrentUser).Cash.AsCurrency();
 
-            return TranslationService.Get("You don''t have {0}, but only {1}", CurrentUser, value, cash);
+            return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, value, cash);
         }
     }
 
@@ -43,7 +43,7 @@ public class BuyCoinsCredit(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
+                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

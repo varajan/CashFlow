@@ -93,11 +93,11 @@ public class ChooseProfessionTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Choose your *profession*"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<ChooseProfession>();

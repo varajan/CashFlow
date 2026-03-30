@@ -32,11 +32,11 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]
@@ -76,7 +76,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
     [TestCase(10000, 5000, "1500", "Invalid amount. The amount must be a multiple of 1000")]
     [TestCase(10000, 5000, "500", "Invalid amount. The amount must be a multiple of 1000")]
     [TestCase(10000, 5000, "abc", "Invalid amount. The amount must be a multiple of 1000")]
-    [TestCase(10000, 2000, "3000", "You don't have $3,000, but only $2,000")]
+    [TestCase(10000, 2000, "3000", "You don't have *$3,000*, but only *$2,000*")]
     public async Task ReduceLiabilitiesAmount_SelectInvalidValue(int fullAmount, int cash, string value, string errorMessage)
     {
         // Arrange

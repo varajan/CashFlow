@@ -105,7 +105,7 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
@@ -115,7 +115,7 @@ public class SendMoneyTests : StagesBaseTest
                 "Bank",
                 "Cancel"
             }));
-        });
+        }
     }
 
     [Test]
@@ -130,11 +130,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -149,11 +149,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -168,11 +168,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<SendMoney>();

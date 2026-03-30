@@ -22,7 +22,6 @@ public class TranslationService : ITranslationService
         return dictionary;
     }
 
-    public string Get(ActionType action, UserDto user, params object[] args) => Get(action.ToString(), user.Language, args);
     public string Get(string key, UserDto user, params object[] args) => Get(key, user.Language, args);
 
     public string Get(string key, Language language = Language.EN, params object[] args)

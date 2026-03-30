@@ -41,11 +41,11 @@ public class GetMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{CashFlow.AsCurrency()}*. How much should you get?"));
+            Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{CashFlow.AsCurrency()}*. How many should you get?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("$100,000")]

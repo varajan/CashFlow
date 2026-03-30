@@ -33,11 +33,11 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the cash flow?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCaseSource(nameof(CashFlows))]
@@ -56,7 +56,7 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
         await testStage.HandleMessage(cashflow);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
@@ -74,7 +74,7 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
                 It.Is<UserDto>(x => x.Id == CurrentUser.Id),
                 Asset.Id
             ), Times.Once);
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<BuyBigRealEstateCashFlow>();

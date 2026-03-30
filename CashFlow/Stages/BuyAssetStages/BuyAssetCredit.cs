@@ -22,7 +22,7 @@ public abstract class BuyAssetCredit<TNextStage>(
             var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
             var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
-            return TranslationService.Get("You don''t have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
+            return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
         }
     }
 
@@ -47,7 +47,7 @@ public abstract class BuyAssetCredit<TNextStage>(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
+                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

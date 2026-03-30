@@ -1,4 +1,5 @@
-﻿using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
@@ -56,7 +57,7 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
         var minPaymentAmount = liability.AllowsPartialPayment ? 1_000 : liability.FullAmount;
         if (person.Cash < minPaymentAmount)
         {
-            await CurrentUser.Notify(TranslationService.Get("You don't have {0}, but only {1}", CurrentUser,
+            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughAmount, CurrentUser,
                 minPaymentAmount.AsCurrency(),
                 person.Cash.AsCurrency()));
             return;

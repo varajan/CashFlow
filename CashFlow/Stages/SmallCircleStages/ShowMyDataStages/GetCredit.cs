@@ -6,7 +6,7 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 public class GetCredit(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
     public override IEnumerable<string> Buttons => ["1000", "2000", "5000", "10 000", "20 000", Cancel];
 
     public async override Task HandleMessage(string message)
@@ -28,7 +28,7 @@ public class GetCredit(ITranslationService termsService, IPersonService personMa
         person.GetCredit(number);
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Credit, number, CurrentUser);
-        await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, number.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, number.AsCurrency()));
         NextStage = New<Start>();
     }
 }

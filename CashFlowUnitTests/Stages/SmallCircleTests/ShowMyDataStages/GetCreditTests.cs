@@ -21,11 +21,11 @@ public class GetCreditTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("0")]
@@ -61,7 +61,7 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{amount.AsCurrency().AsCurrency()}* from bank."), Times.Once);
 
         PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
@@ -98,7 +98,7 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{amount.AsCurrency().AsCurrency()}* from bank."), Times.Once);
 
         PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>

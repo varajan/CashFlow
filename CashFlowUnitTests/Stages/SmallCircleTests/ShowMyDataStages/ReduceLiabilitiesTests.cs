@@ -34,11 +34,11 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
             Assert.That(testStage.Buttons.ToList(), Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("Car loan", 50_000)]
@@ -89,7 +89,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
         PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have *{required.AsCurrency()}*, but only *{cash.AsCurrency()}*"), Times.Once);
     }
 
     [TestCase("Liability")]

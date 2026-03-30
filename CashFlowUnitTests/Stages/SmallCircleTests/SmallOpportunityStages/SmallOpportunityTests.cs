@@ -31,7 +31,7 @@ public class SmallOpportunityTests : StagesBaseTest
             "Stocks ÷2",
             "Buy Real Estate",
             "Buy Land",
-            "Buy coins",
+            "Buy Coins",
             "Start a company",
             "Cancel"
         };
@@ -39,11 +39,11 @@ public class SmallOpportunityTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("Buy Stocks", typeof(BuyStocks))]

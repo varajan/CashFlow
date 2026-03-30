@@ -10,7 +10,7 @@ public class BuyCoinsCount(
     IPersonService personManager,
     IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets
         .GetAsText(AssetType.CoinCount, CurrentUser.Language)

@@ -31,11 +31,11 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Reduce Liabilities - Car Loan. Yes?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new[] { "Yes", "Cancel" }));
-        });
+        }
     }
 
     [Test, Ignore("Not applicable")]

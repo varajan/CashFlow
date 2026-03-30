@@ -18,7 +18,7 @@ public class SendMoneyCredit(
             var currentUserPerson = PersonService.Read(CurrentUser);
             var value = asset.Qtty.AsCurrency();
             var cash = currentUserPerson.Cash.AsCurrency();
-            return TranslationService.Get("You don''t have {0}, but only {1}", CurrentUser, value, cash);
+            return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, value, cash);
         }
     }
 
@@ -44,7 +44,7 @@ public class SendMoneyCredit(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
+                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await Transfer(asset);
 
                 NextStage = New<Start>();

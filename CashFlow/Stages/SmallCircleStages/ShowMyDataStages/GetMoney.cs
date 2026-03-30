@@ -12,7 +12,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
         get
         {
             var person = PersonService.Read(CurrentUser);
-            return TranslationService.Get("Your Cashflow is *{0}*. How much should you get?", CurrentUser,
+            return TranslationService.Get(Terms.CashflowAsk, CurrentUser,
                 person.BigCircle
                 ? person.GetBigCircleCashflow().AsCurrency()
                 : person.GetSmallCircleCashflow().AsCurrency());

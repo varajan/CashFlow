@@ -162,7 +162,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
             case ActionType.PayOffBoat:
             case ActionType.BankruptcyBankLoan:
                 var reduceLiabilities = TranslationService.Get("Reduce Liabilities", user);
-                var type = TranslationService.Get(Action, user);
+                var type = TranslationService.Get(Action.GetDescription(), user);
                 var amount = value.AsCurrency();
                 return $"{reduceLiabilities}. {type}: {amount}";
 
@@ -172,14 +172,14 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
             case ActionType.BuyLand:
             case ActionType.StartCompany:
             case ActionType.BuyCoins:
-                var buyAsset = TranslationService.Get(Action, user);
+                var buyAsset = TranslationService.Get(Action.GetDescription(), user);
                 var asset = AssetService.Get(assetId, user);
                 var description = GetAssetDescription(asset, user);
                 return $"{buyAsset}. {description}";
 
             case ActionType.IncreaseCashFlow:
                 var smallBusiness = AssetService.Get(assetId, user);
-                var increaseCashFlow = TranslationService.Get(Action, user);
+                var increaseCashFlow = TranslationService.Get(Action.GetDescription(), user);
                 return $"*{smallBusiness.Title}* - {increaseCashFlow}. {value.AsCurrency()}";
 
             case ActionType.SellRealEstate:
@@ -188,7 +188,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
             case ActionType.SellLand:
             case ActionType.SellCoins:
             case ActionType.BankruptcySellAsset:
-                var sellAsset = TranslationService.Get(Action, user);
+                var sellAsset = TranslationService.Get(Action.GetDescription(), user);
                 var assetToSell = AssetService.Get(assetId, user);
                 var sellDescription = GetAssetDescription(assetToSell, user);
 
@@ -196,7 +196,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
 
             case ActionType.Stocks1To2:
             case ActionType.Stocks2To1:
-                var multiply = TranslationService.Get(Action, user);
+                var multiply = TranslationService.Get(Action.GetDescription(), user);
                 var stock = AssetService.Get(assetId, user);
                 var stockDescription = GetAssetDescription(stock, user);
 
@@ -211,13 +211,13 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
 
             case ActionType.BankruptcyDebtRestructuring:
             case ActionType.Bankruptcy:
-                return TranslationService.Get(Action, user);
+                return TranslationService.Get(Action.GetDescription(), user);
 
             case ActionType.GoToBigCircle:
             case ActionType.Divorce:
             case ActionType.TaxAudit:
             case ActionType.Lawsuit:
-                return TranslationService.Get(Action, user);
+                return TranslationService.Get(Action.GetDescription(), user);
 
             default:
                 return $"<{Action}> - {value}";

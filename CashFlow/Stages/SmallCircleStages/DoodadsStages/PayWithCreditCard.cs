@@ -9,7 +9,7 @@ public class PayWithCreditCard(ITranslationService termsService, IAvailableAsset
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => TranslationService.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.MicroCreditAmount).Append(Cancel);
 

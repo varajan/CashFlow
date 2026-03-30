@@ -13,7 +13,7 @@ public class SendMoneyAmount(
 {
     private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => TranslationService.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons
     {

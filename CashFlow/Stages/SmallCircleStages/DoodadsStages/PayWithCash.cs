@@ -9,7 +9,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => TranslationService.Get("How much?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.SmallGiveMoney).Append(Cancel);
 
@@ -38,7 +38,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
             person.GetCredit(credit);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, credit.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
         }
 
         person.Cash -= amount;

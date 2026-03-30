@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Data.Repositories;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -29,7 +28,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
             int upToQtty = person.Cash / asset.Price;
 
             return upToQtty == 0
-                ? TranslationService.Get("How much?", CurrentUser)
+                ? TranslationService.Get(Terms.AskHowMany, CurrentUser)
                 : TranslationService.Get("You can buy up to {0} stocks. How much stocks would you like to buy?", CurrentUser, upToQtty);
         }
     }

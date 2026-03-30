@@ -69,7 +69,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
 
         if (person.Cash < amount)
         {
-            var notEnoughCashMsg = TranslationService.Get("You don't have {0}, but only {1}", CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
+            var notEnoughCashMsg = TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
             await CurrentUser.Notify(notEnoughCashMsg);
             return;
         }

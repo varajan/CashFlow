@@ -61,7 +61,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
             person.GetCredit(firstPayment);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get("You've taken {0} from bank.", CurrentUser, firstPayment.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, firstPayment.AsCurrency()));
         }
 
         boat = new AssetDto
@@ -82,7 +82,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
         PersonService.CreateAsset(CurrentUser, boat);
         PersonService.AddHistory(ActionType.BuyBoat, boat.Price, CurrentUser);
 
-        var message = TranslationService.Get("You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}", CurrentUser,
+        var message = TranslationService.Get(Terms.BoatBought, CurrentUser,
             boat.Price.AsCurrency(),
             firstPayment.AsCurrency(),
             Math.Abs(boat.CashFlow).AsCurrency());
