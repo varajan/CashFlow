@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
 using CashFlow.Extensions;
+using MoreLinq;
 using Polly;
 using Polly.Retry;
 
@@ -8,9 +8,60 @@ namespace CashFlowBotSystemTests.Extras;
 
 public class Bot()
 {
-    private static readonly string emulatorDirectory = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-        ? "./../../../../CashFlowBotEmulator/emulator"
-        : "./../../../../emulator";
+    private static readonly string root = Path.GetFullPath("./../../../..");
+    private static readonly string projectPath = Path.Combine(root, "CashFlowBotEmulator", "CashFlowBotEmulator.csproj");
+    private static readonly string emulatorDirectory = Path.Combine(root, "emulator");
+
+    public static void Launch()
+    {
+        CleanEmulatorDirectory();
+        SendMessage("CHECK");
+        var reply = GetReply(0);
+        if (reply is not null) return;
+
+        BuildEmulator();
+        StartEmulator();
+    }
+
+    public static void Close() => SendMessage("EXIT");
+
+    private static void CleanEmulatorDirectory()
+    {
+        var extensions = new[] { ".msg", ".cmd" };
+
+        Directory.CreateDirectory(emulatorDirectory);
+        Directory
+            .EnumerateFiles(emulatorDirectory, "*.*", SearchOption.TopDirectoryOnly)
+            .Where(f => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
+            .ForEach(File.Delete);
+    }
+
+    private static void BuildEmulator()
+    {
+        var process = new Process();
+        process.StartInfo.FileName = "dotnet";
+        process.StartInfo.Arguments = $"publish {projectPath} -c Release -r win-x64 --self-contained true -o {emulatorDirectory}";
+        process.StartInfo.RedirectStandardOutput = true;
+        process.StartInfo.RedirectStandardError = true;
+        process.StartInfo.UseShellExecute = false;
+
+        process.Start();
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+        {
+            throw new Exception("Publish failed");
+        }
+    }
+
+    private static void StartEmulator()
+    {
+        var exePath = Path.Combine(emulatorDirectory, "CashFlowBotEmulator.exe");
+        var process = new Process();
+        process.StartInfo.FileName = exePath;
+        process.StartInfo.WorkingDirectory = emulatorDirectory;
+        process.Start();
+    }
 
     public static void SendMessage(string message, long? chatId = null)
     {
