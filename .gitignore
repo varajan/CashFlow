@@ -354,3 +354,4 @@ publish/*
 build/*
 /CashFlowBotEmulator/emulator
 **/*.feature.cs
+/emulator

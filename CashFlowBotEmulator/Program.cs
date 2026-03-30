@@ -28,6 +28,12 @@ while (true)
 
     if (message == "EXIT") break;
 
+    if (message == "CHECK")
+    {
+        await new UserDto { Id = 0 }.Notify("OK");
+        continue;
+    }
+
     if (message == "RESET")
     {
         var lastActive = DateTime.Now.AddHours(-1);
