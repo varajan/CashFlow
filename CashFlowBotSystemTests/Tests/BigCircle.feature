@@ -48,7 +48,7 @@ Scenario: I can get money
 	And Rory Hartman history data is following:
 """
 • Start a company. *Computer Programs* - Price: $2,000
-• *Computer Programs* - Increase cash flow. $7,000
+• *Computer Programs* - Increase cashflow. $7,000
 • Go to Big Circle
 • Get $100,000
 """

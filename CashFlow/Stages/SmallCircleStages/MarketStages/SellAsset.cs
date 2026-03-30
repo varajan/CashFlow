@@ -27,12 +27,12 @@ public class SellAsset<TNextStage>(
 
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                return TranslationService.Get("What RealEstate do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
+                return TranslationService.Get(Terms.SellRealEstateAsk, CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.ContainsAny(AssetType.Business, AssetType.SmallBusiness))
             {
-                return TranslationService.Get("What Business do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
+                return TranslationService.Get(Terms.SellBusinessAsk, CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.Contains(AssetType.Coin))

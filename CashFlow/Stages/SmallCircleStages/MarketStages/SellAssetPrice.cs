@@ -51,7 +51,7 @@ public class SellAssetPrice(
 
                 return count == 1
                     ? TranslationService.Get(Terms.AskPrice, CurrentUser)
-                    : TranslationService.Get("You have *{0}* apartments. What is the price per one appartment?", CurrentUser, count);
+                    : TranslationService.Get(Terms.ApartmentsAsk, CurrentUser, count);
             }
 
             return TranslationService.Get(Terms.AskPrice, CurrentUser);

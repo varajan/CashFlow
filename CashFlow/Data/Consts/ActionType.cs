@@ -66,7 +66,7 @@ public enum ActionType
     [Description("Boat Loan")]
     PayOffBoat = 114,
 
-    [Description("BoatStart a company")]
+    [Description("Start a company")]
     StartCompany = 115,
 
     [Description("Increase cashflow")]

@@ -31,15 +31,15 @@ public class BuyStocksCountTests : StagesBaseTest
     }
 
     [TestCase(100, 50, "How many?", new string[] { "100", "150", "200", "Cancel" })]
-    [TestCase(100, 100, "You can buy up to 1 stocks. How much stocks would you like to buy?", new string[] { "1", "Cancel" })]
-    [TestCase(20, 999, "You can buy up to 49 stocks. How much stocks would you like to buy?", new string[] { "49", "Cancel" })]
-    [TestCase(20, 1000, "You can buy up to 50 stocks. How much stocks would you like to buy?", new string[] { "50", "Cancel" })]
-    [TestCase(20, 1250, "You can buy up to 62 stocks. How much stocks would you like to buy?", new string[] { "50", "62", "Cancel" })]
-    [TestCase(999, 1998, "You can buy up to 2 stocks. How much stocks would you like to buy?", new string[] { "2", "Cancel" })]
+    [TestCase(100, 100, "You can buy up to 1 stocks. How many stocks would you like to buy?", new string[] { "1", "Cancel" })]
+    [TestCase(20, 999, "You can buy up to 49 stocks. How many stocks would you like to buy?", new string[] { "49", "Cancel" })]
+    [TestCase(20, 1000, "You can buy up to 50 stocks. How many stocks would you like to buy?", new string[] { "50", "Cancel" })]
+    [TestCase(20, 1250, "You can buy up to 62 stocks. How many stocks would you like to buy?", new string[] { "50", "62", "Cancel" })]
+    [TestCase(999, 1998, "You can buy up to 2 stocks. How many stocks would you like to buy?", new string[] { "2", "Cancel" })]
     [TestCase(1000, 0, "How many?", new string[] { "1", "2", "3", "4", "Cancel" })]
-    [TestCase(1000, 1000, "You can buy up to 1 stocks. How much stocks would you like to buy?", new string[] { "1", "Cancel" })]
-    [TestCase(1000, 4000, "You can buy up to 4 stocks. How much stocks would you like to buy?", new string[] { "1", "2", "3", "4", "Cancel" })]
-    [TestCase(10, 1500, "You can buy up to 150 stocks. How much stocks would you like to buy?", new string[] { "50", "100", "150", "Cancel" })]
+    [TestCase(1000, 1000, "You can buy up to 1 stocks. How many stocks would you like to buy?", new string[] { "1", "Cancel" })]
+    [TestCase(1000, 4000, "You can buy up to 4 stocks. How many stocks would you like to buy?", new string[] { "1", "2", "3", "4", "Cancel" })]
+    [TestCase(10, 1500, "You can buy up to 150 stocks. How many stocks would you like to buy?", new string[] { "50", "100", "150", "Cancel" })]
     public void ButtonsAndMessage_Test(int price, int cash, string expectedMessage, string[] expectedButtons)
     {
         // Arrange

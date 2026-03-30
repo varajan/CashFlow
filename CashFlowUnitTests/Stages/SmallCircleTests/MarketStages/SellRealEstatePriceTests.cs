@@ -23,8 +23,8 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
 
     [TestCase("2/1", "What is the price?")]
     [TestCase("3/2", "What is the price?")]
-    [TestCase("2-plex", "You have *2* apartments. What is the price per one appartment?")]
-    [TestCase("8-plex", "You have *8* apartments. What is the price per one appartment?")]
+    [TestCase("2-plex", "You have *2* apartments. What is the price per one?")]
+    [TestCase("8-plex", "You have *8* apartments. What is the price per one?")]
     public void SellRealEstatePrice_Question_and_Buttons(string apparment, string message)
     {
         // Arrange

@@ -94,7 +94,7 @@ public class Terms
     public const string SellBusiness = "Sell Business";
     public const string InvalidBusiness = "Invalid Business number.";
     public const string NoBusiness = "You have no Business.";
-    public const string SellBusinessAsk = "What Business do you want to sell?{0}{1}.";
+    public const string SellBusinessAsk = "What Business do you want to sell?{0}{1}";
 
     public const string Paycheck = "Paycheck";
     public const string Downsize = "Downsize";
@@ -146,7 +146,7 @@ public class Terms
 
     public const string BoatBought = "You've bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}";
 
-    public const string IncreaseCashflow = "Increase cash flow";
+    public const string IncreaseCashflow = "Increase cashflow";
 
     public const string BuyCoins = "Buy Coins";
     public const string SellCoins = "Sell Coins";

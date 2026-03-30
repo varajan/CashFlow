@@ -238,7 +238,9 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         var expenses = testPerson.PerChild * (children + 1);
-        var message = $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} children.";
+        var message = children == 0
+            ? $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} child."
+            : $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} children.";
 
         // Act
         await testStage.HandleMessage("baby");
