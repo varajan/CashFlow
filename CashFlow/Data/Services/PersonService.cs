@@ -20,7 +20,7 @@ public class PersonService(IPersonRepository personRepository, IDataBase dataBas
 
     public void Create(string profession, UserDto user)
     {
-        profession = Terms.Get(profession);
+        profession = Terms.Translate(profession, user.Language, Language.EN);
         var person = PersonRepository.GetDefault(profession, user.Id);
         
         if (PersonRepository.Exists(user.Id))

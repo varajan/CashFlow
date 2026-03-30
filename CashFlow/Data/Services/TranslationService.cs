@@ -2,6 +2,7 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
+using MoreLinq;
 
 namespace CashFlow.Data.Services;
 
@@ -28,5 +29,11 @@ public class TranslationService : ITranslationService
     {
         var term = GetDictionary(language)[key];
         return string.Format(term, args);
+    }
+
+    public string Translate(string value, Language source, Language target, params object[] args)
+    {
+        var key = Translations[source].FirstOrDefault(x => x.Value == value).Key;
+        return Get(key, target, args);
     }
 }

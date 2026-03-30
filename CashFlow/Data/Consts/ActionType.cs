@@ -94,6 +94,7 @@ public enum ActionType
 
     Divorce = 69,
 
+    [Description("Tax Audit")]
     TaxAudit = 70,
 
     Lawsuit = 71,
