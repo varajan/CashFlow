@@ -157,9 +157,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Child, person.Children, CurrentUser);
 
-        var termKey = person.Children == 1
-            ? "{0}, you have {1} children expenses and {2} children."
-            : "{0}, you have {1} children expenses and {2} children.";
+        var termKey = person.Children == 1 ? Terms.ChildExpense1 : Terms.ChildExpenseMany;
         var childrenExpenses = (person.Children * person.PerChild).AsCurrency();
         var count = person.Children.ToString();
         var personProfession = TranslationService.Get(person.Profession, CurrentUser.Language);

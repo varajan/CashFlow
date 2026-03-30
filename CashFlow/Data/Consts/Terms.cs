@@ -26,11 +26,11 @@ public class Terms
     public const string BuyStocksCalc = "{0} x {1} = {2}. You have only {3}. You can buy *{4}* stocks. So, what quantity of stocks do you want to buy?";
 
     public const string ChildExpense1 = "{0}, you have *{1}* children expenses and {2} child.";
+    public const string ChildExpenseMany = "{0}, you have *{1}* children expenses and {2} children.";
     public const string AskHowMany = "How many?";
     public const string GotAmount = "Ok, you've got *{0}*";
     public const string NotEnoughAmount = "You don't have *{0}*, but only *{1}*";
     public const string InvalidAmount = "Invalid amount. The amount must be a multiple of 1000";
-    public const string ChildExpenseMany = "{0}, you have *{1}* children expenses and {2} children.";
 
     public const string StopGameFirst = "Please stop the current game before starting a new one.";
     public const string SellStocksAsk = "What stocks do you want to sell?";

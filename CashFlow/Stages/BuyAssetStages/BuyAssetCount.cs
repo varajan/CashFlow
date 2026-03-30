@@ -29,7 +29,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
             return upToQtty == 0
                 ? TranslationService.Get(Terms.AskHowMany, CurrentUser)
-                : TranslationService.Get("You can buy up to {0} stocks. How much stocks would you like to buy?", CurrentUser, upToQtty);
+                : TranslationService.Get(Terms.BuyStocksLimit, CurrentUser, upToQtty);
         }
     }
 
