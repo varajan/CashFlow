@@ -64,7 +64,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
         var bankLoan = GetLiability(person, Liability.Bank_Loan);
         var boatLoan = GetLiability(person, Liability.Boat_Loan);
         var taxes = GetLiability(person, Liability.Taxes);
-        var others = GetLiability(person, Liability.Others);
+        var others = GetLiability(person, Liability.Other_Payments);
         var childrenExpenses = person.Children * person.PerChild;
         var children = person.Children;
 

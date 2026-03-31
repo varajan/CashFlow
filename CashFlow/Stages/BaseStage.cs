@@ -105,12 +105,12 @@ public abstract class BaseStage : IStage
     protected bool MessageEquals(string message, string value) =>
         message.Equals(TranslationService.Get(value, CurrentUser), StringComparison.InvariantCultureIgnoreCase);
 
-    protected bool IsCanceled(string message) => MessageEquals(message, "Cancel");
+    protected bool IsCanceled(string message) => MessageEquals(message, Terms.Cancel);
 
     protected string Yes => TranslationService.Get(Terms.Yes, CurrentUser);
     protected string No => TranslationService.Get(Terms.No, CurrentUser);
     protected string Cancel => TranslationService.Get(Terms.Cancel, CurrentUser);
-    protected string GetCredit => TranslationService.Get("Get Credit", CurrentUser);
-    protected string StopGame => TranslationService.Get("Stop Game", CurrentUser);
+    protected string GetCredit => TranslationService.Get(Terms.GetCredit, CurrentUser);
+    protected string StopGame => TranslationService.Get(Terms.StopGame, CurrentUser);
     protected string History => TranslationService.Get(Terms.History, CurrentUser);
 }

@@ -3,7 +3,7 @@
 public enum Liability
 {
     Taxes = 58,
-    Others = 60,
+    Other_Payments = 60,
     Mortgage = 43,
     School_Loan = 44,
     Car_Loan = 45,

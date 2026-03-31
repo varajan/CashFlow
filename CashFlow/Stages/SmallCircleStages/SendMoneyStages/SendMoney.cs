@@ -48,6 +48,6 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        await CurrentUser.Notify(TranslationService.Get("Not found.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.NotFound, CurrentUser));
     }
 }

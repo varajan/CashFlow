@@ -46,7 +46,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var testStage = GetTestStage();
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Others, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
+            new() { Type = Liability.Other_Payments, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
             new() { Type = Liability.Taxes, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
             new() { Type = Liability.Mortgage, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
             new() { Type = Liability.Bank_Loan, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
