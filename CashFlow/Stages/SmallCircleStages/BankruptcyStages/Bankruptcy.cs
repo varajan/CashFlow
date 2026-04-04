@@ -11,7 +11,7 @@ public class Bankruptcy(ITranslationService termsService, IPersonService personM
 
     public override Task HandleMessage(string message)
     {
-        if (MessageEquals(message, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return Task.CompletedTask;

@@ -15,8 +15,8 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
         get
         {
             var person = PersonService.Read(CurrentUser);
-            var cashTerm = TranslationService.Get("Cash", CurrentUser);
-            var monthly = TranslationService.Get("monthly", CurrentUser);
+            var cashTerm = TranslationService.Get(Terms.Cash, CurrentUser);
+            var monthly = TranslationService.Get(Terms.Monthly, CurrentUser);
             var message = "";
 
             foreach (var liability in Liabilities)

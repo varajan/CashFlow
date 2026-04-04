@@ -35,7 +35,7 @@ public class BuyCoinsCredit(
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 var person = PersonService.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;

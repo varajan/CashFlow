@@ -66,7 +66,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
 
     public override async Task HandleMessage(string message)
     {
-        if (MessageEquals(message, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return;

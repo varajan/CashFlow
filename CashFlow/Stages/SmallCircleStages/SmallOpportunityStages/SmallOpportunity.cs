@@ -12,13 +12,13 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
     public override IEnumerable<string> Buttons =>
     [
         TranslationService.Get(Terms.BuyStocks, CurrentUser),
-        TranslationService.Get("Sell Stocks", CurrentUser),
-        TranslationService.Get("Stocks x2", CurrentUser),
-        TranslationService.Get("Stocks ÷2", CurrentUser),
-        TranslationService.Get("Buy Real Estate", CurrentUser),
-        TranslationService.Get("Buy Land", CurrentUser),
+        TranslationService.Get(Terms.SellStocks, CurrentUser),
+        TranslationService.Get(Terms.StocksX2, CurrentUser),
+        TranslationService.Get(Terms.StocksDiv2, CurrentUser),
+        TranslationService.Get(Terms.BuyRealEstate, CurrentUser),
+        TranslationService.Get(Terms.BuyLand, CurrentUser),
         TranslationService.Get(Terms.BuyCoins, CurrentUser),
-        TranslationService.Get("Start a company", CurrentUser),
+        TranslationService.Get(Terms.StartCompany, CurrentUser),
         Cancel
     ];
 
@@ -28,45 +28,45 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
 
         switch (message)
         {
-            case var m when MessageEquals(m, "Buy Stocks"):
+            case var m when MessageEquals(m, Terms.BuyStocks):
                 NextStage = New<BuyStocks>();
                 return;
 
-            case var m when MessageEquals(m, "Sell Stocks"):
+            case var m when MessageEquals(m, Terms.SellStocks):
                 if (hasStocks)
                 {
                     NextStage = New<SellStocks>();
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, "Stocks x2"):
+            case var m when MessageEquals(m, Terms.StocksX2):
                 if (hasStocks)
                 {
                     NextStage = New<StocksMultiply>();
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, "Stocks ÷2"):
+            case var m when MessageEquals(m, Terms.StocksDiv2):
                 if (hasStocks)
                 {
                     NextStage = New<StocksReduce>();
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get("You have no stocks.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, "Buy Real Estate"):
+            case var m when MessageEquals(m, Terms.BuyRealEstate):
                 NextStage = New<BuySmallRealEstate>();
                 return;
 
-            case var m when MessageEquals(m, "Buy Land"):
+            case var m when MessageEquals(m, Terms.BuyLand):
                 NextStage = New<BuyLand>();
                 return;
 
@@ -74,7 +74,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                 NextStage = New<BuyCoins>();
                 return;
 
-            case var m when MessageEquals(m, "Start a company"):
+            case var m when MessageEquals(m, Terms.StartCompany):
                 NextStage = New<StartCompany>();
                 return;
 

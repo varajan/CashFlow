@@ -35,7 +35,7 @@ public class SendMoneyCredit(
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 var currentUserPerson = PersonService.Read(CurrentUser);
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;

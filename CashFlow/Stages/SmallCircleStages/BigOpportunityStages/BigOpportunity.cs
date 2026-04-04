@@ -19,7 +19,7 @@ public class BigOpportunity(ITranslationService termsService, IPersonService per
     {
         switch (message)
         {
-            case var m when MessageEquals(m, "Buy Real Estate"):
+            case var m when MessageEquals(m, Terms.BuyRealEstate):
                 NextStage = New<BuyBigRealEstate>();
                 return Task.CompletedTask;
 
@@ -27,7 +27,7 @@ public class BigOpportunity(ITranslationService termsService, IPersonService per
                 NextStage = New<BuyBusiness>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, "Buy Land"):
+            case var m when MessageEquals(m, Terms.BuyLand):
                 NextStage = New<BuyLand>();
                 return Task.CompletedTask;
 

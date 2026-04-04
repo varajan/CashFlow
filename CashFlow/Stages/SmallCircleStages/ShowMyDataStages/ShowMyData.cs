@@ -11,26 +11,26 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
     public override List<string> Buttons =>
     [
         TranslationService.Get(Terms.GetMoney, CurrentUser),
-        TranslationService.Get("Get Credit", CurrentUser),
-        TranslationService.Get("Charity - Pay 10%", CurrentUser),
+        TranslationService.Get(Terms.GetCredit, CurrentUser),
+        TranslationService.Get(Terms.Charity10, CurrentUser),
         TranslationService.Get(Terms.ReduceLiabilities, CurrentUser),
         StopGame,
-        TranslationService.Get("Main menu", CurrentUser),
+        TranslationService.Get(Terms.MainMenu, CurrentUser),
     ];
 
     public async override Task HandleMessage(string message)
     {
         switch (message)
         {
-            case var m when MessageEquals(m, "Get Money"):
+            case var m when MessageEquals(m, Terms.GetMoney):
                 NextStage = New<GetMoney>();
                 return;
 
-            case var m when MessageEquals(m, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 NextStage = New<GetCredit>();
                 return;
 
-            case var m when MessageEquals(m, "Charity - Pay 10%"):
+            case var m when MessageEquals(m, Terms.Charity10):
                 await Charity();
                 NextStage = New<Start>();
                 return;
@@ -39,11 +39,11 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
                 await ReduceLiabilities();
                 return;
 
-            case var m when MessageEquals(m, "Stop Game"):
+            case var m when MessageEquals(m, Terms.StopGame):
                 NextStage = New<StopGame>();
                 return;
 
-            case var m when MessageEquals(m, "Main menu"):
+            case var m when MessageEquals(m, Terms.MainMenu):
                 NextStage = New<Start>();
                 return;
         }
@@ -58,7 +58,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
             return;
         }
 
-        await CurrentUser.Notify(TranslationService.Get("You have no liabilities.", CurrentUser));
+        await CurrentUser.Notify(TranslationService.Get(Terms.NoLiabilities, CurrentUser));
         NextStage = New<Start>();
     }
 
@@ -78,7 +78,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Charity, amount, CurrentUser);
 
-        var message = TranslationService.Get("You've payed {0}, now you can use two dice in next 3 turns.", CurrentUser, amount.AsCurrency());
+        var message = TranslationService.Get(Terms.CharityResult, CurrentUser, amount.AsCurrency());
         await CurrentUser.Notify(message);
     }
 }

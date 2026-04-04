@@ -22,7 +22,7 @@ public class SellAsset<TNextStage>(
 
             if (AssetTypes.Contains(AssetType.Land))
             {
-                return TranslationService.Get("What Land do you want to sell?{0}{1}", CurrentUser, Environment.NewLine, assetNames);
+                return TranslationService.Get(Terms.SellLandAsk, CurrentUser, Environment.NewLine, assetNames);
             }
 
             if (AssetTypes.Contains(AssetType.RealEstate))
@@ -42,7 +42,7 @@ public class SellAsset<TNextStage>(
 
             if (AssetTypes.Contains(AssetType.Stock))
             {
-                return TranslationService.Get("What stocks do you want to sell?", CurrentUser);
+                return TranslationService.Get(Terms.SellStocksAsk, CurrentUser);
             }
 
             throw new NotImplementedException();
@@ -89,19 +89,19 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Land))
             {
-                await CurrentUser.Notify(TranslationService.Get("Invalid land number.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidLand, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                await CurrentUser.Notify(TranslationService.Get("Invalid Real Estate number.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidRealEstate, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Business) || AssetTypes.Contains(AssetType.SmallBusinessType))
             {
-                await CurrentUser.Notify(TranslationService.Get("Invalid business number.", CurrentUser));
+                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidBusiness, CurrentUser));
                 return false;
             }
 
