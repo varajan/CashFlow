@@ -28,7 +28,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found"), Times.Once);
         PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
         PersonServiceMock.Verify(x => x.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
     }
@@ -46,7 +46,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found"), Times.Once);
         PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
