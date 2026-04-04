@@ -90,7 +90,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonServiceMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.CarLoan, amount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
@@ -118,7 +118,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonServiceMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.CarLoan, amount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }

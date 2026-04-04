@@ -142,8 +142,6 @@ public class Terms
     public const string StartCompany = "Start a company";
     public const string Boat = "Boat";
 
-    // vvv done
-
     public const string BoatBought = "You've bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}";
 
     public const string IncreaseCashflow = "Increase cashflow";

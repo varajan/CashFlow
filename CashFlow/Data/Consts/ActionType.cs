@@ -4,98 +4,105 @@ namespace CashFlow.Data.Consts;
 
 public enum ActionType
 {
-    PayMoney = -20,
+    [Description("Pay Money")]
+    PayMoney,
+
+    [Description("Get Money")]
     GetMoney,
+
     Child,
     Downsize,
     Credit,
+
+    [Description("Reduce Liabilities")]
     ReduceLiability,
+
     Charity,
-    Mortgage = 43,
+    Mortgage,
 
     [Description("School Loan")]
-    SchoolLoan = 44,
+    SchoolLoan,
 
     [Description("Car Loan")]
-    CarLoan = 45,
+    CarLoan,
 
     [Description("Credit Card")]
-    CreditCard = 46,
+    CreditCard,
 
     [Description("Small Credit")]
-    SmallCredit = 92,
+    SmallCredit,
 
     [Description("Bank Loan")]
-    BankLoan = 47,
+    BankLoan,
 
     [Description("Buy Real Estate")]
-    BuyRealEstate = 37,
+    BuyRealEstate,
 
     [Description("Buy Business")]
-    BuyBusiness = 74,
+    BuyBusiness,
 
     [Description("Buy Land")]
-    BuyLand = 94,
+    BuyLand,
 
     [Description("Buy Stocks")]
-    BuyStocks = 35,
+    BuyStocks,
 
     [Description("Sell Real Estate")]
-    SellRealEstate = 38,
+    SellRealEstate,
 
     [Description("Sell Business")]
-    SellBusiness = 75,
+    SellBusiness,
 
     [Description("Sell Land")]
-    SellLand = 98,
+    SellLand,
 
     [Description("Sell Stocks")]
-    SellStocks = 36,
+    SellStocks,
 
     [Description("Stocks x2")]
-    Stocks1To2 = 82,
+    Stocks1To2,
 
     [Description("Stocks ÷2")]
-    Stocks2To1 = 83,
+    Stocks2To1,
 
     MicroCredit,
 
     [Description("Buy a boat")]
-    BuyBoat = 112,
+    BuyBoat,
 
     [Description("Boat Loan")]
-    PayOffBoat = 114,
+    PayOffBoat,
 
     [Description("Start a company")]
-    StartCompany = 115,
+    StartCompany,
 
     [Description("Increase cashflow")]
-    IncreaseCashFlow = 118,
+    IncreaseCashFlow,
 
     [Description("Buy Coins")]
-    BuyCoins = 119,
+    BuyCoins,
 
     [Description("Sell Coins")]
-    SellCoins = 120,
+    SellCoins,
 
-    Bankruptcy = 125,
+    Bankruptcy,
 
     [Description("Sale for debts")]
-    BankruptcySellAsset = 131,
+    BankruptcySellAsset,
 
     [Description("Debt restructuring")]
-    BankruptcyDebtRestructuring = 132,
+    BankruptcyDebtRestructuring,
 
     [Description("Credit repayment")]
-    BankruptcyBankLoan = 135,
+    BankruptcyBankLoan,
 
     [Description("Go to Big Circle")]
-    GoToBigCircle = 1,
+    GoToBigCircle,
 
-    Divorce = 69,
+    Divorce,
 
     [Description("Tax Audit")]
-    TaxAudit = 70,
+    TaxAudit,
 
-    Lawsuit = 71,
+    Lawsuit,
 }

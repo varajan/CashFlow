@@ -57,7 +57,7 @@ public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonS
         
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, amount, CurrentUser);
+        PersonService.AddHistory(liability.Type.AsActionType(), amount, CurrentUser);
 
         NextStage = PersonService.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
             ? New<Start>()

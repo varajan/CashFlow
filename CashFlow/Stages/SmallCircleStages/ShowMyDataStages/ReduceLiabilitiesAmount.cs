@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
-using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
@@ -81,6 +80,6 @@ public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonSe
 
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, amount, CurrentUser);
+        PersonService.AddHistory(liability.Type.AsActionType(), amount, CurrentUser);
     }
 }
