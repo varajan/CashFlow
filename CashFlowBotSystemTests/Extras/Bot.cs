@@ -41,7 +41,8 @@ public class Bot(string folder)
 
     private void CleanEmulatorDirectory(params string[] extensions)
     {
-        string[] subFolders = [ "Data", "runtimes" ];
+        // DEBUG
+        //string[] subFolders = [ "Data", "runtimes" ];
         extensions = extensions.Length > 0 ? extensions : [".msg", ".cmd"];
 
         Directory.CreateDirectory(EmulatorDirectory);
@@ -49,9 +50,11 @@ public class Bot(string folder)
             .EnumerateFiles(EmulatorDirectory, "*.*", SearchOption.TopDirectoryOnly)
             .Where(f => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
             .ForEach(File.Delete);
-        subFolders.Select(sub => Path.Combine(EmulatorDirectory, sub))
-            .Where(Directory.Exists)
-            .ForEach(DeleteDirectory);
+
+        // DEBUG
+        //subFolders.Select(sub => Path.Combine(EmulatorDirectory, sub))
+        //    .Where(Directory.Exists)
+        //    .ForEach(DeleteDirectory);
     }
 
     private void DeleteDirectory(string path)
