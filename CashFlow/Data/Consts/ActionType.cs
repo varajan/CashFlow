@@ -4,20 +4,26 @@ namespace CashFlow.Data.Consts;
 
 public enum ActionType
 {
-    [Description("Pay Money")]
+    [Description("Pay with Cash")]
     PayMoney,
 
     [Description("Get Money")]
     GetMoney,
 
+    [Description("Get a child")]
     Child,
+
     Downsize,
+    
+    [Description("Get Credit")]
     Credit,
 
     [Description("Reduce Liabilities")]
     ReduceLiability,
 
+    [Description("Charity - Pay 10%")]
     Charity,
+
     Mortgage,
 
     [Description("School Loan")]
@@ -65,7 +71,7 @@ public enum ActionType
     [Description("Stocks ÷2")]
     Stocks2To1,
 
-    [Description("Micro Credit")]
+    [Description("Pay with Credit Card")]
     MicroCredit,
 
     [Description("Buy a boat")]
