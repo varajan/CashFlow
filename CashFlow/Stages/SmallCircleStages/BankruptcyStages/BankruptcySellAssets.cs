@@ -9,7 +9,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
     : BaseStage(termsService, personManager, userRepository)
 {
     private PersonDto Person => PersonService.Read(CurrentUser);
-    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);
+    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.BankLoan);
     private IEnumerable<AssetDto> Assets => Person.Assets.Where(a => !a.IsDeleted).OrderBy(x => x.Type);
 
     public override string Message
@@ -18,7 +18,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
         {
             var cashFlow = TranslationService.Get(Terms.Cashflow, CurrentUser);
             var cash = TranslationService.Get(Terms.Cash, CurrentUser);
-            var bankLoan = TranslationService.Get(Liability.Bank_Loan.AsString(), CurrentUser);
+            var bankLoan = TranslationService.Get(Liability.BankLoan.GetDescription(), CurrentUser);
             var price = TranslationService.Get(Terms.Price, CurrentUser);
             var i = 0;
 
@@ -111,7 +111,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
         if (asset.Type != AssetType.Boat) return;
         if (asset.CashFlow == 0) return;
 
-        var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.Boat_Loan);
+        var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.BoatLoan);
 
         liability.Cashflow = 0;
         liability.FullAmount = 0;

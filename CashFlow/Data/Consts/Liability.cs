@@ -1,14 +1,33 @@
-﻿namespace CashFlow.Data.Consts;
+﻿using System.ComponentModel;
+
+namespace CashFlow.Data.Consts;
 
 public enum Liability
 {
-    Taxes = 58,
-    Other_Payments = 60,
-    Mortgage = 43,
-    School_Loan = 44,
-    Car_Loan = 45,
-    Credit_Card = 46,
-    Small_Credit = 92,
-    Bank_Loan = 47,
-    Boat_Loan = 114
+    [Description("Taxes")]
+    Taxes,
+
+    [Description("Other Payments")]
+    OtherPayments,
+
+    [Description("Mortgage")]
+    Mortgage,
+
+    [Description("School Loan")]
+    SchoolLoan,
+
+    [Description("Car Loan")]
+    CarLoan,
+
+    [Description("Credit Card")]
+    CreditCard,
+
+    [Description("Small Credit")]
+    SmallCredit,
+
+    [Description("Bank Loan")]
+    BankLoan,
+
+    [Description("Boat Loan")]
+    BoatLoan
 }

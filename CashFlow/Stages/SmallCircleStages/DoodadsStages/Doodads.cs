@@ -76,7 +76,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
             Title = "Boat"
         };
         person.Cash -= firstPayment;
-        person.UpdateLiability(Liability.Boat_Loan, boat.CashFlow, boat.Mortgage);
+        person.UpdateLiability(Liability.BoatLoan, boat.CashFlow, boat.Mortgage);
 
         PersonService.Update(person);
         PersonService.CreateAsset(CurrentUser, boat);

@@ -29,7 +29,7 @@ public class PayWithCreditCard(ITranslationService termsService, IAvailableAsset
         }
 
         var person = PersonService.Read(CurrentUser);
-        person.UpdateLiability(Liability.Credit_Card, -(int)(amount * 0.03), amount);
+        person.UpdateLiability(Liability.CreditCard, -(int)(amount * 0.03), amount);
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.MicroCredit, amount, CurrentUser);
         NextStage = New<Start>();

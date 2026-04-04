@@ -57,14 +57,14 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
         var perChildTerm = TranslationService.Get(Terms.PerChild, user);
 
         var mortgage = GetLiability(person, Liability.Mortgage);
-        var schoolLoan = GetLiability(person, Liability.School_Loan);
-        var carLoan = GetLiability(person, Liability.Car_Loan);
-        var creditCard = GetLiability(person, Liability.Credit_Card);
-        var smallCredits = GetLiability(person, Liability.Small_Credit);
-        var bankLoan = GetLiability(person, Liability.Bank_Loan);
-        var boatLoan = GetLiability(person, Liability.Boat_Loan);
+        var schoolLoan = GetLiability(person, Liability.SchoolLoan);
+        var carLoan = GetLiability(person, Liability.CarLoan);
+        var creditCard = GetLiability(person, Liability.CreditCard);
+        var smallCredits = GetLiability(person, Liability.SmallCredit);
+        var bankLoan = GetLiability(person, Liability.BankLoan);
+        var boatLoan = GetLiability(person, Liability.BoatLoan);
         var taxes = GetLiability(person, Liability.Taxes);
-        var others = GetLiability(person, Liability.Other_Payments);
+        var others = GetLiability(person, Liability.OtherPayments);
         var childrenExpenses = person.Children * person.PerChild;
         var children = person.Children;
 

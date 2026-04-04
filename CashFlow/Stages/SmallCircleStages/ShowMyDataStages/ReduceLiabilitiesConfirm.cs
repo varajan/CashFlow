@@ -14,7 +14,7 @@ public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonS
         {
             var liability = PersonService.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
             var reduceLiabilities = TranslationService.Get(Terms.ReduceLiabilities, CurrentUser);
-            var type = TranslationService.Get(liability.Type.AsString(), CurrentUser);
+            var type = TranslationService.Get(liability.Type.GetDescription(), CurrentUser);
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }
@@ -42,7 +42,7 @@ public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonS
         var liability = person.Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         var amount = liability.FullAmount;
 
-        if (liability.Type == Liability.Boat_Loan)
+        if (liability.Type == Liability.BoatLoan)
         {
             var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
             boat.CashFlow = 0;
