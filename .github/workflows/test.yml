@@ -24,14 +24,14 @@ jobs:
       - name: Run Unit Tests
         run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
 
-      - name: Build Bot Emulator
-        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
-
-      - name: Launch Bot Emulator
-        run: |
-          cd emulator
-          chmod +x CashFlowBotEmulator
-          ./CashFlowBotEmulator &
+#      - name: Build Bot Emulator
+#        run: dotnet publish CashFlowBotEmulator/CashFlowBotEmulator.csproj -c Release -o ./emulator -r linux-x64 --self-contained true
+#
+#      - name: Launch Bot Emulator
+#        run: |
+#          cd emulator
+#          chmod +x CashFlowBotEmulator
+#          ./CashFlowBotEmulator &
 
       - name: Run System Tests
         run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
@@ -44,7 +44,8 @@ jobs:
           path: |
             CashFlowUnitTests/TestResults/
             CashFlowBotSystemTests/TestResults/
-            emulator/Logs/*.*
-            emulator/*.msg
-            emulator/*.db
+            emulator/*.*
+#            emulator/Logs/*.*
+#            emulator/*.msg
+#            emulator/*.db
           retention-days: 7
