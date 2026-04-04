@@ -12,24 +12,28 @@ public class BaseSteps(StepsContext context)
     protected User GetUser(string name) => name.Equals("I") || name.Equals("My") || name.Equals("me")
         ? Context.Users.First()
         : Context.Users.First(u => u.Name.Equals(name));
+
+    protected Bot Bot => Context.Bot;
+    protected static Bot GetBot(FeatureContext featureContext) => new (featureContext.FeatureInfo.Title);
 }
 
 [Binding]
 public class GeneralSteps(StepsContext context) : BaseSteps(context)
 {
-    [BeforeTestRun]
-    [BeforeScenario("@do-cleanup")]
-    [AfterScenario("@do-cleanup")]
-    public static void Reset()
-    {
-        Bot.SendMessage("RESET");
-        Thread.Sleep(500);
-    }
+    [BeforeScenario]
+    public void BeforeTestRun(FeatureContext featureContext) => Context.Bot ??= GetBot(featureContext);
+
+    [BeforeFeature]
+    public static void StartBotEmulator(FeatureContext featureContext) => GetBot(featureContext).Launch();
+
+    [AfterFeature]
+    public static void CloseBotEmulator(FeatureContext featureContext) => GetBot(featureContext).Close();
+
 
     [Given(@"I am '(.*)' user")]
     public void SetName(string userName)
     {
-        var user = new User(userName);
+        var user = new User(userName, Bot);
         Context.Users.Add(user);
     }
 

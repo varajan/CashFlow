@@ -1,7 +1,4 @@
-﻿@non-parallel
-@do-cleanup
-
-Feature: GiveMoney
+﻿Feature: GiveMoney
 
 Background:
 	Given Few players:

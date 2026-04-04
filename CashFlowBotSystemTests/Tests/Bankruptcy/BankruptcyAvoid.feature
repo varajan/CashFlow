@@ -1,4 +1,4 @@
-﻿Feature: Avoid Bankruptcy
+﻿Feature: Bankruptcy Avoid
 
 Background:
 	Given I am 'Gladys Monroe' user

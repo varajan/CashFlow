@@ -1,4 +1,4 @@
-﻿Feature: Survive Bankruptcy
+﻿Feature: Bankruptcy Survive
 
 Scenario: Sell assets to survive bankruptcy
 	Given I am 'Sahar Connor' user

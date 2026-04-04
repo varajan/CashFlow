@@ -3,10 +3,11 @@ using System.Text;
 
 namespace CashFlowBotSystemTests.Extras;
 
-public class User(string name)
+public class User(string name, Bot bot)
 {
     public string Name { get; } = name;
     public string Profession { get; set; }
+    private Bot Bot { get; } = bot;
 
     private int Id
     {
