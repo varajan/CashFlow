@@ -65,6 +65,7 @@ public enum ActionType
     [Description("Stocks ÷2")]
     Stocks2To1,
 
+    [Description("Micro Credit")]
     MicroCredit,
 
     [Description("Buy a boat")]
