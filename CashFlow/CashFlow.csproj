@@ -61,13 +61,13 @@
     <None Update="Data\SQL\010_available_assets.sql">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Translations\de.json">
+    <None Update="Data\Translations\DE.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Translations\en.json">
+    <None Update="Data\Translations\EN.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\Translations\ua.json">
+    <None Update="Data\Translations\UA.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
