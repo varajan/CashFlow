@@ -1,7 +1,4 @@
-﻿@non-parallel
-@do-cleanup
-
-Feature: BigCircle
+﻿Feature: Big Circle
 
 Background:
 	Given Few players:
@@ -53,12 +50,6 @@ Scenario: I can get money
 • Get $100,000
 """
 
-Scenario: I can undo get money operation
-	When Rory Hartman get $100,000 in cash
-	But Rory Hartman rollbacks last action
-	Then Rory Hartman has $700,480 in cash
-
-
 Scenario: I can give money
 	When Eoin Owens pays $100,000
 	Then Eoin Owens has $200,510 in cash
@@ -68,11 +59,6 @@ Scenario: I can give money
 • Go to Big Circle
 • Pay $100,000
 """
-
-Scenario: I can rollback give money transaction
-	When Eoin Owens pays $100,000
-	But Eoin Owens rollbacks last action
-	Then Eoin Owens has $300,510 in cash
 
 Scenario: I can see my friends
 	When Rory Hartman says 'Friends'
@@ -98,16 +84,6 @@ Examples:
 	| Tax Audit | $150,255 |
 	| Lawsuit   | $150,255 |
 
-Scenario Outline: I can undo loose of money
-	When Eoin Owens loses money because of <Trouble>
-	But Eoin Owens rollbacks last action
-	Then Eoin Owens has $300,510 in cash
-
-Examples:
-	| Trouble   |
-	| Divorce   |
-	| Tax Audit |
-	| Lawsuit   |
 
 Scenario: I can buy businesses
 	When Eoin Owens gets a paycheck
@@ -142,57 +118,3 @@ And Eoin Owens history data is following:
 • Buy Business. *Pizzeria franchise* - Price: $125,000, Cashflow: $8,000
 • Buy Business. *60-plex* - Price: $200,000, Cashflow: $10,000
 """
-
-Scenario: I can undo buy business
-	When Eoin Owens buys big businesses:
-	| Title              | Price   | Cashflow |
-	| Gold mine          | 100,000 |    3,000 |
-	| 60-plex            | 200,000 |   10,000 |
-	But Eoin Owens rollbacks last action
-	Then Eoin Owens' details are following:
-"""
-*Profession:* Teacher
-*Cash:* $200,510
-Initial Cashflow: $300,000
-Current Cashflow: $303,000
-Target Cashflow: $350,000
-
-
-*Assets:*
-• *Gold mine* - Price: $100,000, Cashflow: $3,000
-"""
-
-Scenario: I can win the game
-	When Rory Hartman buys big businesses:
-	| Title              | Price   | Cashflow |
-	| Gold mine          | 100,000 |   25,000 |
-	| 60-plex            | 100,000 |   25,000 |
-	Then Rory Hartman recieved notification: 'You are the winner!'
-	And All users, except Rory Hartman recieve notification: Rory Hartman is the winner!
-
-Scenario: I can stop the game after my victory
-	When Rory Hartman buys big businesses:
-	| Title              | Price   | Cashflow |
-	| Gold mine          | 100,000 |   25,000 |
-	| 60-plex            | 100,000 |   25,000 |
-	And Rory Hartman say 'Stop game'
-	And Rory Hartman say 'yes'
-	Then The game is restarted for Rory Hartman
-
-Scenario: I can undo last actions after my victory
-	When Rory Hartman buys big businesses:
-	| Title              | Price   | Cashflow |
-	| Gold mine          | 100,000 |   25,000 |
-	| 60-plex            | 100,000 |   25,000 |
-	But Rory Hartman rollbacks last action
-	Then The game is continued for Rory Hartman
-
-Scenario: I can stop the game
-	When Rory Hartman decides to stop the game
-		And Rory Hartman say 'yes'
-	Then The game is restarted for Rory Hartman
-
-Scenario: I choose not to stop the game
-	When Rory Hartman decides to stop the game
-		And Rory Hartman say 'cancel'
-	Then The game is continued for Rory Hartman

@@ -14,7 +14,7 @@ public class FriendsSteps(StepsContext context) : BaseSteps(context)
             var name = row["Name"];
             var role = row["Profession"];
 
-            var user = new User(name);
+            var user = new User(name, Bot);
             user.SendMessage(name);
             user.StopCurrentGame();
             user.SendMessage("en");
