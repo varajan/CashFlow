@@ -1,2 +1,2 @@
 ﻿[assembly: Parallelizable(ParallelScope.Fixtures)]
-[assembly: LevelOfParallelism(10)]
+[assembly: LevelOfParallelism(12)]
