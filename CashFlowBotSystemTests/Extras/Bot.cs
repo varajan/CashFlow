@@ -36,13 +36,13 @@ public class Bot(string folder)
     public void Close()
     {
         SendMessage("EXIT");
-        CleanEmulatorDirectory(".dll", ".json");
+        CleanEmulatorDirectory(".dll", ".pdb", ".json");
     }
 
     private void CleanEmulatorDirectory(params string[] extensions)
     {
         string[] subFolders = [ "Data", "runtimes" ];
-        extensions = extensions.Any() ? extensions : [".msg", ".cmd"];
+        extensions = extensions.Length > 0 ? extensions : [".msg", ".cmd"];
 
         Directory.CreateDirectory(EmulatorDirectory);
         Directory
