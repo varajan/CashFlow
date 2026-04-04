@@ -34,7 +34,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
         var number = message.AsCurrency();
         if (number < 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid first payment value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
             NextStage = this;
             return;
         }

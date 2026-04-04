@@ -16,10 +16,10 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
     {
         get
         {
-            var cashFlow = TranslationService.Get("Cashflow", CurrentUser);
-            var cash = TranslationService.Get("Cash", CurrentUser);
+            var cashFlow = TranslationService.Get(Terms.Cashflow, CurrentUser);
+            var cash = TranslationService.Get(Terms.Cash, CurrentUser);
             var bankLoan = TranslationService.Get(Liability.Bank_Loan.AsString(), CurrentUser);
-            var price = TranslationService.Get("Price", CurrentUser);
+            var price = TranslationService.Get(Terms.Price, CurrentUser);
             var i = 0;
 
             var message = $"*{TranslationService.Get(Terms.NoMoney, CurrentUser)}*";

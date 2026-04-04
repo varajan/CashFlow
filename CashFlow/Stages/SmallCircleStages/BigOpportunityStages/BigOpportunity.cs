@@ -6,12 +6,12 @@ namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
 public class BigOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
     public override IEnumerable<string> Buttons =>
     [
-        TranslationService.Get("Buy Real Estate", CurrentUser),
+        TranslationService.Get(Terms.BuyRealEstate, CurrentUser),
         TranslationService.Get(Terms.BuyBusiness, CurrentUser),
-        TranslationService.Get("Buy Land", CurrentUser),
+        TranslationService.Get(Terms.BuyLand, CurrentUser),
         Cancel
     ];
 

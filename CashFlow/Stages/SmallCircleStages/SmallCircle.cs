@@ -24,12 +24,12 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
             var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
 
             List<string> buttons = isHistoryEmpty
-                ? [TranslationService.Get("Show my Data", CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser)]
-                : [TranslationService.Get("Show my Data", CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser), TranslationService.Get(Terms.History, CurrentUser)];
+                ? [TranslationService.Get(Terms.ShowData, CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser)]
+                : [TranslationService.Get(Terms.ShowData, CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser), TranslationService.Get(Terms.History, CurrentUser)];
 
-            buttons.AddRange([TranslationService.Get("Small Opportunity", CurrentUser), TranslationService.Get("Big Opportunity", CurrentUser)]);
-            buttons.AddRange([TranslationService.Get("Doodads", CurrentUser), TranslationService.Get("Market", CurrentUser)]);
-            buttons.AddRange([TranslationService.Get("Downsize", CurrentUser), TranslationService.Get("Baby", CurrentUser)]);
+            buttons.AddRange([TranslationService.Get(Terms.SmallOpportunity, CurrentUser), TranslationService.Get(Terms.BigOpportunity, CurrentUser)]);
+            buttons.AddRange([TranslationService.Get(Terms.Doodads, CurrentUser), TranslationService.Get(Terms.Market, CurrentUser)]);
+            buttons.AddRange([TranslationService.Get(Terms.Downsize, CurrentUser), TranslationService.Get(Terms.Baby, CurrentUser)]);
             buttons.AddRange([TranslationService.Get(Terms.Paycheck, CurrentUser), TranslationService.Get(Terms.GiveMoney, CurrentUser)]);
 
             if (person.IsReadyForBigCircle())
@@ -54,7 +54,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
         switch (message)
         {
-            case var m when MessageEquals(m, "Show my Data"):
+            case var m when MessageEquals(m, Terms.ShowData):
                 NextStage = New<ShowMyData>();
                 return;
 
@@ -71,43 +71,43 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                     return;
                 }
 
-            case var m when !isHistoryEmpty && MessageEquals(m, "History"):
+            case var m when !isHistoryEmpty && MessageEquals(m, Terms.History):
                 NextStage = New<History>();
                 return;
 
-            case var m when MessageEquals(m, "Small Opportunity"):
+            case var m when MessageEquals(m, Terms.SmallOpportunity):
                 NextStage = New<SmallOpportunity>();
                 return;
 
-            case var m when MessageEquals(m, "Big Opportunity"):
+            case var m when MessageEquals(m, Terms.BigOpportunity):
                 NextStage = New<BigOpportunity>();
                 return;
 
-            case var m when MessageEquals(m, "Downsize"):
+            case var m when MessageEquals(m, Terms.Downsize):
                 await Downsize();
                 return;
 
-            case var m when MessageEquals(m, "Doodads"):
+            case var m when MessageEquals(m, Terms.Doodads):
                 NextStage = New<Doodads>();
                 return;
 
-            case var m when MessageEquals(m, "Market"):
+            case var m when MessageEquals(m, Terms.Market):
                 NextStage = New<Market>();
                 return;
 
-            case var m when MessageEquals(m, "Baby"):
+            case var m when MessageEquals(m, Terms.Baby):
                 await Baby();
                 return;
 
-            case var m when MessageEquals(m, "Paycheck"):
+            case var m when MessageEquals(m, Terms.Paycheck):
                 await GetMoney();
                 return;
 
-            case var m when MessageEquals(m, "Give Money"):
+            case var m when MessageEquals(m, Terms.GiveMoney):
                 NextStage = New<SendMoney>();
                 return;
 
-            case var m when person.IsReadyForBigCircle() && MessageEquals(m, "Go to Big Circle"):
+            case var m when person.IsReadyForBigCircle() && MessageEquals(m, Terms.BigCircle):
                 person.InitialCashFlow = person.Assets.Sum(a => a.CashFlow) / 10 * 1000;
                 person.TargetCashFlow = person.InitialCashFlow + 50_000;
                 person.Cash += person.InitialCashFlow;
@@ -149,7 +149,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
         if (person.Children == 3)
         {
-            await CurrentUser.Notify(TranslationService.Get("You're lucky parent of three children. You don't need one more.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.NoMoreKids, CurrentUser));
             return;
         }
 
@@ -181,6 +181,6 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(TranslationService.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
     }
 }
