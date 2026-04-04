@@ -31,7 +31,7 @@ public class BigOpportunity(ITranslationService termsService, IPersonService per
                 NextStage = New<BuyLand>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 NextStage = New<Start>();
                 return Task.CompletedTask;
         }

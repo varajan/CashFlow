@@ -28,7 +28,7 @@ public class BuyCoinsCount(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid quantity value. Try again.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidQty, CurrentUser));
             return;
         }
 

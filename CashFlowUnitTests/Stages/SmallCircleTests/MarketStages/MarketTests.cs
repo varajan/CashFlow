@@ -80,7 +80,7 @@ public class MarketTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no properties."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no Real Estates."), Times.Once);
     }
 
     [Test]

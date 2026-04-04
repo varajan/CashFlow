@@ -8,7 +8,7 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 public class SmallOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
     public override IEnumerable<string> Buttons =>
     [
         TranslationService.Get(Terms.BuyStocks, CurrentUser),
@@ -78,7 +78,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                 NextStage = New<StartCompany>();
                 return;
 
-            case var m when MessageEquals(m, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 NextStage = New<Start>();
                 return;
         }

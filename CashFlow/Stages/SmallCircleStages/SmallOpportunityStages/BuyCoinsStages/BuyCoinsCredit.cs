@@ -30,7 +30,7 @@ public class BuyCoinsCredit(
 
         switch (message)
         {
-            case var m when MessageEquals(m, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 PersonService.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;

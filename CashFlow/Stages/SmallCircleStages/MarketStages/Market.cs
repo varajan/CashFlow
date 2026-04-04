@@ -6,13 +6,13 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class Market(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
     public override IEnumerable<string> Buttons =>
     [
-        TranslationService.Get("Sell Real Estate", CurrentUser),
-        TranslationService.Get("Sell Land", CurrentUser),
-        TranslationService.Get("Sell Business", CurrentUser),
+        TranslationService.Get(Terms.SellRealEstate, CurrentUser),
+        TranslationService.Get(Terms.SellLand, CurrentUser),
+        TranslationService.Get(Terms.SellBusiness, CurrentUser),
         TranslationService.Get(Terms.SellCoins, CurrentUser),
         TranslationService.Get(Terms.IncreaseCashflow, CurrentUser),
         Cancel
@@ -24,11 +24,11 @@ public class Market(ITranslationService termsService, IPersonService personManag
 
         switch (message)
         {
-            case var m when MessageEquals(m, "Sell Real Estate"):
+            case var m when MessageEquals(m, Terms.SellRealEstate):
                 var noRealEstate = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).Count == 0;
                 if (noRealEstate)
                 {
-                    await CurrentUser.Notify(TranslationService.Get("You have no properties.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoRealEstate, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -36,11 +36,11 @@ public class Market(ITranslationService termsService, IPersonService personManag
                 NextStage = New<SellRealEstate>();
                 return;
 
-            case var m when MessageEquals(m, "Sell Land"):
+            case var m when MessageEquals(m, Terms.SellLand):
                 var noLand = PersonService.ReadAllAssets(AssetType.Land, CurrentUser).Count == 0;
                 if (noLand)
                 {
-                    await CurrentUser.Notify(TranslationService.Get("You have no Land.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoLand, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -48,11 +48,11 @@ public class Market(ITranslationService termsService, IPersonService personManag
                 NextStage = New<SellLand>();
                 return;
 
-            case var m when MessageEquals(m, "Sell Business"):
+            case var m when MessageEquals(m, Terms.SellBusiness):
                 var noBusiness = PersonService.ReadAllAssets(AssetType.Business, CurrentUser).Count == 0;
                 if (noBusiness && noSmallBusiness)
                 {
-                    await CurrentUser.Notify(TranslationService.Get("You have no Business.", CurrentUser));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoBusiness, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -83,7 +83,7 @@ public class Market(ITranslationService termsService, IPersonService personManag
                 NextStage = New<IncreaseCashflow>();
                 return;
 
-            case var m when MessageEquals(m, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 NextStage = New<Start>();
                 return;
         }

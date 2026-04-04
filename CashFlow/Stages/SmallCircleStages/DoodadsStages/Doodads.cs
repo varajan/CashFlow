@@ -8,13 +8,13 @@ namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 public class Doodads(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => TranslationService.Get("What do you want?", CurrentUser);
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
     public override List<string> Buttons =>
     [
-        TranslationService.Get("Pay with Cash", CurrentUser),
-        TranslationService.Get("Pay with Credit Card", CurrentUser),
-        TranslationService.Get("Buy a boat", CurrentUser),
+        TranslationService.Get(Terms.PayCash, CurrentUser),
+        TranslationService.Get(Terms.PayCard, CurrentUser),
+        TranslationService.Get(Terms.BuyBoat, CurrentUser),
         Cancel
     ];
 
@@ -28,15 +28,15 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
 
         switch (message)
         {
-            case var m when MessageEquals(m, "Pay with Cash"):
+            case var m when MessageEquals(m, Terms.PayCash):
                 NextStage = New<PayWithCash>();
                 return;
 
-            case var m when MessageEquals(m, "Pay with Credit Card"):
+            case var m when MessageEquals(m, Terms.PayCard):
                 NextStage = New<PayWithCreditCard>();
                 return;
 
-            case var m when MessageEquals(m, "Buy a boat"):
+            case var m when MessageEquals(m, Terms.BuyBoat):
                 await BuyBoat();
                 NextStage = New<Start>();
                 return;
@@ -50,7 +50,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
         var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
-            await CurrentUser.Notify(TranslationService.Get("You already have a boat.", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.AlreadyBoat, CurrentUser));
             return;
         }
 

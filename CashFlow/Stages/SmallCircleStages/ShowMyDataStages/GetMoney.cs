@@ -70,7 +70,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(TranslationService.Get("Ok, you've got *{0}*", CurrentUser, amount.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
         NextStage = New<Start>();
     }
 }

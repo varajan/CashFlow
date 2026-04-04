@@ -20,7 +20,7 @@ public class GetCredit(ITranslationService termsService, IPersonService personMa
         var number = message.AsCurrency();
         if (number % 1000 > 0 || number < 1000)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid amount. The amount must be a multiple of 1000", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidAmount, CurrentUser));
             return;
         }
 

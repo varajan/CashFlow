@@ -89,7 +89,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
 
         if (item > 0 && item <= assets.Count)
         {
-            var price = TranslationService.Get("Price", CurrentUser);
+            var price = TranslationService.Get(Terms.Price, CurrentUser);
             var sellForDepbts = TranslationService.Get(Terms.SaleForDebts, CurrentUser);
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();

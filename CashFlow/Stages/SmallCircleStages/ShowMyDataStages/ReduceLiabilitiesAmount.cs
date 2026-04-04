@@ -48,7 +48,7 @@ public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonSe
         var amount = message.AsCurrency();
         if (amount % 1000 > 0 || amount < 1000)
         {
-            await CurrentUser.Notify(TranslationService.Get("Invalid amount. The amount must be a multiple of 1000", CurrentUser));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidAmount, CurrentUser));
             return;
         }
 
