@@ -25,7 +25,7 @@ public class History(ITranslationService termsService, IPersonService personMana
             return;
         }
 
-        if (MessageEquals(message, "Rollback last action"))
+        if (MessageEquals(message, Terms.Rollback))
         {
             var person = PersonService.Read(CurrentUser);
 

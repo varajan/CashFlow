@@ -23,7 +23,7 @@ public class BigOpportunity(ITranslationService termsService, IPersonService per
                 NextStage = New<BuyBigRealEstate>();
                 return Task.CompletedTask;
 
-            case var m when MessageEquals(m, "Buy Business"):
+            case var m when MessageEquals(m, Terms.BuyBusiness):
                 NextStage = New<BuyBusiness>();
                 return Task.CompletedTask;
 

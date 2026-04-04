@@ -17,7 +17,7 @@ public class Bankruptcy(ITranslationService termsService, IPersonService personM
             return Task.CompletedTask;
         }
 
-        if (MessageEquals(message, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return Task.CompletedTask;

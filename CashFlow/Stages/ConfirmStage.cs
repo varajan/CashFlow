@@ -1,4 +1,5 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
@@ -20,7 +21,7 @@ public abstract class ConfirmStage(ITranslationService termsService, IPersonServ
         }
     }
 
-    protected bool IsConfirmed(string message) => MessageEquals(message, "Yes");
+    protected bool IsConfirmed(string message) => MessageEquals(message, Terms.Yes);
     
     protected abstract Task OnConfirmed();
 

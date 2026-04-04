@@ -72,7 +72,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
             return;
         }
 
-        if (MessageEquals(message, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return;
