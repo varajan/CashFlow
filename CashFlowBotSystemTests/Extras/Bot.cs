@@ -1,46 +1,74 @@
-﻿using System.Diagnostics;
-using CashFlow.Extensions;
+﻿using CashFlow.Extensions;
 using MoreLinq;
 using Polly;
 using Polly.Retry;
+using System.Diagnostics;
 
 namespace CashFlowBotSystemTests.Extras;
 
-public class Bot()
+public class Bot(string folder)
 {
-    private static readonly string root = Path.GetFullPath("./../../../..");
-    private static readonly string projectPath = Path.Combine(root, "CashFlowBotEmulator", "CashFlowBotEmulator.csproj");
-    private static readonly string emulatorDirectory = Path.Combine(root, "emulator");
+    private static string Root => Path.GetFullPath("./../../../..");
+    private static string ProjectPath => Path.Combine(Root, "CashFlowBotEmulator", "CashFlowBotEmulator.csproj");
+    private string EmulatorDirectory => Path.Combine(Root, "emulator", folder.Replace(" ", ""));
 
-    public static void Launch()
+    private static readonly Mutex _lock = new(false, "LOCK");
+
+    public void Launch()
     {
         CleanEmulatorDirectory();
         SendMessage("CHECK");
         var reply = GetReply(0);
         if (reply is not null) return;
 
-        BuildEmulator();
-        StartEmulator();
+        _lock.WaitOne();
+        try
+        {
+            BuildEmulator();
+            StartEmulator();
+        }
+        finally
+        {
+            _lock.ReleaseMutex();
+        }
     }
 
-    public static void Close() => SendMessage("EXIT");
-
-    private static void CleanEmulatorDirectory()
+    public void Close()
     {
-        var extensions = new[] { ".msg", ".cmd" };
+        SendMessage("EXIT");
+        CleanEmulatorDirectory(".dll", ".json");
+    }
 
-        Directory.CreateDirectory(emulatorDirectory);
+    private void CleanEmulatorDirectory(params string[] extensions)
+    {
+        string[] subFolders = [ "Data", "runtimes" ];
+        extensions = extensions.Any() ? extensions : [".msg", ".cmd"];
+
+        Directory.CreateDirectory(EmulatorDirectory);
         Directory
-            .EnumerateFiles(emulatorDirectory, "*.*", SearchOption.TopDirectoryOnly)
+            .EnumerateFiles(EmulatorDirectory, "*.*", SearchOption.TopDirectoryOnly)
             .Where(f => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
             .ForEach(File.Delete);
+        subFolders.Select(sub => Path.Combine(EmulatorDirectory, sub))
+            .Where(Directory.Exists)
+            .ForEach(DeleteDirectory);
     }
 
-    private static void BuildEmulator()
+    private void DeleteDirectory(string path)
+    {
+        var directory = new DirectoryInfo(path) { Attributes = FileAttributes.Normal };
+        foreach (var info in directory.GetFileSystemInfos("*", SearchOption.AllDirectories))
+        {
+            info.Attributes = FileAttributes.Normal;
+        }
+        directory.Delete(true);
+    }
+
+    private void BuildEmulator()
     {
         var process = new Process();
         process.StartInfo.FileName = "dotnet";
-        process.StartInfo.Arguments = $"publish {projectPath} -c Release -r win-x64 --self-contained true -o {emulatorDirectory}";
+        process.StartInfo.Arguments = @$"publish ""{ProjectPath}"" -c Release -o ""{EmulatorDirectory}"" -p:UseAppHost=false";
         process.StartInfo.RedirectStandardOutput = true;
         process.StartInfo.RedirectStandardError = true;
         process.StartInfo.UseShellExecute = false;
@@ -54,21 +82,22 @@ public class Bot()
         }
     }
 
-    private static void StartEmulator()
+    private void StartEmulator()
     {
-        var exePath = Path.Combine(emulatorDirectory, "CashFlowBotEmulator.exe");
         var process = new Process();
-        process.StartInfo.FileName = exePath;
-        process.StartInfo.WorkingDirectory = emulatorDirectory;
+        process.StartInfo.FileName = "dotnet";
+        process.StartInfo.Arguments = Path.Combine(EmulatorDirectory, "CashFlowBotEmulator.dll");
+        process.StartInfo.WorkingDirectory = EmulatorDirectory;
+        process.StartInfo.UseShellExecute = false;
         process.Start();
     }
 
-    public static void SendMessage(string message, long? chatId = null)
+    public void SendMessage(string message, long? chatId = null)
     {
         var lastReply = chatId.HasValue ? GetReply(chatId.Value) : null;
         var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{chatId}";
-        var tmpFile = Path.Combine(emulatorDirectory, $"{fileName}.txt");
-        var finalFile = Path.Combine(emulatorDirectory, $"{fileName}.cmd");
+        var tmpFile = Path.Combine(EmulatorDirectory, $"{fileName}.txt");
+        var finalFile = Path.Combine(EmulatorDirectory, $"{fileName}.cmd");
 
         File.WriteAllText(tmpFile, message);
         File.Move(tmpFile, finalFile);
@@ -76,7 +105,7 @@ public class Bot()
         Thread.Sleep(100);
     }
 
-    private static void WaitForReply(long? chatId, MessageDto lastReply)
+    private void WaitForReply(long? chatId, MessageDto lastReply)
     {
         if (!chatId.HasValue) return;
 
@@ -94,9 +123,9 @@ public class Bot()
         throw new TimeoutException($"{DateTime.UtcNow} [{chatId}] No reply from bot within the expected time.");
     }
 
-    public static MessageDto GetReply(long chatId, int indexFromEnd = 0)
+    public MessageDto GetReply(long chatId, int indexFromEnd = 0)
     {
-        var fileName = Path.Combine(emulatorDirectory, $"{chatId}.msg");
+        var fileName = Path.Combine(EmulatorDirectory, $"{chatId}.msg");
         var getReply = () =>
         {
             var lines = File.ReadAllLines(fileName);
@@ -112,7 +141,7 @@ public class Bot()
             : null;
     }
 
-    private static readonly RetryPolicy _retryPolicy =
+    private readonly RetryPolicy _retryPolicy =
         Policy
             .Handle<IOException>()
             .WaitAndRetry(
