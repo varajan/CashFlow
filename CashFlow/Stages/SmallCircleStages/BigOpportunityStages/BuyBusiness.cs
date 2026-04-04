@@ -4,15 +4,15 @@ using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BuyBusiness(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBusiness(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAsset<BuyBusinessPrice>(AssetType.BusinessType, AssetType.Business, termsService, availableAssets, personManager, userRepository) { }
 
-public class BuyBusinessPrice(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBusinessPrice(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBusinessFirstPayment>(
         AssetType.BusinessBuyPrice, AssetType.Business, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBusinessFirstPayment(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -20,7 +20,7 @@ public class BuyBusinessFirstPayment(
         AssetType.BusinessFirstPayment, AssetType.Business, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBusinessCredit(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -28,7 +28,7 @@ public class BuyBusinessCredit(
         AssetType.BusinessFirstPayment, AssetType.Business, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBusinessCashFlow(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)

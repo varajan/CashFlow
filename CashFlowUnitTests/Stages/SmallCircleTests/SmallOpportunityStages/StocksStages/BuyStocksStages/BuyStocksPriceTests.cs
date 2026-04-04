@@ -31,11 +31,11 @@ public class BuyStocksPriceTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("a")]
@@ -67,7 +67,7 @@ public class BuyStocksPriceTests : StagesBaseTest
         await testStage.HandleMessage(price);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyStocksCount>());
 
@@ -75,7 +75,7 @@ public class BuyStocksPriceTests : StagesBaseTest
                 CurrentUser,
                 It.Is<AssetDto>(x => x.Id == Asset.Id && x.Price == price.AsCurrency() && x.Qtty == 0)
             ), Times.Once);
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<BuyStocksPrice>();

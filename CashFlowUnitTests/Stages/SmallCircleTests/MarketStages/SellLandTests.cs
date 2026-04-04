@@ -19,11 +19,11 @@ public class SellLandTests : SellAssetBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]

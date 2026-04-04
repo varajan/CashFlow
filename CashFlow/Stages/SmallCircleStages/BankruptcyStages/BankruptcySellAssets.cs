@@ -5,31 +5,31 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class BankruptcySellAssets(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class BankruptcySellAssets(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     private PersonDto Person => PersonService.Read(CurrentUser);
-    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.Bank_Loan);
+    private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.BankLoan);
     private IEnumerable<AssetDto> Assets => Person.Assets.Where(a => !a.IsDeleted).OrderBy(x => x.Type);
 
     public override string Message
     {
         get
         {
-            var cashFlow = Terms.Get(55, CurrentUser, "Cashflow");
-            var cash = Terms.Get(51, CurrentUser, "Cash");
-            var bankLoan = Terms.Get(47, CurrentUser, Liability.Bank_Loan.AsString());
-            var price = Terms.Get(64, CurrentUser, "Price");
+            var cashFlow = TranslationService.Get(Terms.Cashflow, CurrentUser);
+            var cash = TranslationService.Get(Terms.Cash, CurrentUser);
+            var bankLoan = TranslationService.Get(Liability.BankLoan.GetDescription(), CurrentUser);
+            var price = TranslationService.Get(Terms.Price, CurrentUser);
             var i = 0;
 
-            var message = $"*{Terms.Get(126, CurrentUser, "You're out of money.")}*";
+            var message = $"*{TranslationService.Get(Terms.NoMoney, CurrentUser)}*";
             message += Environment.NewLine + $"{bankLoan}: *{BankLoan.FullAmount.AsCurrency()}*";
             message += Environment.NewLine + $"{cashFlow}: *{Person.GetSmallCircleCashflow().AsCurrency()}*";
             message += Environment.NewLine + $"{cash}: *{Person.Cash.AsCurrency()}*";
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get(127, CurrentUser, "You have to sell your assets till you cash flow is positive.");
+            message += Environment.NewLine + TranslationService.Get(Terms.MustSellAssets, CurrentUser);
             message += Environment.NewLine;
-            message += Environment.NewLine + Terms.Get(128, CurrentUser, "What asset do you want to sell?");
+            message += Environment.NewLine + TranslationService.Get(Terms.SellAssetAsk, CurrentUser);
             message += Environment.NewLine;
 
             foreach (var asset in Assets)
@@ -66,13 +66,13 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
     public override async Task HandleMessage(string message)
     {
-        if (MessageEquals(message, 41, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return;
         }
 
-        if (MessageEquals(message, 2, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return;
@@ -89,8 +89,8 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
 
         if (item > 0 && item <= assets.Count)
         {
-            var price = Terms.Get(64, CurrentUser, "Price");
-            var sellForDepbts = Terms.Get(131, CurrentUser, "Sale for debts");
+            var price = TranslationService.Get(Terms.Price, CurrentUser);
+            var sellForDepbts = TranslationService.Get(Terms.SaleForDebts, CurrentUser);
             var asset = assets[item - 1];
             var bancrupcySellPrice = asset.GetBancrupcySellPrice();
 
@@ -111,14 +111,14 @@ public class BankruptcySellAssets(ITermsRepository termsService, IPersonService 
         if (asset.Type != AssetType.Boat) return;
         if (asset.CashFlow == 0) return;
 
-        var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.Boat_Loan);
+        var liability = person.Liabilities.FirstOrDefault(l => l.Type == Liability.BoatLoan);
 
         liability.Cashflow = 0;
         liability.FullAmount = 0;
         liability.Deleted = true;
 
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, 0, CurrentUser);
+        PersonService.AddHistory(liability.Type.AsActionType(), 0, CurrentUser);
     }
 
     private Task ReduceBankLoan(PersonDto person)

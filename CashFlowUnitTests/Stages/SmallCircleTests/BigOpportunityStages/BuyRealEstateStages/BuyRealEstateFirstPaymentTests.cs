@@ -32,11 +32,11 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the first payment?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("-1")]
@@ -70,7 +70,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         await testStage.HandleMessage(firstPayment);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigRealEstateCashFlow>());
             PersonServiceMock.Verify(a => a.UpdateAsset(
@@ -80,7 +80,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
                     x.Mortgage == mortgage &&
                     x.IsDraft)),
                 Times.Once);
-        });
+        }
     }
 
     [TestCase(100, 100, false)]
@@ -101,11 +101,11 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         await testStage.HandleMessage($"${firstPayment}");
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
             PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<BuyBigRealEstateFirstPayment>();

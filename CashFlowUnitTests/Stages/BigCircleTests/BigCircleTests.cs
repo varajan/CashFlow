@@ -56,11 +56,11 @@ public class BigCircleTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(bigCircleDescription));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]

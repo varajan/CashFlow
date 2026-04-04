@@ -29,7 +29,7 @@ public static class ServicesProvider
     {
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
-        services.AddSingleton<ITermsRepository, TermsRepository>();
+        services.AddSingleton<ITranslationService, TranslationService>();
         services.AddSingleton<IAvailableAssetsRepository, AvailableAssetsRepository>();
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IPersonRepository, PersonRepository>();

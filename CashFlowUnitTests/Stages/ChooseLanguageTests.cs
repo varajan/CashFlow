@@ -38,11 +38,11 @@ public class ChooseLanguageTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Language/Мова"));
             Assert.That(testStage.Buttons, Is.EqualTo(languages));
-        });
+        }
     }
 
     [Test]

@@ -29,11 +29,11 @@ public class HistoryTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(history));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]
@@ -50,11 +50,11 @@ public class HistoryTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(history));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]

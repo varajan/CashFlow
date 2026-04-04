@@ -8,7 +8,7 @@ public abstract class BuyAssetCredit<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -22,7 +22,7 @@ public abstract class BuyAssetCredit<TNextStage>(
             var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
             var amount = asset.Price * asset.Qtty - asset.Mortgage;
 
-            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
+            return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
         }
     }
 
@@ -34,12 +34,12 @@ public abstract class BuyAssetCredit<TNextStage>(
 
         switch (message)
         {
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 PersonService.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, 34, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 var person = PersonService.Read(CurrentUser);
                 var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
@@ -47,7 +47,7 @@ public abstract class BuyAssetCredit<TNextStage>(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
+                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

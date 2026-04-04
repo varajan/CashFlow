@@ -37,25 +37,25 @@ public class MarketTests : StagesBaseTest
             "Sell Land",
             "Sell Business",
             "Sell Coins",
-            "Increase cash flow",
+            "Increase cashflow",
             "Cancel"
         };
 
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("Sell Real Estate", typeof(SellRealEstate))]
     [TestCase("Sell Land", typeof(SellLand))]
     [TestCase("Sell Business", typeof(SellBusiness))]
     [TestCase("Sell Coins", typeof(SellCoins))]
-    [TestCase("Increase cash flow", typeof(IncreaseCashflow))]
+    [TestCase("Increase cashflow", typeof(IncreaseCashflow))]
     public async Task Market_SelectValidOption(string message, Type nextStage)
     {
         // Arrange
@@ -80,7 +80,7 @@ public class MarketTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no properties."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "You have no Real Estates."), Times.Once);
     }
 
     [Test]
@@ -165,7 +165,7 @@ public class MarketTests : StagesBaseTest
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([]);
 
         // Act
-        await testStage.HandleMessage("Increase cash flow");
+        await testStage.HandleMessage("Increase cashflow");
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());

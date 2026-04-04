@@ -22,8 +22,8 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var testStage = GetTestStage();
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false },
-            new() { Type = Liability.Bank_Loan, FullAmount = fullAmount, Cashflow = -500, MarkedForReduction = true },
+            new() { Type = Liability.CarLoan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false },
+            new() { Type = Liability.BankLoan, FullAmount = fullAmount, Cashflow = -500, MarkedForReduction = true },
         };
         var person = new PersonDto { Cash = cash, Liabilities = liabilities };
 
@@ -32,11 +32,11 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]
@@ -46,10 +46,10 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var testStage = GetTestStage();
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Others, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
+            new() { Type = Liability.OtherPayments, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
             new() { Type = Liability.Taxes, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
             new() { Type = Liability.Mortgage, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
-            new() { Type = Liability.Bank_Loan, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
+            new() { Type = Liability.BankLoan, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = false },
         };
 
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(new PersonDto { Liabilities = liabilities });
@@ -76,15 +76,15 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
     [TestCase(10000, 5000, "1500", "Invalid amount. The amount must be a multiple of 1000")]
     [TestCase(10000, 5000, "500", "Invalid amount. The amount must be a multiple of 1000")]
     [TestCase(10000, 5000, "abc", "Invalid amount. The amount must be a multiple of 1000")]
-    [TestCase(10000, 2000, "3000", "You don't have $3,000, but only $2,000")]
+    [TestCase(10000, 2000, "3000", "You don't have *$3,000*, but only *$2,000*")]
     public async Task ReduceLiabilitiesAmount_SelectInvalidValue(int fullAmount, int cash, string value, string errorMessage)
     {
         // Arrange
         var testStage = GetTestStage();
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false },
-            new() { Type = Liability.Bank_Loan, FullAmount = fullAmount, Cashflow = -500, MarkedForReduction = true },
+            new() { Type = Liability.CarLoan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false },
+            new() { Type = Liability.BankLoan, FullAmount = fullAmount, Cashflow = -500, MarkedForReduction = true },
         };
         var person = new PersonDto { Cash = cash, Liabilities = liabilities };
 
@@ -107,8 +107,8 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         var testStage = GetTestStage();
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false, AllowsPartialPayment = true },
-            new() { Type = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = true, AllowsPartialPayment = true },
+            new() { Type = Liability.CarLoan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = false, AllowsPartialPayment = true },
+            new() { Type = Liability.BankLoan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = true, AllowsPartialPayment = true },
         };
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
         var amount = Math.Min(value.AsCurrency(), liabilities[1].FullAmount);
@@ -121,10 +121,10 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonServiceMock.Verify(p => p.AddHistory((ActionType)Liability.Bank_Loan, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.BankLoan, amount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l =>
-                l.Type == Liability.Bank_Loan &&
+                l.Type == Liability.BankLoan &&
                 l.Deleted == false &&
                 l.MarkedForReduction == false &&
                 l.FullAmount == 50_000 - amount &&
@@ -142,8 +142,8 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
 
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true, AllowsPartialPayment = true },
-            new() { Type = Liability.Bank_Loan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = true },
+            new() { Type = Liability.CarLoan, FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true, AllowsPartialPayment = true },
+            new() { Type = Liability.BankLoan, FullAmount = 50_000, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = true },
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
@@ -157,7 +157,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
 
-        PersonServiceMock.Verify(p => p.AddHistory((ActionType) liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.CarLoan, amount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }
@@ -170,8 +170,8 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
 
         var liabilities = new List<LiabilityDto>
         {
-            new() { Type = Liability.Car_Loan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = true, Deleted = false },
-            new() { Type = Liability.Bank_Loan, FullAmount = 0, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = true, Deleted = true },
+            new() { Type = Liability.CarLoan,  FullAmount = 50_000, Cashflow = -5100, MarkedForReduction = true,  AllowsPartialPayment = true, Deleted = false },
+            new() { Type = Liability.BankLoan, FullAmount = 0, Cashflow = -5000, MarkedForReduction = false, AllowsPartialPayment = true, Deleted = true },
         };
         var amount = liabilities.First().FullAmount;
         var person = new PersonDto { Cash = 100_000, Liabilities = liabilities };
@@ -185,7 +185,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        PersonServiceMock.Verify(p => p.AddHistory((ActionType)liability.Type, amount, CurrentUser), Times.Once);
+        PersonServiceMock.Verify(p => p.AddHistory(ActionType.CarLoan, amount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.Update(CurrentUser,
             It.Is<LiabilityDto>(l => l.Type == liability.Type && l.Deleted == true)), Times.Once);
     }

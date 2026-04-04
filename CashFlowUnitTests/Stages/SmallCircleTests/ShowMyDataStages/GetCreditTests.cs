@@ -21,11 +21,11 @@ public class GetCreditTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("0")]
@@ -61,7 +61,7 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{amount.AsCurrency().AsCurrency()}* from bank."), Times.Once);
 
         PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
@@ -70,7 +70,7 @@ public class GetCreditTests : StagesBaseTest
             ), Times.Once);
 
         Assert.That(person.Liabilities.Count, Is.EqualTo(1), "One liability should be added");
-        Assert.That(person.Liabilities[0].Type, Is.EqualTo(Liability.Bank_Loan), "Liability name should be 'Bank Loan'");
+        Assert.That(person.Liabilities[0].Type, Is.EqualTo(Liability.BankLoan), "Liability name should be 'Bank Loan'");
         Assert.That(person.Liabilities[0].FullAmount, Is.EqualTo(amount.AsCurrency()), "'amount' should be added to 'Bank Loan'");
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(-amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }
@@ -88,7 +88,7 @@ public class GetCreditTests : StagesBaseTest
         {
             Id = CurrentUser.Id,
             Cash = initialCash,
-            Liabilities = [new() { Type = Liability.Bank_Loan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
+            Liabilities = [new() { Type = Liability.BankLoan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);
 
@@ -98,7 +98,7 @@ public class GetCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {amount.AsCurrency().AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{amount.AsCurrency().AsCurrency()}* from bank."), Times.Once);
 
         PersonServiceMock.Verify(p => p.Update(
             It.Is<PersonDto>(x =>
@@ -107,7 +107,7 @@ public class GetCreditTests : StagesBaseTest
             ), Times.Once);
 
         Assert.That(person.Liabilities.Count, Is.EqualTo(1), "One liability should be added");
-        Assert.That(person.Liabilities[0].Type, Is.EqualTo(Liability.Bank_Loan), "Liability name should be 'Bank Loan'");
+        Assert.That(person.Liabilities[0].Type, Is.EqualTo(Liability.BankLoan), "Liability name should be 'Bank Loan'");
         Assert.That(person.Liabilities[0].FullAmount, Is.EqualTo(initialLoanAmount + amount.AsCurrency()), "'amount' should be added to 'Bank Loan'");
         Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
     }

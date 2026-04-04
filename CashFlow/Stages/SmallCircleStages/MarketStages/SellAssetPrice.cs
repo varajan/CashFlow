@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAssetPrice(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository,
@@ -50,11 +50,11 @@ public class SellAssetPrice(
                     .GetApartmentsCount();
 
                 return count == 1
-                    ? Terms.Get(8, CurrentUser, "What is the price?")
-                    : Terms.Get(137, CurrentUser, "You have *{0}* apartments. What is the price per one appartment?", count);
+                    ? TranslationService.Get(Terms.AskPrice, CurrentUser)
+                    : TranslationService.Get(Terms.ApartmentsAsk, CurrentUser, count);
             }
 
-            return Terms.Get(8, CurrentUser, "What is the price?");
+            return TranslationService.Get(Terms.AskPrice, CurrentUser);
         }
     }
 
@@ -79,7 +79,7 @@ public class SellAssetPrice(
         var price = message.AsCurrency();
         if (price <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(9, CurrentUser, "Invalid price value. Try again."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -94,7 +94,7 @@ public class SellAssetPrice(
             PersonService.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

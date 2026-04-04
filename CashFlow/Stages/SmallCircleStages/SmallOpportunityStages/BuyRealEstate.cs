@@ -4,15 +4,15 @@ using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class BuySmallRealEstate(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuySmallRealEstate(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAsset<BuySmallRealEstatePrice>(AssetType.RealEstateSmallType, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
-public class BuySmallRealEstatePrice(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuySmallRealEstatePrice(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuySmallRealEstateFirstPayment>(
         AssetType.RealEstateSmallBuyPrice, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuySmallRealEstateFirstPayment(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -20,7 +20,7 @@ public class BuySmallRealEstateFirstPayment(
         AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuySmallRealEstateCredit(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -28,7 +28,7 @@ public class BuySmallRealEstateCredit(
         AssetType.RealEstateSmallFirstPayment, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuySmallRealEstateCashFlow(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)

@@ -56,9 +56,9 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
             {
                 "$500",
@@ -71,7 +71,7 @@ public class SendMoneyAmountTests : StagesBaseTest
                 "$4,000",
                 "Cancel"
             }));
-        });
+        }
     }
 
     [TestCase("0")]

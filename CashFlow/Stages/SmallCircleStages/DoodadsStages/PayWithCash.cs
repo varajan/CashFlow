@@ -4,12 +4,12 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCash(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.SmallGiveMoney).Append(Cancel);
 
@@ -24,7 +24,7 @@ public class PayWithCash(ITermsRepository termsService, IAvailableAssetsReposito
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -38,7 +38,7 @@ public class PayWithCash(ITermsRepository termsService, IAvailableAssetsReposito
             person.GetCredit(credit);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-            await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
         }
 
         person.Cash -= amount;

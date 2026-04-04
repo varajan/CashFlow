@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetMoney(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class GetMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message
@@ -12,7 +12,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
         get
         {
             var person = PersonService.Read(CurrentUser);
-            return Terms.Get(0, CurrentUser, "Your Cashflow is *{0}*. How much should you get?",
+            return TranslationService.Get(Terms.CashflowAsk, CurrentUser,
                 person.BigCircle
                 ? person.GetBigCircleCashflow().AsCurrency()
                 : person.GetSmallCircleCashflow().AsCurrency());
@@ -55,7 +55,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
 
         if (person.BigCircle && amount <=0)
         {
-            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -70,7 +70,7 @@ public class GetMoney(ITermsRepository termsService, IPersonService personManage
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(Terms.Get(22, CurrentUser, "Ok, you've got *{0}*", amount.AsCurrency()));
+        await CurrentUser.Notify(TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
         NextStage = New<Start>();
     }
 }

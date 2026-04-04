@@ -32,11 +32,11 @@ public class ShowMyDataTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(description));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("Cancel", typeof(ShowMyData))]
@@ -87,12 +87,12 @@ public class ShowMyDataTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
     }
 
-    [TestCase(5, 5, 0, "You don't have $1, but only $0")]
-    [TestCase(0, 10, 0, "You don't have $1, but only $0")]
-    [TestCase(10, 0, 0, "You don't have $1, but only $0")]
-    [TestCase(90, 10, 9, "You don't have $10, but only $9")]
-    [TestCase(101, 0, 9, "You don't have $10, but only $9")]
-    [TestCase(99, 0, 8, "You don't have $9, but only $8")]
+    [TestCase(5, 5, 0, "You don't have *$1*, but only *$0*")]
+    [TestCase(0, 10, 0, "You don't have *$1*, but only *$0*")]
+    [TestCase(10, 0, 0, "You don't have *$1*, but only *$0*")]
+    [TestCase(90, 10, 9, "You don't have *$10*, but only *$9*")]
+    [TestCase(101, 0, 9, "You don't have *$10*, but only *$9*")]
+    [TestCase(99, 0, 8, "You don't have *$9*, but only *$8*")]
     [TestCase(0, 10, 1, "You've payed $1, now you can use two dice in next 3 turns.")]
     [TestCase(90, 10, 10, "You've payed $10, now you can use two dice in next 3 turns.")]
     [TestCase(99, 1, 15, "You've payed $10, now you can use two dice in next 3 turns.")]

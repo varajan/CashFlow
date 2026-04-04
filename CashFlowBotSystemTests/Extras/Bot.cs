@@ -41,7 +41,7 @@ public class Bot(string folder)
 
     private void CleanEmulatorDirectory(params string[] extensions)
     {
-        string[] subFolders = [ "Data", "runtimes" ];
+        string[] subFolders = ["Data", "runtimes"];
         extensions = extensions.Length > 0 ? extensions : [".msg", ".cmd"];
 
         Directory.CreateDirectory(EmulatorDirectory);

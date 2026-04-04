@@ -7,7 +7,7 @@ using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BigCircle(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class BigCircle(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message
@@ -17,7 +17,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
             var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
-                ? Terms.Get(73, CurrentUser, "You are the winner!")
+                ? TranslationService.Get(Terms.Winner, CurrentUser)
                 : PersonService.GetDescription(CurrentUser);
         }
     }
@@ -31,14 +31,14 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
             ? [ History, StopGame ]
             : [
-                Terms.Get(79, CurrentUser, "Paycheck"),
-                Terms.Get(32, CurrentUser, "Get Money"),
-                Terms.Get(33, CurrentUser, "Give Money"),
-                Terms.Get(69, CurrentUser, "Divorce"),
-                Terms.Get(70, CurrentUser, "Tax Audit"),
-                Terms.Get(71, CurrentUser, "Lawsuit"),
-                Terms.Get(74, CurrentUser, "Buy Business"),
-                Terms.Get(140, CurrentUser, "Friends"),
+                TranslationService.Get(Terms.Paycheck, CurrentUser),
+                TranslationService.Get(Terms.GetMoney, CurrentUser),
+                TranslationService.Get(Terms.GiveMoney, CurrentUser),
+                TranslationService.Get(Terms.Divorce, CurrentUser),
+                TranslationService.Get(Terms.TaxAudit, CurrentUser),
+                TranslationService.Get(Terms.Lawsuit, CurrentUser),
+                TranslationService.Get(Terms.BuyBusiness, CurrentUser),
+                TranslationService.Get(Terms.Friends, CurrentUser),
                 History,
                 StopGame,
             ];
@@ -70,7 +70,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
         PersonService.Update(person);
 
         var users = OtherUsers.Where(x => x.IsActive()).ToList();
-        var message = Terms.Get(148, CurrentUser, "{0} is the winner!", CurrentUser.Name);
+        var message = TranslationService.Get(Terms.WinnerName, CurrentUser, CurrentUser.Name);
         var notifyAll = users.Select(u => u.Notify(message));
         await Task.WhenAll(notifyAll);
     }
@@ -93,13 +93,13 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
 
     private Task HandleWinGame(string message)
     {
-        if (MessageEquals(message, 2, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return Task.CompletedTask;
         }
 
-        if (MessageEquals(message, 41, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return Task.CompletedTask;
@@ -112,7 +112,7 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
     {
         var person = PersonService.Read(CurrentUser);
 
-        if (MessageEquals(message, 79, "Paycheck"))
+        if (MessageEquals(message, Terms.Paycheck))
         {
             person.Cash += person.GetBigCircleCashflow();
             PersonService.Update(person);
@@ -121,19 +121,19 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
             return;
         }
 
-        if (MessageEquals(message, 32, "Get Money"))
+        if (MessageEquals(message, Terms.GetMoney))
         {
             NextStage = New<GetMoney>();
             return;
         }
 
-        if (MessageEquals(message, 33, "Give Money"))
+        if (MessageEquals(message, Terms.GiveMoney))
         {
             var transfer = new AssetDto
             {
                 UserId = CurrentUser.Id,
                 Type = AssetType.Transfer,
-                Title = "Bank",
+                Title = Terms.Bank,
                 IsDraft = true,
             };
 
@@ -142,55 +142,55 @@ public class BigCircle(ITermsRepository termsService, IPersonService personManag
             return;
         }
 
-        if (MessageEquals(message, 69, "Divorce"))
+        if (MessageEquals(message, Terms.Divorce))
         {
             var amount = person.Cash;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Divorce, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, 70, "Tax Audit"))
+        if (MessageEquals(message, Terms.TaxAudit))
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.TaxAudit, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, 71, "Lawsuit"))
+        if (MessageEquals(message, Terms.Lawsuit))
         {
             var amount = person.Cash / 2;
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Lawsuit, amount, CurrentUser);
-            await CurrentUser.Notify(Terms.Get(72, CurrentUser, "You've lost {0}.", amount.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
-        if (MessageEquals(message, 74, "Buy Business"))
+        if (MessageEquals(message, Terms.BuyBusiness))
         {
             NextStage = New<BuyBigBusiness>();
             return;
         }
 
-        if (MessageEquals(message, 140, "Friends"))
+        if (MessageEquals(message, Terms.Friends))
         {
             NextStage = New< Friends>();
             return;
         }
 
-        if (MessageEquals(message, 2, "History"))
+        if (MessageEquals(message, Terms.History))
         {
             NextStage = New<History>();
             return;
         }
 
-        if (MessageEquals(message, 41, "Stop Game"))
+        if (MessageEquals(message, Terms.StopGame))
         {
             NextStage = New<StopGame>();
             return;

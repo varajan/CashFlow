@@ -54,11 +54,11 @@ public class SmallCircleStageTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(description));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]
@@ -175,7 +175,7 @@ public class SmallCircleStageTests : StagesBaseTest
 
         var downsizeAmount = 100;
         var testPerson = TestPerson.Clone();
-        var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
+        var message = $"You were fired. You've payed total amount of your expenses: *{downsizeAmount.AsCurrency()}* and lose 2 turns.";
 
         testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
@@ -203,7 +203,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var downsizeAmount = 101;
         var creditAmount = 1_000;
         var testPerson = TestPerson.Clone();
-        var message = $"You were fired. You've payed total amount of your expenses: {downsizeAmount.AsCurrency()} and lose 2 turns.";
+        var message = $"You were fired. You've payed total amount of your expenses: *{downsizeAmount.AsCurrency()}* and lose 2 turns.";
 
         testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
@@ -215,7 +215,7 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallCircle>());
 
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, message), Times.Once);
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{creditAmount.AsCurrency()}* from bank."), Times.Once);
         PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
             pr.Id == TestPerson.Id &&
             pr.Cash == TestPerson.Cash + creditAmount - downsizeAmount)),
@@ -238,7 +238,9 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         var expenses = testPerson.PerChild * (children + 1);
-        var message = $"{testPerson.Profession}, you have {expenses.AsCurrency()} children expenses and {children+1} children.";
+        var message = children == 0
+            ? $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} child."
+            : $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} children.";
 
         // Act
         await testStage.HandleMessage("baby");
