@@ -1,7 +1,4 @@
-﻿@non-parallel
-@do-cleanup
-
-Feature: Friends
+﻿Feature: Friends
 
 Background:
 	Given Few players:

@@ -44,7 +44,7 @@ jobs:
           path: |
             CashFlowUnitTests/TestResults/
             CashFlowBotSystemTests/TestResults/
-            emulator/*.*
+            emulator/
 #            emulator/Logs/*.*
 #            emulator/*.msg
 #            emulator/*.db

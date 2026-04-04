@@ -7,7 +7,8 @@ namespace CashFlowBotSystemTests.Steps;
 [Binding]
 public class BigCircleSteps(StepsContext context) : BaseSteps(context)
 {
-    [Scope(Feature = "BigCircle")]
+    [Scope(Feature = "Big Circle")]
+    [Scope(Feature = "Big Circle Undo")]
     [When("(.*) pay(s|) (.*)")]
     public void Pay(string name, string _, string amount)
     {

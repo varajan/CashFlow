@@ -1,7 +1,4 @@
-﻿@non-parallel
-@do-cleanup
-
-Feature: Business
+﻿Feature: Business
 
 Scenario: I can buy businesses
 	Given I am 'Inayah Hodge' user
