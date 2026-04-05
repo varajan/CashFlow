@@ -3,13 +3,12 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
-using System.Text;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(21, CurrentUser, "How much?");
+    public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons
     {
@@ -48,13 +47,13 @@ public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonServi
         var amount = message.AsCurrency();
         if (amount % 1000 > 0 || amount < 1000)
         {
-            await CurrentUser.Notify(Terms.Get(24, CurrentUser, "Invalid amount. The amount must be a multiple of 1000"));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidAmount, CurrentUser));
             return;
         }
 
         if (amount > person.Cash)
         {
-            await CurrentUser.Notify(Terms.Get(23, CurrentUser, "You don't have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency()));
+            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency()));
             return;
         }
 
@@ -81,6 +80,6 @@ public class ReduceLiabilitiesAmount(ITermsRepository termsService, IPersonServi
 
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, amount, CurrentUser);
+        PersonService.AddHistory(liability.Type.AsActionType(), amount, CurrentUser);
     }
 }

@@ -15,7 +15,7 @@ public static class PersonExtensions
     public static void GetCredit(this PersonDto person, int amount)
     {
         person.Cash += amount;
-        person.UpdateLiability(Liability.Bank_Loan, -amount / 10, amount);
+        person.UpdateLiability(Liability.BankLoan, -amount / 10, amount);
     }
 
     public static void DeleteLiability(this PersonDto person, Liability type)

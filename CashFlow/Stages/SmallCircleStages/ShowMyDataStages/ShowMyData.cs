@@ -4,46 +4,46 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ShowMyData(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ShowMyData(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     public override string Message => PersonService.GetDescription(CurrentUser, false);
 
     public override List<string> Buttons =>
     [
-        Terms.Get(32, CurrentUser, "Get Money"),
-        Terms.Get(34, CurrentUser, "Get Credit"),
-        Terms.Get(90, CurrentUser, "Charity - Pay 10%"),
-        Terms.Get(40, CurrentUser, "Reduce Liabilities"),
+        TranslationService.Get(Terms.GetMoney, CurrentUser),
+        TranslationService.Get(Terms.GetCredit, CurrentUser),
+        TranslationService.Get(Terms.Charity10, CurrentUser),
+        TranslationService.Get(Terms.ReduceLiabilities, CurrentUser),
         StopGame,
-        Terms.Get(102, CurrentUser, "Main menu"),
+        TranslationService.Get(Terms.MainMenu, CurrentUser),
     ];
 
     public async override Task HandleMessage(string message)
     {
         switch (message)
         {
-            case var m when MessageEquals(m, 32, "Get Money"):
+            case var m when MessageEquals(m, Terms.GetMoney):
                 NextStage = New<GetMoney>();
                 return;
 
-            case var m when MessageEquals(m, 34, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 NextStage = New<GetCredit>();
                 return;
 
-            case var m when MessageEquals(m, 90, "Charity - Pay 10%"):
+            case var m when MessageEquals(m, Terms.Charity10):
                 await Charity();
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, 40, "Reduce Liabilities"):
+            case var m when MessageEquals(m, Terms.ReduceLiabilities):
                 await ReduceLiabilities();
                 return;
 
-            case var m when MessageEquals(m, 41, "Stop Game"):
+            case var m when MessageEquals(m, Terms.StopGame):
                 NextStage = New<StopGame>();
                 return;
 
-            case var m when MessageEquals(m, 102, "Main menu"):
+            case var m when MessageEquals(m, Terms.MainMenu):
                 NextStage = New<Start>();
                 return;
         }
@@ -58,7 +58,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
             return;
         }
 
-        await CurrentUser.Notify(Terms.Get(93, CurrentUser, "You have no liabilities."));
+        await CurrentUser.Notify(TranslationService.Get(Terms.NoLiabilities, CurrentUser));
         NextStage = New<Start>();
     }
 
@@ -69,7 +69,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
 
         if (person.Cash < amount)
         {
-            var notEnoughCashMsg = Terms.Get(23, CurrentUser, "You don't have {0}, but only {1}", amount.AsCurrency(), person.Cash.AsCurrency());
+            var notEnoughCashMsg = TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
             await CurrentUser.Notify(notEnoughCashMsg);
             return;
         }
@@ -78,7 +78,7 @@ public class ShowMyData(ITermsRepository termsService, IPersonService personMana
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.Charity, amount, CurrentUser);
 
-        var message = Terms.Get(91, CurrentUser, "You've payed {0}, now you can use two dice in next 3 turns.", amount.AsCurrency());
+        var message = TranslationService.Get(Terms.CharityResult, CurrentUser, amount.AsCurrency());
         await CurrentUser.Notify(message);
     }
 }

@@ -21,11 +21,11 @@ public class SellBusinessTests : SellAssetBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test]
@@ -39,7 +39,7 @@ public class SellBusinessTests : SellAssetBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SellBusiness>());
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid business number."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Invalid Business number."), Times.Once);
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
     }
 

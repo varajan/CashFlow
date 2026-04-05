@@ -13,7 +13,7 @@ var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();
 var PersonRepository = ServicesProvider.Get<IPersonRepository>();
 var PersonManager = ServicesProvider.Get<IPersonService>();
-var TermsService = ServicesProvider.Get<ITermsRepository>();
+var TermsService = ServicesProvider.Get<ITranslationService>();
 var UserRepository = new UserRepository(DataBase);
 
 while (true)

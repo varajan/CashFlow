@@ -31,7 +31,7 @@ Scenario: I can start small business
 *Other Payments:* $1,000
 """
 
-Scenario: I can increase cash flow for small business
+Scenario: I can Increase cashflow for small business
 	Given I am 'Kelsie John' user
 		And I play as 'Business manager'
 		And I get $20,000 in cash
@@ -66,10 +66,10 @@ Scenario: I can increase cash flow for small business
 • Get $20,000
 • Start a company. *Auto Tools* - Price: $3,000
 • Start a company. *Computer Programs* - Price: $5,000
-• *Auto Tools* - Increase cash flow. $250
-• *Computer Programs* - Increase cash flow. $250
-• *Auto Tools* - Increase cash flow. $400
-• *Computer Programs* - Increase cash flow. $400
+• *Auto Tools* - Increase cashflow. $250
+• *Computer Programs* - Increase cashflow. $250
+• *Auto Tools* - Increase cashflow. $400
+• *Computer Programs* - Increase cashflow. $400
 """
 
 Scenario: I can sell small business
@@ -107,10 +107,10 @@ Scenario: I can sell small business
 • Get $20,000
 • Start a company. *Auto Tools* - Price: $3,000
 • Start a company. *Computer Programs* - Price: $5,000
-• *Auto Tools* - Increase cash flow. $250
-• *Computer Programs* - Increase cash flow. $250
-• *Auto Tools* - Increase cash flow. $400
-• *Computer Programs* - Increase cash flow. $400
+• *Auto Tools* - Increase cashflow. $250
+• *Computer Programs* - Increase cashflow. $250
+• *Auto Tools* - Increase cashflow. $400
+• *Computer Programs* - Increase cashflow. $400
 • Sell Business. *Auto Tools* - Price: $3,000, monthly: $650
 """
 

@@ -4,15 +4,15 @@ using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BuyBigRealEstate(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBigRealEstate(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAsset<BuyBigRealEstatePrice>(AssetType.RealEstateBigType, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
-public class BuyBigRealEstatePrice(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBigRealEstatePrice(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBigRealEstateFirstPayment>(
         AssetType.RealEstateBigBuyPrice, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBigRealEstateFirstPayment(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -20,7 +20,7 @@ public class BuyBigRealEstateFirstPayment(
         AssetType.RealEstateBigFirstPayment, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBigRealEstateCredit(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -28,7 +28,7 @@ public class BuyBigRealEstateCredit(
         AssetType.RealEstateBigFirstPayment, AssetType.RealEstate, termsService, availableAssets, personManager, userRepository) { }
 
 public class BuyBigRealEstateCashFlow(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)

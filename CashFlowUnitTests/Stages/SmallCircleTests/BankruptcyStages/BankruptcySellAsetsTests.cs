@@ -21,8 +21,8 @@ public class BankruptcySellAsetsTests : StagesBaseTest
 
     private static readonly List<LiabilityDto> Liabilities =
     [
-        new() { Type = Liability.Bank_Loan, FullAmount = 3_000, Cashflow = -300, IsBankruptcyDivisible = false },
-        new() { Type = Liability.Car_Loan, FullAmount = 10_000, Cashflow = -450, IsBankruptcyDivisible = true },
+        new() { Type = Liability.BankLoan, FullAmount = 3_000, Cashflow = -300, IsBankruptcyDivisible = false },
+        new() { Type = Liability.CarLoan, FullAmount = 10_000, Cashflow = -450, IsBankruptcyDivisible = true },
     ];
 
     private static PersonDto TestPerson => new()
@@ -59,11 +59,11 @@ What asset do you want to sell?
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [Test, Ignore("Not applicable")]
@@ -151,7 +151,7 @@ What asset do you want to sell?
         // Arrange
         var testStage = GetTestStage();
         var asset = Assets.First(a => a.Title == "Asset 3");
-        var bankLoanAmount = Liabilities.First(l => l.Type == Liability.Bank_Loan).FullAmount;
+        var bankLoanAmount = Liabilities.First(l => l.Type == Liability.BankLoan).FullAmount;
 
         // Act
         await testStage.HandleMessage("#1");
@@ -169,7 +169,7 @@ What asset do you want to sell?
     {
         // Arrange
         var testStage = GetTestStage();
-        var bankLoanAmount = Liabilities.First(l => l.Type == Liability.Bank_Loan).FullAmount;
+        var bankLoanAmount = Liabilities.First(l => l.Type == Liability.BankLoan).FullAmount;
         var assets = Assets.Clone();
         var person = TestPerson.Clone();
 

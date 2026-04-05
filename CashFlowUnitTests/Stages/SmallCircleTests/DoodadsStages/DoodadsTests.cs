@@ -19,7 +19,7 @@ public class DoodadsTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
@@ -29,7 +29,7 @@ public class DoodadsTests : StagesBaseTest
                 "Buy a boat",
                 "Cancel"
             }));
-        });
+        }
     }
 
     [TestCase("Pay with cash", typeof(PayWithCash))]
@@ -68,11 +68,11 @@ public class DoodadsTests : StagesBaseTest
         var endCash = cash < firstPayment ? cash : cash - firstPayment;
 
         var botMessage = string.Format(
-            "You've bot a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
+            "You've bought a boat for {0} in credit, first payment is {1}, monthly payment is {2}",
             18_000.AsCurrency(),
             firstPayment.AsCurrency(),
             340.AsCurrency());
-        var creditMessage = string.Format("You've taken {0} from bank.", firstPayment.AsCurrency());
+        var creditMessage = string.Format("You've taken *{0}* from bank.", firstPayment.AsCurrency());
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Id = CurrentUser.Id, Cash = cash });
         PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([]);

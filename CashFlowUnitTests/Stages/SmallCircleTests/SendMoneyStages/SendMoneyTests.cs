@@ -28,7 +28,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found"), Times.Once);
         PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
         PersonServiceMock.Verify(x => x.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never, "No asset should be updated");
     }
@@ -46,7 +46,7 @@ public class SendMoneyTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Not found"), Times.Once);
         PersonServiceMock.Verify(x => x.Update(It.IsAny<PersonDto>()), Times.Never, "No person data should be updated");
     }
 
@@ -105,7 +105,7 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
@@ -115,7 +115,7 @@ public class SendMoneyTests : StagesBaseTest
                 "Bank",
                 "Cancel"
             }));
-        });
+        }
     }
 
     [Test]
@@ -130,11 +130,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -149,11 +149,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -168,11 +168,11 @@ public class SendMoneyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<SendMoney>();

@@ -6,19 +6,19 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class SmallOpportunity(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class SmallOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
     public override IEnumerable<string> Buttons =>
     [
-        Terms.Get(35, CurrentUser, "Buy Stocks"),
-        Terms.Get(36, CurrentUser, "Sell Stocks"),
-        Terms.Get(82, CurrentUser, "Stocks x2"),
-        Terms.Get(83, CurrentUser, "Stocks ÷2"),
-        Terms.Get(37, CurrentUser, "Buy Real Estate"),
-        Terms.Get(94, CurrentUser, "Buy Land"),
-        Terms.Get(119, CurrentUser, "Buy coins"),
-        Terms.Get(115, CurrentUser, "Start a company"),
+        TranslationService.Get(Terms.BuyStocks, CurrentUser),
+        TranslationService.Get(Terms.SellStocks, CurrentUser),
+        TranslationService.Get(Terms.StocksX2, CurrentUser),
+        TranslationService.Get(Terms.StocksDiv2, CurrentUser),
+        TranslationService.Get(Terms.BuyRealEstate, CurrentUser),
+        TranslationService.Get(Terms.BuyLand, CurrentUser),
+        TranslationService.Get(Terms.BuyCoins, CurrentUser),
+        TranslationService.Get(Terms.StartCompany, CurrentUser),
         Cancel
     ];
 
@@ -28,57 +28,57 @@ public class SmallOpportunity(ITermsRepository termsService, IPersonService pers
 
         switch (message)
         {
-            case var m when MessageEquals(m, 35, "Buy Stocks"):
+            case var m when MessageEquals(m, Terms.BuyStocks):
                 NextStage = New<BuyStocks>();
                 return;
 
-            case var m when MessageEquals(m, 36, "Sell Stocks"):
+            case var m when MessageEquals(m, Terms.SellStocks):
                 if (hasStocks)
                 {
                     NextStage = New<SellStocks>();
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, 82, "Stocks x2"):
+            case var m when MessageEquals(m, Terms.StocksX2):
                 if (hasStocks)
                 {
                     NextStage = New<StocksMultiply>();
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, 83, "Stocks ÷2"):
+            case var m when MessageEquals(m, Terms.StocksDiv2):
                 if (hasStocks)
                 {
                     NextStage = New<StocksReduce>();
                     return;
                 }
 
-                await CurrentUser.Notify(Terms.Get(49, CurrentUser, "You have no stocks."));
+                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
-            case var m when MessageEquals(m, 37, "Buy Real Estate"):
+            case var m when MessageEquals(m, Terms.BuyRealEstate):
                 NextStage = New<BuySmallRealEstate>();
                 return;
 
-            case var m when MessageEquals(m, 94, "Buy Land"):
+            case var m when MessageEquals(m, Terms.BuyLand):
                 NextStage = New<BuyLand>();
                 return;
 
-            case var m when MessageEquals(m, 119, "Buy coins"):
+            case var m when MessageEquals(m, Terms.BuyCoins):
                 NextStage = New<BuyCoins>();
                 return;
 
-            case var m when MessageEquals(m, 115, "Start a company"):
+            case var m when MessageEquals(m, Terms.StartCompany):
                 NextStage = New<StartCompany>();
                 return;
 
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 NextStage = New<Start>();
                 return;
         }

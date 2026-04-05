@@ -9,7 +9,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -17,7 +17,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
 {
     protected ActionType ActionType { get; } = actionType;
 
-    public override string Message => Terms.Get(10, CurrentUser, "What is the first payment?");
+    public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
     public override async Task HandleMessage(string message)
@@ -34,7 +34,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
         var number = message.AsCurrency();
         if (number < 0)
         {
-            await CurrentUser.Notify(Terms.Get(11, CurrentUser, "Invalid first payment value. Try again."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
             NextStage = this;
             return;
         }
@@ -66,6 +66,6 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
 
         PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

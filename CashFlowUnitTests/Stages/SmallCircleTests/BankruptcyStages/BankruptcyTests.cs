@@ -16,11 +16,11 @@ public class BankruptcyTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("You are bankrupt. Game is over."));
             Assert.That(testStage.Buttons, Is.EqualTo(new[] { "Stop Game", "History" } ));
-        });
+        }
     }
 
     [Test, Ignore("Not applicable")]

@@ -28,11 +28,11 @@ public class PayWithCashTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(Amounts.Append("Cancel")));
-        });
+        }
     }
 
     [TestCase("a")]
@@ -62,7 +62,7 @@ public class PayWithCashTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
-        var creditMessage = string.Format("You've taken {0} from bank.", credit.AsCurrency());
+        var creditMessage = string.Format("You've taken *{0}* from bank.", credit.AsCurrency());
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Id = CurrentUser.Id, Cash = cash });
 

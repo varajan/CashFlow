@@ -4,17 +4,17 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class Market(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class Market(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
-    public override string Message => Terms.Get(89, CurrentUser, "What do you want?");
+    public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
     public override IEnumerable<string> Buttons =>
     [
-        Terms.Get(38, CurrentUser, "Sell Real Estate"),
-        Terms.Get(98, CurrentUser, "Sell Land"),
-        Terms.Get(75, CurrentUser, "Sell Business"),
-        Terms.Get(120, CurrentUser, "Sell Coins"),
-        Terms.Get(118, CurrentUser, "Increase cash flow"),
+        TranslationService.Get(Terms.SellRealEstate, CurrentUser),
+        TranslationService.Get(Terms.SellLand, CurrentUser),
+        TranslationService.Get(Terms.SellBusiness, CurrentUser),
+        TranslationService.Get(Terms.SellCoins, CurrentUser),
+        TranslationService.Get(Terms.IncreaseCashflow, CurrentUser),
         Cancel
     ];
 
@@ -24,11 +24,11 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
 
         switch (message)
         {
-            case var m when MessageEquals(m, 38, "Sell Real Estate"):
+            case var m when MessageEquals(m, Terms.SellRealEstate):
                 var noRealEstate = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).Count == 0;
                 if (noRealEstate)
                 {
-                    await CurrentUser.Notify(Terms.Get(15, CurrentUser, "You have no properties."));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoRealEstate, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -36,11 +36,11 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 NextStage = New<SellRealEstate>();
                 return;
 
-            case var m when MessageEquals(m, 98, "Sell Land"):
+            case var m when MessageEquals(m, Terms.SellLand):
                 var noLand = PersonService.ReadAllAssets(AssetType.Land, CurrentUser).Count == 0;
                 if (noLand)
                 {
-                    await CurrentUser.Notify(Terms.Get(100, CurrentUser, "You have no Land."));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoLand, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -48,11 +48,11 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 NextStage = New<SellLand>();
                 return;
 
-            case var m when MessageEquals(m, 75, "Sell Business"):
+            case var m when MessageEquals(m, Terms.SellBusiness):
                 var noBusiness = PersonService.ReadAllAssets(AssetType.Business, CurrentUser).Count == 0;
                 if (noBusiness && noSmallBusiness)
                 {
-                    await CurrentUser.Notify(Terms.Get(77, CurrentUser, "You have no Business."));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoBusiness, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -60,11 +60,11 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 NextStage = New<SellBusiness>();
                 return;
 
-            case var m when MessageEquals(m, 120, "Sell Coins"):
+            case var m when MessageEquals(m, Terms.SellCoins):
                 var noCoins = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Count == 0;
                 if (noCoins)
                 {
-                    await CurrentUser.Notify(Terms.Get(121, CurrentUser, "You have no coins."));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoCoins, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -72,10 +72,10 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 NextStage = New<SellCoins>();
                 return;
 
-            case var m when MessageEquals(m, 118, "Increase cash flow"):
+            case var m when MessageEquals(m, Terms.IncreaseCashflow):
                 if (noSmallBusiness)
                 {
-                    await CurrentUser.Notify(Terms.Get(136, CurrentUser, "You have no small Business."));
+                    await CurrentUser.Notify(TranslationService.Get(Terms.NoSmallBusiness, CurrentUser));
                     NextStage = New<Start>();
                     return;
                 }
@@ -83,7 +83,7 @@ public class Market(ITermsRepository termsService, IPersonService personManager,
                 NextStage = New<IncreaseCashflow>();
                 return;
 
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 NextStage = New<Start>();
                 return;
         }

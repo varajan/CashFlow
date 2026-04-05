@@ -38,11 +38,11 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("a")]
@@ -73,11 +73,11 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         await testStage.HandleMessage(price);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<BuyBigBusinessCashFlow>());
             PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(a => a.IsDraft && a.Price == price.AsCurrency())), Times.Once);
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<BuyBigBusinessPrice>();

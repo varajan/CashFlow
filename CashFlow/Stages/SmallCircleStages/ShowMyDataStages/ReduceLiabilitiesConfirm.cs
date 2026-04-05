@@ -5,7 +5,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : ConfirmStage(termsService, personManager, userRepository, 3, "Are you sure want to stop current game?")
 {
     public override string Message
@@ -13,8 +13,8 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         get
         {
             var liability = PersonService.Read(CurrentUser).Liabilities.First(l => l.MarkedForReduction);
-            var reduceLiabilities = Terms.Get(40, CurrentUser, "Reduce Liabilities");
-            var type = Terms.Get((int)liability.Type, CurrentUser, liability.Type.AsString());
+            var reduceLiabilities = TranslationService.Get(Terms.ReduceLiabilities, CurrentUser);
+            var type = TranslationService.Get(liability.Type.GetDescription(), CurrentUser);
 
             return $"{reduceLiabilities} - {type}. {Yes}?";
         }
@@ -42,7 +42,7 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         var liability = person.Liabilities.FirstOrDefault(l => l.MarkedForReduction);
         var amount = liability.FullAmount;
 
-        if (liability.Type == Liability.Boat_Loan)
+        if (liability.Type == Liability.BoatLoan)
         {
             var boat = person.Assets.FirstOrDefault(a => a.Type == AssetType.Boat);
             boat.CashFlow = 0;
@@ -57,7 +57,7 @@ public class ReduceLiabilitiesConfirm(ITermsRepository termsService, IPersonServ
         
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
-        PersonService.AddHistory((ActionType)liability.Type, amount, CurrentUser);
+        PersonService.AddHistory(liability.Type.AsActionType(), amount, CurrentUser);
 
         NextStage = PersonService.Read(CurrentUser).Liabilities.All(l => l.FullAmount == 0)
             ? New<Start>()

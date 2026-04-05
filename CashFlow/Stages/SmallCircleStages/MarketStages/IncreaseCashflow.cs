@@ -6,14 +6,14 @@ using MoreLinq;
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class IncreaseCashflow(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
-    public override string Message => Terms.Get(12, CurrentUser, "What is the cash flow?");
+    public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
 
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.IncreaseCashFlow).Append(Cancel);
 
@@ -28,7 +28,7 @@ public class IncreaseCashflow(
         var cashflow = message.AsCurrency();
         if (cashflow <= 0)
         {
-            await CurrentUser.Notify(Terms.Get(150, CurrentUser, "Invalid value. Try again."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -41,7 +41,7 @@ public class IncreaseCashflow(
             PersonService.AddHistory(ActionType.IncreaseCashFlow, cashflow, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(Terms.Get(13, CurrentUser, "Done."));
+        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

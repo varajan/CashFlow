@@ -46,7 +46,7 @@ public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
         var user = GetUser(name);
 
         user.SendMessage("Market");
-        user.SendMessage("Increase cash flow");
+        user.SendMessage("Increase cashflow");
         user.SendMessage(amount);
     }
 }

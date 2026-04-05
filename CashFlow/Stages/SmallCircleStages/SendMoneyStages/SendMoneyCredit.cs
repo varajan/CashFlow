@@ -6,7 +6,7 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
 public class SendMoneyCredit(
     IPersonService personManager,
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IUserRepository userRepository) : SendMoneyAmount(personManager, termsService, availableAssets, userRepository)
 {
@@ -18,7 +18,7 @@ public class SendMoneyCredit(
             var currentUserPerson = PersonService.Read(CurrentUser);
             var value = asset.Qtty.AsCurrency();
             var cash = currentUserPerson.Cash.AsCurrency();
-            return Terms.Get(23, CurrentUser, "You don''t have {0}, but only {1}", value, cash);
+            return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, value, cash);
         }
     }
 
@@ -30,12 +30,12 @@ public class SendMoneyCredit(
 
         switch (message)
         {
-            case var m when MessageEquals(m, 6, "Cancel"):
+            case var m when MessageEquals(m, Terms.Cancel):
                 PersonService.DeleteAsset(CurrentUser, asset);
                 NextStage = New<Start>();
                 return;
 
-            case var m when MessageEquals(m, 34, "Get Credit"):
+            case var m when MessageEquals(m, Terms.GetCredit):
                 var currentUserPerson = PersonService.Read(CurrentUser);
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
@@ -44,7 +44,7 @@ public class SendMoneyCredit(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(Terms.Get(88, CurrentUser, "You've taken {0} from bank.", credit.AsCurrency()));
+                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await Transfer(asset);
 
                 NextStage = New<Start>();

@@ -1,125 +1,125 @@
 ﻿INSERT OR REPLACE INTO AvailableAssets VALUES
 
 -- Shares Title
-(1, '-', 'GRO4US'), (1, '-', 'MYT4U'), (1, '-', 'ON2U'), (1, '-', 'OK4U'), (1, '-', '2BIG'), (1, '-', 'CD'),
+('Stock', '-', 'GRO4US'), ('Stock', '-', 'MYT4U'), ('Stock', '-', 'ON2U'), ('Stock', '-', 'OK4U'), ('Stock', '-', '2BIG'), ('Stock', '-', 'CD'),
 
 -- Shares Price
-(2, '-', '1'), (2, '-', '5'), (2, '-', '10'), (2, '-', '20'), (2, '-', '30'), (2, '-', '40'), (2, '-', '50'), (2, '-', '1200'),
-(2, '-', '4000'), (2, '-', '5000'),
+('StockPrice', '-', '1'), ('StockPrice', '-', '5'), ('StockPrice', '-', '10'), ('StockPrice', '-', '20'), ('StockPrice', '-', '30'), ('StockPrice', '-', '40'), ('StockPrice', '-', '50'), ('StockPrice', '-', '1200'),
+('StockPrice', '-', '4000'), ('StockPrice', '-', '5000'),
 
 -- SmallGiveMoney
-(3, '-', '10'), (3, '-', '20'), (3, '-', '40'), (3, '-', '50'), (3, '-', '70'), (3, '-', '80'), (3, '-', '100'), (3, '-', '120'),
-(3, '-', '150'), (3, '-', '180'), (3, '-', '200'), (3, '-', '220'), (3, '-', '250'), (3, '-', '300'), (3, '-', '350'), 
-(3, '-', '450'), (3, '-', '500'), (3, '-', '600'), (3, '-', '700'), (3, '-', '1500'), (3, '-', '2000'), (3, '-', '4000'),
+('SmallGiveMoney', '-', '10'), ('SmallGiveMoney', '-', '20'), ('SmallGiveMoney', '-', '40'), ('SmallGiveMoney', '-', '50'), ('SmallGiveMoney', '-', '70'), ('SmallGiveMoney', '-', '80'), ('SmallGiveMoney', '-', '100'), ('SmallGiveMoney', '-', '120'),
+('SmallGiveMoney', '-', '150'), ('SmallGiveMoney', '-', '180'), ('SmallGiveMoney', '-', '200'), ('SmallGiveMoney', '-', '220'), ('SmallGiveMoney', '-', '250'), ('SmallGiveMoney', '-', '300'), ('SmallGiveMoney', '-', '350'), 
+('SmallGiveMoney', '-', '450'), ('SmallGiveMoney', '-', '500'), ('SmallGiveMoney', '-', '600'), ('SmallGiveMoney', '-', '700'), ('SmallGiveMoney', '-', '1500'), ('SmallGiveMoney', '-', '2000'), ('SmallGiveMoney', '-', '4000'),
 
 -- MicroCreditAmount
-(8, '-', '1000'), (8, '-', '2000'), (8, '-', '3000'),(8, '-', '4000'),
+('MicroCreditAmount', '-', '1000'), ('MicroCreditAmount', '-', '2000'), ('MicroCreditAmount', '-', '3000'),('MicroCreditAmount', '-', '4000'),
 
 -- BusinessType
-(10, '-', 'Enterprise'), (10, '-', 'Limited Partnership'), (10, '-', 'Passage'), (10, '-', 'Company'), (10, '-', 'Pizzeria'), (10, '-', 'Car Wash'),
-(10, 'UA', 'Підприємство'), (10, 'UA', 'Обмежене партнерство'), (10, 'UA', 'Пасаж'), (10, 'UA', 'Автомийка'), (10, 'UA', 'Франшиза піцерій'),
+('BusinessType', '-', 'Enterprise'), ('BusinessType', '-', 'Limited Partnership'), ('BusinessType', '-', 'Passage'), ('BusinessType', '-', 'Company'), ('BusinessType', '-', 'Pizzeria'), ('BusinessType', '-', 'Car Wash'),
+('BusinessType', 'UA', 'Підприємство'), ('BusinessType', 'UA', 'Обмежене партнерство'), ('BusinessType', 'UA', 'Пасаж'), ('BusinessType', 'UA', 'Автомийка'), ('BusinessType', 'UA', 'Франшиза піцерій'),
 
 -- BusinessBuyPrice
-(11, '-', '20000'), (11, '-', '25000'), (11, '-', '30000'), (11, '-', '50000'), (11, '-', '100000'), (11, '-', '125000'),
-(11, '-', '150000'), (11, '-', '200000'), (11, '-', '350000'), (11, '-', '500000'),
+('BusinessBuyPrice', '-', '20000'), ('BusinessBuyPrice', '-', '25000'), ('BusinessBuyPrice', '-', '30000'), ('BusinessBuyPrice', '-', '50000'), ('BusinessBuyPrice', '-', '100000'), ('BusinessBuyPrice', '-', '125000'),
+('BusinessBuyPrice', '-', '150000'), ('BusinessBuyPrice', '-', '200000'), ('BusinessBuyPrice', '-', '350000'), ('BusinessBuyPrice', '-', '500000'),
 
 -- BusinessFirstPayment
-(12, '-', '20000'), (12, '-', '25000'), (12, '-', '30000'), (12, '-', '40000'), (12, '-', '50000'), (12, '-', '100000'),
+('BusinessFirstPayment', '-', '20000'), ('BusinessFirstPayment', '-', '25000'), ('BusinessFirstPayment', '-', '30000'), ('BusinessFirstPayment', '-', '40000'), ('BusinessFirstPayment', '-', '50000'), ('BusinessFirstPayment', '-', '100000'),
 
 -- BusinessCashFlow
-(13, '-', '800'), (13, '-', '1000'), (13, '-', '1500'), (13, '-', '1600'), (13, '-', '1800'), (13, '-', '2500'),
-(13, '-', '2700'), (13, '-', '5000'),
+('BusinessCashFlow', '-', '800'), ('BusinessCashFlow', '-', '1000'), ('BusinessCashFlow', '-', '1500'), ('BusinessCashFlow', '-', '1600'), ('BusinessCashFlow', '-', '1800'), ('BusinessCashFlow', '-', '2500'),
+('BusinessCashFlow', '-', '2700'), ('BusinessCashFlow', '-', '5000'),
 
 -- BigBusinessType
-(14, '-', 'Resourants'), (14, '-', 'Utilities company'), (14, '-', 'Auto parts factory'), (14, '-', 'Auto repair shop'),
-(14, '-', 'Gold mine'), (14, '-', 'Beauty salons'), (14, '-', 'Oil deal'), (14, '-', 'T-shirt company'),
-(14, '-', '60-plex'), (14, '-', 'Pizzeria franchise'), (14, '-', 'Warehouse'), (14, '-', 'Dry cleaning'),
-(14, '-', 'Advertising agency'), 
+('BigBusinessType', '-', 'Resourants'), ('BigBusinessType', '-', 'Utilities company'), ('BigBusinessType', '-', 'Auto parts factory'), ('BigBusinessType', '-', 'Auto repair shop'),
+('BigBusinessType', '-', 'Gold mine'), ('BigBusinessType', '-', 'Beauty salons'), ('BigBusinessType', '-', 'Oil deal'), ('BigBusinessType', '-', 'T-shirt company'),
+('BigBusinessType', '-', '60-plex'), ('BigBusinessType', '-', 'Pizzeria franchise'), ('BigBusinessType', '-', 'Warehouse'), ('BigBusinessType', '-', 'Dry cleaning'),
+('BigBusinessType', '-', 'Advertising agency'), 
 
-(14, 'UA', 'Ресторани'), (14, 'UA', 'Комунальні послуги'), (14, 'UA', 'Завод автозапчастин'), (14, 'UA', 'Авторемонтна майстерня'),
-(14, 'UA', 'Золотий рудник'), (14, 'UA', 'Салони краси'), (14, 'UA', 'Нафтова угода'), (14, 'UA', 'Фірма тенісок'),
-(14, 'UA', '60-квартирний будинок'), (14, 'UA', 'Франшиза піцерій'), (14, 'UA', 'Склад'), (14, 'UA', 'Хімчистка'),
-(14, 'UA', 'Рекламна агенція'), 
+('BigBusinessType', 'UA', 'Ресторани'), ('BigBusinessType', 'UA', 'Комунальні послуги'), ('BigBusinessType', 'UA', 'Завод автозапчастин'), ('BigBusinessType', 'UA', 'Авторемонтна майстерня'),
+('BigBusinessType', 'UA', 'Золотий рудник'), ('BigBusinessType', 'UA', 'Салони краси'), ('BigBusinessType', 'UA', 'Нафтова угода'), ('BigBusinessType', 'UA', 'Фірма тенісок'),
+('BigBusinessType', 'UA', '60-квартирний будинок'), ('BigBusinessType', 'UA', 'Франшиза піцерій'), ('BigBusinessType', 'UA', 'Склад'), ('BigBusinessType', 'UA', 'Хімчистка'),
+('BigBusinessType', 'UA', 'Рекламна агенція'), 
 
 -- BigBusinessBuyPrice
-(15, '-', '100 000'), (15, '-', '120 000'), (15, '-', '150 000'), (15, '-', '200 000'), (15, '-', '225 000'),
-(15, '-', '250 000'), (15, '-', '300 000'),
+('BigBusinessBuyPrice', '-', '100 000'), ('BigBusinessBuyPrice', '-', '120 000'), ('BigBusinessBuyPrice', '-', '150 000'), ('BigBusinessBuyPrice', '-', '200 000'), ('BigBusinessBuyPrice', '-', '225 000'),
+('BigBusinessBuyPrice', '-', '250 000'), ('BigBusinessBuyPrice', '-', '300 000'),
 
 -- BusinessSellPrice
-(16, '-', '50000'), (16, '-', '100000'), (16, '-', '250000'),
+('BusinessSellPrice', '-', '50000'), ('BusinessSellPrice', '-', '100000'), ('BusinessSellPrice', '-', '250000'),
 
 -- BigBusinessCashFlow
-(17, '-', '3 000'), (17, '-', '5 000'), (17, '-', '6 000'), (17, '-', '7 000'), (17, '-', '8 000'), (17, '-', '9 500'),
-(17, '-', '10 000'), (17, '-', '14 000'), (17, '-', '25 000'), (17, '-', '50 000'), (17, '-', '75 000'),
+('BigBusinessCashFlow', '-', '3 000'), ('BigBusinessCashFlow', '-', '5 000'), ('BigBusinessCashFlow', '-', '6 000'), ('BigBusinessCashFlow', '-', '7 000'), ('BigBusinessCashFlow', '-', '8 000'), ('BigBusinessCashFlow', '-', '9 500'),
+('BigBusinessCashFlow', '-', '10 000'), ('BigBusinessCashFlow', '-', '14 000'), ('BigBusinessCashFlow', '-', '25 000'), ('BigBusinessCashFlow', '-', '50 000'), ('BigBusinessCashFlow', '-', '75 000'),
 
 -- RealEstateSmallType
-(18, '-', '2/1'), (18, '-', '3/2'),
+('RealEstateSmallType', '-', '2/1'), ('RealEstateSmallType', '-', '3/2'),
 
 -- RealEstateSmallBuyPrice
-(19, '-', '35000'), (19, '-', '40000'), (19, '-', '45000'), (19, '-', '50000'), (19, '-', '55000'), (19, '-', '60000'), (19, '-', '65000'),
+('RealEstateSmallBuyPrice', '-', '35000'), ('RealEstateSmallBuyPrice', '-', '40000'), ('RealEstateSmallBuyPrice', '-', '45000'), ('RealEstateSmallBuyPrice', '-', '50000'), ('RealEstateSmallBuyPrice', '-', '55000'), ('RealEstateSmallBuyPrice', '-', '60000'), ('RealEstateSmallBuyPrice', '-', '65000'),
 
 -- RealEstateSellPrice
-(20, '-', '25000'), (20, '-', '30000'), (20, '-', '35000'), (20, '-', '40000'), (20, '-', '45000'), (20, '-', '55000'),
-(20, '-', '65000'), (20, '-', '90000'), (20, '-', '100000'), (20, '-', '110000'), (20, '-', '135000'), (20, '-', '250000'),
+('RealEstateSellPrice', '-', '25000'), ('RealEstateSellPrice', '-', '30000'), ('RealEstateSellPrice', '-', '35000'), ('RealEstateSellPrice', '-', '40000'), ('RealEstateSellPrice', '-', '45000'), ('RealEstateSellPrice', '-', '55000'),
+('RealEstateSellPrice', '-', '65000'), ('RealEstateSellPrice', '-', '90000'), ('RealEstateSellPrice', '-', '100000'), ('RealEstateSellPrice', '-', '110000'), ('RealEstateSellPrice', '-', '135000'), ('RealEstateSellPrice', '-', '250000'),
 
 -- RealEstateSmallFirstPayment
-(21, '-', '0'), (21, '-', '2000'), (21, '-', '3000'), (21, '-', '4000'), (21, '-', '5000'),
+('RealEstateSmallFirstPayment', '-', '0'), ('RealEstateSmallFirstPayment', '-', '2000'), ('RealEstateSmallFirstPayment', '-', '3000'), ('RealEstateSmallFirstPayment', '-', '4000'), ('RealEstateSmallFirstPayment', '-', '5000'),
 
 -- RealEstateSmallCashFlow
-(22, '-', '-100'), (22, '-', '100'), (22, '-', '140'), (22, '-', '160'), (22, '-', '200'), (22, '-', '220'), (22, '-', '250'),
+('RealEstateSmallCashFlow', '-', '-100'), ('RealEstateSmallCashFlow', '-', '100'), ('RealEstateSmallCashFlow', '-', '140'), ('RealEstateSmallCashFlow', '-', '160'), ('RealEstateSmallCashFlow', '-', '200'), ('RealEstateSmallCashFlow', '-', '220'), ('RealEstateSmallCashFlow', '-', '250'),
 
 -- RealEstateBigType
-(23, '-', '3/2'), (23, '-', '5/3'), (23, '-', '2-plex'), (23, '-', '4-plex'), (23, '-', '8-plex'), (23, '-', '12-plex'),
-(23, '-', '24-plex'), (23, '-', '2x24-plex'), (23, '-', '60-plex'),
+('RealEstateBigType', '-', '3/2'), ('RealEstateBigType', '-', '5/3'), ('RealEstateBigType', '-', '2-plex'), ('RealEstateBigType', '-', '4-plex'), ('RealEstateBigType', '-', '8-plex'), ('RealEstateBigType', '-', '12-plex'),
+('RealEstateBigType', '-', '24-plex'), ('RealEstateBigType', '-', '2x24-plex'), ('RealEstateBigType', '-', '60-plex'),
 
 -- RealEstateBigBuyPrice 
-(24, '-', '45000'), (24, '-', '50000'), (24, '-', '60000'), (24, '-', '65000'), (24, '-', '67000'), (24, '-', '70000'),
-(24, '-', '75000'), (24, '-', '80000'), (24, '-', '90000'), (24, '-', '100000'), (24, '-', '115000'), (24, '-', '125000'), 
-(24, '-', '140000'), (24, '-', '150000'), (24, '-', '160000'), (24, '-', '200000'), (24, '-', '220000'), (24, '-', '240000'), 
-(24, '-', '350000'), (24, '-', '550000'), (24, '-', '575000'), (24, '-', '1200000'),
+('RealEstateBigBuyPrice', '-', '45000'), ('RealEstateBigBuyPrice', '-', '50000'), ('RealEstateBigBuyPrice', '-', '60000'), ('RealEstateBigBuyPrice', '-', '65000'), ('RealEstateBigBuyPrice', '-', '67000'), ('RealEstateBigBuyPrice', '-', '70000'),
+('RealEstateBigBuyPrice', '-', '75000'), ('RealEstateBigBuyPrice', '-', '80000'), ('RealEstateBigBuyPrice', '-', '90000'), ('RealEstateBigBuyPrice', '-', '100000'), ('RealEstateBigBuyPrice', '-', '115000'), ('RealEstateBigBuyPrice', '-', '125000'), 
+('RealEstateBigBuyPrice', '-', '140000'), ('RealEstateBigBuyPrice', '-', '150000'), ('RealEstateBigBuyPrice', '-', '160000'), ('RealEstateBigBuyPrice', '-', '200000'), ('RealEstateBigBuyPrice', '-', '220000'), ('RealEstateBigBuyPrice', '-', '240000'), 
+('RealEstateBigBuyPrice', '-', '350000'), ('RealEstateBigBuyPrice', '-', '550000'), ('RealEstateBigBuyPrice', '-', '575000'), ('RealEstateBigBuyPrice', '-', '1200000'),
 
 -- RealEstateBigFirstPayment
-(25, '-', '6000'), (25, '-', '7000'), (25, '-', '8000'), (25, '-', '9000'), (25, '-', '10000'), (25, '-', '12000'),
-(25, '-', '15000'), (25, '-', '16000'), (25, '-', '20000'), (25, '-', '30000'), (25, '-', '32000'), (25, '-', '40000'),
-(25, '-', '50000'), (25, '-', '75000'), (25, '-', '200000'),
+('RealEstateBigFirstPayment', '-', '6000'), ('RealEstateBigFirstPayment', '-', '7000'), ('RealEstateBigFirstPayment', '-', '8000'), ('RealEstateBigFirstPayment', '-', '9000'), ('RealEstateBigFirstPayment', '-', '10000'), ('RealEstateBigFirstPayment', '-', '12000'),
+('RealEstateBigFirstPayment', '-', '15000'), ('RealEstateBigFirstPayment', '-', '16000'), ('RealEstateBigFirstPayment', '-', '20000'), ('RealEstateBigFirstPayment', '-', '30000'), ('RealEstateBigFirstPayment', '-', '32000'), ('RealEstateBigFirstPayment', '-', '40000'),
+('RealEstateBigFirstPayment', '-', '50000'), ('RealEstateBigFirstPayment', '-', '75000'), ('RealEstateBigFirstPayment', '-', '200000'),
 
 -- RealEstateBigCashFlow
-(26, '-', '-100'), (26, '-', '140'), (26, '-', '150'), (26, '-', '240'), (26, '-', '300'), (26, '-', '320'), (26, '-', '400'),
-(26, '-', '500'), (26, '-', '600'), (26, '-', '750'), (26, '-', '800'), (26, '-', '950'), (26, '-', '1000'), (26, '-', '1600'),
-(26, '-', '1700'), (26, '-', '2000'), (26, '-', '2400'), (26, '-', '2800'), (26, '-', '3400'), (26, '-', '11000'),
+('RealEstateBigCashFlow', '-', '-100'), ('RealEstateBigCashFlow', '-', '140'), ('RealEstateBigCashFlow', '-', '150'), ('RealEstateBigCashFlow', '-', '240'), ('RealEstateBigCashFlow', '-', '300'), ('RealEstateBigCashFlow', '-', '320'), ('RealEstateBigCashFlow', '-', '400'),
+('RealEstateBigCashFlow', '-', '500'), ('RealEstateBigCashFlow', '-', '600'), ('RealEstateBigCashFlow', '-', '750'), ('RealEstateBigCashFlow', '-', '800'), ('RealEstateBigCashFlow', '-', '950'), ('RealEstateBigCashFlow', '-', '1000'), ('RealEstateBigCashFlow', '-', '1600'),
+('RealEstateBigCashFlow', '-', '1700'), ('RealEstateBigCashFlow', '-', '2000'), ('RealEstateBigCashFlow', '-', '2400'), ('RealEstateBigCashFlow', '-', '2800'), ('RealEstateBigCashFlow', '-', '3400'), ('RealEstateBigCashFlow', '-', '11000'),
 
 -- Shares CashFlow
-(35, '-', '20'), (35, '-', '10'),
+('StockCashFlow', '-', '20'), ('StockCashFlow', '-', '10'),
 
 -- Land Title
-(5, '-', '10 Acrs'), (5, '-', '20 Acrs'),
-(5, 'UA', '10 Акрів'), (5, 'UA', '20 Акрів'),
+('LandTitle', '-', '10 Acrs'), ('LandTitle', '-', '20 Acrs'),
+('LandTitle', 'UA', '10 Акрів'), ('LandTitle', 'UA', '20 Акрів'),
 
 -- Land Buy Price
-(6, '-', '5000'), (6, '-', '10000'), (6, '-', '20000'),
+('LandBuyPrice', '-', '5000'), ('LandBuyPrice', '-', '10000'), ('LandBuyPrice', '-', '20000'),
 
 -- Land Sell Price
-(7, '-', '150000'), (7, '-', '200000'),
+('LandSellPrice', '-', '150000'), ('LandSellPrice', '-', '200000'),
 
 -- SmallBusinessType
-(28, '-', 'Auto Tools'), (28, '-', 'Computer Programs'),
-(28, 'UA', 'Авто навороти'), (28, 'UA', 'Компютерні програми'),
+('SmallBusinessType', '-', 'Auto Tools'), ('SmallBusinessType', '-', 'Computer Programs'),
+('SmallBusinessType', 'UA', 'Авто навороти'), ('SmallBusinessType', 'UA', 'Компютерні програми'),
 
 -- SmallBusinessBuyPrice
-(29, '-', '3000'), (29, '-', '5000'),
+('SmallBusinessBuyPrice', '-', '3000'), ('SmallBusinessBuyPrice', '-', '5000'),
 
 -- Coin Title
-(31, '-', 'Krugerand'), (31, '-', 'Peso'),
-(31, 'UA', 'Крюгеранд'), (31, 'UA', 'Песо'),
+('CoinTitle', '-', 'Krugerand'), ('CoinTitle', '-', 'Peso'),
+('CoinTitle', 'UA', 'Крюгеранд'), ('CoinTitle', 'UA', 'Песо'),
 
 -- Coin Buy Price
-(32, '-', '300'), (32, '-', '500'),
+('CoinBuyPrice', '-', '300'), ('CoinBuyPrice', '-', '500'),
 
 -- Coin Sell Price
-(33, '-', '600'), (33, '-', '3000'), (33, '-', '5000'),
+('CoinSellPrice', '-', '600'), ('CoinSellPrice', '-', '3000'), ('CoinSellPrice', '-', '5000'),
 
 -- Coin Count
-(34, '-', '1'), (34, '-', '10'),
+('CoinCount', '-', '1'), ('CoinCount', '-', '10'),
 
 -- IncreaseCashFlow
-(36, '-', '250'), (36, '-', '400')
+('IncreaseCashFlow', '-', '250'), ('IncreaseCashFlow', '-', '400')

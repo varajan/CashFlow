@@ -53,11 +53,11 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo($"You don''t have {firstPayment.AsCurrency()}, but only {TestPerson.Cash.AsCurrency()}"));
+            Assert.That(testStage.Message, Is.EqualTo($"You don't have *{firstPayment.AsCurrency()}*, but only *{TestPerson.Cash.AsCurrency()}*"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -87,7 +87,7 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuySmallRealEstateCashFlow>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{creditAmount.AsCurrency()}* from bank."), Times.Once);
         PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()), Times.Never);
     }
 

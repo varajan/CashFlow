@@ -5,9 +5,9 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Data.Services;
 
-public class DescriptionService(ITermsRepository terms, AssetService assetService)
+public class DescriptionService(ITranslationService terms, AssetService assetService)
 {
-    private ITermsRepository Terms { get; } = terms;
+    private ITranslationService TranslationService { get; } = terms;
     private AssetService AssetService { get; } = assetService;
 
     public string GetDescription(UserDto user, PersonDto person, bool compact = true)
@@ -30,7 +30,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         if (!personAssets.Any(a => !a.IsDeleted))
             return string.Empty;
 
-        var assetsTerm = Terms.Get(56, user, "Assets");
+        var assetsTerm = TranslationService.Get(Terms.Assets, user);
         var assets = $"{Environment.NewLine}{Environment.NewLine}*{assetsTerm}:*{Environment.NewLine}";
         assets += string.Join(Environment.NewLine, personAssets
             .Where(a => !a.IsDeleted)
@@ -42,29 +42,29 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
     private string ExpensesDescription(PersonDto person, UserDto user)
     {
-        var expensesTerm = Terms.Get(54, user, "Expenses");
-        var taxesTerm = Terms.Get(58, user, "Taxes");
-        var mortgageTerm = Terms.Get(59, user, "Mortgage/Rent Pay");
-        var schoolLoanTerm = Terms.Get(44, user, "School Loan");
-        var carLoanTerm = Terms.Get(45, user, "Car Loan");
-        var creditCardTerm = Terms.Get(46, user, "Credit Card");
-        var smallCreditsTerm = Terms.Get(92, user, "Small Credit");
-        var bankLoanTerm = Terms.Get(47, user, "Bank Loan");
-        var boatLoanTerm = Terms.Get(114, user, "Boat Loan");
-        var otherPaymentTerm = Terms.Get(60, user, "Other Payments");
-        var childrenTerm = Terms.Get(61, user, "Children");
-        var childrenExpensesTerm = Terms.Get(62, user, "Children Expenses");
-        var perChildTerm = Terms.Get(63, user, "per child");
+        var expensesTerm = TranslationService.Get(Terms.Expenses, user);
+        var taxesTerm = TranslationService.Get(Terms.Taxes, user);
+        var mortgageTerm = TranslationService.Get(Terms.MortgageRent, user);
+        var schoolLoanTerm = TranslationService.Get(Terms.SchoolLoan, user);
+        var carLoanTerm = TranslationService.Get(Terms.CarLoan, user);
+        var creditCardTerm = TranslationService.Get(Terms.CreditCard, user);
+        var smallCreditsTerm = TranslationService.Get(Terms.SmallCredit, user);
+        var bankLoanTerm = TranslationService.Get(Terms.BankLoan, user);
+        var boatLoanTerm = TranslationService.Get(Terms.BoatLoan, user);
+        var otherPaymentTerm = TranslationService.Get(Terms.OtherPayments, user);
+        var childrenTerm = TranslationService.Get(Terms.Children, user);
+        var childrenExpensesTerm = TranslationService.Get(Terms.ChildrenExpenses, user);
+        var perChildTerm = TranslationService.Get(Terms.PerChild, user);
 
         var mortgage = GetLiability(person, Liability.Mortgage);
-        var schoolLoan = GetLiability(person, Liability.School_Loan);
-        var carLoan = GetLiability(person, Liability.Car_Loan);
-        var creditCard = GetLiability(person, Liability.Credit_Card);
-        var smallCredits = GetLiability(person, Liability.Small_Credit);
-        var bankLoan = GetLiability(person, Liability.Bank_Loan);
-        var boatLoan = GetLiability(person, Liability.Boat_Loan);
+        var schoolLoan = GetLiability(person, Liability.SchoolLoan);
+        var carLoan = GetLiability(person, Liability.CarLoan);
+        var creditCard = GetLiability(person, Liability.CreditCard);
+        var smallCredits = GetLiability(person, Liability.SmallCredit);
+        var bankLoan = GetLiability(person, Liability.BankLoan);
+        var boatLoan = GetLiability(person, Liability.BoatLoan);
         var taxes = GetLiability(person, Liability.Taxes);
-        var others = GetLiability(person, Liability.Others);
+        var others = GetLiability(person, Liability.OtherPayments);
         var childrenExpenses = person.Children * person.PerChild;
         var children = person.Children;
 
@@ -93,13 +93,13 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
     private string SmallCircleDescription(PersonDto person, UserDto user)
     {
-        var professionTerm = Terms.Get(50, user, "Profession");
-        var cashTerm = Terms.Get(51, user, "Cash");
-        var salaryTerm = Terms.Get(52, user, "Salary");
-        var incomeTerm = Terms.Get(53, user, "Income");
-        var expensesTerm = Terms.Get(54, user, "Expenses");
-        var cashFlowTerm = Terms.Get(55, user, "Cashflow");
-        var personProfession = Terms.Translate(person.Profession, user.Language);
+        var professionTerm = TranslationService.Get(Terms.Profession, user);
+        var cashTerm = TranslationService.Get(Terms.Cash, user);
+        var salaryTerm = TranslationService.Get(Terms.Salary, user);
+        var incomeTerm = TranslationService.Get(Terms.Income, user);
+        var expensesTerm = TranslationService.Get(Terms.Expenses, user);
+        var cashFlowTerm = TranslationService.Get(Terms.Cashflow, user);
+        var personProfession = TranslationService.Get(person.Profession, user.Language);
 
         return
             $"*{professionTerm}:* {personProfession}{Environment.NewLine}" +
@@ -112,12 +112,12 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
     private string BigCircleDescription(PersonDto person, UserDto user)
     {
-        var professionTerm = Terms.Get(50, user, "Profession");
-        var cashTerm = Terms.Get(51, user, "Cash");
-        var cashFlowTerm = Terms.Get(55, user, "Cashflow");
-        var initialTerm = Terms.Get(65, user, "Initial");
-        var currentTerm = Terms.Get(66, user, "Current");
-        var targetTerm = Terms.Get(67, user, "Target");
+        var professionTerm = TranslationService.Get(Terms.Profession, user);
+        var cashTerm = TranslationService.Get(Terms.Cash, user);
+        var cashFlowTerm = TranslationService.Get(Terms.Cashflow, user);
+        var initialTerm = TranslationService.Get(Terms.Initial, user);
+        var currentTerm = TranslationService.Get(Terms.Current, user);
+        var targetTerm = TranslationService.Get(Terms.Target, user);
         var assets = person.Assets.Where(a => a.BigCircle).ToList();
 
         var description =
@@ -136,22 +136,22 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         switch (Action)
         {
             case ActionType.PayMoney:
-                return Terms.Get(103, user, "Pay {0}", value.AsCurrency());
+                return TranslationService.Get(Terms.Pay, user, value.AsCurrency());
 
             case ActionType.GetMoney:
-                return Terms.Get(104, user, "Get {0}", value.AsCurrency());
+                return TranslationService.Get(Terms.Get, user, value.AsCurrency());
 
             case ActionType.Child:
-                return Terms.Get(105, user, "Get a child");
+                return TranslationService.Get(Terms.GetChild, user);
 
             case ActionType.Downsize:
-                return Terms.Get(106, user, "Downsize and paying {0}", value.AsCurrency());
+                return TranslationService.Get(Terms.DownsizePay, user, value.AsCurrency());
 
             case ActionType.Credit:
-                return Terms.Get(107, user, "Get credit: {0}", value.AsCurrency());
+                return TranslationService.Get(Terms.GetCreditAmount, user, value.AsCurrency());
 
             case ActionType.Charity:
-                return Terms.Get(108, user, "Charity: {0}", value.AsCurrency());
+                return TranslationService.Get(Terms.CharityAmount, user, value.AsCurrency());
 
             case ActionType.Mortgage:
             case ActionType.SchoolLoan:
@@ -161,8 +161,8 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
             case ActionType.BankLoan:
             case ActionType.PayOffBoat:
             case ActionType.BankruptcyBankLoan:
-                var reduceLiabilities = Terms.Get(40, user, "Reduce Liabilities");
-                var type = Terms.Get((int)Action, user, "Liability");
+                var reduceLiabilities = TranslationService.Get(Terms.ReduceLiabilities, user);
+                var type = TranslationService.Get(Action.GetDescription(), user);
                 var amount = value.AsCurrency();
                 return $"{reduceLiabilities}. {type}: {amount}";
 
@@ -172,14 +172,14 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
             case ActionType.BuyLand:
             case ActionType.StartCompany:
             case ActionType.BuyCoins:
-                var buyAsset = Terms.Get((int)Action, user, "Buy Asset");
+                var buyAsset = TranslationService.Get(Action.GetDescription(), user);
                 var asset = AssetService.Get(assetId, user);
                 var description = GetAssetDescription(asset, user);
                 return $"{buyAsset}. {description}";
 
             case ActionType.IncreaseCashFlow:
                 var smallBusiness = AssetService.Get(assetId, user);
-                var increaseCashFlow = Terms.Get((int)Action, user, "Increase Cashflow");
+                var increaseCashFlow = TranslationService.Get(Action.GetDescription(), user);
                 return $"*{smallBusiness.Title}* - {increaseCashFlow}. {value.AsCurrency()}";
 
             case ActionType.SellRealEstate:
@@ -188,7 +188,7 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
             case ActionType.SellLand:
             case ActionType.SellCoins:
             case ActionType.BankruptcySellAsset:
-                var sellAsset = Terms.Get((int)Action, user, "Sell Asset");
+                var sellAsset = TranslationService.Get(Action.GetDescription(), user);
                 var assetToSell = AssetService.Get(assetId, user);
                 var sellDescription = GetAssetDescription(assetToSell, user);
 
@@ -196,28 +196,28 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
             case ActionType.Stocks1To2:
             case ActionType.Stocks2To1:
-                var multiply = Terms.Get((int)Action, user, "Multiply Stocks");
+                var multiply = TranslationService.Get(Action.GetDescription(), user);
                 var stock = AssetService.Get(assetId, user);
                 var stockDescription = GetAssetDescription(stock, user);
 
                 return $"{multiply}. {stockDescription}";
 
             case ActionType.MicroCredit:
-                return Terms.Get(96, user, "Pay with Credit Card") + " - " + value.AsCurrency();
+                return TranslationService.Get(Terms.PayCard, user) + " - " + value.AsCurrency();
 
             case ActionType.BuyBoat:
-                var buyBoat = Terms.Get(112, user, "Buy a boat");
+                var buyBoat = TranslationService.Get(Terms.BuyBoat, user);
                 return $"{buyBoat}: {value.AsCurrency()}";
 
             case ActionType.BankruptcyDebtRestructuring:
             case ActionType.Bankruptcy:
-                return Terms.Get((int)Action, user, "Bankruptcy");
+                return TranslationService.Get(Action.GetDescription(), user);
 
             case ActionType.GoToBigCircle:
             case ActionType.Divorce:
             case ActionType.TaxAudit:
             case ActionType.Lawsuit:
-                return Terms.Get((int)Action, user, "BigCircle");
+                return TranslationService.Get(Action.GetDescription(), user);
 
             default:
                 return $"<{Action}> - {value}";
@@ -226,9 +226,9 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
     public string GetAssetDescription(AssetDto asset, UserDto user)
     {
-        var mortgage = Terms.Get(43, user, "Mortgage");
-        var price = Terms.Get(64, user, "Price");
-        var cashFlow = Terms.Get(55, user, "Cashflow");
+        var mortgage = TranslationService.Get(Terms.Mortgage, user);
+        var price = TranslationService.Get(Terms.Price, user);
+        var cashFlow = TranslationService.Get(Terms.Cashflow, user);
 
         return asset.Type switch
         {
@@ -257,11 +257,11 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
 
             AssetType.Boat => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
-                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {TranslationService.Get(Terms.Monthly, user)}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.SmallBusinessType => asset.CashFlow == 0
                             ? $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}"
-                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {Terms.Get(42, user, "monthly")}: {asset.CashFlow.AsCurrency()}",
+                            : $"*{asset.Title}* - {price}: {asset.Price.AsCurrency()}, {TranslationService.Get(Terms.Monthly, user)}: {asset.CashFlow.AsCurrency()}",
 
             AssetType.Coin => asset.IsDeleted
                             ? $"*{asset.Title}* - {asset.Qtty} @ {asset.SellPrice.AsCurrency()}"
@@ -271,5 +271,5 @@ public class DescriptionService(ITermsRepository terms, AssetService assetServic
         };
     }
 
-    public string NoRecordsFound(UserDto user) => Terms.Get(111, user, "No records found.");
+    public string NoRecordsFound(UserDto user) => TranslationService.Get(Terms.NoRecords, user);
 }

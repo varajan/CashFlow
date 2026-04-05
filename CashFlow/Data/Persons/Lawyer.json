@@ -20,7 +20,7 @@
             "Deleted": false,
             "FullAmount": 0,
             "Cashflow": -1830,
-            "Type": 58,
+            "Type": "Taxes",
             "Name": "Taxes"
         },
         {
@@ -30,7 +30,7 @@
             "Deleted": false,
             "FullAmount": 115000,
             "Cashflow": -1100,
-            "Type": 43,
+            "Type": "Mortgage",
             "Name": "Mortgage"
         },
         {
@@ -40,7 +40,7 @@
             "Deleted": false,
             "FullAmount": 78000,
             "Cashflow": -390,
-            "Type": 44,
+            "Type": "SchoolLoan",
             "Name": "School Loan"
         },
         {
@@ -50,7 +50,7 @@
             "Deleted": false,
             "FullAmount": 11000,
             "Cashflow": -220,
-            "Type": 45,
+            "Type": "CarLoan",
             "Name": "Car Loan"
         },
         {
@@ -60,7 +60,7 @@
             "Deleted": false,
             "FullAmount": 6000,
             "Cashflow": -180,
-            "Type": 46,
+            "Type": "CreditCard",
             "Name": "Credit Card"
         },
         {
@@ -70,7 +70,7 @@
             "Deleted": false,
             "FullAmount": 0,
             "Cashflow": 0,
-            "Type": 47,
+            "Type": "BankLoan",
             "Name": "Bank Loan"
         },
         {
@@ -80,7 +80,7 @@
             "Deleted": false,
             "FullAmount": 0,
             "Cashflow": -1650,
-            "Type": 60,
+            "Type": "OtherPayments",
             "Name": "Others"
         },
         {
@@ -90,7 +90,7 @@
             "Deleted": false,
             "FullAmount": 1000,
             "Cashflow": -50,
-            "Type": 92,
+            "Type": "SmallCredit",
             "Name": "Small Credit"
         }
     ]

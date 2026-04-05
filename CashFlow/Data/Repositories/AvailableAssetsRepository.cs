@@ -18,10 +18,10 @@ public class AvailableAssetsRepository(IDataBase dataBase) : IAvailableAssetsRep
 
     public IEnumerable<string> Get(AssetType type, string language = DefaultLanguage)
     {
-        var select = "SELECT Value FROM AvailableAssets WHERE Type = {0} AND Language = '{1}' ORDER BY CAST(Value as Number)";
+        var select = "SELECT Value FROM AvailableAssets WHERE Type = '{0}' AND Language = '{1}' ORDER BY CAST(Value as Number)";
 
-        var assetsByLanguage = DataBase.GetColumn(string.Format(select, (int)type, language)).Distinct();
-        var assetsDefault = DataBase.GetColumn(string.Format(select, (int)type, DefaultLanguage)).Distinct();
+        var assetsByLanguage = DataBase.GetColumn(string.Format(select, type.ToString(), language)).Distinct();
+        var assetsDefault = DataBase.GetColumn(string.Format(select, type.ToString(), DefaultLanguage)).Distinct();
 
         return assetsByLanguage.Any() ? assetsByLanguage : assetsDefault;
     }
@@ -33,6 +33,6 @@ public class AvailableAssetsRepository(IDataBase dataBase) : IAvailableAssetsRep
 
         DataBase.Execute(@"
             INSERT INTO AvailableAssets (Type, Language, Value) " +
-            $"VALUES ({(int)type}, '{language}', '{value}')");
+            $"VALUES ('{type}', '{language}', '{value}')");
     }
 }

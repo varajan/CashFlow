@@ -4,17 +4,17 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BuyBigBusiness(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBigBusiness(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAsset<BuyBigBusinessPrice>(AssetType.BigBusinessType, AssetType.BigBusinessType, termsService, availableAssets, personManager, userRepository)
 { }
 
-public class BuyBigBusinessPrice(ITermsRepository termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBigBusinessPrice(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBigBusinessCashFlow>(
         AssetType.BigBusinessBuyPrice, AssetType.BigBusinessType, termsService, availableAssets, personManager, userRepository)
 { }
 
 public class BuyBigBusinessFirstPayment(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
@@ -23,7 +23,7 @@ public class BuyBigBusinessFirstPayment(
 { }
 
 public class BuyBigBusinessCashFlow(
-    ITermsRepository termsService,
+    ITranslationService termsService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)

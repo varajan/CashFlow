@@ -1,5 +1,4 @@
-﻿using CashFlow.Data.Consts;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace CashFlow.Extensions;
 
@@ -85,8 +84,6 @@ public static class StringExtensions
 
     public static DateTime ToDateTime(this string date) => DateTime.Parse(date);
     public static string AsString(this DateTime dateTime, string format = "yyyy.MM.dd HH:mm") => dateTime.ToString(format, CultureInfo.InvariantCulture);
-
-    public static string AsString(this Liability liability) => liability.ToString().Replace("_", " ");
 
     public static int GetApartmentsCount(this string title)
     {

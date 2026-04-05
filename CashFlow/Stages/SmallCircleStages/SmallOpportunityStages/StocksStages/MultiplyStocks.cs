@@ -4,18 +4,18 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class StocksMultiply(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class StocksMultiply(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : MultiplyStocks(ActionType.Stocks1To2, termsService, personManager, userRepository) { }
 
-public class StocksReduce(ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public class StocksReduce(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : MultiplyStocks(ActionType.Stocks2To1, termsService, personManager, userRepository) { }
 
-public abstract class MultiplyStocks(ActionType actionType, ITermsRepository termsService, IPersonService personManager, IUserRepository userRepository)
+public abstract class MultiplyStocks(ActionType actionType, ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, personManager, userRepository)
 {
     protected ActionType ActionType { get; } = actionType;
 
-    public override string Message => Terms.Get(7, CurrentUser, "Title:");
+    public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
 
     public override IEnumerable<string> Buttons =>
         PersonService
@@ -38,7 +38,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITermsRepository ter
 
         if (stocks.Count == 0)
         {
-            await CurrentUser.Notify(Terms.Get(124, CurrentUser, "Invalid stocks name."));
+            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidStockName, CurrentUser));
             return;
         }
 

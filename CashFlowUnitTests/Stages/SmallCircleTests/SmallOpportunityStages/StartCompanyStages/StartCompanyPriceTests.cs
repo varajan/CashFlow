@@ -39,11 +39,11 @@ public class StartCompanyPriceTests: StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
             Assert.That(testStage.Buttons, Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("a")]
@@ -78,7 +78,7 @@ public class StartCompanyPriceTests: StagesBaseTest
         await testStage.HandleMessage(price);
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
@@ -96,7 +96,7 @@ public class StartCompanyPriceTests: StagesBaseTest
                     It.Is<UserDto>(x => x.Id == CurrentUser.Id),
                     Asset.Id
                 ), Times.Once);
-        });
+        }
     }
 
     [TestCase(100, 100, false)]
@@ -118,7 +118,7 @@ public class StartCompanyPriceTests: StagesBaseTest
         await testStage.HandleMessage($"${price}");
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
 
@@ -131,7 +131,7 @@ public class StartCompanyPriceTests: StagesBaseTest
                 price,
                 It.IsAny<UserDto>(),
                 asset.Id), Times.Exactly(creditIsNeeded ? 0 : 1));
-        });
+        }
     }
 
     protected override IStage GetTestStage() => GetStage<StartCompanyPrice>();

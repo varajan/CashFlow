@@ -27,11 +27,11 @@ public class PayWithCreditCardTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo("How much?"));
+            Assert.That(testStage.Message, Is.EqualTo("How many?"));
             Assert.That(testStage.Buttons, Is.EqualTo(Amounts.Append("Cancel")));
-        });
+        }
     }
 
     [TestCase("a")]
@@ -69,13 +69,13 @@ public class PayWithCreditCardTests : StagesBaseTest
             [
                 new()
                 {
-                    Type = Liability.Credit_Card,
+                    Type = Liability.CreditCard,
                     FullAmount = initialCredit,
                     Cashflow = initialExpenses,
                 },
                 new()
                 {
-                    Type = Liability.Small_Credit,
+                    Type = Liability.SmallCredit,
                     FullAmount = 2000,
                     Cashflow = -15,
                 },
@@ -92,8 +92,8 @@ public class PayWithCreditCardTests : StagesBaseTest
 
         PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUser.Id &&
-            person.Liabilities.First(l => l.Type == Liability.Credit_Card).FullAmount == initialCredit + amount.AsCurrency() &&
-            person.Liabilities.First(l => l.Type == Liability.Credit_Card).Cashflow == initialExpenses - 0.03 * amount.AsCurrency()
+            person.Liabilities.First(l => l.Type == Liability.CreditCard).FullAmount == initialCredit + amount.AsCurrency() &&
+            person.Liabilities.First(l => l.Type == Liability.CreditCard).Cashflow == initialExpenses - 0.03 * amount.AsCurrency()
         )), Times.Once);
 
         PersonServiceMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUser), Times.Once);

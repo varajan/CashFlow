@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
@@ -56,11 +55,11 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo($"You don''t have {TransferAsset.Qtty.AsCurrency()}, but only {TestPerson.Cash.AsCurrency()}"));
+            Assert.That(testStage.Message, Is.EqualTo($"You don't have *{TransferAsset.Qtty.AsCurrency()}*, but only *{TestPerson.Cash.AsCurrency()}*"));
             Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
-        });
+        }
     }
 
     [Test]
@@ -84,7 +83,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, "Bank", transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, "Bank", transferAmount.AsCurrency(), Environment.NewLine);
 
         // Act
         await testStage.HandleMessage("Get credit");
@@ -123,7 +123,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency(), Environment.NewLine);
 
         // Act
         await testStage.HandleMessage("Get credit");
@@ -131,7 +132,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken {creditAmount.AsCurrency()} from bank."), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You've taken *{creditAmount.AsCurrency()}* from bank."), Times.Once);
 
         PersonServiceMock.Verify(a => a.DeleteAsset(
             CurrentUser,

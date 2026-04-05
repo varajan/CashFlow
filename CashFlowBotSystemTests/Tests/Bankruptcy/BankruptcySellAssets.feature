@@ -35,13 +35,13 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Boat* - Price: $500, Cashflow: -$340
+#2 - *10 Acrs* - Price: $5,000
+#3 - *Car Wash* - Price: $2,500, Cashflow: $800
 #4 - *Auto Tools* - Price: $1,500
-#5 - *Peso* - Price: $1,500
-#6 - *10 Acrs* - Price: $5,000
-#7 - *2/1* - Price: $1,500, Cashflow: $160
-#8 - *3/2* - Price: $2,500, Cashflow: -$100
+#5 - *2/1* - Price: $1,500, Cashflow: $160
+#6 - *3/2* - Price: $2,500, Cashflow: -$100
+#7 - *Boat* - Price: $500, Cashflow: -$340
+#8 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell shares to survive
@@ -57,13 +57,13 @@ You have to sell your assets till you cash flow is positive.
 
 What asset do you want to sell?
 
-#1 - *Car Wash* - Price: $2,500, Cashflow: $800
-#2 - *Boat* - Price: $500, Cashflow: -$340
+#1 - *10 Acrs* - Price: $5,000
+#2 - *Car Wash* - Price: $2,500, Cashflow: $800
 #3 - *Auto Tools* - Price: $1,500
-#4 - *Peso* - Price: $1,500
-#5 - *10 Acrs* - Price: $5,000
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#4 - *2/1* - Price: $1,500, Cashflow: $160
+#5 - *3/2* - Price: $2,500, Cashflow: -$100
+#6 - *Boat* - Price: $500, Cashflow: -$340
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell business to survive
@@ -80,12 +80,12 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Boat* - Price: $500, Cashflow: -$340
+#2 - *10 Acrs* - Price: $5,000
 #3 - *Auto Tools* - Price: $1,500
-#4 - *Peso* - Price: $1,500
-#5 - *10 Acrs* - Price: $5,000
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#4 - *2/1* - Price: $1,500, Cashflow: $160
+#5 - *3/2* - Price: $2,500, Cashflow: -$100
+#6 - *Boat* - Price: $500, Cashflow: -$340
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell Boat to survive
@@ -102,12 +102,12 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Auto Tools* - Price: $1,500
-#4 - *Peso* - Price: $1,500
-#5 - *10 Acrs* - Price: $5,000
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#2 - *10 Acrs* - Price: $5,000
+#3 - *Car Wash* - Price: $2,500, Cashflow: $800
+#4 - *Auto Tools* - Price: $1,500
+#5 - *2/1* - Price: $1,500, Cashflow: $160
+#6 - *3/2* - Price: $2,500, Cashflow: -$100
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell small business to survive
@@ -124,12 +124,12 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Boat* - Price: $500, Cashflow: -$340
-#4 - *Peso* - Price: $1,500
-#5 - *10 Acrs* - Price: $5,000
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#2 - *10 Acrs* - Price: $5,000
+#3 - *Car Wash* - Price: $2,500, Cashflow: $800
+#4 - *2/1* - Price: $1,500, Cashflow: $160
+#5 - *3/2* - Price: $2,500, Cashflow: -$100
+#6 - *Boat* - Price: $500, Cashflow: -$340
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell coins to survive
@@ -146,12 +146,12 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Boat* - Price: $500, Cashflow: -$340
+#2 - *10 Acrs* - Price: $5,000
+#3 - *Car Wash* - Price: $2,500, Cashflow: $800
 #4 - *Auto Tools* - Price: $1,500
-#5 - *10 Acrs* - Price: $5,000
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#5 - *2/1* - Price: $1,500, Cashflow: $160
+#6 - *3/2* - Price: $2,500, Cashflow: -$100
+#7 - *Boat* - Price: $500, Cashflow: -$340
 """
 
 Scenario: I sell land to survive
@@ -169,11 +169,11 @@ What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
 #2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Boat* - Price: $500, Cashflow: -$340
-#4 - *Auto Tools* - Price: $1,500
-#5 - *Peso* - Price: $1,500
-#6 - *2/1* - Price: $1,500, Cashflow: $160
-#7 - *3/2* - Price: $2,500, Cashflow: -$100
+#3 - *Auto Tools* - Price: $1,500
+#4 - *2/1* - Price: $1,500, Cashflow: $160
+#5 - *3/2* - Price: $2,500, Cashflow: -$100
+#6 - *Boat* - Price: $500, Cashflow: -$340
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell real estate to survive
@@ -190,12 +190,12 @@ You have to sell your assets till you cash flow is positive.
 What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
-#2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Boat* - Price: $500, Cashflow: -$340
+#2 - *10 Acrs* - Price: $5,000
+#3 - *Car Wash* - Price: $2,500, Cashflow: $800
 #4 - *Auto Tools* - Price: $1,500
-#5 - *Peso* - Price: $1,500
-#6 - *10 Acrs* - Price: $5,000
-#7 - *2/1* - Price: $1,500, Cashflow: $160
+#5 - *2/1* - Price: $1,500, Cashflow: $160
+#6 - *Boat* - Price: $500, Cashflow: -$340
+#7 - *Peso* - Price: $1,500
 """
 
 Scenario: I sell everything to survive

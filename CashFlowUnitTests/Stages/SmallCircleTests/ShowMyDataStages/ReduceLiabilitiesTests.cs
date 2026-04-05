@@ -12,10 +12,10 @@ public class ReduceLiabilitiesTests : StagesBaseTest
 {
     private readonly List<LiabilityDto> Liabilities =
     [
-        new() { Type = Liability.Car_Loan, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = false },
-        new() { Type = Liability.Boat_Loan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = false },
+        new() { Type = Liability.CarLoan, FullAmount = 50_000, Cashflow = -5100, AllowsPartialPayment = false, Deleted = false },
+        new() { Type = Liability.BoatLoan, FullAmount = 5_000,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = false },
         new() { Type = Liability.Mortgage, FullAmount = 0, Cashflow = -5100, AllowsPartialPayment = false, Deleted = true },
-        new() { Type = Liability.School_Loan, FullAmount = 0,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = true },
+        new() { Type = Liability.SchoolLoan, FullAmount = 0,  Cashflow = -500,  AllowsPartialPayment = true , Deleted = true },
     ];
 
     private PersonDto TestPerson => new() { Cash = 50_250, Liabilities = Liabilities };
@@ -28,17 +28,17 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Liabilities.Where(l => !l.Deleted).Select(x => x.Type.AsString()).Append("Cancel");
+        var buttons = Liabilities.Where(l => !l.Deleted).Select(x => x.Type.GetDescription()).Append("Cancel");
         var message = $"*Cash:* $50,250{NL}{NL}*Car Loan:* $50,000 - $5,100 monthly{NL}*Boat Loan:* $5,000 - $500 monthly";
 
         // Act
 
         // Assert
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
             Assert.That(testStage.Buttons.ToList(), Is.EqualTo(buttons));
-        });
+        }
     }
 
     [TestCase("Car loan", 50_000)]
@@ -51,7 +51,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+        var liability = Liabilities.First(l => l.Type.GetDescription().Equals(message, StringComparison.InvariantCultureIgnoreCase));
         var nextStage = liability.AllowsPartialPayment ? typeof(ReduceLiabilitiesAmount) : typeof(ReduceLiabilitiesConfirm);
 
         var testPerson = TestPerson.Clone();
@@ -77,7 +77,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var liability = Liabilities.First(l => l.Type.AsString().Equals(message, StringComparison.InvariantCultureIgnoreCase));
+        var liability = Liabilities.First(l => l.Type.GetDescription().Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         var testPerson = TestPerson.Clone();
         testPerson.Cash = cash;
@@ -89,7 +89,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<ReduceLiabilities>());
         PersonServiceMock.Verify(p => p.Update(It.IsAny<UserDto>(), It.IsAny<LiabilityDto>()), Times.Never);
-        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have {required.AsCurrency()}, but only {cash.AsCurrency()}"), Times.Once);
+        NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, $"You don't have *{required.AsCurrency()}*, but only *{cash.AsCurrency()}*"), Times.Once);
     }
 
     [TestCase("Liability")]
