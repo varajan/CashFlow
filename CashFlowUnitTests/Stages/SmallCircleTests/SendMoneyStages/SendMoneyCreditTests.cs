@@ -83,7 +83,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, "Bank", transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, "Bank", transferAmount.AsCurrency(), Environment.NewLine);
 
         // Act
         await testStage.HandleMessage("Get credit");
@@ -122,7 +123,8 @@ public class SendMoneyCreditTests : StagesBaseTest
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency(), Environment.NewLine);
 
         // Act
         await testStage.HandleMessage("Get credit");

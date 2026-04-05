@@ -179,7 +179,7 @@ public class Terms
 
     public const string Transfer = "Transfer";
     public const string NotFound = "Not found";
-    public const string TransferMsg = "{0} transferred {2} to {1}.";
+    public const string TransferMsg = "{0} transferred {2} to {1}.{3}";
     public const string Whom = "Whom?";
     public const string WinnerName = "{0} is the winner!";
     public const string Bank = "Bank";

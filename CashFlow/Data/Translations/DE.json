@@ -145,7 +145,7 @@
   "On Big circle:": "Auf großem Kreis:",
   "Transfer": "Überweisung",
   "Not found": "Nicht gefunden",
-  "{0} transferred {2} to {1}.": "{0} überwies {2} an {1}.",
+  "{0} transferred {2} to {1}.{3}": "{0} überwies {2} an {1}.{3}",
   "Whom?": "Wem?",
   "{0} is the winner!": "{0} gewinnt das Spiel!",
   "Bank": "Bank",

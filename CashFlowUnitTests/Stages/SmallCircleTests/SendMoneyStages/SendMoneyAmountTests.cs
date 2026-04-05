@@ -97,7 +97,8 @@ public class SendMoneyAmountTests : StagesBaseTest
     {
         // Arrange
         var transferAmount = 100;
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency(), Environment.NewLine);
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         var testStage = GetTestStage();
@@ -152,7 +153,8 @@ public class SendMoneyAmountTests : StagesBaseTest
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([transferAsset]);
 
         var transferAmount = 100;
-        var message = string.Format("{0} transferred {2} to {1}.", CurrentUser.Name, "Bank", transferAmount.AsCurrency());
+        var message = string.Format("{0} transferred {2} to {1}.{3}",
+            CurrentUser.Name, "Bank", transferAmount.AsCurrency(), Environment.NewLine);
         var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
 
         var testStage = GetTestStage();
