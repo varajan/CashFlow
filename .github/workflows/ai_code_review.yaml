@@ -1,4 +1,4 @@
-name: AI Code Review
+name: AI Code Review (Gemini)
 
 on:
   pull_request:
@@ -10,7 +10,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
     steps:
       - name: Checkout repo
@@ -31,7 +31,9 @@ jobs:
           
           Analyze the following git diff.
           
-          Return STRICT JSON ONLY (no markdown, no code fences):
+          Return ONLY valid JSON. No markdown. No explanation.
+          
+          Format:
           {
             "summary": "short overall review",
             "comments": [
@@ -51,47 +53,42 @@ jobs:
           - Max 10 comments
           EOF
 
-      - name: Call OpenAI (with fallback model)
+      - name: Call Gemini API
         run: |
           set -e
 
-          request() {
-            MODEL=$1
-            curl https://api.openai.com/v1/responses \
-              -s \
-              -H "Authorization: Bearer $OPENAI_API_KEY" \
-              -H "Content-Type: application/json" \
-              -d @- <<EOF
-            {
-            "model": "$MODEL",
-            "input": "$(cat prompt.txt)\n\nDIFF:\n$(cat diff_small.txt)"
-            }
-            EOF
-        }
+          jq -n \
+            --arg prompt "$(cat prompt.txt)" \
+            --arg diff "$(cat diff_small.txt)" \
+            '{
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: ($prompt + "\n\nDIFF:\n" + $diff)
+                    }
+                  ]
+                }
+              ]
+            }' > request.json
 
-          echo "Calling primary model gpt-4.1-mini..."
-          request "gpt-4.1-mini" > response1.json
-
-          ERR_CODE=$(jq -r '.error.code // empty' response1.json)
-
-          if [ "$ERR_CODE" = "insufficient_quota" ]; then
-            echo "Primary quota exceeded, switching to fallback model gpt-4o-mini..."
-            request "gpt-4o-mini" > response.json
-          else
-            cp response1.json response.json
-          fi
+          curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
+            -s \
+            -H "Content-Type: application/json" \
+            -X POST \
+            --data @request.json > response.json
 
       - name: Extract AI result safely
         run: |
           set -e
 
-          jq -r '.output[0].content[0].text // empty' response.json \
+          jq -r '.candidates[0].content.parts[0].text // empty' response.json \
             | sed 's/```json//g' \
             | sed 's/```//g' \
             > ai_result.json
 
           if [ ! -s ai_result.json ]; then
-            echo '{"quota_error":true}' > ai_result.json
+            echo '{"summary":"No valid AI response","comments":[]}' > ai_result.json
           fi
 
       - name: Post review comments
@@ -106,21 +103,11 @@ jobs:
             try {
               data = JSON.parse(raw);
             } catch (e) {
-              data = null;
+              data = { summary: "AI returned invalid JSON", comments: [] };
             }
 
-            if (data?.quota_error === true) {
-              await github.rest.issues.createComment({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                body: "I'm tired for today, let's check tomorrow."
-              });
-              return;
-            }
-
-            const summary = data?.summary ?? "No summary";
-            const comments = Array.isArray(data?.comments) ? data.comments : [];
+            const summary = data.summary ?? "No summary";
+            const comments = Array.isArray(data.comments) ? data.comments : [];
 
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
