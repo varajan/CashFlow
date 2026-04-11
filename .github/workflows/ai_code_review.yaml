@@ -22,6 +22,7 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           git diff origin/${{ github.base_ref }} > diff.txt
+          head -c 30000 diff.txt > diff_small.txt
 
       - name: Build prompt
         run: |
@@ -54,13 +55,14 @@ jobs:
           - Max 10 comments
           EOF
 
-      - name: Call Gemini API
+
+      - name: Call Gemini API (with retry)
         run: |
           set -e
 
           jq -n \
             --arg prompt "$(cat prompt.txt)" \
-            --arg diff "$(cat diff.txt)" \
+            --arg diff "$(cat diff_small.txt)" \
             '{
               contents: [
                 {
@@ -73,11 +75,43 @@ jobs:
               ]
             }' > request.json
 
-          curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \
-            -s \
-            -H "Content-Type: application/json" \
-            -X POST \
-            --data @request.json > response.json
+          URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY"
+
+          MAX_RETRIES=5
+          attempt=0
+
+          until [ $attempt -ge $MAX_RETRIES ]
+          do
+            attempt=$((attempt+1))
+
+            echo "Attempt $attempt of $MAX_RETRIES..."
+
+            HTTP_CODE=$(curl -s -o response.json -w "%{http_code}" \
+              -H "Content-Type: application/json" \
+              -X POST \
+              --data @request.json \
+              "$URL")
+
+            # success
+            if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+              echo "Success on attempt $attempt"
+              break
+            fi
+
+            echo "Request failed with HTTP $HTTP_CODE"
+
+            # last attempt → fail
+            if [ $attempt -eq $MAX_RETRIES ]; then
+              echo "Max retries reached"
+              exit 1
+            fi
+
+            # exponential backoff: 2, 4, 8, 16...
+            sleep_time=$((2 ** attempt))
+            echo "Retrying in $sleep_time seconds..."
+            sleep $sleep_time
+
+          done
 
       - name: Extract AI result safely
         run: |
@@ -89,7 +123,7 @@ jobs:
             > ai_result.json
 
           if [ ! -s ai_result.json ]; then
-            echo '{"summary":"No valid AI response","comments":[]}' > ai_result.json
+            echo '{"summary":"No valid AI response, try again later.","comments":[]}' > ai_result.json
           fi
 
       - name: Post review comments
