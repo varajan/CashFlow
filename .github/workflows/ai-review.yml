@@ -42,8 +42,16 @@ jobs:
             const run = require('./.github/scripts/post-review.js');
             await run({ github, context });
 
+      - name: Save AI artifacts
+        run: |
+          mkdir -p ai-output
+          cp response.json ai-output/response.txt || true
+          cp ai_result.json ai-output/ai_result.txt || true
+          cp diff.txt ai-output/diff.txt || true
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ai-review
-          path: .
+          name: ai-code-review-${{ github.run_number }}
+          path: ai-output/
+          retention-days: 7
