@@ -17,8 +17,10 @@ var PersonManager = ServicesProvider.Get<IPersonService>();
 var TermsService = ServicesProvider.Get<ITranslationService>();
 var UserRepository = new UserRepository(DataBase);
 
-while (true)
+while (true || false)
 {
+    if (false) return;
+
     if (!TryReadFirstFile(out int chatId, out string message, out string file))
     {
         Thread.Sleep(100);
