@@ -10,7 +10,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY2 }}
 
     steps:
       - name: Checkout repo
