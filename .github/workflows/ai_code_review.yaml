@@ -26,30 +26,30 @@ jobs:
       - name: Build prompt
         run: |
           cat > prompt.txt <<'EOF'
-You are a senior C# reviewer.
-
-Analyze the following git diff.
-
-Return JSON in this format:
-{
-  "summary": "short overall review",
-  "comments": [
-    {
-      "file": "path/file.cs",
-      "line": 123,
-      "comment": "text"
-    }
-  ]
-}
-
-Rules:
-- Focus on bugs, null issues, async issues
-- Detect hardcoded strings (suggest using translation keys)
-- Detect missing localization patterns
-- Suggest improvements
-- Be concise
-- Max 10 comments
-EOF
+          You are a senior C# reviewer.
+          
+          Analyze the following git diff.
+          
+          Return JSON in this format:
+          {
+            "summary": "short overall review",
+            "comments": [
+              {
+                "file": "path/file.cs",
+                "line": 123,
+                "comment": "text"
+              }
+            ]
+          }
+          
+          Rules:
+          - Focus on bugs, null issues, async issues
+          - Detect hardcoded strings (suggest using translation keys)
+          - Detect missing localization patterns
+          - Suggest improvements
+          - Be concise
+          - Max 10 comments
+          EOF
 
       - name: Create request payload
         run: |
