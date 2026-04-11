@@ -22,7 +22,6 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           git diff origin/${{ github.base_ref }} > diff.txt
-          head -c 20000 diff.txt > diff_small.txt
 
       - name: Build prompt
         run: |
@@ -32,6 +31,8 @@ jobs:
           Analyze the following git diff.
           
           Return ONLY valid JSON. No markdown. No explanation.
+          
+          Add short code suggestion or pattern to apply.
           
           Format:
           {
@@ -59,7 +60,7 @@ jobs:
 
           jq -n \
             --arg prompt "$(cat prompt.txt)" \
-            --arg diff "$(cat diff_small.txt)" \
+            --arg diff "$(cat diff.txt)" \
             '{
               contents: [
                 {
@@ -146,7 +147,7 @@ jobs:
           mkdir -p ai-output
           cp response.json ai-output/response.json || true
           cp ai_result.json ai-output/ai_result.json || true
-          cp diff_small.txt ai-output/diff.txt || true
+          cp diff.txt ai-output/diff.txt || true
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
