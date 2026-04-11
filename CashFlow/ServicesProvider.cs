@@ -124,7 +124,7 @@ public static class ServicesProvider
         services.AddTransient<BuyBigBusinessPrice>();
         services.AddTransient<BuyBigBusinessFirstPayment>();
         services.AddTransient<BuyBigBusinessCashFlow>();
-        
+
         Instance = services.BuildServiceProvider();
     }
 

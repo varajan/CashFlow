@@ -41,7 +41,7 @@ public class SendMoneyCredit(
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 var person = PersonService.Read(CurrentUser);
-                
+
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);

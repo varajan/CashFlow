@@ -8,7 +8,7 @@ namespace CashFlowBotSystemTests.Steps;
 public class BusinessSteps(StepsContext context) : BaseSteps(context)
 {
     [Given("(I|.*) buy(|s) businesses:")]
-    [When ("(I|.*) buy(|s) businesses:")]
+    [When("(I|.*) buy(|s) businesses:")]
     public void BuyRealEstate(string name, string _, Table table)
     {
         var user = GetUser(name);

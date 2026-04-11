@@ -187,7 +187,7 @@ public class SendMoneyAmountTests : StagesBaseTest
             x.Cash == TestPerson.Cash - transferAmount)
             ), Times.Once);
 
-        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x =>x.Id == RecipientPerson.Id)), Times.Never);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(x => x.Id == RecipientPerson.Id)), Times.Never);
 
         PersonServiceMock.Verify(x => x.AddHistory(ActionType.PayMoney, transferAmount, CurrentUser), Times.Once);
         PersonServiceMock.Verify(x => x.AddHistory(ActionType.GetMoney, transferAmount, Recipient), Times.Never);

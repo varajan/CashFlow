@@ -32,7 +32,7 @@ public class BigCircleSteps(StepsContext context) : BaseSteps(context)
     }
 
     [Given("(.*) buys big businesses:")]
-    [When ("(.*) buys big businesses:")]
+    [When("(.*) buys big businesses:")]
     public void BuyRealEstate(string name, Table table)
     {
         var user = GetUser(name);

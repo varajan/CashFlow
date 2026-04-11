@@ -107,7 +107,7 @@ public class ShowMyDataTests : StagesBaseTest
             Id = CurrentUser.Id,
             Cash = cash,
             Salary = salary,
-            Assets = [ new() { CashFlow = cashFlow } ],
+            Assets = [new() { CashFlow = cashFlow }],
         };
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);

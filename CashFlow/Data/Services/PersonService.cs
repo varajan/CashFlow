@@ -22,7 +22,7 @@ public class PersonService(IPersonRepository personRepository, IDataBase dataBas
     {
         profession = Terms.Translate(profession, user.Language, Language.EN);
         var person = PersonRepository.GetDefault(profession, user.Id);
-        
+
         if (PersonRepository.Exists(user.Id))
             PersonRepository.Delete(user.Id);
 

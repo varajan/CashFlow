@@ -9,7 +9,7 @@ public class BuyCoinsCount(
     IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    IUserRepository userRepository) : BuyCoins(termsService, userService,availableAssets, personManager, userRepository)
+    IUserRepository userRepository) : BuyCoins(termsService, userService, availableAssets, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 

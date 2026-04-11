@@ -1,5 +1,5 @@
-﻿using CashFlow.Data.Consts;
-using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.DTOs;
+using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 

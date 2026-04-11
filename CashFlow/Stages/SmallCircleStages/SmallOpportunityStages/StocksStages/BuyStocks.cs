@@ -18,7 +18,8 @@ public class BuyStocksCount(
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetCount<BuyStocksCredit, BuyStocksCashFlow>(
-        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, availableAssets, personManager, userRepository) { }
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, availableAssets, personManager, userRepository)
+{ }
 
 public class BuyStocksCredit(
     ITranslationService termsService, IUserService userService,

@@ -79,7 +79,7 @@ public class SendMoneyAmount(
         var bank = TranslationService.Get(Terms.Bank, CurrentUser);
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = TranslationService.Get(Terms.TransferMsg, CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = TranslationService.Get(Terms.TransferMsg, CurrentUser, CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
                 .Where(UserService.IsActive)
                 .Append(CurrentUser)

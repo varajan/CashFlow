@@ -53,7 +53,7 @@ public class GetMoney(ITranslationService termsService, IUserService userService
         var person = PersonService.Read(CurrentUser);
         var amount = message.AsCurrency();
 
-        if (person.BigCircle && amount <=0)
+        if (person.BigCircle && amount <= 0)
         {
             await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;

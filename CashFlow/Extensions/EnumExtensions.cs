@@ -17,14 +17,14 @@ public static class EnumExtensions
     }
 
     public static ActionType AsActionType(this Liability liability) => liability switch
-        {
-            Liability.Mortgage => ActionType.Mortgage,
-            Liability.SchoolLoan => ActionType.SchoolLoan,
-            Liability.CarLoan => ActionType.CarLoan,
-            Liability.CreditCard => ActionType.CreditCard,
-            Liability.SmallCredit => ActionType.SmallCredit,
-            Liability.BankLoan => ActionType.BankLoan,
-            Liability.BoatLoan => ActionType.PayOffBoat,
-            _ => throw new InvalidOperationException($"Unknown liability type: {liability}")
-        };
+    {
+        Liability.Mortgage => ActionType.Mortgage,
+        Liability.SchoolLoan => ActionType.SchoolLoan,
+        Liability.CarLoan => ActionType.CarLoan,
+        Liability.CreditCard => ActionType.CreditCard,
+        Liability.SmallCredit => ActionType.SmallCredit,
+        Liability.BankLoan => ActionType.BankLoan,
+        Liability.BoatLoan => ActionType.PayOffBoat,
+        _ => throw new InvalidOperationException($"Unknown liability type: {liability}")
+    };
 }

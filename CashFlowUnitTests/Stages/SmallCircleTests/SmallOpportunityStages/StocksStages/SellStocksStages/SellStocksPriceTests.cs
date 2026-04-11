@@ -13,7 +13,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 public class SellStocksPriceTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
-    private static readonly List<string> AvailablePrices = [ "$100", "$500", "$1,000", ];
+    private static readonly List<string> AvailablePrices = ["$100", "$500", "$1,000",];
 
     private static List<AssetDto> Assets =>
     [

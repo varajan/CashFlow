@@ -14,7 +14,7 @@ public class BaseSteps(StepsContext context)
         : Context.Users.First(u => u.Name.Equals(name));
 
     protected Bot Bot => Context.Bot;
-    protected static Bot GetBot(FeatureContext featureContext) => new (featureContext.FeatureInfo.Title);
+    protected static Bot GetBot(FeatureContext featureContext) => new(featureContext.FeatureInfo.Title);
 }
 
 [Binding]
@@ -38,8 +38,8 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     }
 
     [Given("(I|.*) say(|s) '(.*)'")]
-    [When ("(I|.*) say(|s) '(.*)'")]
-    [Then ("(I|.*) say(|s) '(.*)'")]
+    [When("(I|.*) say(|s) '(.*)'")]
+    [Then("(I|.*) say(|s) '(.*)'")]
     public void Say(string name, string _, string text) => GetUser(name).SendMessage(text);
 
     [Then("My last message contains '(.*)'")]
@@ -71,7 +71,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     }
 
     [Given(@"(.*) get(|s) (.*) in cash")]
-    [When (@"(.*) get(|s) (.*) in cash")]
+    [When(@"(.*) get(|s) (.*) in cash")]
     public void GetMoney(string name, string _, string amount)
     {
         var user = GetUser(name);

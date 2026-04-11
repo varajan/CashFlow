@@ -29,7 +29,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
             var person = PersonService.Read(CurrentUser);
 
             return person.GetBigCircleCashflow() >= person.TargetCashFlow
-            ? [ History, StopGame ]
+            ? [History, StopGame]
             : [
                 TranslationService.Get(Terms.Paycheck, CurrentUser),
                 TranslationService.Get(Terms.GetMoney, CurrentUser),
@@ -180,7 +180,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
 
         if (MessageEquals(message, Terms.Friends))
         {
-            NextStage = New< Friends>();
+            NextStage = New<Friends>();
             return;
         }
 

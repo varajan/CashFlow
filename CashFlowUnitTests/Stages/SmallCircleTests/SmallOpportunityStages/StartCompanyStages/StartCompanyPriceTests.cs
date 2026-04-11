@@ -9,7 +9,7 @@ using Moq;
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.StartCompanyStages;
 
 [TestFixture]
-public class StartCompanyPriceTests: StagesBaseTest
+public class StartCompanyPriceTests : StagesBaseTest
 {
     private static readonly string[] CompanyPrices = ["$100", "$500"];
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.SmallBusinessType, IsDraft = true };

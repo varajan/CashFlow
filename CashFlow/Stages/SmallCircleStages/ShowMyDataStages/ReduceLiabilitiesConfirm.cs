@@ -54,7 +54,7 @@ public class ReduceLiabilitiesConfirm(ITranslationService termsService, IUserSer
         liability.MarkedForReduction = false;
         liability.Deleted = true;
         person.Cash -= amount;
-        
+
         PersonService.Update(person);
         PersonService.Update(CurrentUser, liability);
         PersonService.AddHistory(liability.Type.AsActionType(), amount, CurrentUser);

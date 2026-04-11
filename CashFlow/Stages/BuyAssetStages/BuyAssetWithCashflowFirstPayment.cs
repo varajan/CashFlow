@@ -19,7 +19,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-    
+
     public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
@@ -35,7 +35,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         var number = message.AsCurrency();
-        if (number <  0 && asset.Type != AssetType.BigBusinessType ||
+        if (number < 0 && asset.Type != AssetType.BigBusinessType ||
             number <= 0 && asset.Type == AssetType.BigBusinessType)
         {
             await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));

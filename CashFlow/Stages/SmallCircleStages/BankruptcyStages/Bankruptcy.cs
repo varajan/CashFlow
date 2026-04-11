@@ -7,7 +7,7 @@ public class Bankruptcy(ITranslationService termsService, IUserService userServi
 {
     public override string Message => TranslationService.Get(Terms.GameOver, CurrentUser);
 
-    public override IEnumerable<string> Buttons => [ StopGame, History ];
+    public override IEnumerable<string> Buttons => [StopGame, History];
 
     public override Task HandleMessage(string message)
     {

@@ -7,7 +7,7 @@ public abstract class ConfirmStage(ITranslationService termsService, IUserServic
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(question, CurrentUser);
-    public override List<string> Buttons => [ Yes, Cancel ];
+    public override List<string> Buttons => [Yes, Cancel];
 
     public async override Task HandleMessage(string message)
     {
@@ -22,7 +22,7 @@ public abstract class ConfirmStage(ITranslationService termsService, IUserServic
     }
 
     protected bool IsConfirmed(string message) => MessageEquals(message, Terms.Yes);
-    
+
     protected abstract Task OnConfirmed();
 
     protected virtual async Task OnDismiss()

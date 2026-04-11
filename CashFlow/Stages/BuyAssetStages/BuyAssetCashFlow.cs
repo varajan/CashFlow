@@ -33,7 +33,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
         asset.CashFlow = message.AsCurrency();
         asset.IsDraft = false;
         PersonService.UpdateAsset(CurrentUser, asset);
-        
+
         var person = PersonService.Read(CurrentUser);
         var amount = asset.Price * asset.Qtty - asset.Mortgage;
         person.Cash -= amount;

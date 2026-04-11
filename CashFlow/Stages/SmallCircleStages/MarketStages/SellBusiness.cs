@@ -12,5 +12,5 @@ public class SellBusinessPrice(
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository) :
-    SellAssetPrice(termsService, userService,availableAssets, personManager, userRepository, AssetType.Business, AssetType.SmallBusinessType)
+    SellAssetPrice(termsService, userService, availableAssets, personManager, userRepository, AssetType.Business, AssetType.SmallBusinessType)
 { }

@@ -13,7 +13,7 @@ public class TranslationService : ITranslationService
     private Dictionary<string, string> GetDictionary(Language language)
     {
         var translationsPath = $"{AppDomain.CurrentDomain.BaseDirectory}/Data/Translations/{language}.json";
-        
+
         if (Translations.ContainsKey(language))
             return Translations[language];
 

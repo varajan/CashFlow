@@ -38,7 +38,7 @@ public class ReduceLiabilities(ITranslationService termsService, IUserService us
 
     public async override Task HandleMessage(string message)
     {
-        if ( IsCanceled(message))
+        if (IsCanceled(message))
         {
             NextStage = New<Start>();
             return;
