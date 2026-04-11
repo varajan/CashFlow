@@ -46,7 +46,7 @@ jobs:
           }
           
           Rules:
-          - Focus on bugs, null issues, async issues
+          - Focus on architecture issues, bugs, null issues, async issues
           - Detect hardcoded strings
           - Detect missing localization patterns
           - Suggest improvements
@@ -106,7 +106,7 @@ jobs:
               data = { summary: "AI returned invalid JSON", comments: [] };
             }
 
-            const summary = data.summary ?? "No summary";
+            const summary = data.summary ?? "Nothing from my side";
             const comments = Array.isArray(data.comments) ? data.comments : [];
 
             await github.rest.issues.createComment({
