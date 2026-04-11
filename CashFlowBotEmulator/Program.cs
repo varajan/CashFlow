@@ -11,6 +11,7 @@ ServicesProvider.Add<INotifyService>(new EmulationNotifyService());
 
 var Logger = ServicesProvider.Get<ILogger>();
 var DataBase = ServicesProvider.Get<IDataBase>();
+var UserService = ServicesProvider.Get<IUserService>();
 var PersonRepository = ServicesProvider.Get<IPersonRepository>();
 var PersonManager = ServicesProvider.Get<IPersonService>();
 var TermsService = ServicesProvider.Get<ITranslationService>();
@@ -30,7 +31,8 @@ while (true)
 
     if (message == "CHECK")
     {
-        await new UserDto { Id = 0 }.Notify("OK");
+        UserDto test = new() { Id = 0 };
+        await UserService.Notify(test, "OK");
         continue;
     }
 

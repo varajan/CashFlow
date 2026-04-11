@@ -7,9 +7,10 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class IncreaseCashflow(
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+    IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
@@ -28,7 +29,7 @@ public class IncreaseCashflow(
         var cashflow = message.AsCurrency();
         if (cashflow <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -41,7 +42,7 @@ public class IncreaseCashflow(
             PersonService.AddHistory(ActionType.IncreaseCashFlow, cashflow, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

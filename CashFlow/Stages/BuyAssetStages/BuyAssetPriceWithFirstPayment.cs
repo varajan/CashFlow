@@ -8,10 +8,11 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
@@ -30,7 +31,7 @@ public abstract class BuyAssetPriceWithFirstPayment<TNextStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 

@@ -1,5 +1,4 @@
-﻿using CashFlow.Extensions;
-using CashFlow.Stages;
+﻿using CashFlow.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages;
@@ -13,7 +12,7 @@ public class FriendsTests : StagesBaseTest
     public void Friends_Question_and_Buttons(bool onSmall, bool onBig)
     {
         // Arrange
-        OtherUsers = OtherUsers.Where(u => u.IsActive() && (u.Name.Contains("Big") == onBig || u.Name.Contains("Small") == onSmall)).ToList();
+        OtherUsers = OtherUsers.Where(u => u.Name.Contains("Active") && (u.Name.Contains("Big") == onBig || u.Name.Contains("Small") == onSmall)).ToList();
         UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
 
         var testStage = GetTestStage();
@@ -35,7 +34,7 @@ public class FriendsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var testUser = OtherUsers.First(u => u.IsActive());
+        var testUser = OtherUsers.First(u => u.Name.Contains("Active"));
         var description = $"{testUser.Name} description";
         var top5 = $"{testUser.Name} history";
 
@@ -55,7 +54,7 @@ public class FriendsTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var testUser = OtherUsers.First(u => !u.IsActive());
+        var testUser = OtherUsers.First(u => u.Name.Contains("Inactive"));
 
         // Act
         await testStage.HandleMessage(testUser.Name.ToLower());

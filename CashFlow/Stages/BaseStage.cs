@@ -14,16 +14,18 @@ public abstract class BaseStage : IStage
     public virtual IEnumerable<string> Buttons => default;
     public virtual IStage NextStage { get; set; }
     protected ITranslationService TranslationService { get; }
+    protected IUserService UserService { get; }
     protected IPersonService PersonService { get; }
     protected IUserRepository UserRepository { get; }
 
     public IList<UserDto> OtherUsers => [.. UserRepository.GetAll().Where(u => u.Id != CurrentUser.Id)];
 
-    public BaseStage(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
+    public BaseStage(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     {
         TranslationService = termsService;
         PersonService = personManager;
         UserRepository = userRepository;
+        UserService = userService;
         NextStage = this;
     }
 
@@ -37,7 +39,7 @@ public abstract class BaseStage : IStage
 
     public virtual Task BeforeStage() { return Task.CompletedTask; }
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
-    public Task SetButtons() => CurrentUser.SetButtons(this);
+    public Task SetButtons() => UserService.SetButtons(CurrentUser, this);
 
     public static IStage GetCurrentStage(UserDto currentUser)
     {
@@ -75,7 +77,7 @@ public abstract class BaseStage : IStage
         var isCashFlowPositive = person.GetSmallCircleCashflow() >= 0;
         if (isCashFlowPositive)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.DebtRecovered, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.DebtRecovered, CurrentUser));
 
             person.Bankruptcy = false;
             PersonService.Update(person);
@@ -98,7 +100,7 @@ public abstract class BaseStage : IStage
             PersonService.Update(CurrentUser, liability);
         }
         PersonService.Update(person);
-        await CurrentUser.Notify(TranslationService.Get(Terms.DebtRestructDetails, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.DebtRestructDetails, CurrentUser));
         PersonService.AddHistory(ActionType.BankruptcyDebtRestructuring, 0, CurrentUser);
     }
 

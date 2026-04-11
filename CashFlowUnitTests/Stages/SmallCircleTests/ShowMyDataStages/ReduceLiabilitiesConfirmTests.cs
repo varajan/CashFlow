@@ -42,7 +42,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
     [Test]
-    public async Task ReduceLiabilitiesConfirm_CanBeCanceled([Values ("Cancel", "No", "123")] string value)
+    public async Task ReduceLiabilitiesConfirm_CanBeCanceled([Values("Cancel", "No", "123")] string value)
     {
         // Arrange
         var testStage = GetTestStage();

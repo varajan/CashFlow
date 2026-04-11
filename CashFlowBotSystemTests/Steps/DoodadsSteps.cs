@@ -17,7 +17,7 @@ public class DoodadsSteps(StepsContext context) : BaseSteps(context)
     }
 
     [Given("(I|.*) buy(|s) a boat")]
-    [When ("(I|.*) buy(|s) a boat")]
+    [When("(I|.*) buy(|s) a boat")]
     public void BuyBoat(string name, string _)
     {
         var user = GetUser(name);

@@ -7,9 +7,10 @@ namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStage
 
 public class BuyCoinsPrice(
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    IUserRepository userRepository) : BuyCoins(termsService, availableAssets, personManager, userRepository)
+    IUserRepository userRepository) : BuyCoins(termsService, userService, availableAssets, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
@@ -26,7 +27,7 @@ public class BuyCoinsPrice(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -57,6 +58,6 @@ public class BuyCoinsPrice(
 
         PersonService.AddHistory(ActionType.BuyCoins, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

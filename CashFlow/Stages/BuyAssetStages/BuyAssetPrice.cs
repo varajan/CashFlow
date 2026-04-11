@@ -9,11 +9,11 @@ public abstract class BuyAssetPrice<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
@@ -33,7 +33,7 @@ public abstract class BuyAssetPrice<TNextStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -63,6 +63,6 @@ public abstract class BuyAssetPrice<TNextStage>(
 
         PersonService.AddHistory(ActionType, asset.Price, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

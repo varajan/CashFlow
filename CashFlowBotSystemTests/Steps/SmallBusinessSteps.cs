@@ -8,7 +8,7 @@ namespace CashFlowBotSystemTests.Steps;
 public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
 {
     [Given(@"(I|.*) start(|s) the (Auto Tools|Computer Programs) company with (.*)")]
-    [When (@"(I|.*) start(|s) the (Auto Tools|Computer Programs) company with (.*)")]
+    [When(@"(I|.*) start(|s) the (Auto Tools|Computer Programs) company with (.*)")]
     public void StartCompany(string name, string _, string title, string price)
     {
         var user = GetUser(name);
@@ -40,7 +40,7 @@ public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
     }
 
     [Given(@"(I|.*) increase(|s) the cash flow of my small business by (.*)")]
-    [When (@"(I|.*) increase(|s) the cash flow of my small business by (.*)")]
+    [When(@"(I|.*) increase(|s) the cash flow of my small business by (.*)")]
     public void IncreaseCashFlow(string name, string _, string amount)
     {
         var user = GetUser(name);

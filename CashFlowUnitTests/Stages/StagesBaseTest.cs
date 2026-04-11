@@ -14,6 +14,7 @@ public abstract class StagesBaseTest
     protected Mock<IAvailableAssetsRepository> AvailableAssetsMock;
     protected Mock<IPersonService> PersonServiceMock;
     protected Mock<INotifyService> NotifyServiceMock;
+    protected Mock<IUserService> UserServiceMock;
     protected Mock<IUserRepository> UserRepositoryMock;
     protected Mock<IPersonRepository> PersonRepositoryMock;
     protected Mock<ITranslationService> TermsServiceMock;
@@ -47,6 +48,7 @@ public abstract class StagesBaseTest
     private void InitMocks()
     {
         AvailableAssetsMock = new Mock<IAvailableAssetsRepository>();
+        UserServiceMock = new Mock<IUserService>();
         UserRepositoryMock = new Mock<IUserRepository>();
         PersonServiceMock = new Mock<IPersonService>();
         PersonRepositoryMock = new Mock<IPersonRepository>();

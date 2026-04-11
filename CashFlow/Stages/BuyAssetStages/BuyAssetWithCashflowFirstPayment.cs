@@ -8,17 +8,18 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
     AssetType assetName,
     AssetType assetType,
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-     : BaseStage(termsService, personManager, userRepository)
+     : BaseStage(termsService, userService, personManager, userRepository)
         where TNextStage : BaseStage
         where TCreditStage : BaseStage
 {
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-    
+
     public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
 
@@ -34,10 +35,10 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         var number = message.AsCurrency();
-        if (number <  0 && asset.Type != AssetType.BigBusinessType ||
+        if (number < 0 && asset.Type != AssetType.BigBusinessType ||
             number <= 0 && asset.Type == AssetType.BigBusinessType)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
             NextStage = this;
             return;
         }
@@ -49,7 +50,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         if (person.Cash < number && asset.Type == AssetType.BigBusinessType)
         {
             PersonService.DeleteAsset(CurrentUser, asset);
-            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
         }
 
         NextStage = person.Cash < number

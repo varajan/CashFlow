@@ -8,7 +8,7 @@ using Moq;
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.SellStocksStages;
 
 [TestFixture]
-public class SellStocksTests: StagesBaseTest
+public class SellStocksTests : StagesBaseTest
 {
     private static readonly List<AssetDto> Assets =
     [

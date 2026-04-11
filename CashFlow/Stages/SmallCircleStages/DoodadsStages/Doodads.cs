@@ -5,8 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class Doodads(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class Doodads(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
@@ -50,7 +50,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
         var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.AlreadyBoat, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.AlreadyBoat, CurrentUser));
             return;
         }
 
@@ -61,7 +61,7 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
             person.GetCredit(firstPayment);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, firstPayment, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, firstPayment.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, firstPayment.AsCurrency()));
         }
 
         boat = new AssetDto
@@ -86,6 +86,6 @@ public class Doodads(ITranslationService termsService, IPersonService personMana
             boat.Price.AsCurrency(),
             firstPayment.AsCurrency(),
             Math.Abs(boat.CashFlow).AsCurrency());
-        await CurrentUser.Notify(message);
+        await UserService.Notify(CurrentUser, message);
     }
 }

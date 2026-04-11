@@ -11,7 +11,6 @@ using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests;
@@ -80,7 +79,7 @@ public class SmallCircleStageTests : StagesBaseTest
         // Arrange
         if (noActiveUsers)
         {
-            OtherUsers = OtherUsers.Where(x => !x.IsActive()).ToList();
+            OtherUsers = OtherUsers.Where(x => x.Name.Contains("Inactive")).ToList();
             UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
         }
 
@@ -205,7 +204,7 @@ public class SmallCircleStageTests : StagesBaseTest
         var testPerson = TestPerson.Clone();
         var message = $"You were fired. You've payed total amount of your expenses: *{downsizeAmount.AsCurrency()}* and lose 2 turns.";
 
-        testPerson.Liabilities = [ new() { Cashflow = -downsizeAmount} ];
+        testPerson.Liabilities = [new() { Cashflow = -downsizeAmount }];
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 
         // Act
@@ -239,8 +238,8 @@ public class SmallCircleStageTests : StagesBaseTest
 
         var expenses = testPerson.PerChild * (children + 1);
         var message = children == 0
-            ? $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} child."
-            : $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children+1} children.";
+            ? $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children + 1} child."
+            : $"{testPerson.Profession}, you have *{expenses.AsCurrency()}* children expenses and {children + 1} children.";
 
         // Act
         await testStage.HandleMessage("baby");

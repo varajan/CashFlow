@@ -6,7 +6,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ReduceLiabilitiesAmount(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
@@ -47,13 +47,13 @@ public class ReduceLiabilitiesAmount(ITranslationService termsService, IPersonSe
         var amount = message.AsCurrency();
         if (amount % 1000 > 0 || amount < 1000)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidAmount, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidAmount, CurrentUser));
             return;
         }
 
         if (amount > person.Cash)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency()));
             return;
         }
 

@@ -5,9 +5,9 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class Friends(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class Friends(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
-    private IList<UserDto> ActiveUsers => OtherUsers.Where(x => x.IsActive()).ToList();
+    private IList<UserDto> ActiveUsers => OtherUsers.Where(UserService.IsActive).ToList();
 
     public override string Message
     {
@@ -44,7 +44,7 @@ public class Friends(ITranslationService termsService, IPersonService personMana
         var description = PersonService.GetDescription(friend);
         var topFive = PersonService.HistoryTopFive(friend, CurrentUser);
 
-        await CurrentUser.Notify(description);
-        await CurrentUser.Notify(topFive);
+        await UserService.Notify(CurrentUser, description);
+        await UserService.Notify(CurrentUser, topFive);
     }
 }

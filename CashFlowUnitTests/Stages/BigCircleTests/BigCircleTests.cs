@@ -5,7 +5,6 @@ using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
@@ -68,7 +67,7 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
 
         // Act
         await testStage.BeforeStage();
@@ -86,7 +85,7 @@ public class BigCircleTests : StagesBaseTest
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
 
         // Act
         await testStage.BeforeStage();

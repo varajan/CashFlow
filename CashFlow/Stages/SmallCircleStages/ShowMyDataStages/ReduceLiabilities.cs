@@ -6,7 +6,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilities(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ReduceLiabilities(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     private IEnumerable<LiabilityDto> Liabilities => PersonService.Read(CurrentUser).Liabilities.Where(l => l.FullAmount > 0);
 
@@ -38,7 +38,7 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
 
     public async override Task HandleMessage(string message)
     {
-        if ( IsCanceled(message))
+        if (IsCanceled(message))
         {
             NextStage = New<Start>();
             return;
@@ -57,7 +57,7 @@ public class ReduceLiabilities(ITranslationService termsService, IPersonService 
         var minPaymentAmount = liability.AllowsPartialPayment ? 1_000 : liability.FullAmount;
         if (person.Cash < minPaymentAmount)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughAmount, CurrentUser,
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotEnoughAmount, CurrentUser,
                 minPaymentAmount.AsCurrency(),
                 person.Cash.AsCurrency()));
             return;

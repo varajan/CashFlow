@@ -5,8 +5,8 @@ using CashFlow.Stages.SmallCircleStages;
 
 namespace CashFlow.Stages;
 
-public class ChooseProfession(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class ChooseProfession(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.ChooseProfession, CurrentUser);
     public override IEnumerable<string> Buttons => Professions.Append(TranslationService.Get(Terms.PickRandom, CurrentUser));

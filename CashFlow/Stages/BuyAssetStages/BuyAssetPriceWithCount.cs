@@ -7,11 +7,11 @@ namespace CashFlow.Stages.BuyAssetStages;
 public class BuyAssetPriceWithCount<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
     public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
@@ -31,7 +31,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
 
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidQty, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidQty, CurrentUser));
             return;
         }
 

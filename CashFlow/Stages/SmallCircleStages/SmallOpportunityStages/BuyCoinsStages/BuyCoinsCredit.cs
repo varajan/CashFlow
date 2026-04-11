@@ -5,10 +5,10 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoinsCredit(
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository assets,
     IPersonService personManager,
-    IUserRepository userRepository) : BuyCoinsPrice(termsService, assets, personManager, userRepository)
+    IUserRepository userRepository) : BuyCoinsPrice(termsService, userService, assets, personManager, userRepository)
 {
     public override string Message
     {
@@ -43,7 +43,7 @@ public class BuyCoinsCredit(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

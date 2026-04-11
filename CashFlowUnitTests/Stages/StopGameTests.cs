@@ -16,7 +16,7 @@ public class StopGameTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.Message, Is.EqualTo("Are you sure want to stop current game?"));
-        Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Yes", "Cancel" } ));
+        Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Yes", "Cancel" }));
     }
 
     [Test]

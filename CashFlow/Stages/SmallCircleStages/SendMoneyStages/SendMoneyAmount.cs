@@ -8,8 +8,9 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoneyAmount(
     IPersonService personManager,
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
-    IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+    IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
@@ -44,7 +45,7 @@ public class SendMoneyAmount(
 
         if (amount <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -61,7 +62,7 @@ public class SendMoneyAmount(
         {
             PersonService.DeleteAsset(CurrentUser, asset);
             NextStage = New<Start>();
-            await CurrentUser.Notify(TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
             return;
         }
 
@@ -78,9 +79,9 @@ public class SendMoneyAmount(
         var bank = TranslationService.Get(Terms.Bank, CurrentUser);
         var amount = asset.Qtty;
         var friend = OtherUsers.FirstOrDefault(x => x.Name == asset.Title);
-        var message = TranslationService.Get(Terms.TransferMsg, CurrentUser, CurrentUser.Name , friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
+        var message = TranslationService.Get(Terms.TransferMsg, CurrentUser, CurrentUser.Name, friend?.Name ?? bank, amount.AsCurrency(), Environment.NewLine);
         var users = OtherUsers
-                .Where(x => x.IsActive())
+                .Where(UserService.IsActive)
                 .Append(CurrentUser)
                 .ToList();
 
@@ -99,7 +100,7 @@ public class SendMoneyAmount(
 
         PersonService.DeleteAsset(CurrentUser, asset);
 
-        var notifyAll = users.Select(u => u.Notify(message));
+        var notifyAll = users.Select(u => UserService.Notify(u, message));
         await Task.WhenAll(notifyAll);
         NextStage = New<Start>();
     }

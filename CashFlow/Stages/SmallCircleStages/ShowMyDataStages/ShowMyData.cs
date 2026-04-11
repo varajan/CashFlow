@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ShowMyData(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class ShowMyData(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => PersonService.GetDescription(CurrentUser, false);
 
@@ -58,7 +58,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
             return;
         }
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.NoLiabilities, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoLiabilities, CurrentUser));
         NextStage = New<Start>();
     }
 
@@ -70,7 +70,7 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
         if (person.Cash < amount)
         {
             var notEnoughCashMsg = TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
-            await CurrentUser.Notify(notEnoughCashMsg);
+            await UserService.Notify(CurrentUser, notEnoughCashMsg);
             return;
         }
 
@@ -79,6 +79,6 @@ public class ShowMyData(ITranslationService termsService, IPersonService personM
         PersonService.AddHistory(ActionType.Charity, amount, CurrentUser);
 
         var message = TranslationService.Get(Terms.CharityResult, CurrentUser, amount.AsCurrency());
-        await CurrentUser.Notify(message);
+        await UserService.Notify(CurrentUser, message);
     }
 }

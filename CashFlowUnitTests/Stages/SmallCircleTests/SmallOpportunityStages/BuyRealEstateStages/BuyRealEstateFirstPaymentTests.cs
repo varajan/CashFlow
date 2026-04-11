@@ -104,7 +104,7 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
-            PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft) ), Times.Once);
+            PersonServiceMock.Verify(a => a.UpdateAsset(CurrentUser, It.Is<AssetDto>(x => x.Price == firstPayment && x.IsDraft)), Times.Once);
         }
     }
 

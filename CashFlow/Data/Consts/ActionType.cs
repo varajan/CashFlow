@@ -14,7 +14,7 @@ public enum ActionType
     Child,
 
     Downsize,
-    
+
     [Description("Get Credit")]
     Credit,
 

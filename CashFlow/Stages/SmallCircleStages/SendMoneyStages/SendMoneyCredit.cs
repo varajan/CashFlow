@@ -7,8 +7,9 @@ namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 public class SendMoneyCredit(
     IPersonService personManager,
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
-    IUserRepository userRepository) : SendMoneyAmount(personManager, termsService, availableAssets, userRepository)
+    IUserRepository userRepository) : SendMoneyAmount(personManager, termsService, userService, availableAssets, userRepository)
 {
     public override string Message
     {
@@ -40,11 +41,11 @@ public class SendMoneyCredit(
                 var delta = asset.Qtty - currentUserPerson.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
                 var person = PersonService.Read(CurrentUser);
-                
+
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await Transfer(asset);
 
                 NextStage = New<Start>();

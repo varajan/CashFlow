@@ -88,7 +88,8 @@ public class GetCreditTests : StagesBaseTest
         {
             Id = CurrentUser.Id,
             Cash = initialCash,
-            Liabilities = [new() { Type = Liability.BankLoan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow } ] };
+            Liabilities = [new() { Type = Liability.BankLoan, FullAmount = initialLoanAmount, Cashflow = initialLoanCashflow }]
+        };
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);
 

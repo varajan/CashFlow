@@ -1,5 +1,5 @@
-﻿using CashFlow.Data.Consts;
-using CashFlow.Data.DTOs;
+﻿using CashFlow.Data.DTOs;
+using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -9,11 +9,11 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
 
@@ -34,7 +34,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
         var number = message.AsCurrency();
         if (number < 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
             NextStage = this;
             return;
         }
@@ -66,6 +66,6 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
 
         PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
     }
 }

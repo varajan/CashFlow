@@ -9,11 +9,11 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TCreditStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository)
+    : BuyAsset<TCreditStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository)
         where TCreditStage : BaseStage
         where TCashFlowStage : BaseStage
 {
@@ -81,7 +81,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
         var number = message.AsCurrency();
         if (number <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidQty, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidQty, CurrentUser));
             return;
         }
 
@@ -116,6 +116,6 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
         PersonService.AddHistory(ActionType, asset.Qtty, CurrentUser, asset.Id);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
     }
 }
