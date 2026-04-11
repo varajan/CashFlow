@@ -1,17 +1,16 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class StocksMultiply(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : MultiplyStocks(ActionType.Stocks1To2, termsService, personManager, userRepository) { }
+public class StocksMultiply(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : MultiplyStocks(ActionType.Stocks1To2, termsService, userService, personManager, userRepository) { }
 
-public class StocksReduce(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : MultiplyStocks(ActionType.Stocks2To1, termsService, personManager, userRepository) { }
+public class StocksReduce(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : MultiplyStocks(ActionType.Stocks2To1, termsService, userService, personManager, userRepository) { }
 
-public abstract class MultiplyStocks(ActionType actionType, ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public abstract class MultiplyStocks(ActionType actionType, ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected ActionType ActionType { get; } = actionType;
 
@@ -38,7 +37,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 
         if (stocks.Count == 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidStockName, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidStockName, CurrentUser));
             return;
         }
 

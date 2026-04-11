@@ -7,10 +7,11 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAsset<TNextStage>(
     ITranslationService termsService,
+    IUserService userService,
     IPersonService personManager,
     IUserRepository userRepository,
     params AssetType[] assetTypes)
-    : BaseStage(termsService, personManager, userRepository) where TNextStage : BaseStage
+    : BaseStage(termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 
@@ -89,19 +90,19 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Land))
             {
-                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidLand, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidLand, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidRealEstate, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidRealEstate, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Business) || AssetTypes.Contains(AssetType.SmallBusinessType))
             {
-                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidBusiness, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidBusiness, CurrentUser));
                 return false;
             }
 
@@ -124,13 +125,13 @@ public class SellAsset<TNextStage>(
         {
             if (AssetTypes.Contains(AssetType.Coin))
             {
-                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidCoins, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidCoins, CurrentUser));
                 return false;
             }
 
             if (AssetTypes.Contains(AssetType.Stock))
             {
-                await CurrentUser.Notify(TranslationService.Get(Terms.InvalidStockName, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidStockName, CurrentUser));
                 return false;
             }
 

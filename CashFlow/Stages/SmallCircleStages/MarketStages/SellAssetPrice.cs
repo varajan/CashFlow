@@ -6,10 +6,11 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
 public class SellAssetPrice(
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository,
-    params AssetType[] assetTypes) : BaseStage(termsService, personManager, userRepository)
+    params AssetType[] assetTypes) : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 
@@ -79,7 +80,7 @@ public class SellAssetPrice(
         var price = message.AsCurrency();
         if (price <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidPrice, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidPrice, CurrentUser));
             return;
         }
 
@@ -94,7 +95,7 @@ public class SellAssetPrice(
             PersonService.AddHistory(ActionType, price, CurrentUser, asset.Id);
         });
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.Done, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.Done, CurrentUser));
         NextStage = New<Start>();
     }
 }

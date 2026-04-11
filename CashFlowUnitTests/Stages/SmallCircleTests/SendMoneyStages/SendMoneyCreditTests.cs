@@ -11,7 +11,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
 [TestFixture]
 public class SendMoneyCreditTests : StagesBaseTest
 {
-    private UserDto Recipient => OtherUsers.Last(u => u.IsActive() && u.Name.Contains("Small"));
+    private UserDto Recipient => OtherUsers.Last(u => u.Name.Contains("Active") && u.Name.Contains("Small"));
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 600 };
     private PersonDto RecipientPerson => new() { Id = Recipient.Id, Cash = 200 };
     private AssetDto TransferAsset => new() { UserId = CurrentUser.Id, Qtty = 1500, Type = AssetType.Transfer, IsDraft = true };
@@ -82,7 +82,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         var transferAmount = TransferAsset.Qtty;
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
         var message = string.Format("{0} transferred {2} to {1}.{3}",
             CurrentUser.Name, "Bank", transferAmount.AsCurrency(), Environment.NewLine);
 
@@ -122,7 +122,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         var transferAmount = transferAsset.Qtty;
         var creditAmount = (int)Math.Ceiling((transferAmount - TestPerson.Cash) / 1_000d) * 1_000;
         var testStage = GetTestStage();
-        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
         var message = string.Format("{0} transferred {2} to {1}.{3}",
             CurrentUser.Name, Recipient.Name, transferAmount.AsCurrency(), Environment.NewLine);
 

@@ -6,8 +6,6 @@ namespace CashFlow.Data;
 
 public class SQLiteDataBase(ILogger logger) : IDataBase
 {
-    private readonly ILogger _logger = logger;
-
     private static string DatabaseFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
     private static string ConnectionString => $"Data Source={DatabaseFileName}; Version=3; Cache=Shared";
 
@@ -195,7 +193,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     private void Log(Exception ex, string sql)
     {
         Console.WriteLine($"{ex.Message}{Environment.NewLine}{sql}{Environment.NewLine}{ex.StackTrace}");
-        _logger.Log(sql);
-        _logger.Log(ex);
+        logger.Log(sql);
+        logger.Log(ex);
     }
 }

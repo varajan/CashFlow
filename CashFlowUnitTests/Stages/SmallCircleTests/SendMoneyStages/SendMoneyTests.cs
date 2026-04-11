@@ -3,7 +3,6 @@ using CashFlow.Data.Consts;
 using Moq;
 using CashFlow.Data.DTOs;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
-using CashFlow.Extensions;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
 
@@ -19,7 +18,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_SendToInactiveUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => !u.IsActive() && u.Name.Contains("Small"));
+        var testUser = OtherUsers.First(u => u.Name.Contains("Inactive") && u.Name.Contains("Small"));
         var testStage = GetTestStage();
 
         // Act
@@ -37,7 +36,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_SendToBigCircleUser_NotFondMesage()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => u.IsActive() && u.Name.Contains("Big"));
+        var testUser = OtherUsers.First(u => u.Name.Contains("Active") && u.Name.Contains("Big"));
         var testStage = GetTestStage();
 
         // Act
@@ -54,7 +53,7 @@ public class SendMoneyTests : StagesBaseTest
     public async Task SendMoney_MoveTo_SendMoneyTo_WhenSendToValidUser()
     {
         // Arrange
-        var testUser = OtherUsers.First(u => u.IsActive() && u.Name.Contains("Small"));
+        var testUser = OtherUsers.First(u => u.Name.Contains("Active") && u.Name.Contains("Small"));
         var testStage = GetTestStage();
 
         // Act
@@ -141,7 +140,7 @@ public class SendMoneyTests : StagesBaseTest
     public void SendMoney_NoOtherActiveUsers_CanSendToBankOnly()
     {
         // Arrange
-        OtherUsers = OtherUsers.Where(x => !x.IsActive()).ToList();
+        OtherUsers = OtherUsers.Where(x => x.Name.Contains("Inactive")).ToList();
         UserRepositoryMock.Setup(r => r.GetAll()).Returns(OtherUsers.Append(CurrentUser).ToList());
 
         var testStage = GetTestStage();

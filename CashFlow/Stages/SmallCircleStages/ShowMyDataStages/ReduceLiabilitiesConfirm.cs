@@ -5,8 +5,8 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class ReduceLiabilitiesConfirm(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : ConfirmStage(termsService, personManager, userRepository, 3, "Are you sure want to stop current game?")
+public class ReduceLiabilitiesConfirm(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : ConfirmStage(termsService, userService, personManager, userRepository, "Are you sure want to stop current game?")
 {
     public override string Message
     {

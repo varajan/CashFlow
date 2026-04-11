@@ -7,8 +7,8 @@ using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BigCircle(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class BigCircle(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message
     {
@@ -69,9 +69,9 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
         person.IsWinning = true;
         PersonService.Update(person);
 
-        var users = OtherUsers.Where(x => x.IsActive()).ToList();
+        var users = OtherUsers.Where(UserService.IsActive).ToList();
         var message = TranslationService.Get(Terms.WinnerName, CurrentUser, CurrentUser.Name);
-        var notifyAll = users.Select(u => u.Notify(message));
+        var notifyAll = users.Select(u => UserService.Notify(u, message));
         await Task.WhenAll(notifyAll);
     }
 
@@ -148,7 +148,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Divorce, amount, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
@@ -158,7 +158,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.TaxAudit, amount, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 
@@ -168,7 +168,7 @@ public class BigCircle(ITranslationService termsService, IPersonService personMa
             person.Cash -= amount;
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Lawsuit, amount, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.LostMoney, CurrentUser, amount.AsCurrency()));
             return;
         }
 

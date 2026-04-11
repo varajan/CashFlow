@@ -12,7 +12,7 @@ using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class SmallCircle(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => PersonService.GetDescription(CurrentUser);
 
@@ -49,7 +49,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         if (person.IsReadyForBigCircle())
         {
             var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
-            OtherUsers.Where(x => x.IsActive()).ForEach(async u => await u.Notify(notifyMessage));
+            OtherUsers.Where(UserService.IsActive).ForEach(async u => await UserService.Notify(u, notifyMessage));
         }
 
         switch (message)
@@ -59,7 +59,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                 return;
 
             case var m when MessageEquals(m, Terms.Friends):
-                var users = OtherUsers.Where(x => x.IsActive()).ToList();
+                var users = OtherUsers.Where(UserService.IsActive).ToList();
                 if (users.Count != 0)
                 {
                     NextStage = New<Friends>();
@@ -67,7 +67,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
                 }
                 else
                 {
-                    await CurrentUser.Notify(TranslationService.Get(Terms.NoPlayers, CurrentUser));
+                    await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoPlayers, CurrentUser));
                     return;
                 }
 
@@ -125,7 +125,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         var person = PersonService.Read(CurrentUser);
         var expenses = -1 * person.GetTotalExpenses();
         var info = TranslationService.Get(Terms.Fired, CurrentUser, expenses.AsCurrency());
-        await CurrentUser.Notify(info);
+        await UserService.Notify(CurrentUser, info);
 
         if (person.Cash < expenses)
         {
@@ -135,7 +135,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
             person.GetCredit(credit);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-            await CurrentUser.Notify(loanInfo);
+            await UserService.Notify(CurrentUser, loanInfo);
         }
 
         person.Cash -= expenses;
@@ -149,7 +149,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
 
         if (person.Children == 3)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.NoMoreKids, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoMoreKids, CurrentUser));
             return;
         }
 
@@ -162,7 +162,7 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         var count = person.Children.ToString();
         var personProfession = TranslationService.Get(person.Profession, CurrentUser.Language);
 
-        await CurrentUser.Notify(TranslationService.Get(termKey, CurrentUser, personProfession, childrenExpenses, count));
+        await UserService.Notify(CurrentUser, TranslationService.Get(termKey, CurrentUser, personProfession, childrenExpenses, count));
     }
 
     private async Task GetMoney()
@@ -181,6 +181,6 @@ public class SmallCircle(ITranslationService termsService, IPersonService person
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
     }
 }

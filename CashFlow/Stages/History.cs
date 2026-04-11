@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public class History(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class History(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => Records.Any()
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
@@ -34,7 +34,7 @@ public class History(ITranslationService termsService, IPersonService personMana
 
         if (Records.Count == 0)
         {
-            await CurrentUser.Notify(Message);
+            await UserService.Notify(CurrentUser, Message);
             NextStage = New<Start>();
             return;
         }

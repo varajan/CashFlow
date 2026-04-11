@@ -34,6 +34,7 @@ public static class ServicesProvider
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IPersonRepository, PersonRepository>();
         services.AddSingleton<IPersonService, PersonService>();
+        services.AddSingleton<IUserService, UserService>();
 
         services.AddTransient<Start>();
         services.AddTransient<SmallCircle>();

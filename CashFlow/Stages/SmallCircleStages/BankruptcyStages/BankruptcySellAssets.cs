@@ -5,8 +5,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class BankruptcySellAssets(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class BankruptcySellAssets(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     private PersonDto Person => PersonService.Read(CurrentUser);
     private LiabilityDto BankLoan => Person.Liabilities.FirstOrDefault(l => l.Type == Liability.BankLoan);
@@ -102,7 +102,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IPersonServi
             ReduceLiability(person, asset);
 
             var message = $"{sellForDepbts}: {asset.Title}, {price}: {asset.GetBancrupcySellPrice().AsCurrency()}";
-            await CurrentUser.Notify(message);
+            await UserService.Notify(CurrentUser, message);
         }
     }
 

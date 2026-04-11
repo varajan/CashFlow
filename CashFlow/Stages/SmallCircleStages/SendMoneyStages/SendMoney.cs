@@ -1,12 +1,11 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class SendMoney(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.Whom, CurrentUser);
 
@@ -16,7 +15,7 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
         {
             var bank = TranslationService.Get(Terms.Bank, CurrentUser);
             var users = OtherUsers
-                .Where(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false })
+                .Where(x => UserService.IsActive(x) && PersonService.Read(x) is { BigCircle: false })
                 .Select(x => x.Name)
                 .ToList();
 
@@ -33,7 +32,7 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
         }
 
         if (MessageEquals(message, Terms.Bank) ||
-            OtherUsers.Any(x => x.IsActive() && PersonService.Read(x) is { BigCircle: false } && x.Name == message))
+            OtherUsers.Any(x => UserService.IsActive(x) && PersonService.Read(x) is { BigCircle: false } && x.Name == message))
         {
             var transfer = new AssetDto
             {
@@ -48,6 +47,6 @@ public class SendMoney(ITranslationService termsService, IPersonService personMa
             return;
         }
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.NotFound, CurrentUser));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotFound, CurrentUser));
     }
 }

@@ -6,7 +6,8 @@ using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
-public class SmallOpportunity(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository)
+public class SmallOpportunity(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
     public override IEnumerable<string> Buttons =>
@@ -39,7 +40,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
             case var m when MessageEquals(m, Terms.StocksX2):
@@ -49,7 +50,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
             case var m when MessageEquals(m, Terms.StocksDiv2):
@@ -59,7 +60,7 @@ public class SmallOpportunity(ITranslationService termsService, IPersonService p
                     return;
                 }
 
-                await CurrentUser.Notify(TranslationService.Get(Terms.NoStocks, CurrentUser));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoStocks, CurrentUser));
                 return;
 
             case var m when MessageEquals(m, Terms.BuyRealEstate):

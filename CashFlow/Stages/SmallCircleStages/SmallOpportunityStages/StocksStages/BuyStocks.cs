@@ -4,34 +4,34 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
 
-public class BuyStocks(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
-    : BuyAsset<BuyStocksPrice>(AssetType.Stock, AssetType.Stock, termsService, availableAssets, personManager, userRepository)
+public class BuyStocks(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+    : BuyAsset<BuyStocksPrice>(AssetType.Stock, AssetType.Stock, termsService, userService, availableAssets, personManager, userRepository)
 { }
 
-public class BuyStocksPrice(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
-    : BuyAssetPriceWithCount<BuyStocksCount>(AssetType.StockPrice, AssetType.Stock, termsService, availableAssets, personManager, userRepository)
+public class BuyStocksPrice(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+    : BuyAssetPriceWithCount<BuyStocksCount>(AssetType.StockPrice, AssetType.Stock, termsService, userService, availableAssets, personManager, userRepository)
 { }
 
 public class BuyStocksCount(
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetCount<BuyStocksCredit, BuyStocksCashFlow>(
-        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager, userRepository) { }
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, availableAssets, personManager, userRepository) { }
 
 public class BuyStocksCredit(
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    IUserRepository userRepository) : BuyAssetCredit<BuyStocksCashFlow>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager, userRepository)
+    IUserRepository userRepository) : BuyAssetCredit<BuyStocksCashFlow>(AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, availableAssets, personManager, userRepository)
 { }
 
 public class BuyStocksCashFlow(
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetCashFlow<Start>(
-        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, availableAssets, personManager, userRepository)
+        AssetType.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, availableAssets, personManager, userRepository)
 { }

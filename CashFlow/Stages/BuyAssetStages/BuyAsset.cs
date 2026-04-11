@@ -1,8 +1,6 @@
-﻿using CashFlow.Data;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
-using System.Text;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
@@ -10,9 +8,11 @@ public abstract class BuyAsset<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
-    IUserRepository userRepository) : BaseStage(termsService, personManager, userRepository) where TNextStage : BaseStage
+    IUserRepository userRepository
+    ) : BaseStage(termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;

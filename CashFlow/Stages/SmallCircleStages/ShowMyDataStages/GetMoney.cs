@@ -4,8 +4,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 
-public class GetMoney(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class GetMoney(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message
     {
@@ -55,7 +55,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
 
         if (person.BigCircle && amount <=0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -70,7 +70,7 @@ public class GetMoney(ITranslationService termsService, IPersonService personMan
         PersonService.Update(person);
         PersonService.AddHistory(ActionType.GetMoney, amount, CurrentUser);
 
-        await CurrentUser.Notify(TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
+        await UserService.Notify(CurrentUser, TranslationService.Get(Terms.GotAmount, CurrentUser, amount.AsCurrency()));
         NextStage = New<Start>();
     }
 }

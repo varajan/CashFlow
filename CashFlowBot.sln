@@ -10,8 +10,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED9CC9AB-485F-4A15-B00C-AD5E3FF6E44C}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		2.0.0-beta.version = 2.0.0-beta.version
 		publish.bat = publish.bat
+		2.0.2-beta.version = 2.0.2-beta.version
 		README.md = README.md
 	EndProjectSection
 EndProject

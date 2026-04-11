@@ -2,7 +2,6 @@
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 using MoreLinq;
 
@@ -63,7 +62,7 @@ public class WinGameTests : StagesBaseTest
 
         var testStage = GetTestStage();
         var message = $"{CurrentUser.Name} is the winner!";
-        var activeUsers = OtherUsers.Where(u => u.IsActive());
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active"));
 
         // Act
         await testStage.BeforeStage();

@@ -4,8 +4,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
-    : BaseStage(termsService, personManager, userRepository)
+public class PayWithCash(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
@@ -24,7 +24,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
         var amount = message.AsCurrency();
         if (amount <= 0)
         {
-            await CurrentUser.Notify(TranslationService.Get(Terms.InvalidValue, CurrentUser));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidValue, CurrentUser));
             return;
         }
 
@@ -38,7 +38,7 @@ public class PayWithCash(ITranslationService termsService, IAvailableAssetsRepos
             person.GetCredit(credit);
             PersonService.Update(person);
             PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-            await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
+            await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
         }
 
         person.Cash -= amount;

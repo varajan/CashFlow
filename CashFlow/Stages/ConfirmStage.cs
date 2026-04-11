@@ -3,8 +3,8 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages;
 
-public abstract class ConfirmStage(ITranslationService termsService, IPersonService personManager, IUserRepository userRepository, int? id = null, string question = null)
-    : BaseStage(termsService, personManager, userRepository)
+public abstract class ConfirmStage(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository, string question = null)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(question, CurrentUser);
     public override List<string> Buttons => [ Yes, Cancel ];

@@ -7,11 +7,11 @@ namespace CashFlow.Stages.BuyAssetStages;
 public abstract class BuyAssetWithCashflowCredit<TNextStage>(
     AssetType assetName,
     AssetType assetType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message
     {
@@ -46,7 +46,7 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
 
                 NextStage = New<TNextStage>();
                 return;

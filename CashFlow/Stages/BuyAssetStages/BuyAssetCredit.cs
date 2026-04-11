@@ -8,11 +8,11 @@ public abstract class BuyAssetCredit<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService,
+    ITranslationService termsService, IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message
     {
@@ -47,7 +47,7 @@ public abstract class BuyAssetCredit<TNextStage>(
                 person.GetCredit(credit);
                 PersonService.Update(person);
                 PersonService.AddHistory(ActionType.Credit, credit, CurrentUser);
-                await CurrentUser.Notify(TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
+                await UserService.Notify(CurrentUser, TranslationService.Get(Terms.TookLoan, CurrentUser, credit.AsCurrency()));
                 await CompleteTransaction(asset);
 
                 NextStage = New<Start>();

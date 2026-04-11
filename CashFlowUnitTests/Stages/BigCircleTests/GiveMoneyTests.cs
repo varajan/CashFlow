@@ -96,7 +96,7 @@ public class SendMoneyTests : StagesBaseTest
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.{3}", 
             CurrentUser.Name, "Bank", transferAmount.AsCurrency(), Environment.NewLine);
-        var activeUsers = OtherUsers.Where(u => u.IsActive()).Append(CurrentUser);
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
 
         var testStage = GetTestStage();
 
