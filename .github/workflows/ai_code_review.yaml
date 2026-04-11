@@ -10,7 +10,7 @@ jobs:
 
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY2 }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 
     steps:
       - name: Checkout repo
@@ -32,7 +32,6 @@ jobs:
           Analyze the following git diff.
           
           Return STRICT JSON ONLY (no markdown, no code fences):
-          
           {
             "summary": "short overall review",
             "comments": [
@@ -52,33 +51,47 @@ jobs:
           - Max 10 comments
           EOF
 
-      - name: Call OpenAI
+      - name: Call OpenAI (with fallback model)
         run: |
           set -e
 
-          jq -n \
-            --arg prompt "$(cat prompt.txt)" \
-            --arg diff "$(cat diff_small.txt)" \
-            '{
-              model: "gpt-4.1-mini",
-              input: ($prompt + "\n\nDIFF:\n" + $diff)
-            }' > request.json
+          request() {
+            MODEL=$1
+            curl https://api.openai.com/v1/responses \
+              -s \
+              -H "Authorization: Bearer $OPENAI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d @- <<EOF
+{
+  "model": "$MODEL",
+  "input": "$(cat prompt.txt)\n\nDIFF:\n$(cat diff_small.txt)"
+}
+EOF
+          }
 
-          curl https://api.openai.com/v1/responses \
-            -s \
-            -H "Authorization: Bearer $OPENAI_API_KEY" \
-            -H "Content-Type: application/json" \
-            --data @request.json > response.json
+          echo "Calling primary model gpt-4.1-mini..."
+          request "gpt-4.1-mini" > response1.json
+
+          ERR_CODE=$(jq -r '.error.code // empty' response1.json)
+
+          if [ "$ERR_CODE" = "insufficient_quota" ]; then
+            echo "Primary quota exceeded, switching to fallback model gpt-4o-mini..."
+            request "gpt-4o-mini" > response.json
+          else
+            cp response1.json response.json
+          fi
 
       - name: Extract AI result safely
         run: |
+          set -e
+
           jq -r '.output[0].content[0].text // empty' response.json \
             | sed 's/```json//g' \
             | sed 's/```//g' \
             > ai_result.json
 
           if [ ! -s ai_result.json ]; then
-            echo '{"summary":"No comments from AI","comments":[]}' > ai_result.json
+            echo '{"quota_error":true}' > ai_result.json
           fi
 
       - name: Post review comments
@@ -88,17 +101,26 @@ jobs:
             const fs = require('fs');
 
             let raw = fs.readFileSync('ai_result.json', 'utf8');
-
             let data;
+
             try {
               data = JSON.parse(raw);
             } catch (e) {
-              console.log("Invalid JSON from AI, fallback used");
-              data = { summary: "AI returned invalid JSON", comments: [] };
+              data = null;
             }
 
-            const summary = data.summary ?? "No summary";
-            const comments = Array.isArray(data.comments) ? data.comments : [];
+            if (data?.quota_error === true) {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: "I'm tired for today, let's check tomorrow."
+              });
+              return;
+            }
+
+            const summary = data?.summary ?? "No summary";
+            const comments = Array.isArray(data?.comments) ? data.comments : [];
 
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
@@ -132,14 +154,14 @@ jobs:
               }
             }
 
-      - name: Save AI raw output
+      - name: Save AI artifacts
         run: |
           mkdir -p ai-output
           cp response.json ai-output/response.json || true
           cp ai_result.json ai-output/ai_result.json || true
           cp diff_small.txt ai-output/diff.txt || true
 
-      - name: Upload AI artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: ai-code-review-${{ github.run_number }}
