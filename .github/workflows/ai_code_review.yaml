@@ -12,6 +12,21 @@ jobs:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
+      # === API ===
+      GEMINI_MODEL: gemini-2.5-flash
+      GEMINI_URL: https://generativelanguage.googleapis.com/v1beta/models
+
+      # === Diff limits ===
+      DIFF_MAX_BYTES: 30000
+
+      # === Retry config ===
+      MAX_RETRIES: 5
+      BACKOFF_BASE_SECONDS: 2
+
+      # === Prompt config ===
+      MAX_COMMENTS: 10
+      REVIEW_ROLE: senior C# reviewer
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -22,12 +37,12 @@ jobs:
         run: |
           git fetch origin ${{ github.base_ref }}
           git diff origin/${{ github.base_ref }} > diff.txt
-          head -c 30000 diff.txt > diff_small.txt
+          head -c $DIFF_MAX_BYTES diff.txt > diff_small.txt
 
       - name: Build prompt
         run: |
-          cat > prompt.txt <<'EOF'
-          You are a senior C# reviewer.
+          cat > prompt.txt <<EOF
+          You are a $REVIEW_ROLE.
           
           Analyze the following git diff.
           
@@ -52,9 +67,8 @@ jobs:
           - Detect hardcoded strings
           - Detect missing localization patterns
           - Suggest improvements
-          - Max 10 comments
+          - Max $MAX_COMMENTS comments
           EOF
-
 
       - name: Call Gemini API (with retry)
         run: |
@@ -75,9 +89,8 @@ jobs:
               ]
             }' > request.json
 
-          URL="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY"
+          URL="$GEMINI_URL/$GEMINI_MODEL:generateContent?key=$GEMINI_API_KEY"
 
-          MAX_RETRIES=5
           attempt=0
 
           until [ $attempt -ge $MAX_RETRIES ]
@@ -92,7 +105,6 @@ jobs:
               --data @request.json \
               "$URL")
 
-            # success
             if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
               echo "Success on attempt $attempt"
               break
@@ -100,14 +112,12 @@ jobs:
 
             echo "Request failed with HTTP $HTTP_CODE"
 
-            # last attempt → fail
             if [ $attempt -eq $MAX_RETRIES ]; then
               echo "Max retries reached"
               exit 1
             fi
 
-            # exponential backoff: 2, 4, 8, 16...
-            sleep_time=$((2 ** attempt))
+            sleep_time=$((BACKOFF_BASE_SECONDS ** attempt))
             echo "Retrying in $sleep_time seconds..."
             sleep $sleep_time
 
