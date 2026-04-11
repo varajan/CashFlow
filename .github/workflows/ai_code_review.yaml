@@ -77,9 +77,8 @@ jobs:
             | sed 's/```//g' \
             > ai_result.json
 
-          # якщо пусто — не падаємо, але створюємо fallback
           if [ ! -s ai_result.json ]; then
-            echo '{"summary":"No valid AI response","comments":[]}' > ai_result.json
+            echo '{"summary":"No comments from AI","comments":[]}' > ai_result.json
           fi
 
       - name: Post review comments
@@ -132,3 +131,17 @@ jobs:
                 console.log("Failed to comment:", c);
               }
             }
+
+      - name: Save AI raw output
+        run: |
+          mkdir -p ai-output
+          cp response.json ai-output/response.json || true
+          cp ai_result.json ai-output/ai_result.json || true
+          cp diff_small.txt ai-output/diff.txt || true
+
+      - name: Upload AI artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-code-review-${{ github.run_number }}
+          path: ai-output/
+          retention-days: 7
