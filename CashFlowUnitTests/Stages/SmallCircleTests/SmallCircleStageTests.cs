@@ -132,7 +132,7 @@ public class SmallCircleStageTests : StagesBaseTest
     [TestCase("Market", typeof(Market))]
     [TestCase("Give money", typeof(SendMoney))]
     [TestCase("Game menu", typeof(GameMenu))]
-    public async Task SmallCircleSelect_ValidOption(string message, Type nextStage)
+    public async Task SmallCircle_Select_ValidOption(string message, Type nextStage)
     {
         // Arrange
         var testStage = GetTestStage();
