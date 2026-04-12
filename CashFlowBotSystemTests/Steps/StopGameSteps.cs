@@ -11,7 +11,7 @@ public class StopGameSteps(StepsContext context) : BaseSteps(context)
     {
         var user = GetUser(name);
 
-        user.SendMessage("Show my data");
+        user.SendMessage("Game menu");
         user.SendMessage("Stop game");
     }
 
