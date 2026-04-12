@@ -4,7 +4,6 @@ using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages;

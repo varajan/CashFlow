@@ -1,6 +1,5 @@
 ﻿using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
-using CashFlowUnitTests.Stages;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.BankruptcyStages;
 

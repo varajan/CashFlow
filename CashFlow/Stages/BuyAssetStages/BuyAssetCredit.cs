@@ -20,7 +20,7 @@ public abstract class BuyAssetCredit<TNextStage>(
         {
             var person = PersonService.Read(CurrentUser);
             var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
-            var amount = asset.Price * asset.Qtty - asset.Mortgage;
+            var amount = (asset.Price * asset.Qtty) - asset.Mortgage;
 
             return TranslationService.Get(Terms.NotEnoughAmount, CurrentUser, amount.AsCurrency(), person.Cash.AsCurrency());
         }
@@ -41,7 +41,7 @@ public abstract class BuyAssetCredit<TNextStage>(
 
             case var m when MessageEquals(m, Terms.GetCredit):
                 var person = PersonService.Read(CurrentUser);
-                var delta = asset.Price * asset.Qtty - asset.Mortgage - person.Cash;
+                var delta = (asset.Price * asset.Qtty) - asset.Mortgage - person.Cash;
                 var credit = (int)Math.Ceiling(delta / 1_000d) * 1_000;
 
                 person.GetCredit(credit);

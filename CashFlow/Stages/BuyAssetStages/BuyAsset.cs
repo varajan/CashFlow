@@ -43,7 +43,7 @@ public abstract class BuyAsset<TNextStage>(
             var draftAsset = new AssetDto
             {
                 Title = title,
-                BigCircle = (AssetType == AssetType.BigBusinessType),
+                BigCircle = AssetType == AssetType.BigBusinessType,
                 Qtty = 1,
                 Type = AssetType,
                 UserId = CurrentUser.Id,

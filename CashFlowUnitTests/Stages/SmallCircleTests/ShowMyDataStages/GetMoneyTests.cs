@@ -4,7 +4,6 @@ using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;

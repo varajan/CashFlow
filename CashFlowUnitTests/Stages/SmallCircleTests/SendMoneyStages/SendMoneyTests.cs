@@ -1,8 +1,8 @@
-﻿using CashFlow.Stages;
-using CashFlow.Data.Consts;
-using Moq;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
+using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SendMoneyStages;
 

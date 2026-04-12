@@ -1,9 +1,9 @@
 ﻿using CashFlow;
 using CashFlow.Data.DTOs;
+using CashFlow.Data.Repositories;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
-using CashFlow.Data.Repositories;
 using CashFlowBotEmulator;
 
 ServicesProvider.AddApplicationServices();

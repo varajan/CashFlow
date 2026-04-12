@@ -35,8 +35,8 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
         }
 
         var number = message.AsCurrency();
-        if (number < 0 && asset.Type != AssetType.BigBusinessType ||
-            number <= 0 && asset.Type == AssetType.BigBusinessType)
+        if ((number < 0 && asset.Type != AssetType.BigBusinessType) ||
+            (number <= 0 && asset.Type == AssetType.BigBusinessType))
         {
             await UserService.Notify(CurrentUser, TranslationService.Get(Terms.InvalidFirstPayment, CurrentUser));
             NextStage = this;

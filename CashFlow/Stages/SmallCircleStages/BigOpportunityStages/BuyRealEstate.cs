@@ -1,6 +1,6 @@
-﻿using CashFlow.Interfaces;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Interfaces;
 using CashFlow.Stages.BuyAssetStages;
-using CashFlow.Data.Consts;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 

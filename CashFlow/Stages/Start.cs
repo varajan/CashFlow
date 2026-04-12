@@ -1,6 +1,6 @@
-﻿using CashFlow.Stages.BigCircleStages;
+﻿using CashFlow.Interfaces;
+using CashFlow.Stages.BigCircleStages;
 using CashFlow.Stages.SmallCircleStages;
-using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
 namespace CashFlow.Stages;
