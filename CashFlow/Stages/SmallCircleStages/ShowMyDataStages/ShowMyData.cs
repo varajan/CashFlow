@@ -14,7 +14,6 @@ public class ShowMyData(ITranslationService termsService, IUserService userServi
         TranslationService.Get(Terms.GetCredit, CurrentUser),
         TranslationService.Get(Terms.Charity10, CurrentUser),
         TranslationService.Get(Terms.ReduceLiabilities, CurrentUser),
-        StopGame,
         TranslationService.Get(Terms.MainMenu, CurrentUser),
     ];
 
@@ -37,10 +36,6 @@ public class ShowMyData(ITranslationService termsService, IUserService userServi
 
             case var m when MessageEquals(m, Terms.ReduceLiabilities):
                 await ReduceLiabilities();
-                return;
-
-            case var m when MessageEquals(m, Terms.StopGame):
-                NextStage = New<StopGame>();
                 return;
 
             case var m when MessageEquals(m, Terms.MainMenu):

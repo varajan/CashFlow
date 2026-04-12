@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;
@@ -22,7 +21,6 @@ public class ShowMyDataTests : StagesBaseTest
             "Get Credit",
             "Charity - Pay 10%",
             "Reduce Liabilities",
-            "Stop Game",
             "Main menu",
         };
 
@@ -55,7 +53,6 @@ public class ShowMyDataTests : StagesBaseTest
 
     [TestCase("Get Money", typeof(GetMoney))]
     [TestCase("Get Credit", typeof(GetCredit))]
-    [TestCase("Stop Game", typeof(StopGame))]
     [TestCase("Main menu", typeof(Start))]
     public async Task ShowMyData_Select_ValidOption(string message, Type nextStage)
     {

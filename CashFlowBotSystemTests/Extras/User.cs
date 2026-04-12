@@ -23,7 +23,7 @@ public class User(string name, Bot bot)
     {
         SendMessage("Cancel");
         SendMessage("Main menu");
-        SendMessage("Show my data");
+        SendMessage("Game menu");
         SendMessage("Stop game");
         SendMessage("Yes");
     }

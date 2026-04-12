@@ -40,7 +40,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
                 TranslationService.Get(Terms.BuyBusiness, CurrentUser),
                 TranslationService.Get(Terms.Friends, CurrentUser),
                 History,
-                StopGame,
+                TranslationService.Get(Terms.GameMenu, CurrentUser),
             ];
         }
     }
@@ -190,9 +190,9 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
             return;
         }
 
-        if (MessageEquals(message, Terms.StopGame))
+        if (MessageEquals(message, Terms.GameMenu))
         {
-            NextStage = New<StopGame>();
+            NextStage = New<GameMenu>();
             return;
         }
     }

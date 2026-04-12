@@ -6,7 +6,7 @@ namespace CashFlow.Stages;
 
 public class ChooseLanguage(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
-    public override string Message => "Language/Мова";
+    public override string Message => TranslationService.Get(Terms.Language, CurrentUser);
     public override IEnumerable<string> Buttons => PersonService.Exists(CurrentUser) ? Languages.Append(Cancel) : Languages;
 
     private static List<string> Languages => Enum.GetValues<Language>().Select(l => l.ToString()).ToList();
