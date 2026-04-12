@@ -46,7 +46,7 @@ public class BigCircleTests : StagesBaseTest
             "Buy Business",
             "Friends",
             "History",
-            "Stop Game",
+            "Game menu",
         };
 
         PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, false)).Returns(smallCircleDescription);
@@ -135,7 +135,7 @@ public class BigCircleTests : StagesBaseTest
     [TestCase("Buy Business", typeof(BuyBigBusiness))]
     [TestCase("Friends", typeof(Friends))]
     [TestCase("History", typeof(History))]
-    [TestCase("Stop Game", typeof(StopGame))]
+    [TestCase("Game menu", typeof(GameMenu))]
     public async Task BigCircle_ValidOption(string message, Type nextStage)
     {
         // Arrange

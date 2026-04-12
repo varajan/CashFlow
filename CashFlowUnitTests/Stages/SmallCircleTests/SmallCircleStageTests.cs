@@ -43,7 +43,7 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.PerChild = expenses;
 
         List<string> buttons = isHistoryEmpty ? ["Show my Data", "Friends"] : ["Show my Data", "Friends", "History"];
-        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money"]);
+        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money", "Game menu"]);
         if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
 
         PersonServiceMock.Setup(x => x.IsHistoryEmpty(CurrentUser)).Returns(isHistoryEmpty);
@@ -115,32 +115,6 @@ public class SmallCircleStageTests : StagesBaseTest
     }
 
     [Test]
-    public async Task SmallCircle_SmallOpportunity()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-        await testStage.HandleMessage("Small opportunity");
-
-        // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SmallOpportunity>());
-    }
-
-    [Test]
-    public async Task SmallCircle_BigOpportunity()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-        await testStage.HandleMessage("Big opportunity");
-
-        // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<BigOpportunity>());
-    }
-
-    [Test]
     public async Task SmallCircle_Doodads()
     {
         // Arrange
@@ -153,17 +127,21 @@ public class SmallCircleStageTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Doodads>());
     }
 
-    [Test]
-    public async Task SmallCircle_Market()
+    [TestCase("Big opportunity", typeof(BigOpportunity))]
+    [TestCase("Small opportunity", typeof(SmallOpportunity))]
+    [TestCase("Market", typeof(Market))]
+    [TestCase("Give money", typeof(SendMoney))]
+    [TestCase("Game menu", typeof(GameMenu))]
+    public async Task SmallCircleSelect_ValidOption(string message, Type nextStage)
     {
         // Arrange
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage("Market");
+        await testStage.HandleMessage(message);
 
         // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<Market>());
+        Assert.That(testStage.NextStage, Is.TypeOf(nextStage));
     }
 
     [Test]
@@ -324,19 +302,6 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonServiceMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUser), Times.Once);
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
-    }
-
-    [Test]
-    public async Task SmallCircle_GiveMoney()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-        await testStage.HandleMessage("Give money");
-
-        // Assert
-        Assert.That(testStage.NextStage, Is.TypeOf<SendMoney>());
     }
 
     [Test]

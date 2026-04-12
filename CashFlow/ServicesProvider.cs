@@ -37,6 +37,7 @@ public static class ServicesProvider
         services.AddSingleton<IUserService, UserService>();
 
         services.AddTransient<Start>();
+        services.AddTransient<GameMenu>();
         services.AddTransient<SmallCircle>();
         services.AddTransient<ChooseLanguage>();
         services.AddTransient<ChooseProfession>();

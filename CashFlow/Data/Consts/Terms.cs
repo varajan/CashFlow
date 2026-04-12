@@ -4,7 +4,9 @@ public class Terms
 {
     public const string CashflowAsk = "Your Cashflow is *{0}*. How many should you get?";
     public const string BigCircle = "Go to Big Circle";
+    public const string GameMenu = "Game menu";
     public const string History = "History";
+    public const string Language = "Language/Мова";
     public const string StopGameConfirm = "Are you sure want to stop current game?";
     public const string Yes = "Yes";
     public const string NotEnoughMoney = "You don't have enough money.";

@@ -31,6 +31,7 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
             buttons.AddRange([TranslationService.Get(Terms.Doodads, CurrentUser), TranslationService.Get(Terms.Market, CurrentUser)]);
             buttons.AddRange([TranslationService.Get(Terms.Downsize, CurrentUser), TranslationService.Get(Terms.Baby, CurrentUser)]);
             buttons.AddRange([TranslationService.Get(Terms.Paycheck, CurrentUser), TranslationService.Get(Terms.GiveMoney, CurrentUser)]);
+            buttons.AddRange([TranslationService.Get(Terms.GameMenu, CurrentUser)]);
 
             if (person.IsReadyForBigCircle())
             {
@@ -105,6 +106,10 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
 
             case var m when MessageEquals(m, Terms.GiveMoney):
                 NextStage = New<SendMoney>();
+                return;
+
+            case var m when MessageEquals(m, Terms.GameMenu):
+                NextStage = New<GameMenu>();
                 return;
 
             case var m when person.IsReadyForBigCircle() && MessageEquals(m, Terms.BigCircle):
