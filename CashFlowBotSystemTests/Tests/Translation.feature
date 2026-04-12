@@ -14,10 +14,10 @@ Scenario Outline: I can use any language
 		And My last message contains '*<expenses>* $3,460'
 
 Examples:
-	| lang | name         | details      | stop          | yes | role      | cashflow       | baby   | downsize   | profession  | cash     | expenses  |
-	| UA   | Тарас Тополя | Мої дані     | Закінчити гру | Так | Інженер   | Грошовий потік | Дитина | Звільнення | Професія:   | Готівка: | Витрати:  |
-	| EN   | Lilli Nolan  | Show my data | Stop game     | Yes | Engineer  | Paycheck       | Baby   | Downsize   | Profession: | Cash:    | Expenses: |
-	| DE   | Lukas Müller | Meine Info   | Spiel beenden | Ja  | Ingenieur | Gehalt         | Kind   | Entlassung | Beruf:      | Bargeld: | Ausgaben: |
+	| lang | name         | role      | cashflow       | baby   | downsize   | profession  | cash     | expenses  |
+	| UA   | Тарас Тополя | Інженер   | Грошовий потік | Дитина | Звільнення | Професія:   | Готівка: | Витрати:  |
+	| EN   | Lilli Nolan  | Engineer  | Paycheck       | Baby   | Downsize   | Profession: | Cash:    | Expenses: |
+	| DE   | Lukas Müller | Ingenieur | Gehalt         | Kind   | Entlassung | Beruf:      | Bargeld: | Ausgaben: |
 
 
 Scenario Outline: I can change language
@@ -34,8 +34,8 @@ Scenario Outline: I can change language
 		And My last message contains '*<expenses>* $3,210'
 
 Examples:
-	| lang | new lang | name           | game menu | change lang        | details      | stop          | yes | role      | profession             | cash     | expenses  |
-	| UA   | EN       | Іван Бондар    | Гра       | Language/Мова      | Мої дані     | Закінчити гру | Так | Інженер   | *Profession:* Engineer | Cash:    | Expenses: |
-	| EN   | DE       | Billie Craig   | Game menu | Language/Мова      | Show my data | Stop game     | Yes | Engineer  | *Beruf:* Ingenieur     | Bargeld: | Ausgaben: |
-	| DE   | UA       | Ursula Schäfer | Spielmenu | Schprache/Language | Meine Info   | Spiel beenden | Ja  | Ingenieur | *Професія:* Інженер    | Готівка: | Витрати:  |
+	| lang | new lang | name           | game menu | change lang        | role      | profession             | cash     | expenses  |
+	| UA   | EN       | Іван Бондар    | Меню гри  | Language/Мова      | Інженер   | *Profession:* Engineer | Cash:    | Expenses: |
+	| EN   | DE       | Billie Craig   | Game menu | Language/Мова      | Engineer  | *Beruf:* Ingenieur     | Bargeld: | Ausgaben: |
+	| DE   | UA       | Ursula Schäfer | Spielmenü | Schprache/Language | Ingenieur | *Професія:* Інженер    | Готівка: | Витрати:  |
 
