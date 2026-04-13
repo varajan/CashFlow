@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.StocksStages.BuyStocksStages;
@@ -89,7 +88,7 @@ public class BuyStocksCountTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var person = TestPerson.Clone();
-        var personCash = person.Cash - Asset.Price * count.AsCurrency();
+        var personCash = person.Cash - (Asset.Price * count.AsCurrency());
 
         // Act
         await testStage.HandleMessage(count.ToLower());
@@ -118,7 +117,7 @@ public class BuyStocksCountTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var count = TestPerson.Cash / Asset.Price + 1;
+        var count = (TestPerson.Cash / Asset.Price) + 1;
 
         // Act
         await testStage.HandleMessage($"{count}");

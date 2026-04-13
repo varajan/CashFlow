@@ -2,7 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLandStages;

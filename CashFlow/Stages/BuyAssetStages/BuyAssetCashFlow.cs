@@ -35,7 +35,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
         PersonService.UpdateAsset(CurrentUser, asset);
 
         var person = PersonService.Read(CurrentUser);
-        var amount = asset.Price * asset.Qtty - asset.Mortgage;
+        var amount = (asset.Price * asset.Qtty) - asset.Mortgage;
         person.Cash -= amount;
         PersonService.Update(person);
         PersonService.AddHistory(ActionType, asset.CashFlow, CurrentUser, asset.Id);

@@ -159,7 +159,7 @@ What asset do you want to sell?
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BankruptcySellAssets>());
 
-        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash - Liabilities[0].FullAmount + Assets[2].Price / 2)), Times.Exactly(2));
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(p => p.Cash == TestPerson.Cash - Liabilities[0].FullAmount + (Assets[2].Price / 2))), Times.Exactly(2));
         PersonServiceMock.Verify(p => p.SellAsset(It.Is<AssetDto>(a => a.Title == asset.Title), asset.Qtty * asset.Price / 2, CurrentUser), Times.Once);
         PersonServiceMock.Verify(p => p.AddHistory(ActionType.BankLoan, bankLoanAmount, CurrentUser), Times.Once);
     }

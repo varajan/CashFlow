@@ -1,5 +1,5 @@
-﻿using CashFlow.Data.DTOs;
-using CashFlow.Data.Consts;
+﻿using CashFlow.Data.Consts;
+using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -56,7 +56,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     protected async Task CompleteTransaction(AssetDto asset)
     {
         var person = PersonService.Read(CurrentUser);
-        var amount = asset.Price * asset.Qtty - asset.Mortgage;
+        var amount = (asset.Price * asset.Qtty) - asset.Mortgage;
 
         person.Cash -= amount;
         PersonService.Update(person);

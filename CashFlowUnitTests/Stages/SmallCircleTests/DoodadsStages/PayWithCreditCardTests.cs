@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.DoodadsStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
@@ -59,6 +58,7 @@ public class PayWithCreditCardTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
+        var interest = 0.03;
         var initialCredit = 1000;
         var initialExpenses = -10;
         var testPerson = new PersonDto
@@ -93,7 +93,7 @@ public class PayWithCreditCardTests : StagesBaseTest
         PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(person =>
             person.Id == CurrentUser.Id &&
             person.Liabilities.First(l => l.Type == Liability.CreditCard).FullAmount == initialCredit + amount.AsCurrency() &&
-            person.Liabilities.First(l => l.Type == Liability.CreditCard).Cashflow == initialExpenses - 0.03 * amount.AsCurrency()
+            person.Liabilities.First(l => l.Type == Liability.CreditCard).Cashflow == initialExpenses - (interest * amount.AsCurrency())
         )), Times.Once);
 
         PersonServiceMock.Verify(x => x.AddHistory(ActionType.MicroCredit, amount.AsCurrency(), CurrentUser), Times.Once);

@@ -69,7 +69,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var person = new PersonDto { Cash = 10_000 };
-        var personCash = person.Cash - price.AsCurrency() * Asset.Qtty;
+        var personCash = person.Cash - (price.AsCurrency() * Asset.Qtty);
 
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 

@@ -3,7 +3,6 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
-using CashFlowUnitTests.Stages;
 using Moq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;
@@ -81,6 +80,7 @@ public class GetCreditTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
+        var bankLoanInterest = 10;
         var initialCash = 300;
         var initialLoanAmount = 5000;
         var initialLoanCashflow = -500;
@@ -110,7 +110,7 @@ public class GetCreditTests : StagesBaseTest
         Assert.That(person.Liabilities.Count, Is.EqualTo(1), "One liability should be added");
         Assert.That(person.Liabilities[0].Type, Is.EqualTo(Liability.BankLoan), "Liability name should be 'Bank Loan'");
         Assert.That(person.Liabilities[0].FullAmount, Is.EqualTo(initialLoanAmount + amount.AsCurrency()), "'amount' should be added to 'Bank Loan'");
-        Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - amount.AsCurrency() / 10), "'percent' should be added to 'Bank Loan'");
+        Assert.That(person.Liabilities[0].Cashflow, Is.EqualTo(initialLoanCashflow - (amount.AsCurrency() / bankLoanInterest)), "'percent' should be added to 'Bank Loan'");
     }
 
     protected override IStage GetTestStage() => GetStage<GetCredit>();

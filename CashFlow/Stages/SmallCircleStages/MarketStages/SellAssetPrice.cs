@@ -88,7 +88,7 @@ public class SellAssetPrice(
         {
             var person = PersonService.Read(CurrentUser);
             var count = asset.Type == AssetType.RealEstate ? asset.Title.GetApartmentsCount() : asset.Qtty;
-            person.Cash += price * count - asset.Mortgage;
+            person.Cash += (price * count) - asset.Mortgage;
 
             PersonService.Update(person);
             PersonService.SellAsset(asset, price, CurrentUser);
