@@ -17,8 +17,12 @@ Format:
 }
 
 Rules:
-- Focus on architecture issues, bugs, null issues, async issues
-- Detect hardcoded strings
-- Detect missing localization patterns
-- Suggest improvements
-- Max 10 comments
+- Focus ONLY on problems, risks, and potential improvements. Do NOT include praise or positive comments.
+- Prioritize critical issues: architecture flaws, bugs, null-safety issues, async/concurrency issues.
+- Detect hardcoded strings and explain why they are problematic.
+- Detect missing localization patterns where applicable.
+- Identify code smells and maintainability issues.
+- Suggest concrete improvements or fixes for each issue.
+- Be concise and direct. No generic statements.
+- If no significant issues are found, respond with: "No major issues found."
+- Max 10 comments.

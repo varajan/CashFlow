@@ -5,7 +5,7 @@ for %%f in (*.version) do set VERSION=%%~nf
 set PROJECT=CashFlowBot\CashFlowBot.csproj
 set CONFIG=Release
 set PUBLISH=publish
-set RIDS=win-x86 win-x64
+set RIDS=win-x86 win-x64 linux-x64
 REM set RIDS=win-x86 win-x64 linux-x64 osx-x64
 
 if exist %PUBLISH% rmdir /s /q %PUBLISH%
