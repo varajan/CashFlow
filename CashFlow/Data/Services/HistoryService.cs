@@ -136,6 +136,11 @@ public class HistoryService(IDataBase dataBase, IPersonRepository personReposito
                 AssetService.Delete(person, asset);
                 break;
 
+            case ActionType.BuyDream:
+                person.Cash += amount;
+                person.BoughtDream = false;
+                break;
+
             case ActionType.IncreaseCashFlow:
                 person.Assets.Where(a => a.Type == AssetType.SmallBusiness).ForEach(x => x.CashFlow -= (int)record.Value);
                 break;

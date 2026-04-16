@@ -9,7 +9,8 @@ public abstract class BuyAssetPrice<TNextStage>(
     AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService, IUserService userService,
+    ITranslationService termsService,
+    IUserService userService,
     IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository)

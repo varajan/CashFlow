@@ -47,6 +47,9 @@ public enum ActionType
     [Description("Buy Business")]
     BuyBusiness,
 
+    [Description("Buy Dream")]
+    BuyDream,
+
     [Description("Buy Land")]
     BuyLand,
 

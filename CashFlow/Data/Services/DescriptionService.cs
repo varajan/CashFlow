@@ -177,6 +177,10 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
                 var description = GetAssetDescription(asset, user);
                 return $"{buyAsset}. {description}";
 
+            case ActionType.BuyDream:
+                var buyDream = TranslationService.Get(Terms.BuyDream, user);
+                return $"{buyDream}. {value.AsCurrency()}";
+
             case ActionType.IncreaseCashFlow:
                 var smallBusiness = AssetService.Get(assetId, user);
                 var increaseCashFlow = TranslationService.Get(Action.GetDescription(), user);

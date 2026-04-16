@@ -44,6 +44,7 @@ public class BigCircleTests : StagesBaseTest
             "Tax Audit",
             "Lawsuit",
             "Buy Business",
+            "Buy Dream",
             "Friends",
             "History",
             "Game menu",
@@ -81,7 +82,7 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var person = Person.Clone();
-        person.IsWinning = true;
+        person.IsWinner = true;
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
@@ -93,7 +94,7 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Never));
 
-        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinning == false)), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinner == false)), Times.Once);
     }
 
     [Test]

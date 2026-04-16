@@ -50,4 +50,5 @@ public enum AssetType
     CoinCount,
 
     Transfer,
+    DreamPrice
 }

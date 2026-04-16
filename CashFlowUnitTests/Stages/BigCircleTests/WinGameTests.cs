@@ -57,7 +57,7 @@ public class WinGameTests : StagesBaseTest
     {
         // Arrange
         var person = Person.Clone();
-        person.IsWinning = alreadyNotified;
+        person.IsWinner = alreadyNotified;
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
@@ -73,7 +73,7 @@ public class WinGameTests : StagesBaseTest
         activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), alreadyNotified ? Times.Never : Times.Once));
 
         PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr =>
-            pr.IsWinning == true)),
+            pr.IsWinner == true)),
             alreadyNotified ? Times.Never : Times.Once);
     }
 

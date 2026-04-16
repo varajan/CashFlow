@@ -122,4 +122,7 @@
 ('CoinCount', '-', '1'), ('CoinCount', '-', '10'),
 
 -- IncreaseCashFlow
-('IncreaseCashFlow', '-', '250'), ('IncreaseCashFlow', '-', '400')
+('IncreaseCashFlow', '-', '250'), ('IncreaseCashFlow', '-', '400'),
+
+-- DreamPrice
+('DreamPrice', '-', '250000'), ('DreamPrice', '-', '400000')

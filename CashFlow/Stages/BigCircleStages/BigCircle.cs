@@ -16,7 +16,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
         {
             var person = PersonService.Read(CurrentUser);
 
-            return person.GetBigCircleCashflow() >= person.TargetCashFlow
+            return person.HasMetWinningCriteria()
                 ? TranslationService.Get(Terms.Winner, CurrentUser)
                 : PersonService.GetDescription(CurrentUser);
         }
@@ -28,7 +28,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
         {
             var person = PersonService.Read(CurrentUser);
 
-            return person.GetBigCircleCashflow() >= person.TargetCashFlow
+            return person.HasMetWinningCriteria()
             ? [History, StopGame]
             : [
                 TranslationService.Get(Terms.Paycheck, CurrentUser),
@@ -38,6 +38,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
                 TranslationService.Get(Terms.TaxAudit, CurrentUser),
                 TranslationService.Get(Terms.Lawsuit, CurrentUser),
                 TranslationService.Get(Terms.BuyBusiness, CurrentUser),
+                TranslationService.Get(Terms.BuyDream, CurrentUser),
                 TranslationService.Get(Terms.Friends, CurrentUser),
                 History,
                 TranslationService.Get(Terms.GameMenu, CurrentUser),
@@ -49,24 +50,24 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
     {
         var person = PersonService.Read(CurrentUser);
 
-        if (person.GetBigCircleCashflow() < person.TargetCashFlow && !person.IsWinning)
+        if (!person.HasMetWinningCriteria() && !person.IsWinner)
         {
             return;
         }
 
-        if (person.GetBigCircleCashflow() >= person.TargetCashFlow && person.IsWinning)
+        if (person.HasMetWinningCriteria() && person.IsWinner)
         {
             return;
         }
 
-        if (person.GetBigCircleCashflow() < person.TargetCashFlow && person.IsWinning)
+        if (!person.HasMetWinningCriteria() && person.IsWinner)
         {
-            person.IsWinning = false;
+            person.IsWinner = false;
             PersonService.Update(person);
             return;
         }
 
-        person.IsWinning = true;
+        person.IsWinner = true;
         PersonService.Update(person);
 
         var users = OtherUsers.Where(UserService.IsActive).ToList();
@@ -175,6 +176,12 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
         if (MessageEquals(message, Terms.BuyBusiness))
         {
             NextStage = New<BuyBigBusiness>();
+            return;
+        }
+
+        if (MessageEquals(message, Terms.BuyDream))
+        {
+            NextStage = New<BuyDream>();
             return;
         }
 

@@ -12,6 +12,8 @@ public static class PersonExtensions
     public static int GetSmallCircleCashflow(this PersonDto person) => person.Salary + person.GetIncome() + person.GetTotalExpenses();
     public static int GetBigCircleCashflow(this PersonDto person) => person.InitialCashFlow + person.Assets.Where(a => a.BigCircle && !a.IsDeleted).Sum(a => a.CashFlow);
 
+    public static bool HasMetWinningCriteria(this PersonDto person) => person.BoughtDream || person.GetBigCircleCashflow() >= person.TargetCashFlow;
+
     public static void GetCredit(this PersonDto person, int amount)
     {
         person.Cash += amount;

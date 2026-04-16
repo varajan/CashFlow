@@ -8,10 +8,11 @@ public class PersonDto
     public int Salary { get; set; }
     public int Cash { get; set; }
     public bool BigCircle { get; set; }
-    public bool IsWinning { get; set; }
+    public bool IsWinner { get; set; }
     public int InitialCashFlow { get; set; }
     public bool Bankruptcy { get; set; }
     public bool CreditsReduced { get; set; }
+    public bool BoughtDream { get; set; }
 
     public int PerChild { get; set; }
     public int Children { get; set; }
