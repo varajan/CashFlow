@@ -236,6 +236,15 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
         Assert.That(actual, Is.EquivalentTo(expected));
     }
 
+    [Given("(.*) go(es|) to the Big Circle")]
     [When("(.*) go(es|) to the Big Circle")]
     public void GoToBigCircle(string name, string _) => GetUser(name).SendMessage("Go to Big Circle");
+
+    [When("(.*) buys my dream for (.*)")]
+    public void BuyDream(string name, string price)
+    {
+        var user = GetUser(name);
+        user.SendMessage("Buy Dream");
+        user.SendMessage(price);
+    }
 }

@@ -24,13 +24,24 @@ Background:
 	But Renee Rocha buys a boat
 
 
-Scenario: I can win the game
+Scenario: I can win the game by reaching +$50,000 cashflow
 	When Elmer Chang buys big businesses:
 	| Title              | Price   | Cashflow |
 	| Gold mine          | 100,000 |   25,000 |
 	| 60-plex            | 100,000 |   25,000 |
 	Then Elmer Chang recieved notification: 'You are the winner!'
 	And All users, except Elmer Chang recieve notification: Elmer Chang is the winner!
+
+Scenario: I can win the game by buying my dream
+	When Elmer Chang buys my dream for $100,000
+	Then Elmer Chang recieved notification: 'You are the winner!'
+		And All users, except Elmer Chang recieve notification: Elmer Chang is the winner!
+
+Scenario: I can rollback buying dream
+	When Elmer Chang buys my dream for $100,000
+	But Elmer Chang rollbacks last action
+	Then The game is continued for Elmer Chang
+		And Elmer Chang has $700,480 in cash
 
 Scenario: I can stop the game after my victory
 	When Elmer Chang buys big businesses:
