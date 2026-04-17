@@ -28,14 +28,17 @@ public class BigCircleTests : StagesBaseTest
     public void Setup() => PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(Person);
 
     [Test]
-    public void BigCircle_Question_and_Buttons()
+    public void BigCircle_Question_and_Buttons([Values] bool reachTargetCashflow, [Values] bool boughtDream)
     {
         // Arrange
         var testStage = GetTestStage();
+        var isWinner = reachTargetCashflow || boughtDream;
 
+        var winnerMessage = "You are the winner!";
         var smallCircleDescription = $"{CurrentUser.Name} at SmallCircle!";
         var bigCircleDescription = $"{CurrentUser.Name} at BigCircle!";
-        var buttons = new[]
+        var winGameButtons = new[] { "History", "Stop Game" };
+        var regularButtons = new[]
         {
             "Paycheck",
             "Get Money",
@@ -44,6 +47,7 @@ public class BigCircleTests : StagesBaseTest
             "Tax Audit",
             "Lawsuit",
             "Buy Business",
+            "Buy Dream",
             "Friends",
             "History",
             "Game menu",
@@ -52,13 +56,18 @@ public class BigCircleTests : StagesBaseTest
         PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, false)).Returns(smallCircleDescription);
         PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, true)).Returns(bigCircleDescription);
 
+        var person = Person.Clone();
+        person.InitialCashFlow = reachTargetCashflow ? Person.TargetCashFlow : Person.InitialCashFlow;
+        person.BoughtDream = boughtDream;
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
+
         // Act
 
         // Assert
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(testStage.Message, Is.EqualTo(bigCircleDescription));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.Message, Is.EqualTo(isWinner ? winnerMessage : bigCircleDescription));
+            Assert.That(testStage.Buttons, Is.EqualTo(isWinner ? winGameButtons : regularButtons));
         }
     }
 
@@ -81,7 +90,7 @@ public class BigCircleTests : StagesBaseTest
     {
         // Arrange
         var person = Person.Clone();
-        person.IsWinning = true;
+        person.IsWinner = true;
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         var testStage = GetTestStage();
@@ -93,7 +102,7 @@ public class BigCircleTests : StagesBaseTest
         // Assert
         activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, It.IsAny<string>()), Times.Never));
 
-        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinning == false)), Times.Once);
+        PersonServiceMock.Verify(p => p.Update(It.Is<PersonDto>(pr => pr.IsWinner == false)), Times.Once);
     }
 
     [Test]
@@ -133,6 +142,7 @@ public class BigCircleTests : StagesBaseTest
 
     [TestCase("Get Money", typeof(GetMoney))]
     [TestCase("Buy Business", typeof(BuyBigBusiness))]
+    [TestCase("Buy Dream", typeof(BuyDream))]
     [TestCase("Friends", typeof(Friends))]
     [TestCase("History", typeof(History))]
     [TestCase("Game menu", typeof(GameMenu))]
