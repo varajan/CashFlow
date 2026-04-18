@@ -12,6 +12,7 @@ using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 using Moq;
+using MoreLinq;
 
 namespace CashFlowUnitTests.Stages.SmallCircleTests;
 
@@ -302,6 +303,32 @@ public class SmallCircleStageTests : StagesBaseTest
         PersonServiceMock.Verify(h => h.AddHistory(ActionType.Bankruptcy, 0, CurrentUser), Times.Once);
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, It.IsAny<string>()), Times.Once);
         NotifyServiceMock.Verify(n => n.Notify(CurrentUser.Id, "Debt restructuring. Car loans, small loans and credit card halved."), Times.Once);
+    }
+
+    [Test]
+    public async Task SmallCircle_NotifyUsers_CanGoToBigCircle([Values] bool isReady)
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        var message = $"{CurrentUser.Name}' income is greater, then expenses. {CurrentUser.Name} is ready for Big Circle.";
+        var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
+
+        var testPerson = TestPerson.Clone();
+        var assets = new List<AssetDto>
+        {
+            new() { Id = 1, Qtty = 1, CashFlow = 200 },
+            new() { Id = 2, Qtty = 1, CashFlow = 300 },
+        };
+        testPerson.Assets = isReady ? assets : [];
+
+        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
+
+        // Act
+        await testStage.BeforeStage();
+
+        // Assert
+        activeUsers.ForEach(u => NotifyServiceMock.Verify(n => n.Notify(u.Id, message), isReady ? Times.Once : Times.Never));
     }
 
     [Test]
