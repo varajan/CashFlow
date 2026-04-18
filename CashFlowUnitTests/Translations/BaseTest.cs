@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Consts.Terms;
 using System.Reflection;
 
 namespace CashFlowUnitTests.Translations;

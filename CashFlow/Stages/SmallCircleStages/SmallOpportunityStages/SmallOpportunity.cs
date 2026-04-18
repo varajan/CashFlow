@@ -1,4 +1,5 @@
 ﻿using CashFlow.Data.Consts;
+using CashFlow.Data.Consts.Terms;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;

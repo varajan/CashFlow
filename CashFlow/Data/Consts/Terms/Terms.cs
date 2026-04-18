@@ -1,4 +1,4 @@
-﻿namespace CashFlow.Data.Consts;
+﻿namespace CashFlow.Data.Consts.Terms;
 
 public class Terms
 {
