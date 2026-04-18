@@ -42,16 +42,23 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
         }
     }
 
+    public async override Task BeforeStage()
+    {
+        var person = PersonService.Read(CurrentUser);
+        if (person.IsReadyForBigCircle())
+        {
+            var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
+            OtherUsers
+                .Where(UserService.IsActive)
+                .Append(CurrentUser)
+                .ForEach(async u => await UserService.Notify(u, notifyMessage));
+        }
+    }
+
     public async override Task HandleMessage(string message)
     {
         var person = PersonService.Read(CurrentUser);
         var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
-
-        if (person.IsReadyForBigCircle())
-        {
-            var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
-            OtherUsers.Where(UserService.IsActive).ForEach(async u => await UserService.Notify(u, notifyMessage));
-        }
 
         switch (message)
         {
