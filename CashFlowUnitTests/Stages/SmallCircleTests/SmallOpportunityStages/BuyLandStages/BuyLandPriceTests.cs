@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLa
 [TestFixture]
 public class BuyLandPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = CashFlow.Data.Consts.Prices.LandBuyPrice.AsCurrency().ToArray();
+    private static readonly string[] Prices = BuyPrices.Land.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Land, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];

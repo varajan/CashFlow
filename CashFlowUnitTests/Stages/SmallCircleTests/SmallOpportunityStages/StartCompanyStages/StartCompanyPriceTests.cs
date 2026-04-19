@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Start
 [TestFixture]
 public class StartCompanyPriceTests : StagesBaseTest
 {
-    private static readonly string[] CompanyPrices = Prices.SmallBusinessBuyPrice.AsCurrency().ToArray();// ["$100", "$500"];
+    private static readonly string[] CompanyPrices = BuyPrices.BusinessSmall.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.SmallBusinessType, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];

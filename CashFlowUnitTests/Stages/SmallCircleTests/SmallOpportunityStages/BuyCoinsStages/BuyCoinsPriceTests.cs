@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCo
 [TestFixture]
 public class BuyCoinsPriceTests : StagesBaseTest
 {
-    private static readonly string[] CoinPrices = Prices.CoinBuyPrice.OrderBy(x => x).AsCurrency().ToArray();
+    private static readonly string[] CoinPrices = BuyPrices.Coin.OrderBy(x => x).AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Coin, Qtty = 5, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
