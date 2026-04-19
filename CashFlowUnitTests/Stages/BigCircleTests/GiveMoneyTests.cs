@@ -56,7 +56,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(Prices.BigGiveMoney.OrderBy(x => x).AsCurrency().Append("Cancel")));
+            Assert.That(testStage.Buttons, Is.EqualTo(MoneyAmount.BigGiveMoney.OrderBy(x => x).AsCurrency().Append("Cancel")));
         }
     }
 

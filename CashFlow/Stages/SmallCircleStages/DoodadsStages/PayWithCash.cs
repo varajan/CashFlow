@@ -9,7 +9,7 @@ public class PayWithCash(ITranslationService termsService, IUserService userServ
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons => Prices.SmallGiveMoney.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> Buttons => MoneyAmount.SmallGiveMoney.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

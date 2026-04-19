@@ -9,7 +9,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCo
 [TestFixture]
 public class BuyCoinsCountTests : StagesBaseTest
 {
-    private static readonly int[] Counts = Prices.CoinCount.OrderBy(x => x).ToArray();
+    private static readonly int[] Counts = [1, 10];
     private AssetDto Asset => new() { UserId = CurrentUser.Id, Type = AssetType.Coin, IsDraft = true };
 
     [SetUp]

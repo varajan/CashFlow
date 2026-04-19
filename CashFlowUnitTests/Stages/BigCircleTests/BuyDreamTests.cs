@@ -28,7 +28,7 @@ public class BuyDreamTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(Prices.DreamPrice.OrderBy(x => x).AsCurrency().Append("Cancel")));
+            Assert.That(testStage.Buttons, Is.EqualTo(BuyPrice.BigDream.OrderBy(x => x).AsCurrency().Append("Cancel")));
         }
     }
 

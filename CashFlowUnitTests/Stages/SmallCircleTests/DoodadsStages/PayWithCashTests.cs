@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
 [TestFixture]
 public class PayWithCashTests : StagesBaseTest
 {
-    private static readonly string[] Amounts = Prices.SmallGiveMoney.OrderBy(x => x).AsCurrency().ToArray();
+    private static readonly string[] Amounts = MoneyAmount.SmallGiveMoney.OrderBy(x => x).AsCurrency().ToArray();
 
     [Test]
     public void Doodads_PayWithCash_Question_and_Buttons()

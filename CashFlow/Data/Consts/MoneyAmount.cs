@@ -1,13 +1,10 @@
 ﻿namespace CashFlow.Data.Consts;
 
-public class Prices
+public class MoneyAmount
 {
     public static readonly int[] SmallGiveMoney = [10, 20, 40, 50, 70, 80, 100, 120, 150, 180, 200, 220, 250, 300, 350, 450, 500, 600, 700, 1500, 2000, 4000];
     public static readonly int[] BigGiveMoney = [25_000, 50_000, 100_000, 200_000];
-    public static readonly int[] MicroCreditAmount = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
-
-    public static readonly int[] CoinCount = [1, 10];
-    public static readonly int[] DreamPrice = [250000, 400000];
+    public static readonly int[] MicroCredit = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000];
 }
 
 public class BuyPrice
@@ -20,6 +17,7 @@ public class BuyPrice
     public static readonly int[] Stock = [1, 5, 10, 20, 30, 40, 50, 1200, 4000, 5000];
     public static readonly int[] Land = [5000, 10000, 20000];
     public static readonly int[] Coin = [300, 500];
+    public static readonly int[] BigDream = [100_000, 125_000, 150_000, 175_000, 200_000, 225_000, 250_000, 300_000];
 }
 
 public class SellPrice

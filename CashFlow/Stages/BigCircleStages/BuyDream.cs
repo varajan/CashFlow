@@ -8,7 +8,7 @@ public class BuyDream(ITranslationService termsService, IUserService userService
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => Prices.DreamPrice.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> Buttons => BuyPrice.BigDream.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

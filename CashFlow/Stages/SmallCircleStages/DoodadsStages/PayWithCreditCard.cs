@@ -9,7 +9,7 @@ public class PayWithCreditCard(ITranslationService termsService, IUserService us
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons => Prices.MicroCreditAmount.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> Buttons => MoneyAmount.MicroCredit.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

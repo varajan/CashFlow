@@ -9,7 +9,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
 
 public class PayWithCreditCardTests : StagesBaseTest
 {
-    public static readonly string[] Amounts = Prices.MicroCreditAmount.OrderBy(x => x).AsCurrency().ToArray();
+    public static readonly string[] Amounts = MoneyAmount.MicroCredit.OrderBy(x => x).AsCurrency().ToArray();
 
     [Test]
     public void Doodads_PayWithCreditCard_Question_and_Buttons()
