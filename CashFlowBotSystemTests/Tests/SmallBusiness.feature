@@ -17,8 +17,8 @@ Scenario: I can start small business
 *Cashflow:* $1,070
 
 *Assets:*
-• *Auto Tools* - Price: $3,000
-• *Computer Programs* - Price: $5,000
+• *Auto tools* - Price: $3,000
+• *Computer programs* - Price: $5,000
 
 *Expenses:*
 *Taxes:* $910
@@ -49,8 +49,8 @@ Scenario: I can Increase cashflow for small business
 *Cashflow:* $2,970
 
 *Assets:*
-• *Auto Tools* - Price: $3,000, monthly: $650
-• *Computer Programs* - Price: $5,000, monthly: $650
+• *Auto tools* - Price: $3,000, monthly: $650
+• *Computer programs* - Price: $5,000, monthly: $650
 
 *Expenses:*
 *Taxes:* $910
@@ -64,12 +64,12 @@ Scenario: I can Increase cashflow for small business
 	And My history data is following:
 """
 • Get $20,000
-• Start a company. *Auto Tools* - Price: $3,000
-• Start a company. *Computer Programs* - Price: $5,000
-• *Auto Tools* - Increase cashflow. $250
-• *Computer Programs* - Increase cashflow. $250
-• *Auto Tools* - Increase cashflow. $400
-• *Computer Programs* - Increase cashflow. $400
+• Start a company. *Auto tools* - Price: $3,000
+• Start a company. *Computer programs* - Price: $5,000
+• *Auto tools* - Increase cashflow. $250
+• *Computer programs* - Increase cashflow. $250
+• *Auto tools* - Increase cashflow. $400
+• *Computer programs* - Increase cashflow. $400
 """
 
 Scenario: I can sell small business
@@ -91,7 +91,7 @@ Scenario: I can sell small business
 *Cashflow:* $2,320
 
 *Assets:*
-• *Computer Programs* - Price: $5,000, monthly: $650
+• *Computer programs* - Price: $5,000, monthly: $650
 
 *Expenses:*
 *Taxes:* $910
@@ -105,13 +105,13 @@ Scenario: I can sell small business
 	And My history data is following:
 """
 • Get $20,000
-• Start a company. *Auto Tools* - Price: $3,000
-• Start a company. *Computer Programs* - Price: $5,000
-• *Auto Tools* - Increase cashflow. $250
-• *Computer Programs* - Increase cashflow. $250
-• *Auto Tools* - Increase cashflow. $400
-• *Computer Programs* - Increase cashflow. $400
-• Sell Business. *Auto Tools* - Price: $3,000, monthly: $650
+• Start a company. *Auto tools* - Price: $3,000
+• Start a company. *Computer programs* - Price: $5,000
+• *Auto tools* - Increase cashflow. $250
+• *Computer programs* - Increase cashflow. $250
+• *Auto tools* - Increase cashflow. $400
+• *Computer programs* - Increase cashflow. $400
+• Sell Business. *Auto tools* - Price: $3,000, monthly: $650
 """
 
 Scenario: I can rollback starting a small business
@@ -124,7 +124,7 @@ Scenario: I can rollback starting a small business
 	Then I have $19,070 in cash
 		And My assets are:
 """
-• *Auto Tools* - Price: $3,000
+• *Auto tools* - Price: $3,000
 """
 
 Scenario: I can rollback selling small business
@@ -140,8 +140,8 @@ Scenario: I can rollback selling small business
 		And My passive income is $800
 		And My assets are:
 """
-• *Auto Tools* - Price: $3,000, monthly: $400
-• *Computer Programs* - Price: $5,000, monthly: $400
+• *Auto tools* - Price: $3,000, monthly: $400
+• *Computer programs* - Price: $5,000, monthly: $400
 """
 
 Scenario: I can rollback increasing cashflow
@@ -158,6 +158,6 @@ Scenario: I can rollback increasing cashflow
 		And My passive income is $1,300
 		And My assets are:
 """
-• *Auto Tools* - Price: $3,000, monthly: $650
-• *Computer Programs* - Price: $5,000, monthly: $650
+• *Auto tools* - Price: $3,000, monthly: $650
+• *Computer programs* - Price: $5,000, monthly: $650
 """
