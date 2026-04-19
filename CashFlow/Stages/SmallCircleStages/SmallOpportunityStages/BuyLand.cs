@@ -9,7 +9,7 @@ public class BuyLand(ITranslationService termsService, IUserService userService,
 { }
 
 public class BuyLandPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
-    : BuyAssetPrice<BuyLandCredit>(BuyPrices.Land, AssetType.Land, ActionType.BuyLand, termsService, userService, personManager, userRepository)
+    : BuyAssetPrice<BuyLandCredit>(BuyPrice.Land, AssetType.Land, ActionType.BuyLand, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyLandCredit(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)

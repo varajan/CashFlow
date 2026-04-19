@@ -10,7 +10,7 @@ public class BuyBusiness(ITranslationService termsService, IUserService userServ
 
 public class BuyBusinessPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBusinessFirstPayment>(
-        BuyPrices.BusinessBig, AssetType.Business, termsService, userService, personManager, userRepository)
+        BuyPrice.BusinessBig, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessFirstPayment(
@@ -19,7 +19,7 @@ public class BuyBusinessFirstPayment(
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetWithCashflowFirstPayment<BuyBusinessCashFlow, BuyBusinessCredit>(
-        Prices.BusinessFirstPayment, AssetType.Business, termsService, userService, personManager, userRepository)
+        FirstPayment.Business, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessCredit(

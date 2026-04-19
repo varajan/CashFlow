@@ -10,12 +10,12 @@ public class BuyBigRealEstate(ITranslationService termsService, IUserService use
 
 public class BuyBigRealEstatePrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBigRealEstateFirstPayment>(
-        BuyPrices.RealEstateBig, AssetType.RealEstate, termsService, userService, personManager, userRepository)
+        BuyPrice.RealEstateBig, AssetType.RealEstate, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBigRealEstateFirstPayment(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetWithCashflowFirstPayment<BuyBigRealEstateCashFlow, BuyBigRealEstateCredit>(
-        Prices.RealEstateBigFirstPayment, AssetType.RealEstate, termsService, userService, personManager, userRepository)
+        FirstPayment.RealEstateBig, AssetType.RealEstate, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBigRealEstateCredit(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
