@@ -108,7 +108,7 @@ public class Terms
     public const string LostMoney = "You've lost {0}.";
     public const string Winner = "You are the winner!";
 
-    public const string BuyDream = "Buy Dream";
+    public const string BuyDream = "Buy my dream";
     public const string BuyBusiness = "Buy Business";
     public const string SellBusiness = "Sell Business";
     public const string InvalidBusiness = "Invalid Business number.";
