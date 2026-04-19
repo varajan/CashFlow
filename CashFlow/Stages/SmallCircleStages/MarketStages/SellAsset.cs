@@ -63,7 +63,7 @@ public class SellAsset<TNextStage>(
         }
     }
 
-    private List<AssetDto> Assets => AssetTypes.SelectMany(type => PersonService.ReadAllAssets(type, CurrentUser).Where(a => !a.IsDeleted)).ToList();
+    private List<AssetDto> Assets => AssetTypes.SelectMany(type => PersonService.ReadActiveAssets(type, CurrentUser).Where(a => !a.IsDeleted)).ToList();
 
     public override async Task HandleMessage(string message)
     {

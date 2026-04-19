@@ -47,7 +47,7 @@ public class Doodads(ITranslationService termsService, IUserService userService,
     {
         const int firstPayment = 1_000;
 
-        var boat = PersonService.ReadAllAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
+        var boat = PersonService.ReadActiveAssets(AssetType.Boat, CurrentUser).FirstOrDefault();
         if (boat != null)
         {
             await UserService.Notify(CurrentUser, TranslationService.Get(Terms.AlreadyBoat, CurrentUser));

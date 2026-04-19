@@ -25,7 +25,7 @@ public class SendMoneyAmount(IPersonService personManager, ITranslationService t
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft && !x.IsDeleted);
+        var asset = PersonService.ReadActiveAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
         var person = PersonService.Read(CurrentUser);
 
         if (IsCanceled(message))

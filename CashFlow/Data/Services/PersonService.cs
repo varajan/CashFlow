@@ -54,7 +54,9 @@ public class PersonService(IPersonRepository personRepository, IDataBase dataBas
     public void RollbackHistory(PersonDto person, HistoryDto record) => HistoryService.RollbackRecord(person, record);
 
 
-    public List<AssetDto> ReadAllAssets(AssetType type, UserDto user) => AssetService.GetAll(type, user);
+    public List<AssetDto> ReadActiveAssets(AssetType type, UserDto user) =>
+        AssetService.GetAll(type, user).Where(x => !x.IsDeleted).ToList();
+
     public void CreateAsset(UserDto user, AssetDto asset) => AssetService.Create(user, asset);
     public void DeleteAsset(UserDto user, AssetDto asset) => AssetService.Delete(user, asset);
     public void UpdateAsset(UserDto user, AssetDto asset) => AssetService.Update(user, asset);

@@ -44,7 +44,7 @@ public class SellAssetPrice(
         {
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                var count = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell && !a.IsDeleted)
+                var count = PersonService.ReadActiveAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell)
                     .Title
                     .GetApartmentsCount();
 
@@ -61,7 +61,7 @@ public class SellAssetPrice(
 
     public override async Task HandleMessage(string message)
     {
-        var assets = AssetTypes.SelectMany(type => PersonService.ReadAllAssets(type, CurrentUser)).Where(a => a.MarkedToSell).ToList();
+        var assets = AssetTypes.SelectMany(type => PersonService.ReadActiveAssets(type, CurrentUser)).Where(a => a.MarkedToSell).ToList();
 
         if (IsCanceled(message))
         {

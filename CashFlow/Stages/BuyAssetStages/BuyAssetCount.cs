@@ -22,7 +22,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     {
         get
         {
-            var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).First(x => x.IsDraft);
             var person = PersonService.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
 
@@ -36,7 +36,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
     {
         get
         {
-            var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+            var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).First(x => x.IsDraft);
             var person = PersonService.Read(CurrentUser);
             int upToQtty = person.Cash / asset.Price;
             int upTo50 = upToQtty / 50 * 50;
@@ -68,7 +68,7 @@ public class BuyAssetCount<TCreditStage, TCashFlowStage>(
 
     public async override Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {

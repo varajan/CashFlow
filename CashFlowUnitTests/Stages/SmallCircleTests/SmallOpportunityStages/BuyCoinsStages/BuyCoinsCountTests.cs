@@ -13,7 +13,7 @@ public class BuyCoinsCountTests : StagesBaseTest
     private AssetDto Asset => new() { UserId = CurrentUser.Id, Type = AssetType.Coin, IsDraft = true };
 
     [SetUp]
-    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
 
     [Test]
     public void BuyCoinsCount_Question_and_Buttons()

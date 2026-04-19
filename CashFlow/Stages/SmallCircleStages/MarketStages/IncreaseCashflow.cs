@@ -27,7 +27,7 @@ public class IncreaseCashflow(ITranslationService termsService, IUserService use
             return;
         }
 
-        var assets = PersonService.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Where(a => !a.IsDeleted);
+        var assets = PersonService.ReadActiveAssets(AssetType.SmallBusinessType, CurrentUser);
 
         assets.ForEach(asset =>
         {

@@ -18,7 +18,7 @@ public class BuyAssetPriceWithCount<TNextStage>(
 
     public async override Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).First(x => x.IsDraft);
 
         if (IsCanceled(message))
         {

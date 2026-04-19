@@ -24,7 +24,7 @@ public class SmallOpportunity(ITranslationService termsService, IUserService use
 
     public override async Task HandleMessage(string message)
     {
-        var hasStocks = PersonService.ReadAllAssets(AssetType.Stock, CurrentUser).Count(x => !x.IsDeleted) > 0;
+        var hasStocks = PersonService.ReadActiveAssets(AssetType.Stock, CurrentUser).Count > 0;
 
         switch (message)
         {

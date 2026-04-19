@@ -27,7 +27,7 @@ public class BuyCoinsCount(ITranslationService termsService, IUserService userSe
             return;
         }
 
-        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft && !x.IsDeleted);
+        var asset = PersonService.ReadActiveAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
         asset.Qtty = number;
         PersonService.UpdateAsset(CurrentUser, asset);
 

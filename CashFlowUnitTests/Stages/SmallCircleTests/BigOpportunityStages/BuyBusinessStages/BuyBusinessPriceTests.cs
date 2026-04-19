@@ -19,7 +19,7 @@ public class BuyBusinessPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Business, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Business, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
             .Callback<UserDto, AssetDto>((user, dto) =>

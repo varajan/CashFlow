@@ -19,7 +19,7 @@ public class StartCompanyPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
             .Callback<UserDto, AssetDto>((user, dto) =>
@@ -109,7 +109,7 @@ public class StartCompanyPriceTests : StagesBaseTest
 
         asset.Price = price;
 
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Coin, CurrentUser)).Returns([asset]);
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act

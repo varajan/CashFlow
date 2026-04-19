@@ -19,7 +19,7 @@ public class BuyLandPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Land, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
             .Callback<UserDto, AssetDto>((user, dto) =>
@@ -108,7 +108,7 @@ public class BuyLandPriceTests : StagesBaseTest
         var asset = Asset.Clone();
         asset.Price = price;
 
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.LandTitle, CurrentUser)).Returns([asset]);
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act

@@ -20,7 +20,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 
     public override IEnumerable<string> Buttons =>
         PersonService
-            .ReadAllAssets(AssetType.Stock, CurrentUser)
+            .ReadActiveAssets(AssetType.Stock, CurrentUser)
             .Select(x => x.Title)
             .Distinct()
             .Append(Cancel);
@@ -33,8 +33,8 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
             return;
         }
 
-        var stocks = PersonService.ReadAllAssets(AssetType.Stock, CurrentUser)
-            .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase) && !x.IsDeleted)
+        var stocks = PersonService.ReadActiveAssets(AssetType.Stock, CurrentUser)
+            .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase))
             .ToList();
 
         if (stocks.Count == 0)

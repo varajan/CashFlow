@@ -75,7 +75,7 @@ public class DoodadsTests : StagesBaseTest
         var creditMessage = string.Format("You've taken *{0}* from bank.", firstPayment.AsCurrency());
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(new PersonDto { Id = CurrentUser.Id, Cash = cash });
-        PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(It.IsAny<AssetType>(), CurrentUser)).Returns([]);
 
         // Act
         await testStage.HandleMessage("Buy a boat");
@@ -107,7 +107,7 @@ public class DoodadsTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
 
-        PersonServiceMock.Setup(a => a.ReadAllAssets(It.IsAny<AssetType>(), CurrentUser))
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(It.IsAny<AssetType>(), CurrentUser))
             .Returns([new AssetDto { Type = AssetType.Boat }]);
 
         // Act

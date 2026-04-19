@@ -19,7 +19,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
             .Callback<UserDto, AssetDto>((user, dto) =>
@@ -112,7 +112,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
         asset.Qtty = qtty;
         asset.Price = price;
 
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Coin, CurrentUser)).Returns([asset]);
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);
 
         // Act
