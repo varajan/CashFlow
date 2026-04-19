@@ -244,7 +244,7 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     public void BuyDream(string name, string price)
     {
         var user = GetUser(name);
-        user.SendMessage("Buy Dream");
+        user.SendMessage("Buy my dream");
         user.SendMessage(price);
     }
 }

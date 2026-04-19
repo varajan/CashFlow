@@ -47,7 +47,7 @@ public class BigCircleTests : StagesBaseTest
             "Tax Audit",
             "Lawsuit",
             "Buy Business",
-            "Buy Dream",
+            "Buy my dream",
             "Friends",
             "History",
             "Game menu",
@@ -142,7 +142,7 @@ public class BigCircleTests : StagesBaseTest
 
     [TestCase("Get Money", typeof(GetMoney))]
     [TestCase("Buy Business", typeof(BuyBigBusiness))]
-    [TestCase("Buy Dream", typeof(BuyDream))]
+    [TestCase("Buy my dream", typeof(BuyDream))]
     [TestCase("Friends", typeof(Friends))]
     [TestCase("History", typeof(History))]
     [TestCase("Game menu", typeof(GameMenu))]
