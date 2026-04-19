@@ -68,6 +68,8 @@ public class SendMoneyAmountTests : StagesBaseTest
                 "$3,000",
                 "$3,500",
                 "$4,000",
+                "$4,500",
+                "$5,000",
                 "Cancel"
             }));
         }

@@ -7,7 +7,6 @@ namespace CashFlowBotSystemTests.Steps;
 [Binding]
 public class GiveMoneySteps(StepsContext context) : BaseSteps(context)
 {
-    [Scope(Feature = "GiveMoney")]
     [When("(.*) pays (.*) to (.*)")]
     public void PayMoney(string from, string amount, string to)
     {

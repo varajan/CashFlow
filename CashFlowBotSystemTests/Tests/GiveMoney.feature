@@ -98,6 +98,52 @@ Scenario: Can pay money to bank
 • Pay $1,000
 """
 
+# Bug #72 All further transfers to bank go to a player
+Scenario: Can pay money to a friend and bank
+	When Haroon Stephens pays $1000 to Ela Lynch
+		And Haroon Stephens pays $500 to bank
+	Then All users recieve notification: Haroon Stephens transferred $500 to Bank.
+	And Balance by users is:
+		| Name            | Balance  |
+		| Haroon Stephens | $7,450   |
+		| Ela Lynch       | $5,000   |
+		| Brodie Newton   | $3,480   |
+		| Kaitlin Alvarez | $254,510 |
+	And Haroon Stephens history data is following:
+"""
+• Get $5,000
+• Pay $1,000
+• Pay $500
+"""
+	And Ela Lynch history data is following:
+"""
+• Get credit: $1,000
+• Get $1,000
+"""
+
+# Bug #72 All further transfers to bank go to a player
+Scenario: Can pay money to bank and a friend
+	When Haroon Stephens pays $1000 to bank
+		And Haroon Stephens pays $500 to Ela Lynch
+	Then All users recieve notification: Haroon Stephens transferred $500 to Ela Lynch.
+	And Balance by users is:
+		| Name            | Balance  |
+		| Haroon Stephens | $7,450   |
+		| Ela Lynch       | $4,500   |
+		| Brodie Newton   | $3,480   |
+		| Kaitlin Alvarez | $254,510 |
+	And Haroon Stephens history data is following:
+"""
+• Get $5,000
+• Pay $1,000
+• Pay $500
+"""
+	And Ela Lynch history data is following:
+"""
+• Get credit: $1,000
+• Get $500
+"""
+
 Scenario: Can rollback payment to bank
 	When Haroon Stephens pays $1000 to bank
 		But Haroon Stephens rollbacks last action

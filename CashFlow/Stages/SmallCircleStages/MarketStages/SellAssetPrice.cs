@@ -44,7 +44,7 @@ public class SellAssetPrice(
         {
             if (AssetTypes.Contains(AssetType.RealEstate))
             {
-                var count = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell)
+                var count = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).First(a => a.MarkedToSell && !a.IsDeleted)
                     .Title
                     .GetApartmentsCount();
 

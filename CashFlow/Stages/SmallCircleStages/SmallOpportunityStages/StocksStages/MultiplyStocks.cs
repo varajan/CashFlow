@@ -34,7 +34,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
         }
 
         var stocks = PersonService.ReadAllAssets(AssetType.Stock, CurrentUser)
-            .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase))
+            .Where(x => x.Title.Equals(message, StringComparison.InvariantCultureIgnoreCase) && !x.IsDeleted)
             .ToList();
 
         if (stocks.Count == 0)

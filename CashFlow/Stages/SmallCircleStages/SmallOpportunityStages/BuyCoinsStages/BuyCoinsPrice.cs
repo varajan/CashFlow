@@ -27,7 +27,7 @@ public class BuyCoinsPrice(ITranslationService termsService, IUserService userSe
             return;
         }
 
-        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Single(x => x.IsDraft && !x.IsDeleted);
         asset.Price = number;
         PersonService.UpdateAsset(CurrentUser, asset);
 
