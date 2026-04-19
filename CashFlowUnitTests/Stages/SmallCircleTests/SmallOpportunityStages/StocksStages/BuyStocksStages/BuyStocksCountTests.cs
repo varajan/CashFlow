@@ -18,7 +18,7 @@ public class BuyStocksCountTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
 
         AssetsList = [];
@@ -51,7 +51,7 @@ public class BuyStocksCountTests : StagesBaseTest
             Price = price,
             IsDraft = true
         };
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Stock, CurrentUser)).Returns([asset]);
 
         var person = new PersonDto() { Id = CurrentUser.Id, Cash = cash };
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(person);

@@ -14,7 +14,7 @@ public class BuyStocksPriceTests : StagesBaseTest
     private AssetDto Asset => new() { Id = 123, Title = "Stock", UserId = CurrentUser.Id, Type = AssetType.Stock, IsDraft = true };
 
     [SetUp]
-    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
 
     [Test]
     public void BuyStocksPrice_Question_and_Buttons()

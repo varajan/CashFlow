@@ -22,7 +22,7 @@ public interface IPersonService
     string HistoryTopFive(UserDto user, UserDto currentUser);
     void RollbackHistory(PersonDto person, HistoryDto record);
 
-    List<AssetDto> ReadAllAssets(AssetType type, UserDto user);
+    List<AssetDto> ReadActiveAssets(AssetType type, UserDto user);
     void CreateAsset(UserDto user, AssetDto asset);
     void DeleteAsset(UserDto user, AssetDto asset);
     void UpdateAsset(UserDto user, AssetDto asset);

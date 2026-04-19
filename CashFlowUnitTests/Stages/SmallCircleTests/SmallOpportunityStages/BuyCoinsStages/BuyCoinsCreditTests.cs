@@ -16,7 +16,7 @@ public class BuyCoinsCreditTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 

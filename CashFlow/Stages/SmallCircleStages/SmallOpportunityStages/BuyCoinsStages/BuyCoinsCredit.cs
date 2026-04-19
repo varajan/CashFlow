@@ -12,7 +12,7 @@ public class BuyCoinsCredit(
     {
         get
         {
-            var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
+            var asset = PersonService.ReadActiveAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
             var value = (asset.Qtty * asset.Price).AsCurrency();
             var cash = PersonService.Read(CurrentUser).Cash.AsCurrency();
 
@@ -24,7 +24,7 @@ public class BuyCoinsCredit(
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadActiveAssets(AssetType.Coin, CurrentUser).First(x => x.IsDraft);
 
         switch (message)
         {

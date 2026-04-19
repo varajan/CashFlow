@@ -20,7 +20,7 @@ public abstract class BuyAssetPrice<TNextStage>(
     public override IEnumerable<string> Buttons => assetPrices.AsCurrency().Append(Cancel);
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
+        var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).Single(x => x.IsDraft);
 
         if (IsCanceled(message))
         {

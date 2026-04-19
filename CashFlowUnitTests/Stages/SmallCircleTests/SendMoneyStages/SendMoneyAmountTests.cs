@@ -19,7 +19,7 @@ public class SendMoneyAmountTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([TransferAsset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Transfer, CurrentUser)).Returns([TransferAsset]);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
         PersonServiceMock.Setup(p => p.Read(Recipient)).Returns(RecipientPerson);
     }
@@ -68,6 +68,8 @@ public class SendMoneyAmountTests : StagesBaseTest
                 "$3,000",
                 "$3,500",
                 "$4,000",
+                "$4,500",
+                "$5,000",
                 "Cancel"
             }));
         }
@@ -147,7 +149,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Arrange
         var transferAsset = TransferAsset;
         transferAsset.Title = "Bank";
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([transferAsset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Transfer, CurrentUser)).Returns([transferAsset]);
 
         var transferAmount = 100;
         var message = string.Format("{0} transferred {2} to {1}.{3}",

@@ -18,7 +18,7 @@ public class BuyRealEstateCashflowTests : StagesBaseTest
     public void Setup()
     {
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([Asset]);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.RealEstate, CurrentUser)).Returns([Asset]);
     }
 
     [Test]

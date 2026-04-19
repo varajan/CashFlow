@@ -19,13 +19,13 @@ public class SendMoneyAmount(IPersonService personManager, ITranslationService t
             return
                 person.BigCircle
                 ? MoneyAmount.AtBigCircle.OrderBy(x => x).AsCurrency().Append(Cancel)
-                : Enumerable.Range(1, 8).Select(x => (500 * x).AsCurrency()).Append(Cancel);
+                : Enumerable.Range(1, 10).Select(x => (500 * x).AsCurrency()).Append(Cancel);
         }
     }
 
     public override async Task HandleMessage(string message)
     {
-        var asset = PersonService.ReadAllAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
+        var asset = PersonService.ReadActiveAssets(AssetType.Transfer, CurrentUser).First(x => x.IsDraft);
         var person = PersonService.Read(CurrentUser);
 
         if (IsCanceled(message))

@@ -25,7 +25,7 @@ public class SellStocksPriceTests : StagesBaseTest
     [SetUp]
     public void Setup()
     {
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns(Assets);
+        PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.Stock, CurrentUser)).Returns(Assets);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 

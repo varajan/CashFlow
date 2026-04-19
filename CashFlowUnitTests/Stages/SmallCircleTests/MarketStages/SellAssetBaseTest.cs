@@ -34,7 +34,7 @@ public abstract class SellAssetBaseTest : StagesBaseTest
                 new AssetDto { Id = id++, Type = type, Qtty = 1, Title = $"{type} No3", CashFlow = 100 * id, MarkedToSell = false },
             ];
 
-            PersonServiceMock.Setup(a => a.ReadAllAssets(type, CurrentUser)).Returns(assetsOfType);
+            PersonServiceMock.Setup(a => a.ReadActiveAssets(type, CurrentUser)).Returns(assetsOfType);
             Assets.AddRange(assetsOfType);
         }
     }

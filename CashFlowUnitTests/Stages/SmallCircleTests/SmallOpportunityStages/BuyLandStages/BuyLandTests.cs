@@ -12,7 +12,7 @@ public class BuyLandTests : StagesBaseTest
     private static readonly string[] Names = Terms.LandTitles;
 
     [SetUp]
-    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUser)).Returns([]);
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadActiveAssets(AssetType.LandTitle, CurrentUser)).Returns([]);
 
     [Test]
     public void BuyLand_Question_and_Buttons()

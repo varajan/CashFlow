@@ -19,12 +19,12 @@ public class Market(ITranslationService termsService, IUserService userService, 
 
     public override async Task HandleMessage(string message)
     {
-        var noSmallBusiness = PersonService.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser).Count == 0;
+        var noSmallBusiness = PersonService.ReadActiveAssets(AssetType.SmallBusinessType, CurrentUser).Count == 0;
 
         switch (message)
         {
             case var m when MessageEquals(m, Terms.SellRealEstate):
-                var noRealEstate = PersonService.ReadAllAssets(AssetType.RealEstate, CurrentUser).Count == 0;
+                var noRealEstate = PersonService.ReadActiveAssets(AssetType.RealEstate, CurrentUser).Count == 0;
                 if (noRealEstate)
                 {
                     await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoRealEstate, CurrentUser));
@@ -36,7 +36,7 @@ public class Market(ITranslationService termsService, IUserService userService, 
                 return;
 
             case var m when MessageEquals(m, Terms.SellLand):
-                var noLand = PersonService.ReadAllAssets(AssetType.Land, CurrentUser).Count == 0;
+                var noLand = PersonService.ReadActiveAssets(AssetType.Land, CurrentUser).Count(x => !x.IsDeleted) == 0;
                 if (noLand)
                 {
                     await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoLand, CurrentUser));
@@ -48,7 +48,7 @@ public class Market(ITranslationService termsService, IUserService userService, 
                 return;
 
             case var m when MessageEquals(m, Terms.SellBusiness):
-                var noBusiness = PersonService.ReadAllAssets(AssetType.Business, CurrentUser).Count == 0;
+                var noBusiness = PersonService.ReadActiveAssets(AssetType.Business, CurrentUser).Count == 0;
                 if (noBusiness && noSmallBusiness)
                 {
                     await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoBusiness, CurrentUser));
@@ -60,7 +60,7 @@ public class Market(ITranslationService termsService, IUserService userService, 
                 return;
 
             case var m when MessageEquals(m, Terms.SellCoins):
-                var noCoins = PersonService.ReadAllAssets(AssetType.Coin, CurrentUser).Count == 0;
+                var noCoins = PersonService.ReadActiveAssets(AssetType.Coin, CurrentUser).Count == 0;
                 if (noCoins)
                 {
                     await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NoCoins, CurrentUser));
