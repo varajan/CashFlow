@@ -16,17 +16,15 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
         {
             if (_connection == null || !IsReady)
             {
+                var initTablesCommand = @"
+                CREATE TABLE IF NOT EXISTS Users (ID Number, Data Text);
+                CREATE TABLE IF NOT EXISTS Persons (ID Number, PersonData Text);
+                CREATE TABLE IF NOT EXISTS History (UserID Number, Id Number, HistoryRecord Text);";
+
                 SQLiteConnection.CreateFile(DatabaseFileName);
                 _connection = new SQLiteConnection(ConnectionString);
                 _connection = _connection.OpenAndReturn();
-
-                Directory
-                    .GetFiles($"{AppDomain.CurrentDomain.BaseDirectory}/Data/SQL")
-                    .Where(file => file.ToLower().EndsWith(".sql"))
-                    .OrderBy(x => x)
-                    .Select(File.ReadAllText)
-                    .ToList()
-                    .ForEach(sql => Execute(sql, _connection));
+                Execute(initTablesCommand, _connection);
             }
 
             return _connection;

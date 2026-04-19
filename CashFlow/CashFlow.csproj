@@ -55,9 +55,6 @@
     <None Update="Data\Persons\Track driver.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Data\SQL\001_init_tables.sql">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Data\Translations\DE.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
