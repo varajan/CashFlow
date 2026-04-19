@@ -9,7 +9,7 @@ public class BuyStocks(ITranslationService termsService, IUserService userServic
 { }
 
 public class BuyStocksPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
-    : BuyAssetPriceWithCount<BuyStocksCount>(Prices.StockPrice, AssetType.Stock, termsService, userService, personManager, userRepository)
+    : BuyAssetPriceWithCount<BuyStocksCount>(BuyPrice.Stock, AssetType.Stock, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyStocksCount(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)

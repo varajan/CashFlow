@@ -12,7 +12,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.MarketStages;
 public class SellRealEstatePriceTests : SellAssetBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
-    private static readonly List<string> AvailablePrices = Prices.RealEstateSellPrice.OrderBy(x => x).AsCurrency().ToList();
+    private static readonly List<string> AvailablePrices = SellPrice.RealEstate.OrderBy(x => x).AsCurrency().ToList();
 
     [SetUp]
     public void PricesSetup() => PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);

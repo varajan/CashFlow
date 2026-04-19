@@ -28,12 +28,12 @@ public class SellAssetPrice(
 
     protected int[] SellPrices => AssetTypes.First() switch
     {
-        AssetType.Land => Prices.LandSellPrice,
-        AssetType.Coin => Prices.CoinSellPrice,
-        AssetType.Business => Prices.BusinessSellPrice,
-        AssetType.SmallBusiness => Prices.BusinessSellPrice,
-        AssetType.Stock => Prices.StockPrice,
-        AssetType.RealEstate => Prices.RealEstateSellPrice,
+        AssetType.Land => SellPrice.Land,
+        AssetType.Coin => SellPrice.Coin,
+        AssetType.Business => SellPrice.Business,
+        AssetType.SmallBusiness => SellPrice.Business,
+        AssetType.Stock => BuyPrice.Stock,
+        AssetType.RealEstate => SellPrice.RealEstate,
 
         _ => throw new NotImplementedException(),
     };

@@ -13,7 +13,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 public class SellStocksPriceTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
-    private static readonly List<string> AvailablePrices = Prices.StockPrice.OrderBy(x => x).AsCurrency().ToList();
+    private static readonly List<string> AvailablePrices = BuyPrice.Stock.OrderBy(x => x).AsCurrency().ToList();
 
     private static List<AssetDto> Assets =>
     [

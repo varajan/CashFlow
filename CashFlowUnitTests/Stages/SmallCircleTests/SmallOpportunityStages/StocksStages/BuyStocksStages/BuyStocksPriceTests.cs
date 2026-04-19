@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 [TestFixture]
 public class BuyStocksPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = CashFlow.Data.Consts.Prices.StockPrice.AsCurrency().ToArray();
+    private static readonly string[] Prices = BuyPrice.Stock.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, Title = "Stock", UserId = CurrentUser.Id, Type = AssetType.Stock, IsDraft = true };
 
     [SetUp]
