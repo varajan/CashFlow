@@ -113,6 +113,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
     private string BigCircleDescription(PersonDto person, UserDto user)
     {
         var professionTerm = TranslationService.Get(Terms.Profession, user);
+        var personProfession = TranslationService.Get(person.Profession, user.Language);
         var cashTerm = TranslationService.Get(Terms.Cash, user);
         var cashFlowTerm = TranslationService.Get(Terms.Cashflow, user);
         var initialTerm = TranslationService.Get(Terms.Initial, user);
@@ -121,7 +122,7 @@ public class DescriptionService(ITranslationService terms, AssetService assetSer
         var assets = person.Assets.Where(a => a.BigCircle).ToList();
 
         var description =
-            $"*{professionTerm}:* {person.Profession}{Environment.NewLine}" +
+            $"*{professionTerm}:* {personProfession}{Environment.NewLine}" +
             $"*{cashTerm}:* {person.Cash.AsCurrency()}{Environment.NewLine}" +
             $"{initialTerm} {cashFlowTerm}: {person.InitialCashFlow.AsCurrency()}{Environment.NewLine}" +
             $"{currentTerm} {cashFlowTerm}: {person.GetBigCircleCashflow().AsCurrency()}{Environment.NewLine}" +
