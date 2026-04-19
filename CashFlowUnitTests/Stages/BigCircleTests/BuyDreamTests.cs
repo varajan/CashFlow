@@ -1,5 +1,6 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.BigCircleStages;
 using Moq;
@@ -13,11 +14,7 @@ public class BuyDreamTests : StagesBaseTest
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = Cash, BigCircle = true };
 
     [SetUp]
-    public void Setup()
-    {
-        PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
-        AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.DreamPrice)).Returns(["$100,000", "$150,000"]);
-    }
+    public void Setup() => PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
 
     [Test]
     public void BuyDream_Question_and_Buttons()
@@ -31,7 +28,7 @@ public class BuyDreamTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "$100,000", "$150,000", "Cancel" }));
+            Assert.That(testStage.Buttons, Is.EqualTo(Prices.DreamPrice.OrderBy(x => x).AsCurrency().Append("Cancel")));
         }
     }
 

@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
@@ -8,10 +7,10 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class SellAssetPrice(
     ITranslationService termsService,
     IUserService userService,
-    IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository,
-    params AssetType[] assetTypes) : BaseStage(termsService, userService, personManager, userRepository)
+    params AssetType[] assetTypes)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 
@@ -27,19 +26,17 @@ public class SellAssetPrice(
         _ => throw new NotImplementedException(),
     };
 
-    protected AssetType SellPrice => AssetTypes.First() switch
+    protected int[] SellPrices => AssetTypes.First() switch
     {
-        AssetType.Land => AssetType.LandSellPrice,
-        AssetType.Coin => AssetType.CoinSellPrice,
-        AssetType.Business => AssetType.BusinessSellPrice,
-        AssetType.SmallBusiness => AssetType.BusinessSellPrice,
-        AssetType.Stock => AssetType.StockPrice,
-        AssetType.RealEstate => AssetType.RealEstateSellPrice,
+        AssetType.Land => Prices.LandSellPrice,
+        AssetType.Coin => Prices.CoinSellPrice,
+        AssetType.Business => Prices.BusinessSellPrice,
+        AssetType.SmallBusiness => Prices.BusinessSellPrice,
+        AssetType.Stock => Prices.StockPrice,
+        AssetType.RealEstate => Prices.RealEstateSellPrice,
 
         _ => throw new NotImplementedException(),
     };
-
-    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message
     {
@@ -60,7 +57,7 @@ public class SellAssetPrice(
         }
     }
 
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(SellPrice).Append(Cancel);
+    public override IEnumerable<string> Buttons => SellPrices.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

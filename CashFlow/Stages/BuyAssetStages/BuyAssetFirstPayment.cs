@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
@@ -7,19 +6,19 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.BuyAssetStages;
 
 public abstract class BuyAssetFirstPayment<TNextStage>(
-    AssetType assetName,
+    int[] firstPayments,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+    ITranslationService termsService,
+    IUserService userService,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(null, assetType, termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
 
     public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
+    public override IEnumerable<string> Buttons => firstPayments.AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

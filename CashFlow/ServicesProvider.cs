@@ -30,7 +30,6 @@ public static class ServicesProvider
         services.AddSingleton<ILogger, FileLogger>();
         services.AddSingleton<IDataBase, SQLiteDataBase>();
         services.AddSingleton<ITranslationService, TranslationService>();
-        services.AddSingleton<IAvailableAssetsRepository, AvailableAssetsRepository>();
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IPersonRepository, PersonRepository>();
         services.AddSingleton<IPersonService, PersonService>();
@@ -123,7 +122,7 @@ public static class ServicesProvider
         services.AddTransient<BigCircle>();
         services.AddTransient<BuyBigBusiness>();
         services.AddTransient<BuyBigBusinessPrice>();
-        services.AddTransient<BuyBigBusinessFirstPayment>();
+        //services.AddTransient<BuyBigBusinessFirstPayment>();
         services.AddTransient<BuyBigBusinessCashFlow>();
         services.AddTransient<BuyDream>();
 

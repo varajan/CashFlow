@@ -1,15 +1,12 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
 public class BuyCoinsCredit(
-    ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository assets,
-    IPersonService personManager,
-    IUserRepository userRepository) : BuyCoinsPrice(termsService, userService, assets, personManager, userRepository)
+    ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BuyCoinsPrice(termsService, userService, personManager, userRepository)
 {
     public override string Message
     {

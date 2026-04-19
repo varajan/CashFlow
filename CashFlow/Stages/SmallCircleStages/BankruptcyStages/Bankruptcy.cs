@@ -1,9 +1,10 @@
-﻿using CashFlow.Data.Consts.Terms;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.BankruptcyStages;
 
-public class Bankruptcy(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
+public class Bankruptcy(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.GameOver, CurrentUser);
 

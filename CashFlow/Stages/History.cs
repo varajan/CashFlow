@@ -1,4 +1,4 @@
-﻿using CashFlow.Data.Consts.Terms;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 

@@ -1,22 +1,15 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
-public class BuyCoinsCount(
-    ITranslationService termsService,
-    IUserService userService,
-    IAvailableAssetsRepository availableAssets,
-    IPersonService personManager,
-    IUserRepository userRepository) : BuyCoins(termsService, userService, availableAssets, personManager, userRepository)
+public class BuyCoinsCount(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BuyCoins(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons => AvailableAssets
-        .GetAsText(AssetType.CoinCount, CurrentUser.Language)
-        .Append(Cancel);
+    public override IEnumerable<string> Buttons => Prices.CoinCount.OrderBy(x => x).Select(x => x.ToString()).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {

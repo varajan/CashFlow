@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCo
 [TestFixture]
 public class BuyCoinsPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = ["$100", "$500"];
+    private static readonly string[] CoinPrices = Prices.CoinBuyPrice.OrderBy(x => x).AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Coin, Qtty = 5, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
@@ -19,7 +19,6 @@ public class BuyCoinsPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.CoinBuyPrice)).Returns(Prices);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
@@ -33,7 +32,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Prices.Append("Cancel");
+        var buttons = CoinPrices.Append("Cancel");
 
         // Act
 
@@ -62,7 +61,7 @@ public class BuyCoinsPriceTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
     }
 
-    [TestCaseSource(nameof(Prices))]
+    [TestCaseSource(nameof(CoinPrices))]
     [TestCase("1000")]
     public async Task BuyCoinsPrice_SelectValidCount_MoveForward(string price)
     {

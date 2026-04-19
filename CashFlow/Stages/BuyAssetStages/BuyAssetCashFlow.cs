@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
@@ -7,19 +6,18 @@ using MoreLinq;
 namespace CashFlow.Stages.BuyAssetStages;
 
 public abstract class BuyAssetCashFlow<TNextStage>(
-    AssetType assetName,
+    int[] cashflows,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+    ITranslationService termsService,
+    IUserService userService,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TNextStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAsset<TNextStage>(null, assetType, termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     protected ActionType ActionType { get; } = actionType;
     public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetName).Append(Cancel);
-
+    public override IEnumerable<string> Buttons => cashflows.OrderBy(x => x).AsCurrency().Append(Cancel);
     public override async Task HandleMessage(string message)
     {
         var asset = PersonService.ReadAllAssets(AssetType, CurrentUser).Single(x => x.IsDraft);

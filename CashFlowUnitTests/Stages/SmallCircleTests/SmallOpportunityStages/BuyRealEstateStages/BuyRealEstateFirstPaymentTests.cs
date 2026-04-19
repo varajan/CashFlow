@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyRe
 [TestFixture]
 public class BuyRealEstateFirstPaymentTests : StagesBaseTest
 {
-    private static readonly string[] FirstPayments = ["$100", "$500"];
+    private static readonly string[] FirstPayments = Prices.RealEstateSmallFirstPayment.OrderBy(x => x).AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.RealEstate, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 10_000 };
 
@@ -19,7 +19,6 @@ public class BuyRealEstateFirstPaymentTests : StagesBaseTest
     {
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstate, CurrentUser)).Returns([Asset]);
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.RealEstateSmallFirstPayment)).Returns(FirstPayments);
     }
 
     [Test]

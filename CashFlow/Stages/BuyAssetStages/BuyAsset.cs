@@ -1,28 +1,23 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
 public abstract class BuyAsset<TNextStage>(
-    AssetType assetName,
+    string[] assetNames,
     AssetType assetType,
     ITranslationService termsService,
     IUserService userService,
-    IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository
     ) : BaseStage(termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
-    protected AssetType AssetName { get; } = assetName;
     protected AssetType AssetType { get; } = assetType;
 
-    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-
     public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
-    public override IEnumerable<string> Buttons => AvailableAssets
-        .GetAsText(AssetName, CurrentUser.Language)
+    public override IEnumerable<string> Buttons => assetNames
+        .Select(x => TranslationService.Get(x, CurrentUser))
         .OrderBy(x => x.Length)
         .ThenBy(x => x)
         .Append(Cancel);
@@ -35,8 +30,8 @@ public abstract class BuyAsset<TNextStage>(
             return Task.CompletedTask;
         }
 
-        var title = AvailableAssets
-            .GetAsText(AssetName, CurrentUser.Language)
+        var title = assetNames
+            .Select(x => TranslationService.Get(x, CurrentUser))
             .FirstOrDefault(x => x.Equals(message, StringComparison.InvariantCultureIgnoreCase));
 
         if (title is not null)

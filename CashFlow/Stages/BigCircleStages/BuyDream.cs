@@ -1,18 +1,14 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.BigCircleStages;
 
-public class BuyDream(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyDream(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, userService, personManager, userRepository)
 {
-    private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.DreamPrice).Append(Cancel);
-
+    public override IEnumerable<string> Buttons => Prices.DreamPrice.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

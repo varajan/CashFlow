@@ -1,23 +1,16 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class IncreaseCashflow(
-    ITranslationService termsService,
-    IUserService userService,
-    IAvailableAssetsRepository availableAssets,
-    IPersonService personManager,
-    IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
+public class IncreaseCashflow(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
-    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-
     public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
 
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.IncreaseCashFlow).Append(Cancel);
+    public override IEnumerable<string> Buttons => Prices.IncreaseCashFlow.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

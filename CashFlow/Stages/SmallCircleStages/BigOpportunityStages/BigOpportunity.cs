@@ -1,10 +1,11 @@
-﻿using CashFlow.Data.Consts.Terms;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BigOpportunity(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
+public class BigOpportunity(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
     public override IEnumerable<string> Buttons =>

@@ -9,14 +9,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Start
 [TestFixture]
 public class StartCompanyTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Uno", "Dos"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.SmallBusinessType, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.SmallBusinessType, CurrentUser)).Returns([]);
-    }
+    private static readonly string[] Names = Terms.SmallBusinessTypes;
 
     [Test]
     public void StartCompany_Question_and_Buttons()

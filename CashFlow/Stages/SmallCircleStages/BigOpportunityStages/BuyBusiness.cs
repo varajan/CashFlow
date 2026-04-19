@@ -4,38 +4,37 @@ using CashFlow.Stages.BuyAssetStages;
 
 namespace CashFlow.Stages.SmallCircleStages.BigOpportunityStages;
 
-public class BuyBusiness(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
-    : BuyAsset<BuyBusinessPrice>(AssetType.BusinessType, AssetType.Business, termsService, userService, availableAssets, personManager, userRepository)
+public class BuyBusiness(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BuyAsset<BuyBusinessPrice>(Terms.BusinessTypes, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
-public class BuyBusinessPrice(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class BuyBusinessPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBusinessFirstPayment>(
-        AssetType.BusinessBuyPrice, AssetType.Business, termsService, userService, availableAssets, personManager, userRepository)
+        Prices.BigBusinessBuyPrice, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessFirstPayment(
     ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetWithCashflowFirstPayment<BuyBusinessCashFlow, BuyBusinessCredit>(
-        AssetType.BusinessFirstPayment, AssetType.Business, termsService, userService, availableAssets, personManager, userRepository)
+        Prices.BusinessFirstPayment, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessCredit(
     ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAssetWithCashflowCredit<BuyBusinessCashFlow>(
-        AssetType.BusinessFirstPayment, AssetType.Business, termsService, userService, availableAssets, personManager, userRepository)
+    : BuyAssetWithCashflowCredit<BuyBusinessCashFlow>(AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessCashFlow(
     ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetCashFlow<Start>(
-        AssetType.BusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, userService, availableAssets, personManager, userRepository)
+        Prices.BigBusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, userService, personManager, userRepository)
 { }

@@ -15,7 +15,7 @@ public class GetCreditTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new List<string> { "1000", "2000", "5000", "10 000", "20 000", "Cancel" };
+        var buttons = Prices.MicroCreditAmount.AsCurrency().Append("Cancel");
 
         // Act
 

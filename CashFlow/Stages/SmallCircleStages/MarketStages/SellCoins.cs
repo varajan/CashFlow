@@ -9,7 +9,7 @@ public class SellCoins(ITranslationService termsService, IUserService userServic
 
 public class SellCoinsPrice(
     ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
-    IUserRepository userRepository) : SellAssetPrice(termsService, userService, availableAssets, personManager, userRepository, AssetType.Coin)
+    IUserRepository userRepository) : SellAssetPrice(termsService, userService, personManager, userRepository, AssetType.Coin)
 { }

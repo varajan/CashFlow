@@ -1,4 +1,4 @@
-﻿using CashFlow.Data.Consts.Terms;
+﻿using CashFlow.Data.Consts;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages;

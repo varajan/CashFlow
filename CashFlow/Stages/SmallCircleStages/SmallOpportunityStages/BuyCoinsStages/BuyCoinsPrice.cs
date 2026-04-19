@@ -1,20 +1,15 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 
-public class BuyCoinsPrice(
-    ITranslationService termsService,
-    IUserService userService,
-    IAvailableAssetsRepository availableAssets,
-    IPersonService personManager,
-    IUserRepository userRepository) : BuyCoins(termsService, userService, availableAssets, personManager, userRepository)
+public class BuyCoinsPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BuyCoins(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.CoinBuyPrice).Append(Cancel);
+    public override IEnumerable<string> Buttons => Prices.CoinBuyPrice.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

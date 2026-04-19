@@ -9,21 +9,14 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCo
 [TestFixture]
 public class BuyCoinsTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Uno", "Dos"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinTitle, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([]);
-    }
+    private static readonly string[] Names = Terms.CoinTitles;
 
     [Test]
     public void BuyCoins_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.OrderBy(x => x).Append("Cancel");
+        var buttons = Names.OrderBy(x => x.Length).Append("Cancel");
 
         // Act
 

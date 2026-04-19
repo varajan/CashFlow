@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLa
 [TestFixture]
 public class BuyLandPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = ["$100", "$500"];
+    private static readonly string[] Prices = CashFlow.Data.Consts.Prices.LandBuyPrice.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Land, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
@@ -19,7 +19,6 @@ public class BuyLandPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.LandBuyPrice)).Returns(Prices);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Land, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))
@@ -68,7 +67,7 @@ public class BuyLandPriceTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var person = new PersonDto { Cash = 10_000 };
+        var person = new PersonDto { Cash = 30_000 };
         var personCash = person.Cash - price.AsCurrency();
 
         PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(person);

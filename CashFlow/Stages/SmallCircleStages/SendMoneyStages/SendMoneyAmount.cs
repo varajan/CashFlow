@@ -1,20 +1,13 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 
-public class SendMoneyAmount(
-    IPersonService personManager,
-    ITranslationService termsService,
-    IUserService userService,
-    IAvailableAssetsRepository availableAssets,
-    IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
+public class SendMoneyAmount(IPersonService personManager, ITranslationService termsService, IUserService userService, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
-    private IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
     public override IEnumerable<string> Buttons
@@ -25,7 +18,7 @@ public class SendMoneyAmount(
 
             return
                 person.BigCircle
-                ? AvailableAssets.GetAsCurrency(AssetType.BigGiveMoney).Append(Cancel)
+                ? Prices.BigGiveMoney.OrderBy(x => x).AsCurrency().Append(Cancel)
                 : Enumerable.Range(1, 8).Select(x => (500 * x).AsCurrency()).Append(Cancel);
         }
     }
@@ -65,11 +58,6 @@ public class SendMoneyAmount(
             NextStage = New<Start>();
             await UserService.Notify(CurrentUser, TranslationService.Get(Terms.NotEnoughMoney, CurrentUser));
             return;
-        }
-
-        if (person.BigCircle)
-        {
-            AvailableAssets.Add(amount, AssetType.BigGiveMoney);
         }
 
         await Transfer(asset);

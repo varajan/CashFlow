@@ -9,8 +9,8 @@ public class SellBusiness(ITranslationService termsService, IUserService userSer
 
 public class SellBusinessPrice(
     ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
     IUserRepository userRepository) :
-    SellAssetPrice(termsService, userService, availableAssets, personManager, userRepository, AssetType.Business, AssetType.SmallBusinessType)
+    SellAssetPrice(termsService, userService, personManager, userRepository, AssetType.Business, AssetType.SmallBusinessType)
 { }

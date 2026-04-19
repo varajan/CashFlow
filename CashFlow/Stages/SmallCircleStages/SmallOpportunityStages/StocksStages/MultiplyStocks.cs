@@ -1,5 +1,4 @@
 ﻿using CashFlow.Data.Consts;
-using CashFlow.Data.Consts.Terms;
 using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.StocksStages;

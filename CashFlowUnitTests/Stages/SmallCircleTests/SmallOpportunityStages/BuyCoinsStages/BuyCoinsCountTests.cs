@@ -1,6 +1,5 @@
 ﻿using CashFlow.Data.Consts;
 using CashFlow.Data.DTOs;
-using CashFlow.Extensions;
 using CashFlow.Stages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages.BuyCoinsStages;
 using Moq;
@@ -10,22 +9,18 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyCo
 [TestFixture]
 public class BuyCoinsCountTests : StagesBaseTest
 {
-    private static readonly string[] Counts = ["1", "2", "5"];
+    private static readonly int[] Counts = Prices.CoinCount.OrderBy(x => x).ToArray();
     private AssetDto Asset => new() { UserId = CurrentUser.Id, Type = AssetType.Coin, IsDraft = true };
 
     [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.CoinCount, It.IsAny<Language>())).Returns(Counts);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
-    }
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Coin, CurrentUser)).Returns([Asset]);
 
     [Test]
     public void BuyCoinsCount_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Counts.Append("Cancel");
+        var buttons = Counts.Select(x => x.ToString()).Append("Cancel");
 
         // Act
 
@@ -54,14 +49,14 @@ public class BuyCoinsCountTests : StagesBaseTest
     }
 
     [TestCaseSource(nameof(Counts))]
-    [TestCase("10")]
-    public async Task BuyCoinsCount_SelectValidCount_MoveForward(string count)
+    [TestCase(5)]
+    public async Task BuyCoinsCount_SelectValidCount_MoveForward(int count)
     {
         // Arrange
         var testStage = GetTestStage();
 
         // Act
-        await testStage.HandleMessage(count.ToLower());
+        await testStage.HandleMessage(count.ToString());
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<BuyCoinsPrice>());
@@ -69,7 +64,7 @@ public class BuyCoinsCountTests : StagesBaseTest
         PersonServiceMock.Verify(a => a.UpdateAsset(
             CurrentUser,
             It.Is<AssetDto>(x =>
-                x.Qtty == count.ToInt() &&
+                x.Qtty == count &&
                 x.Type == AssetType.Coin &&
                 x.IsDraft)
         ), Times.Once);
