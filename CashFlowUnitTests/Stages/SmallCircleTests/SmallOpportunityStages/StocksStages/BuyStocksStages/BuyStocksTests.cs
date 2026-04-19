@@ -9,20 +9,14 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 [TestFixture]
 public class BuyStocksTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Uno", "Dos"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.Stock, It.IsAny<Language>())).Returns(Names);
-    }
+    private static readonly string[] Names = Terms.StockNames;
 
     [Test]
     public void BuyStocks_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.OrderBy(x => x).Append("Cancel");
+        var buttons = Names.OrderBy(x => x.Length).ThenBy(x => x).Append("Cancel");
 
         // Act
 

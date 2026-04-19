@@ -5,14 +5,13 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.BuyAssetStages;
 
 public abstract class BuyAssetCredit<TNextStage>(
-    AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+    ITranslationService termsService,
+    IUserService userService,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAssetFirstPayment<TNextStage>(assetName, assetType, actionType, termsService, userService, availableAssets, personManager, userRepository) where TNextStage : BaseStage
+    : BuyAssetFirstPayment<TNextStage>(null, assetType, actionType, termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message
     {

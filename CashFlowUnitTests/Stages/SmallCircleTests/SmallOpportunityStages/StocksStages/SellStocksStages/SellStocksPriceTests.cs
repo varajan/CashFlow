@@ -13,7 +13,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 public class SellStocksPriceTests : StagesBaseTest
 {
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 300 };
-    private static readonly List<string> AvailablePrices = ["$100", "$500", "$1,000",];
+    private static readonly List<string> AvailablePrices = BuyPrice.Stock.OrderBy(x => x).AsCurrency().ToList();
 
     private static List<AssetDto> Assets =>
     [
@@ -26,7 +26,6 @@ public class SellStocksPriceTests : StagesBaseTest
     public void Setup()
     {
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns(Assets);
-        AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.StockPrice)).Returns(AvailablePrices);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
     }
 

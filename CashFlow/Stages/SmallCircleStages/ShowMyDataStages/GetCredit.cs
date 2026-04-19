@@ -7,7 +7,7 @@ namespace CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 public class GetCredit(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
-    public override IEnumerable<string> Buttons => ["1000", "2000", "5000", "10 000", "20 000", Cancel];
+    public override IEnumerable<string> Buttons => MoneyAmount.MicroCredit.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {

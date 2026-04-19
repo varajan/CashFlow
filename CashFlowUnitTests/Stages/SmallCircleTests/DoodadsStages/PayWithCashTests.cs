@@ -10,13 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.DoodadsStages;
 [TestFixture]
 public class PayWithCashTests : StagesBaseTest
 {
-    private static readonly string[] Amounts = ["$100", "$500"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.SmallGiveMoney)).Returns(Amounts);
-    }
+    private static readonly string[] Amounts = MoneyAmount.AtSmallCircle.OrderBy(x => x).AsCurrency().ToArray();
 
     [Test]
     public void Doodads_PayWithCash_Question_and_Buttons()

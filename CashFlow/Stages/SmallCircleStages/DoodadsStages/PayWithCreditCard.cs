@@ -4,14 +4,12 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.DoodadsStages;
 
-public class PayWithCreditCard(ITranslationService termsService, IUserService userService, IAvailableAssetsRepository availableAssets, IPersonService personManager, IUserRepository userRepository)
+public class PayWithCreditCard(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BaseStage(termsService, userService, personManager, userRepository)
 {
-    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
-
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(AssetType.MicroCreditAmount).Append(Cancel);
+    public override IEnumerable<string> Buttons => MoneyAmount.MicroCredit.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

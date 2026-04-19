@@ -10,7 +10,7 @@ public class SellRealEstate(ITranslationService termsService, IUserService userS
 public class SellRealEstatePrice(
     ITranslationService termsService,
     IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+
     IPersonService personManager,
-    IUserRepository userRepository) : SellAssetPrice(termsService, userService, availableAssets, personManager, userRepository, AssetType.RealEstate)
+    IUserRepository userRepository) : SellAssetPrice(termsService, userService, personManager, userRepository, AssetType.RealEstate)
 { }

@@ -37,7 +37,7 @@ What asset do you want to sell?
 #1 - *OK4U* - Price: $500
 #2 - *10 Acrs* - Price: $5,000
 #3 - *Car Wash* - Price: $2,500, Cashflow: $800
-#4 - *Auto Tools* - Price: $1,500
+#4 - *Auto tools* - Price: $1,500
 #5 - *2/1* - Price: $1,500, Cashflow: $160
 #6 - *3/2* - Price: $2,500, Cashflow: -$100
 #7 - *Boat* - Price: $500, Cashflow: -$340
@@ -59,7 +59,7 @@ What asset do you want to sell?
 
 #1 - *10 Acrs* - Price: $5,000
 #2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Auto Tools* - Price: $1,500
+#3 - *Auto tools* - Price: $1,500
 #4 - *2/1* - Price: $1,500, Cashflow: $160
 #5 - *3/2* - Price: $2,500, Cashflow: -$100
 #6 - *Boat* - Price: $500, Cashflow: -$340
@@ -81,7 +81,7 @@ What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
 #2 - *10 Acrs* - Price: $5,000
-#3 - *Auto Tools* - Price: $1,500
+#3 - *Auto tools* - Price: $1,500
 #4 - *2/1* - Price: $1,500, Cashflow: $160
 #5 - *3/2* - Price: $2,500, Cashflow: -$100
 #6 - *Boat* - Price: $500, Cashflow: -$340
@@ -104,7 +104,7 @@ What asset do you want to sell?
 #1 - *OK4U* - Price: $500
 #2 - *10 Acrs* - Price: $5,000
 #3 - *Car Wash* - Price: $2,500, Cashflow: $800
-#4 - *Auto Tools* - Price: $1,500
+#4 - *Auto tools* - Price: $1,500
 #5 - *2/1* - Price: $1,500, Cashflow: $160
 #6 - *3/2* - Price: $2,500, Cashflow: -$100
 #7 - *Peso* - Price: $1,500
@@ -148,7 +148,7 @@ What asset do you want to sell?
 #1 - *OK4U* - Price: $500
 #2 - *10 Acrs* - Price: $5,000
 #3 - *Car Wash* - Price: $2,500, Cashflow: $800
-#4 - *Auto Tools* - Price: $1,500
+#4 - *Auto tools* - Price: $1,500
 #5 - *2/1* - Price: $1,500, Cashflow: $160
 #6 - *3/2* - Price: $2,500, Cashflow: -$100
 #7 - *Boat* - Price: $500, Cashflow: -$340
@@ -169,7 +169,7 @@ What asset do you want to sell?
 
 #1 - *OK4U* - Price: $500
 #2 - *Car Wash* - Price: $2,500, Cashflow: $800
-#3 - *Auto Tools* - Price: $1,500
+#3 - *Auto tools* - Price: $1,500
 #4 - *2/1* - Price: $1,500, Cashflow: $160
 #5 - *3/2* - Price: $2,500, Cashflow: -$100
 #6 - *Boat* - Price: $500, Cashflow: -$340
@@ -192,7 +192,7 @@ What asset do you want to sell?
 #1 - *OK4U* - Price: $500
 #2 - *10 Acrs* - Price: $5,000
 #3 - *Car Wash* - Price: $2,500, Cashflow: $800
-#4 - *Auto Tools* - Price: $1,500
+#4 - *Auto tools* - Price: $1,500
 #5 - *2/1* - Price: $1,500, Cashflow: $160
 #6 - *Boat* - Price: $500, Cashflow: -$340
 #7 - *Peso* - Price: $1,500

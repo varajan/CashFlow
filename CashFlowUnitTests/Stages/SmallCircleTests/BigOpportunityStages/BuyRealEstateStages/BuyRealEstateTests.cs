@@ -9,21 +9,14 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.BigOpportunityStages.BuyReal
 [TestFixture]
 public class BuyRealEstateTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["2/1", "3/2"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.RealEstateBigType, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.RealEstateBigType, CurrentUser)).Returns([]);
-    }
+    private static readonly string[] Names = Terms.RealEstateBigTypes;
 
     [Test]
     public void BuyRealEstate_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.Append("Cancel");
+        var buttons = Names.OrderBy(x => x.Length).ThenBy(x => x).Append("Cancel");
 
         // Act
 

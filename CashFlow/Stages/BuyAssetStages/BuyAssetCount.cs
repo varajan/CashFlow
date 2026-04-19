@@ -6,14 +6,13 @@ using CashFlow.Interfaces;
 namespace CashFlow.Stages.BuyAssetStages;
 
 public class BuyAssetCount<TCreditStage, TCashFlowStage>(
-    AssetType assetName,
     AssetType assetType,
     ActionType actionType,
-    ITranslationService termsService, IUserService userService,
-    IAvailableAssetsRepository availableAssets,
+    ITranslationService termsService,
+    IUserService userService,
     IPersonService personManager,
     IUserRepository userRepository)
-    : BuyAsset<TCreditStage>(assetName, assetType, termsService, userService, availableAssets, personManager, userRepository)
+    : BuyAsset<TCreditStage>(null, assetType, termsService, userService, personManager, userRepository)
         where TCreditStage : BaseStage
         where TCashFlowStage : BaseStage
 {

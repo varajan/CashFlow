@@ -8,8 +8,8 @@ public class SendMoneyCredit(
     IPersonService personManager,
     ITranslationService termsService,
     IUserService userService,
-    IAvailableAssetsRepository availableAssets,
-    IUserRepository userRepository) : SendMoneyAmount(personManager, termsService, userService, availableAssets, userRepository)
+
+    IUserRepository userRepository) : SendMoneyAmount(personManager, termsService, userService, userRepository)
 {
     public override string Message
     {

@@ -10,15 +10,11 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.Stock
 [TestFixture]
 public class BuyStocksPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = ["$10", "$50"];
+    private static readonly string[] Prices = BuyPrice.Stock.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, Title = "Stock", UserId = CurrentUser.Id, Type = AssetType.Stock, IsDraft = true };
 
     [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.StockPrice)).Returns(Prices);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
-    }
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Stock, CurrentUser)).Returns([Asset]);
 
     [Test]
     public void BuyStocksPrice_Question_and_Buttons()

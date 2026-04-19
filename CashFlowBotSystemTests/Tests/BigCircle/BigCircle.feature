@@ -44,8 +44,8 @@ Scenario: I can get money
 	Then Rory Hartman has $800,480 in cash
 	And Rory Hartman history data is following:
 """
-• Start a company. *Computer Programs* - Price: $2,000
-• *Computer Programs* - Increase cashflow. $7,000
+• Start a company. *Computer programs* - Price: $2,000
+• *Computer programs* - Increase cashflow. $7,000
 • Go to Big Circle
 • Get $100,000
 """

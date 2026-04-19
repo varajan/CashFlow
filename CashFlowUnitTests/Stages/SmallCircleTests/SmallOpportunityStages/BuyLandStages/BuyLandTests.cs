@@ -9,14 +9,10 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.SmallOpportunityStages.BuyLa
 [TestFixture]
 public class BuyLandTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Uno", "Dos"];
+    private static readonly string[] Names = Terms.LandTitles;
 
     [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.LandTitle, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUser)).Returns([]);
-    }
+    public void Setup() => PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.LandTitle, CurrentUser)).Returns([]);
 
     [Test]
     public void BuyLand_Question_and_Buttons()

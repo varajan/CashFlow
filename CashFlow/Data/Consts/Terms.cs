@@ -2,6 +2,22 @@
 
 public class Terms
 {
+    public static readonly string[] BigBusinessTypes = ["Restaurants", "Utilities company", "Auto parts factory", "Auto repair shop", "Gold mine", "Beauty salons", "Oil deal", "T-shirt company", "60-plex", "Pizzeria franchise", "Warehouse", "Dry cleaning", "Advertising agency"];
+    public static readonly string[] BusinessTypes = ["Enterprise", "Limited Partnership", "Passage", "Company", "Pizzeria", "Car Wash"];
+    public static readonly string[] CoinTitles = ["Krugerand", "Peso"];
+    public static readonly string[] LandTitles = ["10 Acrs", "20 Acrs"];
+
+    [NoTranslationNeeded]
+    public static readonly string[] RealEstateSmallTypes = ["2/1", "3/2"];
+
+    [NoTranslationNeeded]
+    public static readonly string[] RealEstateBigTypes = ["3/2", "5/3", "2-plex", "4-plex", "8-plex", "12-plex", "24-plex", "2x24-plex", "60-plex"];
+
+    public static readonly string[] SmallBusinessTypes = ["Auto tools", "Computer programs"];
+
+    [NoTranslationNeeded]
+    public static readonly string[] StockNames = ["GRO4US", "MYT4U", "ON2U", "OK4U", "2BIG", "CD"];
+
     public const string CashflowAsk = "Your Cashflow is *{0}*. How many should you get?";
     public const string BigCircle = "Go to Big Circle";
     public const string GameMenu = "Game menu";
@@ -189,7 +205,6 @@ public class Terms
 
     public const string InvalidValue = "Invalid value. Try again.";
 
-    // professions
     public const string Lawyer = "Lawyer";
     public const string BusinessManager = "Business manager";
     public const string Engineer = "Engineer";

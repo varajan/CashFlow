@@ -108,8 +108,6 @@ public class SendMoneyAmountTests : StagesBaseTest
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
 
-        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
-
         PersonServiceMock.Verify(a => a.UpdateAsset(
             CurrentUser,
             It.Is<AssetDto>(x =>
@@ -163,8 +161,6 @@ public class SendMoneyAmountTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-
-        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Never);
 
         PersonServiceMock.Verify(a => a.UpdateAsset(
             CurrentUser,

@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.BigCircleTests.BuyBigBusinessStages;
 [TestFixture]
 public class BuyBigBusinessPriceTests : StagesBaseTest
 {
-    private static readonly string[] Prices = ["$100,000", "$500,000"];
+    private static readonly string[] Prices = BuyPrice.BusinessAtBigCirlce.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.BigBusinessType, IsDraft = true };
 
     private List<AssetDto> AssetsList = [];
@@ -19,7 +19,6 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
     public void Setup()
     {
         AssetsList = [];
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessBuyPrice)).Returns(Prices);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([Asset]);
         PersonServiceMock
             .Setup(a => a.UpdateAsset(CurrentUser, It.IsAny<AssetDto>()))

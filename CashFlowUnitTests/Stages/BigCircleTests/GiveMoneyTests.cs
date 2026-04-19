@@ -20,7 +20,6 @@ public class SendMoneyTests : StagesBaseTest
     {
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.Transfer, CurrentUser)).Returns([TransferAsset]);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
-        AvailableAssetsMock.Setup(a => a.GetAsCurrency(AssetType.BigGiveMoney)).Returns(["$100,000", "$200,000"]);
     }
 
     [Test]
@@ -57,12 +56,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
-            {
-                "$100,000",
-                "$200,000",
-                "Cancel"
-            }));
+            Assert.That(testStage.Buttons, Is.EqualTo(MoneyAmount.AtBigCircle.OrderBy(x => x).AsCurrency().Append("Cancel")));
         }
     }
 
@@ -104,8 +98,6 @@ public class SendMoneyTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
-
-        AvailableAssetsMock.Verify(a => a.Add(It.IsAny<int>(), AssetType.BigGiveMoney), Times.Once);
 
         PersonServiceMock.Verify(a => a.UpdateAsset(
             CurrentUser,

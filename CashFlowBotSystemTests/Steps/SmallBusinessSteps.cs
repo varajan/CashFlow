@@ -30,7 +30,7 @@ public class SmallBusinessSteps(StepsContext context) : BaseSteps(context)
         var button = message
             .Escape()
             .Split("\n")
-            .First(x => x.Contains(title))
+            .First(x => x.Contains(title, StringComparison.CurrentCultureIgnoreCase))
             .Split(" ")
             .First()
             .SubString("*", "*");

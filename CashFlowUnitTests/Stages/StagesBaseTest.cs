@@ -11,7 +11,6 @@ public abstract class StagesBaseTest
 {
     protected UserDto CurrentUser;
     protected List<UserDto> OtherUsers;
-    protected Mock<IAvailableAssetsRepository> AvailableAssetsMock;
     protected Mock<IPersonService> PersonServiceMock;
     protected Mock<INotifyService> NotifyServiceMock;
     protected Mock<IUserService> UserServiceMock;
@@ -47,7 +46,6 @@ public abstract class StagesBaseTest
 
     private void InitMocks()
     {
-        AvailableAssetsMock = new Mock<IAvailableAssetsRepository>();
         UserServiceMock = new Mock<IUserService>();
         UserRepositoryMock = new Mock<IUserRepository>();
         PersonServiceMock = new Mock<IPersonService>();
@@ -90,7 +88,6 @@ public abstract class StagesBaseTest
         ServicesProvider.AddMock(PersonServiceMock);
         ServicesProvider.AddMock(TermsServiceMock);
         ServicesProvider.AddMock(NotifyServiceMock);
-        ServicesProvider.AddMock(AvailableAssetsMock);
         ServicesProvider.AddMock(PersonRepositoryMock);
         ServicesProvider.AddMock(UserRepositoryMock);
     }

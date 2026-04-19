@@ -9,21 +9,14 @@ namespace CashFlowUnitTests.Stages.BigCircleTests.BuyBigBusinessStages;
 [TestFixture]
 public class BuyBigBusinessTests : StagesBaseTest
 {
-    private static readonly string[] Names = ["Shop", "Market"];
-
-    [SetUp]
-    public void Setup()
-    {
-        AvailableAssetsMock.Setup(x => x.GetAsText(AssetType.BigBusinessType, It.IsAny<Language>())).Returns(Names);
-        PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([]);
-    }
+    private static readonly string[] Names = Terms.BigBusinessTypes;
 
     [Test]
     public void BuyBigBusiness_Question_and_Buttons()
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = Names.Append("Cancel");
+        var buttons = Names.OrderBy(x => x.Length).ThenBy(x => x).Append("Cancel");
 
         // Act
 

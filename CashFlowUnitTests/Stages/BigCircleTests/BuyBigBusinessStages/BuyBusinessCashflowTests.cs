@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.BigCircleTests.BuyBigBusinessStages;
 [TestFixture]
 public class BuyBigBusinessCashflowTests : StagesBaseTest
 {
-    private static readonly string[] CashFlows = ["$1,000", "$5,000"];
+    private static readonly string[] CashFlows = Cashflow.BusinessAtBigCircle.AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.BigBusinessType, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 10_000 };
 
@@ -18,7 +18,6 @@ public class BuyBigBusinessCashflowTests : StagesBaseTest
     public void Setup()
     {
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(TestPerson);
-        AvailableAssetsMock.Setup(x => x.GetAsCurrency(AssetType.BigBusinessCashFlow)).Returns(CashFlows);
         PersonServiceMock.Setup(a => a.ReadAllAssets(AssetType.BigBusinessType, CurrentUser)).Returns([Asset]);
     }
 

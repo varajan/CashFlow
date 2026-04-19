@@ -7,10 +7,10 @@ namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 public class SellAssetPrice(
     ITranslationService termsService,
     IUserService userService,
-    IAvailableAssetsRepository availableAssets,
     IPersonService personManager,
     IUserRepository userRepository,
-    params AssetType[] assetTypes) : BaseStage(termsService, userService, personManager, userRepository)
+    params AssetType[] assetTypes)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     protected AssetType[] AssetTypes { get; } = assetTypes;
 
@@ -26,19 +26,17 @@ public class SellAssetPrice(
         _ => throw new NotImplementedException(),
     };
 
-    protected AssetType SellPrice => AssetTypes.First() switch
+    protected int[] SellPrices => AssetTypes.First() switch
     {
-        AssetType.Land => AssetType.LandSellPrice,
-        AssetType.Coin => AssetType.CoinSellPrice,
-        AssetType.Business => AssetType.BusinessSellPrice,
-        AssetType.SmallBusiness => AssetType.BusinessSellPrice,
-        AssetType.Stock => AssetType.StockPrice,
-        AssetType.RealEstate => AssetType.RealEstateSellPrice,
+        AssetType.Land => SellPrice.Land,
+        AssetType.Coin => SellPrice.Coin,
+        AssetType.Business => SellPrice.Business,
+        AssetType.SmallBusiness => SellPrice.Business,
+        AssetType.Stock => BuyPrice.Stock,
+        AssetType.RealEstate => SellPrice.RealEstate,
 
         _ => throw new NotImplementedException(),
     };
-
-    protected IAvailableAssetsRepository AvailableAssets { get; } = availableAssets;
 
     public override string Message
     {
@@ -59,7 +57,7 @@ public class SellAssetPrice(
         }
     }
 
-    public override IEnumerable<string> Buttons => AvailableAssets.GetAsCurrency(SellPrice).Append(Cancel);
+    public override IEnumerable<string> Buttons => SellPrices.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
