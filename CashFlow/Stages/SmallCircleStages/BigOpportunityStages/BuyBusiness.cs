@@ -36,5 +36,5 @@ public class BuyBusinessCashFlow(
     IPersonService personManager,
     IUserRepository userRepository)
     : BuyAssetCashFlow<Start>(
-        Prices.BigBusinessCashFlow, AssetType.Business, ActionType.BuyBusiness, termsService, userService, personManager, userRepository)
+        Cashflow.BusinessAtBigCircle, AssetType.Business, ActionType.BuyBusiness, termsService, userService, personManager, userRepository)
 { }

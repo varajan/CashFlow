@@ -24,5 +24,5 @@ public class BuyBigRealEstateCredit(ITranslationService termsService, IUserServi
 
 public class BuyBigRealEstateCashFlow(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetCashFlow<Start>(
-        Prices.RealEstateBigCashFlow, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, userService, personManager, userRepository)
+        Cashflow.RealEstateBig, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, userService, personManager, userRepository)
 { }

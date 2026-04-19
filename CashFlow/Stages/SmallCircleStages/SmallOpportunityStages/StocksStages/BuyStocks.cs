@@ -20,5 +20,5 @@ public class BuyStocksCredit(ITranslationService termsService, IUserService user
 { }
 
 public class BuyStocksCashFlow(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
-    : BuyAssetCashFlow<Start>(Prices.StockCashFlow, AssetType.Stock, ActionType.BuyStocks, termsService, userService, personManager, userRepository)
+    : BuyAssetCashFlow<Start>(Cashflow.Stock, AssetType.Stock, ActionType.BuyStocks, termsService, userService, personManager, userRepository)
 { }

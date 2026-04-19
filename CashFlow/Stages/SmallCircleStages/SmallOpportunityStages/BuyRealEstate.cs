@@ -23,5 +23,5 @@ public class BuySmallRealEstateCredit(ITranslationService termsService, IUserSer
 { }
 
 public class BuySmallRealEstateCashFlow(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
-    : BuyAssetCashFlow<Start>(Prices.RealEstateSmallCashFlow, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, userService, personManager, userRepository)
+    : BuyAssetCashFlow<Start>(Cashflow.RealEstateSmall, AssetType.RealEstate, ActionType.BuyRealEstate, termsService, userService, personManager, userRepository)
 { }

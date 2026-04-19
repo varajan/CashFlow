@@ -10,7 +10,7 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.BigOpportunityStages.BuyBusi
 [TestFixture]
 public class BuyBusinessCashflowTests : StagesBaseTest
 {
-    private static readonly string[] CashFlows = Prices.BigBusinessCashFlow.OrderBy(x => x).AsCurrency().ToArray();
+    private static readonly string[] CashFlows = Cashflow.BusinessAtBigCircle.OrderBy(x => x).AsCurrency().ToArray();
     private AssetDto Asset => new() { Id = 123, UserId = CurrentUser.Id, Type = AssetType.Business, Price = 10_000, Qtty = 1, IsDraft = true };
     private PersonDto TestPerson => new() { Id = CurrentUser.Id, Cash = 10_000 };
 

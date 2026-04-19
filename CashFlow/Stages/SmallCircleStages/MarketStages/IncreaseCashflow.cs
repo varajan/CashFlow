@@ -10,7 +10,7 @@ public class IncreaseCashflow(ITranslationService termsService, IUserService use
 {
     public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
 
-    public override IEnumerable<string> Buttons => Prices.IncreaseCashFlow.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> Buttons => Cashflow.SmallBusinessIncrease.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {
