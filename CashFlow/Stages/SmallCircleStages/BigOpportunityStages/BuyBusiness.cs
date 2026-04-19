@@ -10,7 +10,7 @@ public class BuyBusiness(ITranslationService termsService, IUserService userServ
 
 public class BuyBusinessPrice(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
     : BuyAssetPriceWithFirstPayment<BuyBusinessFirstPayment>(
-        BuyPrice.BusinessBig, AssetType.Business, termsService, userService, personManager, userRepository)
+        BuyPrice.BusinessAtBigCirlce, AssetType.Business, termsService, userService, personManager, userRepository)
 { }
 
 public class BuyBusinessFirstPayment(

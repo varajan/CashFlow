@@ -18,7 +18,7 @@ public class SendMoneyAmount(IPersonService personManager, ITranslationService t
 
             return
                 person.BigCircle
-                ? MoneyAmount.BigGiveMoney.OrderBy(x => x).AsCurrency().Append(Cancel)
+                ? MoneyAmount.AtBigCircle.OrderBy(x => x).AsCurrency().Append(Cancel)
                 : Enumerable.Range(1, 8).Select(x => (500 * x).AsCurrency()).Append(Cancel);
         }
     }
