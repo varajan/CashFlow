@@ -41,6 +41,20 @@ public abstract class BaseStage : IStage
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => UserService.SetButtons(CurrentUser, this);
 
+    protected async Task NotifyUserIsReadyForBigCircle()
+    {
+        var person = PersonService.Read(CurrentUser);
+        if (person.IsReadyForBigCircle())
+        {
+            var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
+            var notifyTasks = OtherUsers
+                .Where(UserService.IsActive)
+                .Append(CurrentUser)
+                .Select(u => UserService.Notify(u, notifyMessage));
+            await Task.WhenAll(notifyTasks);
+        }
+    }
+
     public static IStage GetCurrentStage(UserDto currentUser)
     {
         var stage = Type.GetType(currentUser.StageName);

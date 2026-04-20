@@ -5,7 +5,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
-public class BuyAssetCount<TCreditStage, TCashFlowStage>(
+public abstract class BuyAssetCount<TCreditStage, TCashFlowStage>(
     AssetType assetType,
     ActionType actionType,
     ITranslationService termsService,

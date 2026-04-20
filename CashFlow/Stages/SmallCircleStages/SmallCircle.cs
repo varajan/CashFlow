@@ -8,11 +8,11 @@ using CashFlow.Stages.SmallCircleStages.MarketStages;
 using CashFlow.Stages.SmallCircleStages.SendMoneyStages;
 using CashFlow.Stages.SmallCircleStages.ShowMyDataStages;
 using CashFlow.Stages.SmallCircleStages.SmallOpportunityStages;
-using MoreLinq;
 
 namespace CashFlow.Stages.SmallCircleStages;
 
-public class SmallCircle(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository) : BaseStage(termsService, userService, personManager, userRepository)
+public class SmallCircle(ITranslationService termsService, IUserService userService, IPersonService personManager, IUserRepository userRepository)
+    : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => PersonService.GetDescription(CurrentUser);
 
@@ -42,18 +42,7 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
         }
     }
 
-    public async override Task BeforeStage()
-    {
-        var person = PersonService.Read(CurrentUser);
-        if (person.IsReadyForBigCircle())
-        {
-            var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
-            OtherUsers
-                .Where(UserService.IsActive)
-                .Append(CurrentUser)
-                .ForEach(async u => await UserService.Notify(u, notifyMessage));
-        }
-    }
+    public async override Task BeforeStage() => await NotifyUserIsReadyForBigCircle();
 
     public async override Task HandleMessage(string message)
     {

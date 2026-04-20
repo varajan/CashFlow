@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.SmallCircleStages.MarketStages;
 
-public class SellAssetPrice(
+public abstract class SellAssetPrice(
     ITranslationService termsService,
     IUserService userService,
     IPersonService personManager,
