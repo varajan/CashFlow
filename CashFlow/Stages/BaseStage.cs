@@ -3,6 +3,7 @@ using CashFlow.Data.DTOs;
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages.SmallCircleStages.BankruptcyStages;
+using MoreLinq;
 
 namespace CashFlow.Stages;
 
@@ -40,6 +41,19 @@ public abstract class BaseStage : IStage
     public virtual Task BeforeStage() { return Task.CompletedTask; }
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => UserService.SetButtons(CurrentUser, this);
+
+    protected async Task NotifyUserIsReadyForBigCircle()
+    {
+        var person = PersonService.Read(CurrentUser);
+        if (person.IsReadyForBigCircle())
+        {
+            var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
+            OtherUsers
+                .Where(UserService.IsActive)
+                .Append(CurrentUser)
+                .ForEach(async u => await UserService.Notify(u, notifyMessage));
+        }
+    }
 
     public static IStage GetCurrentStage(UserDto currentUser)
     {

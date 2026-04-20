@@ -4,7 +4,7 @@ using CashFlow.Interfaces;
 
 namespace CashFlow.Stages.BuyAssetStages;
 
-public class BuyAssetPriceWithCount<TNextStage>(
+public abstract class BuyAssetPriceWithCount<TNextStage>(
     int[] assetPrices,
     AssetType assetType,
     ITranslationService termsService,

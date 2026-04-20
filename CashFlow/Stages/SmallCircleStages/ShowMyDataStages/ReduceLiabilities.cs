@@ -36,6 +36,8 @@ public class ReduceLiabilities(ITranslationService termsService, IUserService us
         .Select(l => TranslationService.Get(l.Type.GetDescription(), CurrentUser))
         .Append(Cancel);
 
+    public async override Task BeforeStage() => await NotifyUserIsReadyForBigCircle();
+
     public async override Task HandleMessage(string message)
     {
         if (IsCanceled(message))
