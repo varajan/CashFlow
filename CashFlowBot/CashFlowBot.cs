@@ -3,6 +3,7 @@ using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -23,7 +24,7 @@ public class CashFlowBot
             try
             {
                 var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
-                var botIdFile = $"{AppDomain.CurrentDomain.BaseDirectory}/BotID.txt";
+                var botIdFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotID.txt");
                 var token = File.ReadAllLines(botIdFile).FirstOrDefault(x => !string.IsNullOrEmpty(x));
 
                 if (string.IsNullOrEmpty(token)) throw new ArgumentException("id is null or empty");
@@ -33,11 +34,26 @@ public class CashFlowBot
             }
             catch (Exception)
             {
-                var howTo = $"{AppDomain.CurrentDomain.BaseDirectory}\\index.html";
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {howTo}") { CreateNoWindow = true });
+                OpenHowTo();
                 throw;
             }
         }
+    }
+
+    private static void OpenHowTo()
+    {
+        var howTo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
+        var (fileName, arguments) =
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ("cmd", $"/c start \"\" \"{howTo}\"") :
+            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? ("open", $"\"{howTo}\"") :
+            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? ("xdg-open", $"\"{howTo}\"") :
+            throw new PlatformNotSupportedException("Unsupported OS platform");
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments
+        });
     }
 
     private static void Main()
