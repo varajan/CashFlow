@@ -26,7 +26,7 @@ for %%R in (%RIDS%) do (
 		echo. > !PUBLISH_DIR!\BotID.txt
 	)
 
-	set ZIP_NAME=CashFlow%VERSION%-%%R.zip
+	set ZIP_NAME=CashFlow-%VERSION%-%%R.zip
 
 	powershell -Command "Compress-Archive -Path '!PUBLISH_DIR!\*' -DestinationPath '%CD%\!ZIP_NAME!' -Force"
 
