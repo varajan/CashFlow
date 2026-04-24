@@ -1,83 +1,83 @@
+
+---
+
+# 📄 `README.de.md` (German)
+
+```markdown
 # 💰 CashFlow Telegram Bot
 
-🇬🇧 English | 🇺🇦 [Українська](readme/README.ua.md) | 🇩🇪 [Deutsch](readme/README.de.md)
+🇬🇧 [English](../README.md) | 🇺🇦 [Українська](README.ua.md) | 🇩🇪 Deutsch
 
-A cross-platform Telegram bot designed to simplify and automate gameplay for **CashFlow** — a financial education board game.  
-The bot helps players track income, expenses, assets, and liabilities, making the game smoother and more engaging.
-
----
-
-## 🎲 About the Game
-
-**CashFlow 101** is a board game created to teach financial literacy, investing, and money management skills.
-
-👉 https://en.wikipedia.org/wiki/Cashflow_101
-
-![CashFlow Game Screenshot](./readme/cashflow.jpg)
+Ein plattformübergreifender Telegram-Bot zur Automatisierung des Spiels **CashFlow**.
 
 ---
 
-## 🌍 Supported Languages
+## 🎲 Über das Spiel
 
-- 🇺🇦 Ukrainian
-- 🇬🇧 English
-- 🇩🇪 German
+**CashFlow 101** ist ein Brettspiel zur Vermittlung von Finanzwissen und Investitionsgrundlagen.
+
+👉 [Wiki](https://en.wikipedia.org/wiki/Cashflow_101)
+
+👉 [Cashflow-Clubs Deutschland](https://blog.cashflowclub-magdeburg.de/cash-flow-clubs-deutschland/)
+
+![CashFlow](./readme/cashflow.jpg)
+
+---
+
+## 🌍 Unterstützte Sprachen
+
+- 🇺🇦 Ukrainisch  
+- 🇬🇧 Englisch  
+- 🇩🇪 Deutsch  
 
 ---
 
 ## 🚀 Installation
 
-Download the appropriate archive from the **Releases** section:
+Lade die passende Datei aus dem **Releases**-Bereich herunter:
 
-- `CashFlow*.linux-x64.zip` → `CashFlow`
-- `CashFlow*.osx-x64.zip` → `CashFlow`
-- `CashFlow*.win-x64.zip` → `CashFlow.exe`
-- `CashFlow*.win-x86.zip` → `CashFlow.exe`
-
-> ⚠️ Version may vary (e.g. `CashFlow2.0.9-*`)
+- `CashFlow*.linux-x64.zip`
+- `CashFlow*.osx-x64.zip`
+- `CashFlow*.win-x64.zip`
+- `CashFlow*.win-x86.zip`
 
 ---
 
-## 🔧 Bot Setup
+## 🔧 Bot Einrichtung
 
-1. Open Telegram and search for **BotFather**
+1. Telegram öffnen → **BotFather**
 
-2. Start a chat and run:
+2. Ausführen:
 
    ```
    /start
    ```
 
-3. Create a new bot:
+3. Bot erstellen:
 
    ```
    /newbot
    ```
 
-4. Follow the instructions:
+4. Anweisungen folgen
 
-   * Enter a name for your bot
-   * Enter a unique username (must end with `bot`)
+5. Token kopieren
 
-5. After creation, you will receive a **Bot Token**
-
-6. Open the existing file:
+6. Datei öffnen:
 
    ```
    BotID.txt
    ```
 
-7. Paste your token into this file (replace its contents):
+7. Token einfügen
 
    ```
    123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
    ```
 
-8. Save the file and make sure it remains in the same directory as the application executable
-
 ---
 
-## ▶️ How to Run
+## ▶️ Start
 
 ### 🐧 Linux
 
