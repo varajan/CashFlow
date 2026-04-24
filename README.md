@@ -27,7 +27,7 @@ The bot helps players track income, expenses, assets, and liabilities, making th
 
 ## 🚀 Installation
 
-Download the appropriate archive from the **Releases** section:
+Download the appropriate archive from the [**Releases**](https://github.com/varajan/CashFlow/releases) section:
 
 - `CashFlow*.linux-x64.zip` → `CashFlow`
 - `CashFlow*.osx-x64.zip` → `CashFlow`

@@ -32,7 +32,7 @@
 
 ## 🚀 Встановлення
 
-Завантажте відповідний архів із розділу **Releases**:
+Завантажте відповідний архів із розділу [**Releases**](https://github.com/varajan/CashFlow/releases):
 
 - `CashFlow*.linux-x64.zip`
 - `CashFlow*.osx-x64.zip`

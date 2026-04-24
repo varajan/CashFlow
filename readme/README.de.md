@@ -34,7 +34,7 @@ Ein plattformübergreifender Telegram-Bot zur Automatisierung des Spiels **CashF
 
 ## 🚀 Installation
 
-Lade die passende Datei aus dem **Releases**-Bereich herunter:
+Lade die passende Datei aus dem [**Releases**](https://github.com/varajan/CashFlow/releases)-Bereich herunter:
 
 - `CashFlow*.linux-x64.zip`
 - `CashFlow*.osx-x64.zip`
