@@ -11,8 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		2.0.7-beta.version = 2.0.7-beta.version
-		publish.bat = publish.bat
 		README.md = README.md
+		build.bat = build.bat
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotEmulator", "CashFlowBotEmulator\CashFlowBotEmulator.csproj", "{89656A7A-7924-4E03-8C61-31E564F9E704}"

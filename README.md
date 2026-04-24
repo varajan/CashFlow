@@ -27,10 +27,10 @@ The bot helps players track income, expenses, assets, and liabilities, making th
 
 Download the appropriate archive from the [**Releases**](https://github.com/varajan/CashFlow/releases) section:
 
-- `CashFlow2.0.7-beta-linux-x64.zip` → `CashFlow`
-- `CashFlow2.0.7-beta-osx-x64.zip` → `CashFlow`
-- `CashFlow2.0.7-beta-win-x64.zip` → `CashFlow.exe`
-- `CashFlow2.0.7-beta-win-x86.zip` → `CashFlow.exe`
+- `CashFlow-2.0.7-beta-linux-x64.zip` → `CashFlow`
+- `CashFlow-2.0.7-beta-osx-x64.zip` → `CashFlow`
+- `CashFlow-2.0.7-beta-win-x64.zip` → `CashFlow.exe`
+- `CashFlow-2.0.7-beta-win-x86.zip` → `CashFlow.exe`
 
 ---
 
