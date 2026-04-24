@@ -148,7 +148,7 @@ The project includes a comprehensive testing setup:
 
 * Built with **SpecFlow**
 * Run against a **bot emulator**
-* Execute real-world gameplay scenarios
+* Execute use-case scenarios
 
 ---
 
@@ -179,9 +179,3 @@ The project includes a comprehensive testing setup:
 
 Contributions are welcome!
 Feel free to open issues or submit pull requests.
-
----
-
-## 📄 License
-
-MIT License
