@@ -10,9 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ED9CC9AB-485F-4A15-B00C-AD5E3FF6E44C}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		publish.bat = publish.bat
 		2.0.7-beta.version = 2.0.7-beta.version
 		README.md = README.md
+		build.bat = build.bat
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotEmulator", "CashFlowBotEmulator\CashFlowBotEmulator.csproj", "{89656A7A-7924-4E03-8C61-31E564F9E704}"
@@ -20,6 +20,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotSystemTests", "CashFlowBotSystemTests\CashFlowBotSystemTests.csproj", "{1C5C3F58-639E-477F-BF9A-4B902EA3C519}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowUnitTests", "CashFlowUnitTests\CashFlowUnitTests.csproj", "{8B632CCA-5020-4A63-B45F-600F696DB5E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "readme", "readme", "{11081CAC-8D72-4FB2-9BE7-0C05CA0A38F5}"
+	ProjectSection(SolutionItems) = preProject
+		readme\cashflow.jpg = readme\cashflow.jpg
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +55,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{11081CAC-8D72-4FB2-9BE7-0C05CA0A38F5} = {ED9CC9AB-485F-4A15-B00C-AD5E3FF6E44C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F0E301D4-D8ED-4A7B-BC3B-0D2AB5BE2A63}
