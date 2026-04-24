@@ -24,8 +24,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "readme", "readme", "{11081CAC-8D72-4FB2-9BE7-0C05CA0A38F5}"
 	ProjectSection(SolutionItems) = preProject
 		readme\cashflow.jpg = readme\cashflow.jpg
-		readme\README.de.md = readme\README.de.md
-		readme\README.ua.md = readme\README.ua.md
 	EndProjectSection
 EndProject
 Global
