@@ -2,8 +2,6 @@
 using CashFlow.Data.DTOs;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -16,40 +14,17 @@ public class CashFlowBot
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
-    private static string BotToken
-    {
-        get
-        {
-            try
-            {
-                var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
-                var botIdFile = $"{AppDomain.CurrentDomain.BaseDirectory}/BotID.txt";
-                var token = File.ReadAllLines(botIdFile).FirstOrDefault(x => !string.IsNullOrEmpty(x));
-
-                if (string.IsNullOrEmpty(token)) throw new ArgumentException("id is null or empty");
-                if (!Regex.IsMatch(token, pattern)) throw new InvalidDataException("Invalid bot ID");
-
-                return token;
-            }
-            catch (Exception)
-            {
-                var howTo = $"{AppDomain.CurrentDomain.BaseDirectory}\\index.html";
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {howTo}") { CreateNoWindow = true });
-                throw;
-            }
-        }
-    }
-
     private static void Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
+        ServicesProvider.AddApplicationServices();
 
-        var botClient = new TelegramBotClient(BotToken);
+        var botToken = new BotIdProvider(Logger).InitializeToken();
+        var botClient = new TelegramBotClient(botToken);
         using var cts = new CancellationTokenSource();
         var receiverOptions = new ReceiverOptions { AllowedUpdates = [] };
         var notifyService = new TelegramBotNotifyService(botClient);
 
-        ServicesProvider.AddApplicationServices();
         ServicesProvider.Add<INotifyService>(notifyService);
 
         botClient.StartReceiving(
