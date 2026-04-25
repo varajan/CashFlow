@@ -21,7 +21,7 @@ public class BotIdProvider(ILogger logger)
 
             if (!File.Exists(botIdTxtFile))
             {
-                logger.Log("BotID.txt file found.");
+                logger.Log("BotID.txt file not found.");
                 return null;
             }
 
