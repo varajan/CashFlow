@@ -19,8 +19,8 @@ public class CashFlowBot
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
         ServicesProvider.AddApplicationServices();
 
-        var botId = new BotIdProvider(Logger);
-        var botClient = new TelegramBotClient(botId.Token);
+        var botToken = new BotIdProvider(Logger).InitializeToken();
+        var botClient = new TelegramBotClient(botToken);
         using var cts = new CancellationTokenSource();
         var receiverOptions = new ReceiverOptions { AllowedUpdates = [] };
         var notifyService = new TelegramBotNotifyService(botClient);

@@ -48,21 +48,18 @@ public class BotIdProvider(ILogger logger)
         }
     }
 
-    public string Token
+    public string InitializeToken()
     {
-        get
+        var token = ReadBotIdFromFile();
+        if (token != null)
         {
-            var token = ReadBotIdFromFile();
-            if (token != null)
-            {
-                CredentialStore.AddOrUpdate(_service, _account, token);
-                File.Delete(botIdTxtFile);
-                return token;
-            }
-
-            token = CredentialStore.Get(_service, _account)?.Password;
-
-            return token ?? throw new Exception("BotId is not configured.");
+            CredentialStore.AddOrUpdate(_service, _account, token);
+            File.Delete(botIdTxtFile);
+            return token;
         }
+
+        token = CredentialStore.Get(_service, _account)?.Password;
+
+        return token ?? throw new Exception("BotId is not configured.");
     }
 }
