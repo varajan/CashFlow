@@ -19,6 +19,7 @@
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Devlooped.CredentialManager" Version="2.7.0" />
     <PackageReference Include="NetTelegramBotApi" Version="7.1.0" />
     <PackageReference Include="Telegram.Bot" Version="22.7.5" />
     <PackageReference Include="Telegram.Bot.Fabric" Version="1.0.5846.23609" />
@@ -30,9 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="BotID.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="index.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
