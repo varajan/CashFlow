@@ -24,8 +24,10 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
-      - name: Save Bot Token
-        run: printf '%s' "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotId.txt
+      - name: Save secrets
+        run: |
+          printf '%s' "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotId.txt
+          printf '%s' "${{ secrets.TESTING_SESSION }}" > testing_session.session
 
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
