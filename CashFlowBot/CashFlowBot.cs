@@ -14,7 +14,7 @@ public class CashFlowBot
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
-    private static void Main()
+    private static async Task Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
         ServicesProvider.AddApplicationServices();
@@ -36,7 +36,7 @@ public class CashFlowBot
         );
 
         Console.WriteLine("Starting Bot.");
-        Console.ReadKey();
+        await Task.Delay(Timeout.Infinite, cts.Token);
         cts.Cancel();
     }
 
