@@ -35,7 +35,7 @@ public class TelegramClient : IDisposable
     public async Task SendMessage(string message)
     {
         await Client.SendMessageAsync(botUser, message);
-        await Task.Delay(1_000);
+        //await Task.Delay(1_000);
     }
 
     public async Task<string> GetLastMessage()

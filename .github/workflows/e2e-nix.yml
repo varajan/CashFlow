@@ -2,9 +2,12 @@ name: E2E Tests (Nix)
 
 on:
   workflow_call:
-    secrets:
+    inputs:
       RUN_ON:
         required: true
+        type: string
+
+    secrets:
       BOT_TOKEN:
         required: true
       API_ID:
@@ -18,7 +21,7 @@ on:
 
 jobs:
   tests:
-    runs-on: secrets.RUN_ON
+    runs-on: ${{ inputs.RUN_ON }}
 
     env:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
