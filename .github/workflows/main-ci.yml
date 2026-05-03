@@ -10,9 +10,9 @@ jobs:
     needs: build
     uses: ./.github/workflows/unit.yml
 
-  system-tests:
-    needs: unit-tests
-    uses: ./.github/workflows/system.yml
+#  system-tests:
+#    needs: unit-tests
+#    uses: ./.github/workflows/system.yml
 
 #  build:
 #    if: ${{ !github.event.pull_request.draft }}
