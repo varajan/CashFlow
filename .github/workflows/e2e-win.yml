@@ -1,0 +1,59 @@
+name: E2E Tests (Windows)
+
+on:
+  workflow_call:
+    secrets:
+      BOT_TOKEN:
+        required: true
+      API_ID:
+        required: true
+      API_HASH:
+        required: true
+      PHONE_NUMBER:
+        required: true
+      VERIFICATION_CODE:
+        required: true
+        
+jobs:
+  e2e:
+    runs-on: windows-latest
+
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
+      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore CashFlowBot.sln
+
+      - name: Save secrets
+        shell: pwsh
+        run: |
+          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
+
+          [IO.File]::WriteAllBytes(
+            "CashFlowBotE2eTests/testing_session.session",
+            [Convert]::FromBase64String("${{ secrets.TESTING_SESSION }}")
+          )
+
+      - name: Build solution
+        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+
+      - name: Run E2E Tests
+        shell: pwsh
+        run: |
+          $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
+          Start-Sleep -Seconds 5
+          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+          Stop-Process -Id $process.Id

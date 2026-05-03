@@ -39,67 +39,96 @@ jobs:
             emulator/
           retention-days: 7
 
-  e2e:
-    strategy:
-      max-parallel: 1
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    env:
+  e2e-win:
+    uses: ./.github/workflows/e2e-win.yml
+    secrets:
       BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       API_ID: ${{ secrets.API_ID }}
       API_HASH: ${{ secrets.API_HASH }}
       PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
       VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  e2e-linux:
+    uses: ./.github/workflows/e2e-nix.yml
+    secrets:
+      RUN_ON: ubuntu-latest
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
+      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
 
-      - name: Setup .NET SDK 8.0
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
+  e2e-macOs:
+    uses: ./.github/workflows/e2e-nix.yml
+    secrets:
+      RUN_ON: macos-latest
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
+      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
 
-      - name: Restore dependencies
-        run: dotnet restore CashFlowBot.sln
-
-      - name: Save secrets (Unix)
-        if: runner.os != 'Windows'
-        run: |
-          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
-          echo "${{ secrets.TESTING_SESSION }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
-
-      - name: Save secrets (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
-
-          [IO.File]::WriteAllBytes(
-            "CashFlowBotE2eTests/testing_session.session",
-            [Convert]::FromBase64String("${{ secrets.TESTING_SESSION }}")
-          )
-
-      - name: Build solution
-        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
-
-      - name: Run E2E Tests (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          dotnet run --project CashFlowBot &
-          BOT_PID=$!
-          sleep 5
-          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
-          kill $BOT_PID
-
-      - name: Run E2E Tests (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
-          Start-Sleep -Seconds 5
-          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
-          Stop-Process -Id $process.Id
+#  e2e:
+#    strategy:
+#      max-parallel: 1
+#      matrix:
+#        os: [ubuntu-latest, windows-latest, macos-latest]
+#
+#    runs-on: ${{ matrix.os }}
+#
+#    env:
+#      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+#      API_ID: ${{ secrets.API_ID }}
+#      API_HASH: ${{ secrets.API_HASH }}
+#      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+#      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
+#
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v2
+#
+#      - name: Setup .NET SDK 8.0
+#        uses: actions/setup-dotnet@v4
+#        with:
+#          dotnet-version: 8.0.x
+#
+#      - name: Restore dependencies
+#        run: dotnet restore CashFlowBot.sln
+#
+#      - name: Save secrets (Unix)
+#        if: runner.os != 'Windows'
+#        run: |
+#          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
+#          echo "${{ secrets.TESTING_SESSION }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+#
+#      - name: Save secrets (Windows)
+#        if: runner.os == 'Windows'
+#        shell: pwsh
+#        run: |
+#          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
+#
+#          [IO.File]::WriteAllBytes(
+#            "CashFlowBotE2eTests/testing_session.session",
+#            [Convert]::FromBase64String("${{ secrets.TESTING_SESSION }}")
+#          )
+#
+#      - name: Build solution
+#        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+#
+#      - name: Run E2E Tests (Linux/macOS)
+#        if: runner.os != 'Windows'
+#        run: |
+#          dotnet run --project CashFlowBot &
+#          BOT_PID=$!
+#          sleep 5
+#          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+#          kill $BOT_PID
+#
+#      - name: Run E2E Tests (Windows)
+#        if: runner.os == 'Windows'
+#        shell: pwsh
+#        run: |
+#          $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
+#          Start-Sleep -Seconds 5
+#          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+#          Stop-Process -Id $process.Id
