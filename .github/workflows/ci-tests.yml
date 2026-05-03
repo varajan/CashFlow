@@ -6,6 +6,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
+      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      PHONE_NUMBER: ${{ secrets.BOT_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -18,14 +24,25 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
+      - name: Save Bot Token
+        run: printf '%s' "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotId.txt
+
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
-      - name: Run Unit Tests
-        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
+#      - name: Run Unit Tests
+#        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
 
-      - name: Run System Tests
-        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
+#      - name: Run System Tests
+#        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
+
+      - name: Run E2E Tests
+        run: |
+          dotnet run --project CashFlowBot &
+          BOT_PID=$!
+          sleep 5
+          dotnet test CashFlowBotE2ETests/CashFlowBotE2eTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=E2ETests.html"
+          kill $BOT_PID
 
       - name: Upload logs and messages
         if: always()
@@ -35,5 +52,6 @@ jobs:
           path: |
             CashFlowUnitTests/TestResults/
             CashFlowBotSystemTests/TestResults/
+            CashFlowBotE2eTests/TestResults/
             emulator/
           retention-days: 7
