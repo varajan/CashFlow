@@ -2,12 +2,12 @@ name: Build and Test (.NET 8)
 
 on: pull_request
 
-secrets:
-  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-  API_ID: ${{ secrets.API_ID }}
-  API_HASH: ${{ secrets.API_HASH }}
-  PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-  TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
+#secrets:
+#  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+#  API_ID: ${{ secrets.API_ID }}
+#  API_HASH: ${{ secrets.API_HASH }}
+#  PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+#  TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
 
 jobs:
 
