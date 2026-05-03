@@ -16,6 +16,7 @@ on:
       VERIFICATION_CODE:
         required: true
 
+jobs:
   e2e:
     runs-on: ${{ secrets.RUN_ON }}
 
