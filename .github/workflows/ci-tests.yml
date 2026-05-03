@@ -10,7 +10,6 @@ jobs:
       API_ID: ${{ secrets.API_ID }}
       API_HASH: ${{ secrets.API_HASH }}
       PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      PHONE_NUMBER: ${{ secrets.BOT_TOKEN }}
 
     steps:
       - name: Checkout
