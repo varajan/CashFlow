@@ -1,0 +1,38 @@
+name: Unit Test
+
+on:
+  workflow_call:
+
+jobs:
+
+  build:
+    uses: ./.github/workflows/build.yml
+
+  build:
+    if: ${{ !github.event.pull_request.draft }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: out
+          
+      - name: Run Unit Tests
+        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
+
+      - name: Upload logs and messages
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-tests
+          path: CashFlowUnitTests/TestResults/
+          retention-days: 7
