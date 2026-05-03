@@ -15,7 +15,7 @@ public class TelegramClient : IDisposable
         "api_id" => Environment.GetEnvironmentVariable("API_ID"),
         "api_hash" => Environment.GetEnvironmentVariable("API_HASH"),
         "phone_number" => Environment.GetEnvironmentVariable("PHONE_NUMBER"),
-        "verification_code" => Environment.GetEnvironmentVariable("VERIFICATION_CODE"),
+        //"verification_code" => Environment.GetEnvironmentVariable("VERIFICATION_CODE"),
         "session_pathname" => "testing_session.session",
         //"password" => "qwerty123",
         _ => null

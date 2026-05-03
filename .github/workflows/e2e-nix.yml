@@ -13,11 +13,11 @@ on:
         required: true
       PHONE_NUMBER:
         required: true
-      VERIFICATION_CODE:
+      TESTING_SESSION:
         required: true
 
 jobs:
-  e2e:
+  tests:
     runs-on: secrets.RUN_ON
 
     env:
@@ -25,7 +25,6 @@ jobs:
       API_ID: ${{ secrets.API_ID }}
       API_HASH: ${{ secrets.API_HASH }}
       PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
 
     steps:
       - name: Checkout
