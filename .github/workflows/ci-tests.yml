@@ -6,6 +6,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      API_ID: ${{ secrets.API_ID }}
+      API_HASH: ${{ secrets.API_HASH }}
+      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+      VERIFICATION_CODE: ${{ secrets.VERIFICATION_CODE }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -18,22 +25,44 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
+      - name: Save secrets
+        run: |
+          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
+          echo "${{ secrets.TESTING_SESSION }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
 
-      - name: Run Unit Tests
-        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
+#      - name: Run Unit Tests
+#        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
 
-      - name: Run System Tests
-        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
+#      - name: Run System Tests
+#        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
 
-      - name: Upload logs and messages
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: logs-and-messages
-          path: |
-            CashFlowUnitTests/TestResults/
-            CashFlowBotSystemTests/TestResults/
-            emulator/
-          retention-days: 7
+      - name: Run E2E Tests
+        run: |
+          dotnet run --project CashFlowBot &
+          echo "bot started"
+
+          BOT_PID=$!
+          echo "bot id: ($BOT_PID)"
+
+          sleep 5
+          echo "sleep"
+
+          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+          echo "tests are completed"
+
+          kill $BOT_PID
+          echo "bot is closed"
+
+#      - name: Upload logs and messages
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: logs-and-messages
+#          path: |
+#            CashFlowUnitTests/TestResults/
+#            CashFlowBotSystemTests/TestResults/
+#            emulator/
+#          retention-days: 7

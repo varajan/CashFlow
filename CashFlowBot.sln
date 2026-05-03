@@ -11,8 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		2.0.7-beta.version = 2.0.7-beta.version
-		README.md = README.md
 		build.bat = build.bat
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotEmulator", "CashFlowBotEmulator\CashFlowBotEmulator.csproj", "{89656A7A-7924-4E03-8C61-31E564F9E704}"
@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "readme", "readme", "{11081C
 	ProjectSection(SolutionItems) = preProject
 		readme\cashflow.jpg = readme\cashflow.jpg
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CashFlowBotE2eTests", "CashFlowBotE2eTests\CashFlowBotE2eTests.csproj", "{2A672B46-7F9F-451D-A699-1A6A76B9842A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +54,10 @@ Global
 		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8B632CCA-5020-4A63-B45F-600F696DB5E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A672B46-7F9F-451D-A699-1A6A76B9842A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A672B46-7F9F-451D-A699-1A6A76B9842A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A672B46-7F9F-451D-A699-1A6A76B9842A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A672B46-7F9F-451D-A699-1A6A76B9842A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

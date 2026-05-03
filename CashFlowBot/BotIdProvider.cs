@@ -51,14 +51,14 @@ public class BotIdProvider(ILogger logger)
     public string InitializeToken()
     {
         var token = ReadBotIdFromFile();
-        if (token != null)
-        {
-            CredentialStore.AddOrUpdate(_service, _account, token);
-            File.Delete(botIdTxtFile);
-            return token;
-        }
+        //if (token != null)
+        //{
+        //    CredentialStore.AddOrUpdate(_service, _account, token);
+        //    File.Delete(botIdTxtFile);
+        //    return token;
+        //}
 
-        token = CredentialStore.Get(_service, _account)?.Password;
+        //token = CredentialStore.Get(_service, _account)?.Password;
 
         return token ?? throw new Exception("BotId is not configured.");
     }
