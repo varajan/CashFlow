@@ -3,6 +3,14 @@ name: Build and Test (.NET 8)
 on: pull_request
 
 jobs:
+
+secrets:
+  BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+  API_ID: ${{ secrets.API_ID }}
+  API_HASH: ${{ secrets.API_HASH }}
+  PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+  TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
+
   build:
     if: ${{ !github.event.pull_request.draft }}
     runs-on: ubuntu-latest
@@ -41,32 +49,19 @@ jobs:
 
   e2e-win:
     uses: ./.github/workflows/e2e-win.yml
-    secrets:
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-      API_ID: ${{ secrets.API_ID }}
-      API_HASH: ${{ secrets.API_HASH }}
-      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
+    secrets: inherit
 
   e2e-linux:
     uses: ./.github/workflows/e2e-nix.yml
-    secrets:
+    with:
       RUN_ON: ubuntu-latest
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-      API_ID: ${{ secrets.API_ID }}
-      API_HASH: ${{ secrets.API_HASH }}
-      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
+    secrets: inherit
 
   e2e-macOs:
     uses: ./.github/workflows/e2e-nix.yml
-    secrets:
+    with:
       RUN_ON: macos-latest
-      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-      API_ID: ${{ secrets.API_ID }}
-      API_HASH: ${{ secrets.API_HASH }}
-      PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
-      TESTING_SESSION: ${{ secrets.TESTING_SESSION }}
+    secrets: inherit
 
 #  e2e:
 #    strategy:
