@@ -38,10 +38,19 @@ jobs:
       - name: Run E2E Tests
         run: |
           dotnet run --project CashFlowBot &
+          echo "bot started"
+
           BOT_PID=$!
+          echo "bot id: ($BOT_PID)"
+
           sleep 5
-          dotnet test CashFlowBotE2ETests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+          echo "sleep"
+
+          dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+          echo "tests are completed"
+
           kill $BOT_PID
+          echo "bot is closed"
 
 #      - name: Upload logs and messages
 #        if: always()
