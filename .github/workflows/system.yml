@@ -19,7 +19,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: build
-          path: out
+          path: ./
 
       - name: Run System Tests
         run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
