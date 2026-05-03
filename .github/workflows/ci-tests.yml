@@ -66,10 +66,22 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore CashFlowBot.sln
 
-      - name: Save secrets
+      - name: Save secrets (Unix)
+        if: runner.os != 'Windows'
         run: |
           echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
           echo "${{ secrets.TESTING_SESSION }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+
+      - name: Save secrets (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          echo "${{ secrets.BOT_TOKEN }}" > CashFlowBot/BotID.txt
+
+          [IO.File]::WriteAllBytes(
+            "CashFlowBotE2eTests/testing_session.session",
+            [Convert]::FromBase64String("${{ secrets.TESTING_SESSION }}")
+          )
 
       - name: Build solution
         run: dotnet build CashFlowBot.sln --configuration Release --no-restore
