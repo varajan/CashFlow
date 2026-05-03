@@ -52,12 +52,14 @@ jobs:
     secrets: inherit
 
   e2e-linux:
+    needs: e2e-win
     uses: ./.github/workflows/e2e-nix.yml
     with:
       RUN_ON: ubuntu-latest
     secrets: inherit
 
   e2e-macOs:
+    needs: e2e-linux
     uses: ./.github/workflows/e2e-nix.yml
     with:
       RUN_ON: macos-latest
