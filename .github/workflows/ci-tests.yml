@@ -40,17 +40,16 @@ jobs:
           dotnet run --project CashFlowBot &
           BOT_PID=$!
           sleep 5
-          dotnet test CashFlowBotE2ETests/CashFlowBotE2eTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=E2ETests.html"
+          dotnet test CashFlowBotE2ETests/CashFlowBotE2eTests.csproj --configuration Release --no-build
           kill $BOT_PID
 
-      - name: Upload logs and messages
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: logs-and-messages
-          path: |
-            CashFlowUnitTests/TestResults/
-            CashFlowBotSystemTests/TestResults/
-            CashFlowBotE2eTests/TestResults/
-            emulator/
-          retention-days: 7
+#      - name: Upload logs and messages
+#        if: always()
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: logs-and-messages
+#          path: |
+#            CashFlowUnitTests/TestResults/
+#            CashFlowBotSystemTests/TestResults/
+#            emulator/
+#          retention-days: 7
