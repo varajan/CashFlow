@@ -10,47 +10,12 @@ jobs:
     needs: build
     uses: ./.github/workflows/unit.yml
 
-#  system-tests:
-#    needs: unit-tests
-#    uses: ./.github/workflows/system.yml
-
-#  build:
-#    if: ${{ !github.event.pull_request.draft }}
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v2
-#
-#      - name: Setup .NET SDK 8.0
-#        uses: actions/setup-dotnet@v4
-#        with:
-#          dotnet-version: 8.0.x
-#
-#      - name: Restore dependencies
-#        run: dotnet restore CashFlowBot.sln
-#
-#      - name: Build solution
-#        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
-#
-#      - name: Run Unit Tests
-#        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
-#
-#      - name: Run System Tests
-#        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
-#
-#      - name: Upload logs and messages
-#        if: always()
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: logs-and-messages
-#          path: |
-#            CashFlowUnitTests/TestResults/
-#            CashFlowBotSystemTests/TestResults/
-#            emulator/
-#          retention-days: 7
+  system-tests:
+    needs: unit-tests
+    uses: ./.github/workflows/system.yml
 
 #  e2e-win:
+#    needs: system-tests
 #    uses: ./.github/workflows/e2e-win.yml
 #    secrets: inherit
 #
