@@ -30,7 +30,7 @@ runs:
       shell: bash
       run: dotnet restore CashFlowBot.sln
 
-    - name: Save secrets (cross-platform)
+    - name: Save secrets
       shell: bash
       run: |
         # try if this is needed
@@ -56,6 +56,7 @@ runs:
         API_HASH: ${{ inputs.api_hash }}
         PHONE_NUMBER: ${{ inputs.phone_number }}
         BOT_NAME: ${{ inputs.bot_name }}
+        CASHFLOW_BOT_TOKEN: ${{ inputs.bot_token }}
     
     - name: Run E2E Tests (Windows)
       if: runner.os == 'Windows'
@@ -71,3 +72,4 @@ runs:
         API_HASH: ${{ inputs.api_hash }}
         PHONE_NUMBER: ${{ inputs.phone_number }}
         BOT_NAME: ${{ inputs.bot_name }}
+        CASHFLOW_BOT_TOKEN: ${{ inputs.bot_token }}

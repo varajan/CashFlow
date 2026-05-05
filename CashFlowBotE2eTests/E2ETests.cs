@@ -5,10 +5,10 @@ public class E2ETests
     private TelegramClient _client;
 
     [SetUp]
-    public void Setup()
+    public async Task Setup()
     {
         _client = new TelegramClient();
-        _client.Init().Wait();
+        await _client.Init();
     }
 
     [TearDown]
