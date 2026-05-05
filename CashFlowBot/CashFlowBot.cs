@@ -52,7 +52,7 @@ public class CashFlowBot
 
             if (string.IsNullOrEmpty(token) || !Regex.IsMatch(token, pattern))
             {
-                throw new Exception("BotId is not configured.");
+                throw new Exception("BotId is not configured\r\nCheck README.md for instructions.");
             }
 
             return token;
