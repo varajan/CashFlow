@@ -1,7 +1,9 @@
 ﻿using CashFlow;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
+using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -14,18 +16,16 @@ public class CashFlowBot
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
-    private static async Task Main()
+    private static void Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
-        ServicesProvider.AddApplicationServices();
 
-        //var botToken = new BotIdProvider(Logger).InitializeToken();
-        var botToken = Environment.GetEnvironmentVariable("BOT_TOKEN");
-        var botClient = new TelegramBotClient(botToken);
+        var botClient = new TelegramBotClient(BotToken);
         using var cts = new CancellationTokenSource();
         var receiverOptions = new ReceiverOptions { AllowedUpdates = [] };
         var notifyService = new TelegramBotNotifyService(botClient);
 
+        ServicesProvider.AddApplicationServices();
         ServicesProvider.Add<INotifyService>(notifyService);
 
         botClient.StartReceiving(
@@ -36,8 +36,27 @@ public class CashFlowBot
         );
 
         Console.WriteLine("Starting Bot.");
-        await Task.Delay(Timeout.Infinite, cts.Token);
+        Console.ReadKey();
         cts.Cancel();
+    }
+
+    private static string BotToken
+    {
+        get
+        {
+            var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
+            var botIdTxtFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotID.txt");
+            var envVariableToken = Environment.GetEnvironmentVariable("CASHFLOW_BOT_TOKEN").NullIfEmpty();
+            var fileToken = File.Exists(botIdTxtFile) ? File.ReadAllLines(botIdTxtFile).FirstOrDefault(x => !string.IsNullOrEmpty(x)) : null;
+            var token = envVariableToken ?? fileToken;
+
+            if (string.IsNullOrEmpty(token) || !Regex.IsMatch(token, pattern))
+            {
+                throw new Exception("BotId is not configured.");
+            }
+
+            return token;
+        }
     }
 
     private static Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken token)
