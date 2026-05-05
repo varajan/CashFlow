@@ -32,10 +32,7 @@ runs:
 
     - name: Save secrets
       shell: bash
-      run: |
-        # try if this is needed
-        # echo "${{ inputs.bot_token }}" > CashFlowBot/BotID.txt
-        echo "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+      run: echo "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
 
     - name: Build solution
       shell: bash
