@@ -14,7 +14,7 @@ on:
         
 jobs:
   tests:
-    name: E2E Smoke (Windows)
+    name: E2E Smoke
     runs-on: windows-latest
 
     env:
