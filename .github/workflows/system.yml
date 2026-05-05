@@ -1,10 +1,8 @@
-name: System Test
-
 on:
   workflow_call:
 
 jobs:
-  tests:
+  system:
     runs-on: ubuntu-latest
 
     steps:

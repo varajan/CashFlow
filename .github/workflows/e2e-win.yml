@@ -1,5 +1,3 @@
-name: E2E Tests (Windows)
-
 on:
   workflow_call:
     secrets:
@@ -16,6 +14,7 @@ on:
         
 jobs:
   tests:
+    name: E2E Smoke (Windows)
     runs-on: windows-latest
 
     env:

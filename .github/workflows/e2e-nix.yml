@@ -6,6 +6,9 @@ on:
       RUN_ON:
         required: true
         type: string
+      OS:
+        required: true
+        type: string
 
     secrets:
       BOT_TOKEN:
@@ -21,6 +24,7 @@ on:
 
 jobs:
   tests:
+    name: E2E Smoke (${{ inputs.OS }})
     runs-on: ${{ inputs.RUN_ON }}
 
     env:
