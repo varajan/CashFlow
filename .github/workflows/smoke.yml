@@ -2,26 +2,9 @@ on:
   workflow_call:
 
 jobs:
-#  win:
-#    name: Windows
-#    runs-on: windows-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - uses: ./.github/actions/smoke
-#        with:
-#          bot_token: ${{ secrets.BOT_TOKEN }}
-#          api_id: ${{ secrets.API_ID }}
-#          api_hash: ${{ secrets.API_HASH }}
-#          phone_number: ${{ secrets.PHONE_NUMBER }}
-#          testing_session: ${{ secrets.TESTING_SESSION }}
-#          runner_os: Windows
-
-  linux:
-    name: Linux
-#    needs: win
-    runs-on: ubuntu-latest
+  win:
+    name: Windows
+    runs-on: windows-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +16,24 @@ jobs:
           api_hash: ${{ secrets.API_HASH }}
           phone_number: ${{ secrets.PHONE_NUMBER }}
           testing_session: ${{ secrets.TESTING_SESSION }}
-          runner_os: Linux
+          runner_os: Windows
+
+#  linux:
+#    name: Linux
+#    needs: win
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - uses: ./.github/actions/smoke
+#        with:
+#          bot_token: ${{ secrets.BOT_TOKEN }}
+#          api_id: ${{ secrets.API_ID }}
+#          api_hash: ${{ secrets.API_HASH }}
+#          phone_number: ${{ secrets.PHONE_NUMBER }}
+#          testing_session: ${{ secrets.TESTING_SESSION }}
+#          runner_os: Linux
 
 #  macos:
 #    name: MacOs
