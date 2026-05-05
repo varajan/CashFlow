@@ -6,42 +6,31 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  _0_tests:
+  _1_tests:
     name: Test
     needs: build
     uses: ./.github/workflows/tests.yml
 
-  _1_tests:
-    name: Test
-    needs: build
-    uses: ./.github/workflows/unit.yml
-
   _2_tests:
     if: ${{ !github.event.pull_request.draft }}
-    name: Test
-    needs: _1_tests
-    uses: ./.github/workflows/system.yml
-
-  _3_tests:
-    if: ${{ !github.event.pull_request.draft }}
     name: Windows
-    needs: _2_tests
+    needs: _1_tests
     uses: ./.github/workflows/e2e-win.yml
     secrets: inherit
 
-  _4_tests:
+  _3_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Linux
-    needs: _3_tests
+    needs: _2_tests
     uses: ./.github/workflows/e2e-nix.yml
     with:
       RUN_ON: ubuntu-latest
     secrets: inherit
 
-  _5_tests:
+  _4_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: MacOs
-    needs: _4_tests
+    needs: _2_tests
     uses: ./.github/workflows/e2e-nix.yml
     with:
       RUN_ON: macos-latest
