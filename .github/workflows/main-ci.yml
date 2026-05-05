@@ -15,18 +15,22 @@ jobs:
     uses: ./.github/workflows/system.yml
 
 #  e2e-win:
+#   if: ${{ !github.event.pull_request.draft }}
 #    needs: system-tests
 #    uses: ./.github/workflows/e2e-win.yml
 #    secrets: inherit
 #
-#  e2e-linux:
+  e2e-linux:
+    if: ${{ !github.event.pull_request.draft }}
 #    needs: e2e-win
-#    uses: ./.github/workflows/e2e-nix.yml
-#    with:
-#      RUN_ON: ubuntu-latest
-#    secrets: inherit
+    needs: system-tests
+    uses: ./.github/workflows/e2e-nix.yml
+    with:
+      RUN_ON: ubuntu-latest
+    secrets: inherit
 #
 #  e2e-macOs:
+#    if: ${{ !github.event.pull_request.draft }}
 #    needs: e2e-linux
 #    uses: ./.github/workflows/e2e-nix.yml
 #    with:
