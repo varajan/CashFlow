@@ -14,19 +14,19 @@ jobs:
   _2_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
-    needs: unit-tests
+    needs: _1_tests
     uses: ./.github/workflows/system.yml
 
   _3_tests:
     if: ${{ !github.event.pull_request.draft }}
-    needs: system-tests
+    needs: _2_tests
     uses: ./.github/workflows/e2e-win.yml
     secrets: inherit
 
   _4_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
-    needs: e2e-win
+    needs: _3_tests
     uses: ./.github/workflows/e2e-nix.yml
     with:
       OS: Linux
@@ -36,7 +36,7 @@ jobs:
   _5_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
-    needs: e2e-linux
+    needs: _4_tests
     uses: ./.github/workflows/e2e-nix.yml
     with:
       OS: MacOs
