@@ -4,15 +4,17 @@ on: pull_request
 
 jobs:
   build:
+    name: Build
     uses: ./.github/workflows/build.yml
 
   tests:
+    if: ${{ !github.event.pull_request.draft }}
     name: Test
     needs: build
     uses: ./.github/workflows/tests.yml
 
   smoke:
-    if: ${{ !github.event.pull_request.draft }}
+#    if: ${{ !github.event.pull_request.draft }}
     name: Smoke
     needs: tests
     uses: ./.github/workflows/smoke.yml
