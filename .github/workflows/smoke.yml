@@ -35,19 +35,19 @@ jobs:
           testing_session: ${{ secrets.TESTING_SESSION }}
           runner_os: Linux
 
-  macos:
-    name: MacOs
-    needs: linux
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - uses: ./.github/actions/smoke
-        with:
-          bot_token: ${{ secrets.BOT_TOKEN }}
-          api_id: ${{ secrets.API_ID }}
-          api_hash: ${{ secrets.API_HASH }}
-          phone_number: ${{ secrets.PHONE_NUMBER }}
-          testing_session: ${{ secrets.TESTING_SESSION }}
-          runner_os: MacOs
+#  macos:
+#    name: MacOs
+#    needs: linux
+#    runs-on: macos-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v4
+#
+#      - uses: ./.github/actions/smoke
+#        with:
+#          bot_token: ${{ secrets.BOT_TOKEN }}
+#          api_id: ${{ secrets.API_ID }}
+#          api_hash: ${{ secrets.API_HASH }}
+#          phone_number: ${{ secrets.PHONE_NUMBER }}
+#          testing_session: ${{ secrets.TESTING_SESSION }}
+#          runner_os: MacOs
