@@ -43,7 +43,7 @@ public class TelegramClient : IDisposable
         HumanLikeDelay();
     }
 
-    private void HumanLikeDelay() => Thread.Sleep(Random.Next(2_000, 5_000));
+    private void HumanLikeDelay() => Thread.Sleep(Random.Next(5_000, 10_000));
 
     public string GetLastMessage()
     {
