@@ -5,54 +5,23 @@ jobs:
   unit:
     name: Unit
     runs-on: ubuntu-latest
-
     steps:
-      - name: Setup .NET SDK 8.0
-        uses: actions/setup-dotnet@v4
+      - uses: ./.github/actions/tests
         with:
-          dotnet-version: 8.0.x
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: ./
-          
-      - name: Run Unit Tests
-        run: dotnet test CashFlowUnitTests/CashFlowUnitTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=UnitTests.html"
-
-      - name: Upload logs and messages
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-tests
-          path: CashFlowUnitTests/TestResults/
-          retention-days: 7
+          project: CashFlowUnitTests/CashFlowUnitTests.csproj
+          test-name: UnitTests
+          artifact-path: CashFlowUnitTests/TestResults/
+          artifact-name: unit-tests
 
   system:
     name: System
     runs-on: ubuntu-latest
-
     steps:
-      - name: Setup .NET SDK 8.0
-        uses: actions/setup-dotnet@v4
+      - uses: ./.github/actions/tests
         with:
-          dotnet-version: 8.0.x
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: ./
-
-      - name: Run System Tests
-        run: dotnet test CashFlowBotSystemTests/CashFlowBotSystemTests.csproj --configuration Release --no-build --verbosity quiet --logger "html;LogFileName=SystemTests.html"
-
-      - name: Upload logs and messages
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: system-tests
-          path: |
+          project: CashFlowBotSystemTests/CashFlowBotSystemTests.csproj
+          test-name: SystemTests
+          artifact-path: |
             CashFlowBotSystemTests/TestResults/
             emulator/
-          retention-days: 7
-
+          artifact-name: system-tests

@@ -1,0 +1,58 @@
+inputs:
+  bot_token:
+    required: true
+  api_id:
+    required: true
+  api_hash:
+    required: true
+  phone_number:
+    required: true
+  testing_session:
+    required: true
+  runner_os:
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK 8.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      shell: bash
+      run: dotnet restore CashFlowBot.sln
+
+    - name: Save secrets (cross-platform)
+      shell: bash
+      run: |
+        echo "${{ inputs.bot_token }}" > CashFlowBot/BotID.txt
+        echo "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+
+    - name: Build solution
+      shell: bash
+      run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+
+    - name: Run E2E Tests (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        dotnet run --project CashFlowBot &
+        BOT_PID=$!
+        sleep 5
+        dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        kill $BOT_PID
+
+    - name: Run E2E Tests (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
+        Start-Sleep -Seconds 5
+        dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        Stop-Process -Id $process.Id
