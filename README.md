@@ -1,4 +1,4 @@
-# 💰 CashFlow Telegram Bot
+# 💰 CashFlow Telegram Bot 
 
 A cross-platform Telegram bot designed to simplify and automate gameplay for **CashFlow** — a financial education board game.  
 The bot helps players track income, expenses, assets, and liabilities, making the game smoother and more engaging.
