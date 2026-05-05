@@ -1,6 +1,8 @@
 inputs:
   bot_token:
     required: true
+  bot_name:
+    required: true
   api_id:
     required: true
   api_hash:
@@ -31,7 +33,8 @@ runs:
     - name: Save secrets (cross-platform)
       shell: bash
       run: |
-        echo "${{ inputs.bot_token }}" > CashFlowBot/BotID.txt
+        # try if this is needed
+        # echo "${{ inputs.bot_token }}" > CashFlowBot/BotID.txt
         echo "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
 
     - name: Build solution
@@ -46,11 +49,13 @@ runs:
         BOT_PID=$!
         sleep 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        rm CashFlowBotE2eTests/testing_session.session
         kill $BOT_PID
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
         PHONE_NUMBER: ${{ inputs.phone_number }}
+        BOT_NAME: ${{ inputs.bot_name }}
     
     - name: Run E2E Tests (Windows)
       if: runner.os == 'Windows'
@@ -59,8 +64,10 @@ runs:
         $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
         Start-Sleep -Seconds 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        rm CashFlowBotE2eTests/testing_session.session
         Stop-Process -Id $process.Id
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
         PHONE_NUMBER: ${{ inputs.phone_number }}
+        BOT_NAME: ${{ inputs.bot_name }}

@@ -5,15 +5,15 @@ namespace CashFlowBotE2eTests;
 
 public class TelegramClient : IDisposable
 {
-    private Client _client;
+    private Client? _client;
     private Client Client => _client ??= new Client(Config);
 
-    private Random _random;
+    private Random? _random;
     private Random Random => _random ??= new Random();
 
-    private User botUser;
+    private User? _botUser;
 
-    private string Config(string what) => what switch
+    private string? Config(string what) => what switch
     {
         "api_id" => Environment.GetEnvironmentVariable("API_ID"),
         "api_hash" => Environment.GetEnvironmentVariable("API_HASH"),
@@ -26,7 +26,9 @@ public class TelegramClient : IDisposable
         _ => null
     };
 
-    public static string BotUsername => "varajankoBot";
+    public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME") ?? "varajankoBot";
+
+    //public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME")!;
 
     public void Dispose() => _client?.Dispose();
 
@@ -34,20 +36,20 @@ public class TelegramClient : IDisposable
     {
         await Client.LoginUserIfNeeded();
         var resolveBot = await Client.Contacts_ResolveUsername(BotUsername);
-        botUser = resolveBot.User;
+        _botUser = resolveBot.User;
     }
 
     public void SendMessage(string message)
     {
-        Client.SendMessageAsync(botUser, message).Wait();
+        Client.SendMessageAsync(_botUser, message).Wait();
         HumanLikeDelay();
     }
 
     private void HumanLikeDelay() => Thread.Sleep(Random.Next(5_000, 10_000));
 
-    public string GetLastMessage()
+    public string? GetLastMessage()
     {
-        var history = Client.Messages_GetHistory(botUser, limit: 1).Result;
+        var history = Client.Messages_GetHistory(_botUser, limit: 1).Result;
         var message = history.Messages?.FirstOrDefault()?.ToString();
         return message;
     }
