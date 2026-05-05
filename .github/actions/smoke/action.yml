@@ -46,8 +46,8 @@ runs:
         BOT_PID=$!
         sleep 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
-        rm CashFlowBotE2eTests/testing_session.session
         kill $BOT_PID
+        # rm CashFlowBotE2eTests/testing_session.session
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
@@ -62,8 +62,8 @@ runs:
         $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
         Start-Sleep -Seconds 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
-        rm CashFlowBotE2eTests/testing_session.session
         Stop-Process -Id $process.Id
+        # rm CashFlowBotE2eTests/testing_session.session
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
