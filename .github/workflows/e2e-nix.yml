@@ -22,16 +22,16 @@ on:
 
 jobs:
   tests:
-    env:
-      OS_NAME: ${{ inputs.OS }}
-    name: E2E Smoke (${{ env.OS_NAME }})
     runs-on: ${{ inputs.RUN_ON }}
 
     env:
+      OS_NAME: ${{ inputs.OS }}
       CASHFLOW_BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
       API_ID: ${{ secrets.API_ID }}
       API_HASH: ${{ secrets.API_HASH }}
       PHONE_NUMBER: ${{ secrets.PHONE_NUMBER }}
+
+    name: E2E Smoke (${{ env.OS_NAME }})
 
     steps:
       - name: Checkout
