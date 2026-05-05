@@ -26,9 +26,7 @@ public class TelegramClient : IDisposable
         _ => null
     };
 
-    public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME") ?? "varajankoBot";
-
-    //public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME")!;
+    public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME")!;
 
     public void Dispose() => _client?.Dispose();
 
@@ -39,17 +37,17 @@ public class TelegramClient : IDisposable
         _botUser = resolveBot.User;
     }
 
-    public void SendMessage(string message)
+    public async Task SendMessage(string message)
     {
-        Client.SendMessageAsync(_botUser, message).Wait();
-        HumanLikeDelay();
+        await Client.SendMessageAsync(_botUser, message);
+        await HumanLikeDelay();
     }
 
-    private void HumanLikeDelay() => Thread.Sleep(Random.Next(5_000, 10_000));
+    private async Task HumanLikeDelay() => await Task.Delay(Random.Next(5_000, 10_000));
 
-    public string? GetLastMessage()
+    public async Task<string?> GetLastMessage()
     {
-        var history = Client.Messages_GetHistory(_botUser, limit: 1).Result;
+        var history = await Client.Messages_GetHistory(_botUser, limit: 1);
         var message = history.Messages?.FirstOrDefault()?.ToString();
         return message;
     }
