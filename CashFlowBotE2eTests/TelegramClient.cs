@@ -8,6 +8,9 @@ public class TelegramClient : IDisposable
     private Client _client;
     private Client Client => _client ??= new Client(Config);
 
+    private Random _random;
+    private Random Random => _random ??= new Random();
+
     private User botUser;
 
     private string Config(string what) => what switch
@@ -15,9 +18,7 @@ public class TelegramClient : IDisposable
         "api_id" => Environment.GetEnvironmentVariable("API_ID"),
         "api_hash" => Environment.GetEnvironmentVariable("API_HASH"),
         "phone_number" => Environment.GetEnvironmentVariable("PHONE_NUMBER"),
-        //"verification_code" => Environment.GetEnvironmentVariable("VERIFICATION_CODE"),
         "session_pathname" => "testing_session.session",
-        //"password" => "qwerty123",
         _ => null
     };
 
@@ -32,15 +33,17 @@ public class TelegramClient : IDisposable
         botUser = resolveBot.User;
     }
 
-    public async Task SendMessage(string message)
+    public void SendMessage(string message)
     {
-        await Client.SendMessageAsync(botUser, message);
-        await Task.Delay(1_000);
+        Client.SendMessageAsync(botUser, message).Wait();
+        HumanLikeDelay();
     }
 
-    public async Task<string> GetLastMessage()
+    private void HumanLikeDelay() => Thread.Sleep(Random.Next(2_000, 5_000));
+
+    public string GetLastMessage()
     {
-        var history = await Client.Messages_GetHistory(botUser, limit: 1);
+        var history = Client.Messages_GetHistory(botUser, limit: 1).Result;
         var message = history.Messages?.FirstOrDefault()?.ToString();
         return message;
     }

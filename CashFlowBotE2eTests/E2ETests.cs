@@ -15,7 +15,7 @@ public class E2ETests
     public void TearDown() => _client.Dispose();
 
     [Test]
-    public async Task BasicFlow()
+    public void BasicFlow()
     {
         var messagesAndResponses = new Dictionary<string, string>
         {
@@ -37,8 +37,8 @@ public class E2ETests
 
         foreach (var (message, expectedResponse) in messagesAndResponses)
         {
-            await _client.SendMessage(message);
-            var response = await _client.GetLastMessage();
+            _client.SendMessage(message);
+            var response = _client.GetLastMessage();
             Assert.That(response, Does.Contain(expectedResponse), $"Failed at message: <{message}>");
         }
     }
