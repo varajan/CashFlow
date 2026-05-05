@@ -22,7 +22,9 @@ on:
 
 jobs:
   tests:
-    name: E2E Smoke (${{ inputs.OS }})
+    env:
+      OS_NAME: ${{ inputs.OS }}
+    name: E2E Smoke (${{ env.OS_NAME }})
     runs-on: ${{ inputs.RUN_ON }}
 
     env:
