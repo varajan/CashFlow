@@ -47,7 +47,11 @@ runs:
         sleep 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
         kill $BOT_PID
-
+      env:
+        API_ID: ${{ inputs.api_id }}
+        API_HASH: ${{ inputs.api_hash }}
+        PHONE_NUMBER: ${{ inputs.phone_number }}
+    
     - name: Run E2E Tests (Windows)
       if: runner.os == 'Windows'
       shell: pwsh
@@ -56,3 +60,7 @@ runs:
         Start-Sleep -Seconds 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
         Stop-Process -Id $process.Id
+      env:
+        API_ID: ${{ inputs.api_id }}
+        API_HASH: ${{ inputs.api_hash }}
+        PHONE_NUMBER: ${{ inputs.phone_number }}
