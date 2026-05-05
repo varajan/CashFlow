@@ -3,6 +3,7 @@ on:
 
 jobs:
   system:
+    name: System
     runs-on: ubuntu-latest
 
     steps:

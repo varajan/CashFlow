@@ -19,6 +19,7 @@ jobs:
 
   _3_tests:
     if: ${{ !github.event.pull_request.draft }}
+    name: Test
     needs: _2_tests
     uses: ./.github/workflows/e2e-win.yml
     secrets: inherit

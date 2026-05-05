@@ -3,6 +3,7 @@ on:
 
 jobs:
   unit:
+    name: Unit
     runs-on: ubuntu-latest
 
     steps:
