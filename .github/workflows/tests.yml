@@ -6,7 +6,7 @@ jobs:
     name: Unit
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/tests
+      - uses: ./.github/actions/tests.yml
         with:
           project: CashFlowUnitTests/CashFlowUnitTests.csproj
           test-name: UnitTests
@@ -17,7 +17,7 @@ jobs:
     name: System
     runs-on: ubuntu-latest
     steps:
-      - uses: ./.github/actions/tests
+      - uses: ./.github/actions/tests.yml
         with:
           project: CashFlowBotSystemTests/CashFlowBotSystemTests.csproj
           test-name: SystemTests
