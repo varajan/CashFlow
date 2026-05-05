@@ -18,6 +18,10 @@ public class TelegramClient : IDisposable
         "api_id" => Environment.GetEnvironmentVariable("API_ID"),
         "api_hash" => Environment.GetEnvironmentVariable("API_HASH"),
         "phone_number" => Environment.GetEnvironmentVariable("PHONE_NUMBER"),
+        "device_model" => "Desktop",
+        "system_version" => "Windows 11",
+        "app_version" => "1.0",
+        "lang_code" => "en",
         "session_pathname" => "testing_session.session",
         _ => null
     };
