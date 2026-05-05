@@ -17,6 +17,5 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     name: Smoke
     needs: tests
-    needs: build
     uses: ./.github/workflows/smoke.yml
     secrets: inherit
