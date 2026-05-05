@@ -6,24 +6,24 @@ jobs:
   build:
     uses: ./.github/workflows/build.yml
 
-  1_tests:
+  _1_tests:
     name: Test
     needs: build
     uses: ./.github/workflows/unit.yml
 
-  2_tests:
+  _2_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
     needs: unit-tests
     uses: ./.github/workflows/system.yml
 
-  3_tests:
+  _3_tests:
     if: ${{ !github.event.pull_request.draft }}
     needs: system-tests
     uses: ./.github/workflows/e2e-win.yml
     secrets: inherit
 
-  4_tests:
+  _4_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
     needs: e2e-win
@@ -33,7 +33,7 @@ jobs:
       RUN_ON: ubuntu-latest
     secrets: inherit
 
-  5_tests:
+  _5_tests:
     if: ${{ !github.event.pull_request.draft }}
     name: Test
     needs: e2e-linux
