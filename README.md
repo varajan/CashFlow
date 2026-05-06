@@ -148,6 +148,11 @@ The project includes a comprehensive testing setup:
 * Run against a **bot emulator**
 * Execute use-case scenarios
 
+### Smoke E2E Tests
+
+* Built with **NUnit** and  **WTelegramClient**
+* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows
+
 ---
 
 ## 📁 Project Structure
@@ -156,6 +161,7 @@ The project includes a comprehensive testing setup:
 .
 ├── CashFlow/
 ├── CashFlowBot/
+├── CashFlowBotE2eTests/
 ├── CashFlowBotEmulator/
 ├── CashFlowBotSystemTests/
 ├── CashFlowUnitTests/
