@@ -80,7 +80,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
     {
         var person = PersonService.Read(CurrentUser);
 
-        if (person.GetBigCircleCashflow() >= person.TargetCashFlow)
+        if (person.HasMetWinningCriteria())
         {
             await HandleWinGame(message);
             return;
