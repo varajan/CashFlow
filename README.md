@@ -27,10 +27,10 @@ The bot helps players track income, expenses, assets, and liabilities, making th
 
 Download the appropriate archive from the [**Releases**](https://github.com/varajan/CashFlow/releases) section:
 
-- `CashFlow-2.0.7-beta-linux-x64.zip` → `CashFlow`
-- `CashFlow-2.0.7-beta-osx-x64.zip` → `CashFlow`
-- `CashFlow-2.0.7-beta-win-x64.zip` → `CashFlow.exe`
-- `CashFlow-2.0.7-beta-win-x86.zip` → `CashFlow.exe`
+- `CashFlow-2.0.8-beta-linux-x64.zip` → `CashFlow`
+- `CashFlow-2.0.8-beta-osx-x64.zip` → `CashFlow`
+- `CashFlow-2.0.8-beta-win-x64.zip` → `CashFlow.exe`
+- `CashFlow-2.0.8-beta-win-x86.zip` → `CashFlow.exe`
 
 ---
 
@@ -148,6 +148,11 @@ The project includes a comprehensive testing setup:
 * Run against a **bot emulator**
 * Execute use-case scenarios
 
+### Smoke E2E Tests
+
+* Built with **NUnit** and  **WTelegramClient**
+* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows
+
 ---
 
 ## 📁 Project Structure
@@ -156,6 +161,7 @@ The project includes a comprehensive testing setup:
 .
 ├── CashFlow/
 ├── CashFlowBot/
+├── CashFlowBotE2eTests/
 ├── CashFlowBotEmulator/
 ├── CashFlowBotSystemTests/
 ├── CashFlowUnitTests/
