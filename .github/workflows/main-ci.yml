@@ -7,7 +7,7 @@ jobs:
     name: Build
     uses: ./.github/workflows/build.yml
 
-  tests:
+  test:
     name: Test
     needs: build
     uses: ./.github/workflows/tests.yml
@@ -15,6 +15,13 @@ jobs:
   smoke:
     if: ${{ !github.event.pull_request.draft }}
     name: Smoke
-    needs: tests
+    needs: test
     uses: ./.github/workflows/smoke.yml
+    secrets: inherit
+
+  ai:
+    if: ${{ !github.event.pull_request.draft }}
+    name: AI
+    needs: smoke
+    uses: ./.github/workflows/review.yml
     secrets: inherit

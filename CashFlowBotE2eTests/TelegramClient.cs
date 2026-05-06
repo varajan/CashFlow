@@ -26,7 +26,7 @@ public class TelegramClient : IDisposable
         _ => null
     };
 
-    public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME")!;
+    public static string BotUsername => Environment.GetEnvironmentVariable("BOT_NAME")!.Replace("@", "");
 
     public void Dispose() => _client?.Dispose();
 

@@ -11,8 +11,6 @@ inputs:
     required: true
   testing_session:
     required: true
-  runner_os:
-    required: true
 
 runs:
   using: "composite"
@@ -30,9 +28,24 @@ runs:
       shell: bash
       run: dotnet restore CashFlowBot.sln
 
-    - name: Save secrets
+    - name: Decode session (Linux/macOS)
+      if: runner.os != 'Windows'
       shell: bash
-      run: echo "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+      run: |
+        if base64 --help 2>&1 | grep -q -- '--decode'; then
+          printf "%s" "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+        else
+          printf "%s" "${{ inputs.testing_session }}" | base64 -D > CashFlowBotE2eTests/testing_session.session
+        fi
+    
+    - name: Decode session (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        [System.IO.File]::WriteAllBytes(
+          "CashFlowBotE2eTests/testing_session.session",
+          [System.Convert]::FromBase64String("${{ inputs.testing_session }}")
+        )
 
     - name: Build solution
       shell: bash

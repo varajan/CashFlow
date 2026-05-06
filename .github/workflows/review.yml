@@ -1,12 +1,9 @@
-name: AI Code Review (Gemini)
-
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_call:
 
 jobs:
   ai-review:
-    if: ${{ !github.event.pull_request.draft }}
+    name: Code Review
     runs-on: ubuntu-latest
 
     env:

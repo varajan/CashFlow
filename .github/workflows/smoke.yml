@@ -11,17 +11,15 @@ jobs:
 
       - uses: ./.github/actions/smoke
         with:
-          bot_token: ${{ secrets.BOT_TOKEN }}
-          bot_name: ${{ secrets.BOT_NAME }}
+          bot_token: ${{ secrets.WIN_BOT_TOKEN }}
+          bot_name: ${{ secrets.WIN_BOT_NAME }}
           api_id: ${{ secrets.API_ID }}
           api_hash: ${{ secrets.API_HASH }}
           phone_number: ${{ secrets.PHONE_NUMBER }}
           testing_session: ${{ secrets.TESTING_SESSION }}
-          runner_os: Windows
 
   linux:
     name: Linux
-    needs: win
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -29,17 +27,15 @@ jobs:
 
       - uses: ./.github/actions/smoke
         with:
-          bot_token: ${{ secrets.BOT_TOKEN }}
-          bot_name: ${{ secrets.BOT_NAME }}
+          bot_token: ${{ secrets.LNX_BOT_TOKEN }}
+          bot_name: ${{ secrets.LNX_BOT_NAME }}
           api_id: ${{ secrets.API_ID }}
           api_hash: ${{ secrets.API_HASH }}
           phone_number: ${{ secrets.PHONE_NUMBER }}
           testing_session: ${{ secrets.TESTING_SESSION }}
-          runner_os: Linux
 
 #  macos:
 #    name: MacOs
-#    needs: linux
 #    runs-on: macos-latest
 #    steps:
 #      - name: Checkout
@@ -47,10 +43,9 @@ jobs:
 #
 #      - uses: ./.github/actions/smoke
 #        with:
-#          bot_token: ${{ secrets.BOT_TOKEN }}
-#          bot_name: ${{ secrets.BOT_NAME }}
+#          bot_token: ${{ secrets.MAC_BOT_TOKEN }}
+#          bot_name: ${{ secrets.MAC_BOT_NAME }}
 #          api_id: ${{ secrets.API_ID }}
 #          api_hash: ${{ secrets.API_HASH }}
 #          phone_number: ${{ secrets.PHONE_NUMBER }}
 #          testing_session: ${{ secrets.TESTING_SESSION }}
-#          runner_os: MacOs
