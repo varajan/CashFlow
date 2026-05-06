@@ -1,0 +1,28 @@
+on:
+  workflow_call:
+
+jobs:
+  build:
+    name: Compile
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK 8.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore CashFlowBot.sln
+
+      - name: Build solution
+        run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./

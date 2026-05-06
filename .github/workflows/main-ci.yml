@@ -1,0 +1,27 @@
+name: Build and Test (.NET 8)
+
+on: pull_request
+
+jobs:
+  build:
+    name: Build
+    uses: ./.github/workflows/build.yml
+
+  test:
+    name: Test
+    needs: build
+    uses: ./.github/workflows/tests.yml
+
+  smoke:
+    if: ${{ !github.event.pull_request.draft }}
+    name: Smoke
+    needs: test
+    uses: ./.github/workflows/smoke.yml
+    secrets: inherit
+
+  ai:
+    if: ${{ !github.event.pull_request.draft }}
+    name: AI
+    needs: smoke
+    uses: ./.github/workflows/review.yml
+    secrets: inherit

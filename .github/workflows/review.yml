@@ -1,11 +1,9 @@
-name: AI Code Review (Gemini)
-
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_call:
 
 jobs:
   ai-review:
+    name: Code Review
     runs-on: ubuntu-latest
 
     env:

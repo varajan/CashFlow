@@ -43,6 +43,12 @@ Scenario: I can rollback buying dream
 	Then The game is continued for Elmer Chang
 		And Elmer Chang has $700,480 in cash
 
+Scenario: I can stop the game after buying a dream
+	When Elmer Chang buys my dream for $100,000
+	And Elmer Chang say 'Stop game'
+	And Elmer Chang say 'yes'
+	Then The game is restarted for Elmer Chang
+
 Scenario: I can stop the game after my victory
 	When Elmer Chang buys big businesses:
 	| Title              | Price   | Cashflow |

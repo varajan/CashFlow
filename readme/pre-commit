@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+version_file=$(ls *.version 2>/dev/null | head -n 1)
+
+if [ -z "$version_file" ]; then
+  # not found
+  exit 1
+fi
+
+version_name="${version_file%.*}"
+template="README/template.md"
+
+if [ ! -f "$template" ]; then
+  # not found
+  exit 1
+fi
+
+sed "s/%VERSION%/${version_name}/g" "$template" > README.md
+
+git add README.md

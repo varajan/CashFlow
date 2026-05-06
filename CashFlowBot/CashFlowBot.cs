@@ -1,9 +1,8 @@
 ﻿using CashFlow;
 using CashFlow.Data.DTOs;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Telegram.Bot;
 using Telegram.Bot.Polling;
@@ -17,46 +16,7 @@ public class CashFlowBot
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
-    private static string BotToken
-    {
-        get
-        {
-            try
-            {
-                var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
-                var botIdFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotID.txt");
-                var token = File.ReadAllLines(botIdFile).FirstOrDefault(x => !string.IsNullOrEmpty(x));
-
-                if (string.IsNullOrEmpty(token)) throw new ArgumentException("id is null or empty");
-                if (!Regex.IsMatch(token, pattern)) throw new InvalidDataException("Invalid bot ID");
-
-                return token;
-            }
-            catch (Exception)
-            {
-                OpenHowTo();
-                throw;
-            }
-        }
-    }
-
-    private static void OpenHowTo()
-    {
-        var howTo = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html");
-        var (fileName, arguments) =
-            RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ("cmd", $"/c start \"\" \"{howTo}\"") :
-            RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? ("open", $"\"{howTo}\"") :
-            RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? ("xdg-open", $"\"{howTo}\"") :
-            throw new PlatformNotSupportedException("Unsupported OS platform");
-
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = fileName,
-            Arguments = arguments
-        });
-    }
-
-    private static void Main()
+    private static async Task Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 
@@ -76,8 +36,27 @@ public class CashFlowBot
         );
 
         Console.WriteLine("Starting Bot.");
-        Console.ReadKey();
+        await Task.Delay(Timeout.Infinite, cts.Token);
         cts.Cancel();
+    }
+
+    private static string BotToken
+    {
+        get
+        {
+            var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
+            var botIdTxtFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotID.txt");
+            var envVariableToken = Environment.GetEnvironmentVariable("CASHFLOW_BOT_TOKEN").NullIfEmpty();
+            var fileToken = File.Exists(botIdTxtFile) ? File.ReadAllLines(botIdTxtFile).FirstOrDefault(x => !string.IsNullOrEmpty(x)) : null;
+            var token = envVariableToken ?? fileToken;
+
+            if (string.IsNullOrEmpty(token) || !Regex.IsMatch(token, pattern))
+            {
+                throw new Exception("BotId is not configured\r\nCheck README.md for instructions.");
+            }
+
+            return token;
+        }
     }
 
     private static Task HandleErrorAsync(ITelegramBotClient bot, Exception exception, CancellationToken token)
