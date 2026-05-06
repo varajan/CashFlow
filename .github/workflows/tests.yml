@@ -1,0 +1,34 @@
+on:
+  workflow_call:
+
+jobs:
+  unit:
+    name: Unit
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/tests
+        with:
+          project: CashFlowUnitTests/CashFlowUnitTests.csproj
+          test-name: UnitTests
+          artifact-path: CashFlowUnitTests/TestResults/
+          artifact-name: unit-tests
+
+  system:
+    name: System
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/tests
+        with:
+          project: CashFlowBotSystemTests/CashFlowBotSystemTests.csproj
+          test-name: SystemTests
+          artifact-path: |
+            CashFlowBotSystemTests/TestResults/
+            emulator/
+          artifact-name: system-tests

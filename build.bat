@@ -22,10 +22,6 @@ for %%R in (%RIDS%) do (
 		-p:IncludeNativeLibrariesForSelfExtract=true ^
 		-o !PUBLISH_DIR!
 
-	if exist !PUBLISH_DIR!\BotID.txt (
-		echo. > !PUBLISH_DIR!\BotID.txt
-	)
-
 	set ZIP_NAME=CashFlow-%VERSION%-%%R.zip
 
 	powershell -Command "Compress-Archive -Path '!PUBLISH_DIR!\*' -DestinationPath '%CD%\!ZIP_NAME!' -Force"

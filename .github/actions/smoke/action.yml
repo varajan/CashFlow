@@ -1,0 +1,87 @@
+inputs:
+  bot_token:
+    required: true
+  bot_name:
+    required: true
+  api_id:
+    required: true
+  api_hash:
+    required: true
+  phone_number:
+    required: true
+  testing_session:
+    required: true
+
+runs:
+  using: "composite"
+
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup .NET SDK 8.0
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      shell: bash
+      run: dotnet restore CashFlowBot.sln
+
+    - name: Decode session (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        if base64 --help 2>&1 | grep -q -- '--decode'; then
+          # Linux
+          printf "%s" "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
+        else
+          # MacOS
+          printf "%s" "${{ inputs.testing_session }}" | base64 -D > CashFlowBotE2eTests/testing_session.session
+        fi
+    
+    - name: Decode session (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        [System.IO.File]::WriteAllBytes(
+          "CashFlowBotE2eTests/testing_session.session",
+          [System.Convert]::FromBase64String("${{ inputs.testing_session }}")
+        )
+
+    - name: Build solution
+      shell: bash
+      run: dotnet build CashFlowBot.sln --configuration Release --no-restore
+
+    - name: Run E2E Tests (Linux/macOS)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        dotnet run --project CashFlowBot &
+        BOT_PID=$!
+        sleep 5
+        dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        kill $BOT_PID
+        # rm CashFlowBotE2eTests/testing_session.session
+      env:
+        API_ID: ${{ inputs.api_id }}
+        API_HASH: ${{ inputs.api_hash }}
+        PHONE_NUMBER: ${{ inputs.phone_number }}
+        BOT_NAME: ${{ inputs.bot_name }}
+        CASHFLOW_BOT_TOKEN: ${{ inputs.bot_token }}
+    
+    - name: Run E2E Tests (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $process = Start-Process dotnet -ArgumentList "run --project CashFlowBot" -PassThru
+        Start-Sleep -Seconds 5
+        dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
+        Stop-Process -Id $process.Id
+        # rm CashFlowBotE2eTests/testing_session.session
+      env:
+        API_ID: ${{ inputs.api_id }}
+        API_HASH: ${{ inputs.api_hash }}
+        PHONE_NUMBER: ${{ inputs.phone_number }}
+        BOT_NAME: ${{ inputs.bot_name }}
+        CASHFLOW_BOT_TOKEN: ${{ inputs.bot_token }}

@@ -16,7 +16,7 @@ public class CashFlowBot
     private static ILogger Logger => ServicesProvider.Get<ILogger>();
     private static IUserRepository UserRepository => ServicesProvider.Get<IUserRepository>();
 
-    private static void Main()
+    private static async Task Main()
     {
         //    ServicePointManager.ServerCertificateValidationCallback += (_, _, _, _) => true;
 
@@ -36,7 +36,7 @@ public class CashFlowBot
         );
 
         Console.WriteLine("Starting Bot.");
-        Console.ReadKey();
+        await Task.Delay(Timeout.Infinite, cts.Token);
         cts.Cancel();
     }
 
@@ -46,13 +46,13 @@ public class CashFlowBot
         {
             var pattern = @"^\d{10}:[a-zA-Z0-9-_]{35}$";
             var botIdTxtFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BotID.txt");
-            var envVariableToken = Environment.GetEnvironmentVariable("CashFlowBotId").NullIfEmpty();
+            var envVariableToken = Environment.GetEnvironmentVariable("CASHFLOW_BOT_TOKEN").NullIfEmpty();
             var fileToken = File.Exists(botIdTxtFile) ? File.ReadAllLines(botIdTxtFile).FirstOrDefault(x => !string.IsNullOrEmpty(x)) : null;
             var token = envVariableToken ?? fileToken;
 
             if (string.IsNullOrEmpty(token) || !Regex.IsMatch(token, pattern))
             {
-                throw new Exception("BotId is not configured.");
+                throw new Exception("BotId is not configured\r\nCheck README.md for instructions.");
             }
 
             return token;
