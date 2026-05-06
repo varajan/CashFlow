@@ -33,8 +33,10 @@ runs:
       shell: bash
       run: |
         if base64 --help 2>&1 | grep -q -- '--decode'; then
+          # Linux
           printf "%s" "${{ inputs.testing_session }}" | base64 --decode > CashFlowBotE2eTests/testing_session.session
         else
+          # MacOS
           printf "%s" "${{ inputs.testing_session }}" | base64 -D > CashFlowBotE2eTests/testing_session.session
         fi
     
