@@ -114,7 +114,7 @@ If SmartScreen blocks the app:
 
 ---
 
-## 🤖 Features
+## 🤖 Features 
 
 * 📊 Player financial tracking
 * 💰 Automatic cashflow calculation
