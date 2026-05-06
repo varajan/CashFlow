@@ -62,7 +62,6 @@ runs:
         sleep 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
         kill $BOT_PID
-        # rm CashFlowBotE2eTests/testing_session.session
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
@@ -78,10 +77,14 @@ runs:
         Start-Sleep -Seconds 5
         dotnet test CashFlowBotE2eTests/CashFlowBotE2eTests.csproj --configuration Release --no-build
         Stop-Process -Id $process.Id
-        # rm CashFlowBotE2eTests/testing_session.session
       env:
         API_ID: ${{ inputs.api_id }}
         API_HASH: ${{ inputs.api_hash }}
         PHONE_NUMBER: ${{ inputs.phone_number }}
         BOT_NAME: ${{ inputs.bot_name }}
         CASHFLOW_BOT_TOKEN: ${{ inputs.bot_token }}
+
+    - name: Delete session
+      if: always()
+      shell: pwsh
+      run: rm CashFlowBotE2eTests/testing_session.session
