@@ -1,7 +1,6 @@
 using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using Microsoft.Data.Sqlite;
-using Microsoft.Extensions.Logging;
 
 namespace CashFlow.Data;
 
