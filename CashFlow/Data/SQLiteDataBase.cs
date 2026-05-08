@@ -7,7 +7,6 @@ namespace CashFlow.Data;
 public class SQLiteDataBase(ILogger logger) : IDataBase
 {
     private static string DatabaseFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
-    // У Microsoft.Data.Sqlite параметр Version=3 не підтримується і викликає помилку
     private static string ConnectionString => $"Data Source={DatabaseFileName}; Cache=Shared";
 
     private static SqliteConnection _connection;
@@ -15,8 +14,6 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     {
         get
         {
-            // Microsoft.Data.Sqlite не має методу CreateFile. 
-            // Файл створюється автоматично при відкритті з'єднання, якщо його немає.
             if (_connection == null || !IsReady)
             {
                 var initTablesCommand = @"
@@ -25,7 +22,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
                 CREATE TABLE IF NOT EXISTS History (UserID Number, Id Number, HistoryRecord Text);";
 
                 _connection = new SqliteConnection(ConnectionString);
-                _connection.Open(); // Замість OpenAndReturn (який зазвичай є розширенням System.Data.SQLite)
+                _connection.Open();
                 Execute(initTablesCommand, _connection);
             }
 
@@ -36,7 +33,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     private static bool IsReady => File.Exists(DatabaseFileName);
 
     public void Execute(string sql) => Execute(sql, Connection);
-    
+
     private void Execute(string sql, SqliteConnection connection = null)
     {
         var cmd = new SqliteCommand(sql, connection ?? Connection);
@@ -87,32 +84,6 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
             while (reader.Read())
             {
                 result.Add(reader[Columns(sql).First()].ToString());
-            }
-        }
-        catch (Exception e)
-        {
-            Log(e, sql);
-        }
-        finally
-        {
-            cmd.Dispose();
-        }
-
-        return result;
-    }
-
-    public IList<IList<string>> GetRows_OLD(string sql)
-    {
-        var result = new List<IList<string>>();
-        var cmd = new SqliteCommand(sql, Connection);
-
-        try
-        {
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                var values = Columns(sql).Select(column => reader[column].ToString()).ToList();
-                result.Add(values);
             }
         }
         catch (Exception e)

@@ -7,5 +7,4 @@ public interface IDataBase
     IList<string> GetColumn(string sql);
     Dictionary<string, string> GetRow(string sql);
     IList<Dictionary<string, string>> GetRows(string sql);
-    IList<IList<string>> GetRows_OLD(string sql);
 }
