@@ -9,7 +9,7 @@ public class ChooseProfession(ITranslationService termsService, IUserService use
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.ChooseProfession, CurrentUser);
-    public override IEnumerable<string> Buttons => Professions.Append(TranslationService.Get(Terms.PickRandom, CurrentUser));
+    public override IEnumerable<string> OLD_Buttons => Professions.Append(TranslationService.Get(Terms.PickRandom, CurrentUser));
 
     private IEnumerable<string> Professions => PersonService.GetAllProfessions()
         .Select(x => TranslationService.Get(x, CurrentUser.Language))

@@ -23,7 +23,7 @@ public class GetCreditTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
         }
     }
 

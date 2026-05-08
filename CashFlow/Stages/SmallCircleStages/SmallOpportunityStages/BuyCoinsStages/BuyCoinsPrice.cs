@@ -9,7 +9,7 @@ public class BuyCoinsPrice(ITranslationService termsService, IUserService userSe
     : BuyCoins(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => BuyPrice.Coin.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => BuyPrice.Coin.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

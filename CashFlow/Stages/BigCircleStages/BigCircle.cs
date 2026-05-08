@@ -22,7 +22,7 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
         }
     }
 
-    public override List<string> Buttons
+    public override List<string> OLD_Buttons
     {
         get
         {

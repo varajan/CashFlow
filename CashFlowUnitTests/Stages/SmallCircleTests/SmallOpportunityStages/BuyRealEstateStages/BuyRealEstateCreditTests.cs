@@ -55,7 +55,7 @@ public class BuyRealEstateCreditTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo($"You don't have *{firstPayment.AsCurrency()}*, but only *{TestPerson.Cash.AsCurrency()}*"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
         }
     }
 

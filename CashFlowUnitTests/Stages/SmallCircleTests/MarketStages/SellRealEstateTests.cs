@@ -22,7 +22,7 @@ public class SellRealEstateTests : SellAssetBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
         }
     }
 

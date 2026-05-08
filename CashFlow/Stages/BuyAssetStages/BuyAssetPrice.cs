@@ -17,7 +17,7 @@ public abstract class BuyAssetPrice<TNextStage>(
 {
     protected ActionType ActionType { get; } = actionType;
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => assetPrices.AsCurrency().Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => assetPrices.AsCurrency().Append(Cancel);
     public override async Task HandleMessage(string message)
     {
         var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).Single(x => x.IsDraft);

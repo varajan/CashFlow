@@ -28,7 +28,7 @@ public class Friends(ITranslationService termsService, IUserService userService,
         }
     }
 
-    public override IEnumerable<string> Buttons => ActiveUsers.Select(x => x.Name).Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => ActiveUsers.Select(x => x.Name).Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {

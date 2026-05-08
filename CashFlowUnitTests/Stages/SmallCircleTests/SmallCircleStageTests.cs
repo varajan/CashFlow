@@ -56,7 +56,7 @@ public class SmallCircleStageTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(description));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
         }
     }
 

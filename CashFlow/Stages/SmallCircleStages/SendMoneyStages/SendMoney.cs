@@ -9,7 +9,7 @@ public class SendMoney(ITranslationService termsService, IUserService userServic
 {
     public override string Message => TranslationService.Get(Terms.Whom, CurrentUser);
 
-    public override IEnumerable<string> Buttons
+    public override IEnumerable<string> OLD_Buttons
     {
         get
         {

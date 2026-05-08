@@ -22,7 +22,7 @@ public class DoodadsTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(new List<string>
             {
                 "Pay with Cash",
                 "Pay with Credit Card",

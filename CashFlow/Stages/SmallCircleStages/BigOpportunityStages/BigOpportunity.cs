@@ -8,7 +8,7 @@ public class BigOpportunity(ITranslationService termsService, IUserService userS
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
-    public override IEnumerable<string> Buttons =>
+    public override IEnumerable<string> OLD_Buttons =>
     [
         TranslationService.Get(Terms.BuyRealEstate, CurrentUser),
         TranslationService.Get(Terms.BuyBusiness, CurrentUser),

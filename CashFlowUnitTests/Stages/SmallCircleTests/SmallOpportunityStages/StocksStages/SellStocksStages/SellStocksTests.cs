@@ -35,7 +35,7 @@ public class SellStocksTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What stocks do you want to sell?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
         }
     }
 

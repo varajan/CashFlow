@@ -17,7 +17,7 @@ public abstract class BuyAssetWithCashflowFirstPayment<TNextStage, TCreditStage>
 {
     protected AssetType AssetType { get; } = assetType;
     public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
-    public override IEnumerable<string> Buttons => firtPayments.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => firtPayments.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

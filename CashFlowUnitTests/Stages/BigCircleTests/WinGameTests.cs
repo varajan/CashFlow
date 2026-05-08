@@ -34,7 +34,7 @@ public class WinGameTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("You are the winner!"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
         }
     }
 

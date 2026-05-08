@@ -18,7 +18,7 @@ public abstract class BuyAssetFirstPayment<TNextStage>(
     protected ActionType ActionType { get; } = actionType;
 
     public override string Message => TranslationService.Get(Terms.AskFirstPayment, CurrentUser);
-    public override IEnumerable<string> Buttons => firstPayments.AsCurrency().Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => firstPayments.AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

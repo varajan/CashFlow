@@ -14,7 +14,7 @@ public abstract class BuyAssetPriceWithCount<TNextStage>(
     : BuyAsset<TNextStage>(null, assetType, termsService, userService, personManager, userRepository) where TNextStage : BaseStage
 {
     public override string Message => TranslationService.Get(Terms.AskPrice, CurrentUser);
-    public override IEnumerable<string> Buttons => assetPrices.AsCurrency().Append(Cancel);
+    public override IEnumerable<string> OLD_Buttons => assetPrices.AsCurrency().Append(Cancel);
 
     public async override Task HandleMessage(string message)
     {

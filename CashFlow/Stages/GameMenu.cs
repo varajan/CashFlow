@@ -7,7 +7,7 @@ public class GameMenu(ITranslationService termsService, IUserService userService
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
-    public override IEnumerable<string> Buttons => [StopGame, TranslationService.Get(Terms.Language, CurrentUser), Cancel];
+    public override IEnumerable<string> OLD_Buttons => [StopGame, TranslationService.Get(Terms.Language, CurrentUser), Cancel];
 
     public override Task HandleMessage(string message)
     {

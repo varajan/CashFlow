@@ -9,7 +9,7 @@ public class Start(ITranslationService termsService, IUserService userService, I
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => NextStage.Message;
-    public override IEnumerable<string> Buttons => NextStage.Buttons;
+    public override IEnumerable<string> OLD_Buttons => NextStage.OLD_Buttons;
     public override Task BeforeStage() => NextStage.BeforeStage();
 
     public override IStage NextStage
