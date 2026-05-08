@@ -13,6 +13,7 @@ public class PersonDto
     public bool Bankruptcy { get; set; }
     public bool CreditsReduced { get; set; }
     public bool BoughtDream { get; set; }
+    public bool BigCircleNotificationSent { get; set; }
 
     public int PerChild { get; set; }
     public int Children { get; set; }
