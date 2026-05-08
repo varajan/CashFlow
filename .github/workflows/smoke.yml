@@ -34,18 +34,18 @@ jobs:
           phone_number: ${{ secrets.PHONE_NUMBER }}
           testing_session: ${{ secrets.TESTING_SESSION }}
 
-#  macos:
-#    name: MacOs
-#    runs-on: macos-latest
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@v4
-#
-#      - uses: ./.github/actions/smoke
-#        with:
-#          bot_token: ${{ secrets.MAC_BOT_TOKEN }}
-#          bot_name: ${{ secrets.MAC_BOT_NAME }}
-#          api_id: ${{ secrets.API_ID }}
-#          api_hash: ${{ secrets.API_HASH }}
-#          phone_number: ${{ secrets.PHONE_NUMBER }}
-#          testing_session: ${{ secrets.TESTING_SESSION }}
+  macos:
+    name: MacOs
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: ./.github/actions/smoke
+        with:
+          bot_token: ${{ secrets.MAC_BOT_TOKEN }}
+          bot_name: ${{ secrets.MAC_BOT_NAME }}
+          api_id: ${{ secrets.API_ID }}
+          api_hash: ${{ secrets.API_HASH }}
+          phone_number: ${{ secrets.PHONE_NUMBER }}
+          testing_session: ${{ secrets.TESTING_SESSION }}

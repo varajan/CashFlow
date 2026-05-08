@@ -1,16 +1,16 @@
-﻿using CashFlow.Extensions;
+using CashFlow.Extensions;
 using CashFlow.Interfaces;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 
 namespace CashFlow.Data;
 
 public class SQLiteDataBase(ILogger logger) : IDataBase
 {
     private static string DatabaseFileName => $"{AppDomain.CurrentDomain.BaseDirectory}/DB.db";
-    private static string ConnectionString => $"Data Source={DatabaseFileName}; Version=3; Cache=Shared";
+    private static string ConnectionString => $"Data Source={DatabaseFileName}; Cache=Shared";
 
-    private static SQLiteConnection _connection;
-    private SQLiteConnection Connection
+    private static SqliteConnection _connection;
+    private SqliteConnection Connection
     {
         get
         {
@@ -21,9 +21,8 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
                 CREATE TABLE IF NOT EXISTS Persons (ID Number, PersonData Text);
                 CREATE TABLE IF NOT EXISTS History (UserID Number, Id Number, HistoryRecord Text);";
 
-                SQLiteConnection.CreateFile(DatabaseFileName);
-                _connection = new SQLiteConnection(ConnectionString);
-                _connection = _connection.OpenAndReturn();
+                _connection = new SqliteConnection(ConnectionString);
+                _connection.Open();
                 Execute(initTablesCommand, _connection);
             }
 
@@ -34,9 +33,10 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     private static bool IsReady => File.Exists(DatabaseFileName);
 
     public void Execute(string sql) => Execute(sql, Connection);
-    private void Execute(string sql, SQLiteConnection connection = null)
+
+    private void Execute(string sql, SqliteConnection connection = null)
     {
-        var cmd = new SQLiteCommand(sql, connection ?? Connection);
+        var cmd = new SqliteCommand(sql, connection ?? Connection);
 
         try
         {
@@ -55,7 +55,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     public string GetValue(string sql)
     {
         string result = null;
-        var cmd = new SQLiteCommand(sql, Connection);
+        var cmd = new SqliteCommand(sql, Connection);
 
         try
         {
@@ -76,7 +76,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     public IList<string> GetColumn(string sql)
     {
         var result = new List<string>();
-        var cmd = new SQLiteCommand(sql, Connection);
+        var cmd = new SqliteCommand(sql, Connection);
 
         try
         {
@@ -98,36 +98,10 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
         return result;
     }
 
-    public IList<IList<string>> GetRows_OLD(string sql)
-    {
-        var result = new List<IList<string>>();
-        var cmd = new SQLiteCommand(sql, Connection);
-
-        try
-        {
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                var values = Columns(sql).Select(column => reader[column].ToString()).ToList();
-                result.Add(values);
-            }
-        }
-        catch (Exception e)
-        {
-            Log(e, sql);
-        }
-        finally
-        {
-            cmd.Dispose();
-        }
-
-        return result;
-    }
-
     public IList<Dictionary<string, string>> GetRows(string sql)
     {
         var result = new List<Dictionary<string, string>>();
-        var cmd = new SQLiteCommand(sql, Connection);
+        var cmd = new SqliteCommand(sql, Connection);
 
         try
         {
@@ -153,7 +127,7 @@ public class SQLiteDataBase(ILogger logger) : IDataBase
     public Dictionary<string, string> GetRow(string sql)
     {
         var result = new Dictionary<string, string>();
-        var cmd = new SQLiteCommand(sql, Connection);
+        var cmd = new SqliteCommand(sql, Connection);
 
         try
         {

@@ -27,10 +27,10 @@ The bot helps players track income, expenses, assets, and liabilities, making th
 
 Download the appropriate archive from the [**Releases**](https://github.com/varajan/CashFlow/releases) section:
 
-- `CashFlow-%VERSION%-linux-x64.zip` → `CashFlow`
-- `CashFlow-%VERSION%-osx-x64.zip` → `CashFlow`
-- `CashFlow-%VERSION%-win-x64.zip` → `CashFlow.exe`
-- `CashFlow-%VERSION%-win-x86.zip` → `CashFlow.exe`
+- [CashFlow-%VERSION%-linux-x64.zip](https://github.com/varajan/CashFlow/releases/download/v%VERSION%/CashFlow-%VERSION%-linux-x64.zip) → `CashFlow`
+- [CashFlow-%VERSION%-osx-x64.zip](https://github.com/varajan/CashFlow/releases/download/v%VERSION%/CashFlow-%VERSION%-osx-x64.zip) → `CashFlow`
+- [CashFlow-%VERSION%-win-x64.zip](https://github.com/varajan/CashFlow/releases/download/v%VERSION%/CashFlow-%VERSION%-win-x64.zip) → `CashFlow.exe`
+- [CashFlow-%VERSION%-win-x86.zip](https://github.com/varajan/CashFlow/releases/download/v%VERSION%/CashFlow-%VERSION%-win-x86.zip) → `CashFlow.exe`
 
 ---
 
@@ -151,7 +151,7 @@ The project includes a comprehensive testing setup:
 ### Smoke E2E Tests
 
 * Built with **NUnit** and  **WTelegramClient**
-* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows
+* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows and MacOS
 
 ---
 
