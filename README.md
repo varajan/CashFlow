@@ -151,7 +151,7 @@ The project includes a comprehensive testing setup:
 ### Smoke E2E Tests
 
 * Built with **NUnit** and  **WTelegramClient**
-* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows
+* Ensure basic bot responsiveness in a real Telegram environment on Linux, Windows and MacOS
 
 ---
 
