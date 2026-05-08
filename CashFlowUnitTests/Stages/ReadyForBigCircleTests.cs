@@ -32,11 +32,11 @@ public class ReadyForBigCircleTests(Type stageType) : StagesBaseTest
     private readonly List<Type> ShowMessageStages = [typeof(SmallCircle), typeof(ReduceLiabilities)];
 
     [Test]
-    public async Task NotifyUsers_CanGoToBigCircle([Values] bool isReady)
+    public async Task NotifyUsers_CanGoToBigCircle([Values] bool isReady, [Values] bool notificationSent)
     {
         // Arrange
         var testStage = ((IStage)ServicesProvider.Get(stageType)).SetCurrentUser(CurrentUser);
-        var messageIsExpected = isReady && ShowMessageStages.Contains(stageType);
+        var messageIsExpected = isReady && !notificationSent && ShowMessageStages.Contains(stageType);
 
         var message = $"{CurrentUser.Name}' income is greater, then expenses. {CurrentUser.Name} is ready for Big Circle.";
         var activeUsers = OtherUsers.Where(u => u.Name.Contains("Active")).Append(CurrentUser);
@@ -48,6 +48,7 @@ public class ReadyForBigCircleTests(Type stageType) : StagesBaseTest
             new() { Id = 2, Qtty = 1, CashFlow = 300 },
         };
         testPerson.Assets = isReady ? assets : [];
+        testPerson.BigCircleNotificationSent = notificationSent;
 
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
 

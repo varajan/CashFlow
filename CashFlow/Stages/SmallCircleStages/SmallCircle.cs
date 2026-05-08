@@ -42,7 +42,7 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
         }
     }
 
-    public async override Task BeforeStage() => await NotifyUserIsReadyForBigCircle();
+    public async override Task BeforeStage() => await HandleBigCircleNotificationStatus();
 
     public async override Task HandleMessage(string message)
     {

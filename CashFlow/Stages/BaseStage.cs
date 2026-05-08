@@ -41,11 +41,14 @@ public abstract class BaseStage : IStage
     public virtual Task HandleMessage(string message) { return Task.CompletedTask; }
     public Task SetButtons() => UserService.SetButtons(CurrentUser, this);
 
-    protected async Task NotifyUserIsReadyForBigCircle()
+    protected async Task HandleBigCircleNotificationStatus()
     {
         var person = PersonService.Read(CurrentUser);
-        if (person.IsReadyForBigCircle())
+        if (person.IsReadyForBigCircle() && !person.BigCircleNotificationSent)
         {
+            person.BigCircleNotificationSent = true;
+            PersonService.Update(person);
+
             var notifyMessage = TranslationService.Get(Terms.ReadyBigCircle, CurrentUser, CurrentUser.Name);
             var notifyTasks = OtherUsers
                 .Where(UserService.IsActive)
