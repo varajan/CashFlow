@@ -45,19 +45,6 @@ public abstract class StagesBaseTest
     }
 
     [Test]
-    public virtual void Stage_HaveEmptyButtonsAsList()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-
-        // Assert
-        // TODO: UNCOMMENT TEST!
-        //Assert.That(testStage.ButtonsAsList, Is.Empty);
-    }
-
-    [Test]
     public virtual void Stage_HaveEmptyButtonsAsMatrix()
     {
         // Arrange

@@ -26,6 +26,9 @@ public class SmallCircleStageTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
+    [Test, Ignore("Not applicable")]
+    public override void Stage_HaveEmptyButtonsAsMatrix() { }
+
     [TestCase(true, false, 0, 100)]
     [TestCase(false, false, 100, 100)]
     [TestCase(true, true, 101, 100)]
@@ -42,9 +45,15 @@ public class SmallCircleStageTests : StagesBaseTest
         testPerson.Children = 1;
         testPerson.PerChild = expenses;
 
-        List<string> buttons = isHistoryEmpty ? ["Show my Data", "Friends"] : ["Show my Data", "Friends", "History"];
-        buttons.AddRange(["Small Opportunity", "Big Opportunity", "Doodads", "Market", "Downsize", "Baby", "Paycheck", "Give Money", "Game menu"]);
-        if (isReadyForBigCircle) { buttons.Add("Go to Big Circle"); }
+        List<List<string>> buttons = isHistoryEmpty
+            ? new List<List<string>> { new List<string> { "Show my Data", "Friends" } }
+            : new List<List<string>> { new List<string> { "Show my Data", "Friends", "History" } };
+        buttons.Add(["Small Opportunity", "Big Opportunity"]);
+        buttons.Add(["Doodads", "Market"]);
+        buttons.Add(["Downsize", "Baby"]);
+        buttons.Add(["Paycheck", "Give Money"]);
+        buttons.Add(["Game menu"]);
+        if (isReadyForBigCircle) { buttons.Add(["Go to Big Circle"]); }
 
         PersonServiceMock.Setup(x => x.IsHistoryEmpty(CurrentUser)).Returns(isHistoryEmpty);
         PersonServiceMock.Setup(p => p.Read(CurrentUser)).Returns(testPerson);
@@ -56,7 +65,7 @@ public class SmallCircleStageTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(description));
-            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 

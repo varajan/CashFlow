@@ -16,26 +16,30 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
 {
     public override string Message => PersonService.GetDescription(CurrentUser);
 
-    public override List<string> ButtonsAsList
+    public override List<List<string>> ButtonsAsMatrix
     {
         get
         {
+            var buttons = new List<List<string>>();
             var person = PersonService.Read(CurrentUser);
             var isHistoryEmpty = PersonService.IsHistoryEmpty(CurrentUser);
+            List<string> firstRow = [TranslationService.Get(Terms.ShowData, CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser)];
 
-            List<string> buttons = isHistoryEmpty
-                ? [TranslationService.Get(Terms.ShowData, CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser)]
-                : [TranslationService.Get(Terms.ShowData, CurrentUser), TranslationService.Get(Terms.Friends, CurrentUser), TranslationService.Get(Terms.History, CurrentUser)];
+            if (!isHistoryEmpty)
+            {
+                firstRow.Add(TranslationService.Get(Terms.History, CurrentUser));
+            }
 
-            buttons.AddRange([TranslationService.Get(Terms.SmallOpportunity, CurrentUser), TranslationService.Get(Terms.BigOpportunity, CurrentUser)]);
-            buttons.AddRange([TranslationService.Get(Terms.Doodads, CurrentUser), TranslationService.Get(Terms.Market, CurrentUser)]);
-            buttons.AddRange([TranslationService.Get(Terms.Downsize, CurrentUser), TranslationService.Get(Terms.Baby, CurrentUser)]);
-            buttons.AddRange([TranslationService.Get(Terms.Paycheck, CurrentUser), TranslationService.Get(Terms.GiveMoney, CurrentUser)]);
-            buttons.AddRange([TranslationService.Get(Terms.GameMenu, CurrentUser)]);
+            buttons.Add(firstRow);
+            buttons.Add([TranslationService.Get(Terms.SmallOpportunity, CurrentUser), TranslationService.Get(Terms.BigOpportunity, CurrentUser)]);
+            buttons.Add([TranslationService.Get(Terms.Doodads, CurrentUser), TranslationService.Get(Terms.Market, CurrentUser)]);
+            buttons.Add([TranslationService.Get(Terms.Downsize, CurrentUser), TranslationService.Get(Terms.Baby, CurrentUser)]);
+            buttons.Add([TranslationService.Get(Terms.Paycheck, CurrentUser), TranslationService.Get(Terms.GiveMoney, CurrentUser)]);
+            buttons.Add([TranslationService.Get(Terms.GameMenu, CurrentUser)]);
 
             if (person.IsReadyForBigCircle())
             {
-                buttons.Add(TranslationService.Get(Terms.BigCircle, CurrentUser));
+                buttons.Add([TranslationService.Get(Terms.BigCircle, CurrentUser)]);
             }
 
             return buttons;
