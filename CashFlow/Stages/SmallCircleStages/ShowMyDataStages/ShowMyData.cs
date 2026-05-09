@@ -8,13 +8,11 @@ public class ShowMyData(ITranslationService termsService, IUserService userServi
 {
     public override string Message => PersonService.GetDescription(CurrentUser, false);
 
-    public override List<string> ButtonsAsList =>
+    public override List<List<string>> ButtonsAsMatrix =>
     [
-        TranslationService.Get(Terms.GetMoney, CurrentUser),
-        TranslationService.Get(Terms.GetCredit, CurrentUser),
-        TranslationService.Get(Terms.Charity10, CurrentUser),
-        TranslationService.Get(Terms.ReduceLiabilities, CurrentUser),
-        TranslationService.Get(Terms.MainMenu, CurrentUser),
+        [ TranslationService.Get(Terms.GetMoney, CurrentUser), TranslationService.Get(Terms.GetCredit, CurrentUser)],
+        [ TranslationService.Get(Terms.Charity10, CurrentUser), TranslationService.Get(Terms.ReduceLiabilities, CurrentUser)],
+        [ TranslationService.Get(Terms.MainMenu, CurrentUser)],
     ];
 
     public async override Task HandleMessage(string message)

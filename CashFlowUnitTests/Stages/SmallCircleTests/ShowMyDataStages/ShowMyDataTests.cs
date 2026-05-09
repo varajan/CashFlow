@@ -15,13 +15,11 @@ public class ShowMyDataTests : StagesBaseTest
         // Arrange
         var testStage = GetTestStage();
         var description = "Test User person full description";
-        var buttons = new List<string>
+        var buttons = new List<List<string>>
         {
-            "Get Money",
-            "Get Credit",
-            "Charity - Pay 10%",
-            "Reduce Liabilities",
-            "Main menu",
+            new List<string> { "Get Money", "Get Credit" },
+            new List<string> { "Charity - Pay 10%", "Reduce Liabilities" },
+            new List<string> { "Main menu" },
         };
 
         PersonServiceMock.Setup(p => p.GetDescription(CurrentUser, true)).Returns("Compact description");
@@ -33,7 +31,7 @@ public class ShowMyDataTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(description));
-            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 
