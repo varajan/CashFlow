@@ -26,9 +26,6 @@ public class SmallCircleStageTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    [Test, Ignore("Not applicable")]
-    public override void Stage_HaveEmptyButtonsAsMatrix() { }
-
     [TestCase(true, false, 0, 100)]
     [TestCase(false, false, 100, 100)]
     [TestCase(true, true, 101, 100)]

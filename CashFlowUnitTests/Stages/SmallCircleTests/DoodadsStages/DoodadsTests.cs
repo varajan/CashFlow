@@ -22,12 +22,12 @@ public class DoodadsTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
-            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string>
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(new List<List<string>>
             {
-                "Pay with Cash",
-                "Pay with Credit Card",
-                "Buy a boat",
-                "Cancel"
+                new List<string> { "Pay with Cash" },
+                new List<string> { "Pay with Credit Card" },
+                new List<string> { "Buy a boat" },
+                new List<string> { "Cancel" }
             }));
         }
     }

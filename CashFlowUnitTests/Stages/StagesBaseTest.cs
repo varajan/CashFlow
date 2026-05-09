@@ -45,18 +45,6 @@ public abstract class StagesBaseTest
     }
 
     [Test]
-    public virtual void Stage_HaveEmptyButtonsAsMatrix()
-    {
-        // Arrange
-        var testStage = GetTestStage();
-
-        // Act
-
-        // Assert
-        Assert.That(testStage.ButtonsAsMatrix, Is.Empty);
-    }
-
-    [Test]
     public virtual void Stage_ShouldHaveEitherButtonsAsListOrButtonsAsMatrix()
     {
         // Arrange

@@ -96,8 +96,5 @@ public class SmallOpportunityTests : StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<SmallOpportunity>());
     }
 
-    [Test, Ignore("Not applicable")]
-    public override void Stage_HaveEmptyButtonsAsMatrix() { }
-
     protected override IStage GetTestStage() => GetStage<SmallOpportunity>();
 }

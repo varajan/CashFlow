@@ -100,9 +100,6 @@ public class WinGameTests : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
-    [Test, Ignore("Not applicable")]
-    public override void Stage_HaveEmptyButtonsAsMatrix() { }
-
     [Test]
     public async Task WinGame_CanNotBeCanceled()
     {

@@ -10,12 +10,12 @@ public class Doodads(ITranslationService termsService, IUserService userService,
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
-    public override List<string> ButtonsAsList =>
+    public override List<List<string>> ButtonsAsMatrix =>
     [
-        TranslationService.Get(Terms.PayCash, CurrentUser),
-        TranslationService.Get(Terms.PayCard, CurrentUser),
-        TranslationService.Get(Terms.BuyBoat, CurrentUser),
-        Cancel
+        [TranslationService.Get(Terms.PayCash, CurrentUser)],
+        [TranslationService.Get(Terms.PayCard, CurrentUser)],
+        [TranslationService.Get(Terms.BuyBoat, CurrentUser)],
+        [Cancel]
     ];
 
     public override async Task HandleMessage(string message)
