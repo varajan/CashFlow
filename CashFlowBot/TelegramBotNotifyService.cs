@@ -10,25 +10,39 @@ public class TelegramBotNotifyService(ITelegramBotClient bot) : INotifyService
 {
     public async Task SetButtons(long userId, IStage stage)
     {
-        if (stage.Message is null || stage.ButtonsAsList.Count() == 0) return;
+        if (stage.Message is null || stage.ButtonsAsList.Count() == 0 || stage.ButtonsAsMatrix.Count() == 0) return;
 
-        var buttonsInRow = stage.ButtonsAsList.Any(x => x.Length > 9) ? 3 : 4;
-        var rkm = GetButtons([.. stage.ButtonsAsList], buttonsInRow);
+        var rkm = stage.ButtonsAsList.Any()
+            ? GetButtonsFromList([.. stage.ButtonsAsList])
+            : GetButtonsFromMatrix(stage.ButtonsAsMatrix);
+
         await bot.SendMessage(userId, stage.Message, replyMarkup: rkm, parseMode: ParseMode.Markdown);
     }
 
     public async Task Notify(long userId, string message) => await bot.SendMessage(userId, message, parseMode: ParseMode.Markdown);
 
-    private static ReplyKeyboardMarkup GetButtons(string[] buttons, int inRow)
+    private static ReplyKeyboardMarkup GetButtonsFromMatrix(List<List<string>> buttons)
     {
+        var rkm = new ReplyKeyboardMarkup { Keyboard = [] };
+        foreach (var row in buttons)
+        {
+            rkm.Keyboard.Append([.. row]);
+        }
+
+        return rkm;
+    }
+
+    private static ReplyKeyboardMarkup GetButtonsFromList(string[] buttons)
+    {
+        var buttonsInRow = buttons.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = new ReplyKeyboardMarkup { Keyboard = [] };
         var last = buttons.Last();
         buttons = buttons.Take(buttons.Length - 1).ToArray();
 
         while (buttons.Any())
         {
-            var x = buttons.Take(inRow).ToList();
-            buttons = buttons.Skip(inRow).ToArray();
+            var x = buttons.Take(buttonsInRow).ToList();
+            buttons = buttons.Skip(buttonsInRow).ToArray();
 
             if (x.Count == 4) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2], x[3]]); continue; }
             if (x.Count == 3) { rkm.Keyboard = rkm.Keyboard.Append([x[0], x[1], x[2]]); continue; }
