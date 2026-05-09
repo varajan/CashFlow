@@ -10,7 +10,7 @@ public class TelegramBotNotifyService(ITelegramBotClient bot) : INotifyService
 {
     public async Task SetButtons(long userId, IStage stage)
     {
-        if (stage.Message is null || stage.Buttons.Count() == 0) return;
+        if (stage.Message is null || stage.ButtonsAsList.Count() == 0) return;
 
         var buttonsInRow = stage.ButtonsAsList.Any(x => x.Length > 9) ? 3 : 4;
         var rkm = GetButtons([.. stage.ButtonsAsList], buttonsInRow);

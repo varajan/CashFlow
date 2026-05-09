@@ -62,5 +62,14 @@ public class ReadyForBigCircleTests(Type stageType) : StagesBaseTest
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
 
+    [Test, Ignore("Not applicable")]
+    public override void Stage_HaveEmptyButtonsAsList() { }
+
+    [Test, Ignore("Not applicable")]
+    public override void Stage_HaveEmptyButtonsAsMatrix() { }
+
+    [Test, Ignore("Not applicable")]
+    public override void Stage_ShouldHaveEitherButtonsAsListOrButtonsAsMatrix() { }
+
     protected override IStage GetTestStage() => throw new NotImplementedException();
 }

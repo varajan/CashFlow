@@ -11,8 +11,8 @@ public abstract class BaseStage : IStage
     public string Name => GetType().FullName;
     public UserDto CurrentUser { get; private set; }
     public virtual string Message => default;
-    public virtual IEnumerable<string> ButtonsAsList => default;
-    public virtual List<List<string>> Buttons => default;
+    public virtual IEnumerable<string> ButtonsAsList => [];
+    public virtual List<List<string>> ButtonsAsMatrix => [];
     public virtual IStage NextStage { get; set; }
     protected ITranslationService TranslationService { get; }
     protected IUserService UserService { get; }
