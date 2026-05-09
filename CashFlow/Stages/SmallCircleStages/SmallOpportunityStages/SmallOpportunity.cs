@@ -9,18 +9,28 @@ public class SmallOpportunity(ITranslationService termsService, IUserService use
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
-    public override IEnumerable<string> ButtonsAsList =>
-    [
-        TranslationService.Get(Terms.BuyStocks, CurrentUser),
-        TranslationService.Get(Terms.SellStocks, CurrentUser),
-        TranslationService.Get(Terms.StocksX2, CurrentUser),
-        TranslationService.Get(Terms.StocksDiv2, CurrentUser),
-        TranslationService.Get(Terms.BuyRealEstate, CurrentUser),
-        TranslationService.Get(Terms.BuyLand, CurrentUser),
-        TranslationService.Get(Terms.BuyCoins, CurrentUser),
-        TranslationService.Get(Terms.StartCompany, CurrentUser),
-        Cancel
-    ];
+    public override List<List<string>> ButtonsAsMatrix
+    {
+        get
+        {
+            var buyStocks = TranslationService.Get(Terms.BuyStocks, CurrentUser);
+            var sellStocks = TranslationService.Get(Terms.SellStocks, CurrentUser);
+            var stocksX2 = TranslationService.Get(Terms.StocksX2, CurrentUser);
+            var stocksDiv2 = TranslationService.Get(Terms.StocksDiv2, CurrentUser);
+            var buyRealEstate = TranslationService.Get(Terms.BuyRealEstate, CurrentUser);
+            var buyLand = TranslationService.Get(Terms.BuyLand, CurrentUser);
+            var buyCoins = TranslationService.Get(Terms.BuyCoins, CurrentUser);
+            var startCompany = TranslationService.Get(Terms.StartCompany, CurrentUser);
+
+            return
+            [
+                [buyStocks, sellStocks, stocksX2, stocksDiv2],
+                [buyRealEstate, buyLand],
+                [ buyCoins, startCompany],
+                [Cancel],
+            ];
+        }
+    }
 
     public override async Task HandleMessage(string message)
     {
