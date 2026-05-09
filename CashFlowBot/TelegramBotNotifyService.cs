@@ -10,8 +10,6 @@ public class TelegramBotNotifyService(ITelegramBotClient bot) : INotifyService
 {
     public async Task SetButtons(long userId, IStage stage)
     {
-        if (stage.Message is null || stage.ButtonsAsList.Count() == 0 || stage.ButtonsAsMatrix.Count() == 0) return;
-
         var rkm = stage.ButtonsAsList.Any()
             ? GetButtonsFromList([.. stage.ButtonsAsList])
             : GetButtonsFromMatrix(stage.ButtonsAsMatrix);
@@ -26,7 +24,7 @@ public class TelegramBotNotifyService(ITelegramBotClient bot) : INotifyService
         var rkm = new ReplyKeyboardMarkup { Keyboard = [] };
         foreach (var row in buttons)
         {
-            rkm.Keyboard.Append([.. row]);
+            rkm.Keyboard = rkm.Keyboard.Append([.. row]);
         }
 
         return rkm;
