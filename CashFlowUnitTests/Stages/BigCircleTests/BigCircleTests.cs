@@ -37,20 +37,15 @@ public class BigCircleTests : StagesBaseTest
         var winnerMessage = "You are the winner!";
         var smallCircleDescription = $"{CurrentUser.Name} at SmallCircle!";
         var bigCircleDescription = $"{CurrentUser.Name} at BigCircle!";
-        var winGameButtons = new[] { "History", "Stop Game" };
+        List<List<string>> buttons = [];
+        var winGameButtons = new[] { new[] { "History", "Stop Game" } };
         var regularButtons = new[]
         {
-            "Paycheck",
-            "Get Money",
-            "Give Money",
-            "Divorce",
-            "Tax Audit",
-            "Lawsuit",
-            "Buy Business",
-            "Buy my dream",
-            "Friends",
-            "History",
-            "Game menu",
+            new[] { "Paycheck", "Get Money", "Give Money" },
+            new[] { "Divorce", "Tax Audit", "Lawsuit" },
+            new[] { "Buy Business", "Buy my dream" },
+            new[] { "Friends", "History" },
+            new[] { "Game menu" },
         };
 
         PersonServiceMock.Setup(x => x.GetDescription(CurrentUser, false)).Returns(smallCircleDescription);
@@ -67,7 +62,7 @@ public class BigCircleTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(isWinner ? winnerMessage : bigCircleDescription));
-            Assert.That(testStage.Buttons, Is.EqualTo(isWinner ? winGameButtons : regularButtons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(isWinner ? winGameButtons : regularButtons));
         }
     }
 

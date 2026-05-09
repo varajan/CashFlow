@@ -10,7 +10,7 @@ public class SendMoneyAmount(IPersonService personManager, ITranslationService t
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons
+    public override IEnumerable<string> ButtonsAsList
     {
         get
         {

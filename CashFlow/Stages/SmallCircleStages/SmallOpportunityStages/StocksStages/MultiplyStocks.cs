@@ -18,7 +18,7 @@ public abstract class MultiplyStocks(ActionType actionType, ITranslationService 
 
     public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
 
-    public override IEnumerable<string> Buttons =>
+    public override IEnumerable<string> ButtonsAsList =>
         PersonService
             .ReadActiveAssets(AssetType.Stock, CurrentUser)
             .Select(x => x.Title)

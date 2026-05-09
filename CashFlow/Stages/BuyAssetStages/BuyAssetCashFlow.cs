@@ -17,7 +17,7 @@ public abstract class BuyAssetCashFlow<TNextStage>(
 {
     protected ActionType ActionType { get; } = actionType;
     public override string Message => TranslationService.Get(Terms.AskCashflow, CurrentUser);
-    public override IEnumerable<string> Buttons => cashflows.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> ButtonsAsList => cashflows.OrderBy(x => x).AsCurrency().Append(Cancel);
     public override async Task HandleMessage(string message)
     {
         var asset = PersonService.ReadActiveAssets(AssetType, CurrentUser).Single(x => x.IsDraft);

@@ -9,7 +9,7 @@ public class BuyCoinsCount(ITranslationService termsService, IUserService userSe
 {
     public override string Message => TranslationService.Get(Terms.AskHowMany, CurrentUser);
 
-    public override IEnumerable<string> Buttons => ["1", "10", Cancel];
+    public override IEnumerable<string> ButtonsAsList => ["1", "10", Cancel];
 
     public async override Task HandleMessage(string message)
     {

@@ -24,7 +24,7 @@ public abstract class BuyAssetWithCashflowCredit<TNextStage>(
         }
     }
 
-    public override IEnumerable<string> Buttons => [GetCredit, Cancel];
+    public override IEnumerable<string> ButtonsAsList => [GetCredit, Cancel];
 
     public override async Task HandleMessage(string message)
     {

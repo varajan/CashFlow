@@ -26,7 +26,7 @@ public class WinGameTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new[] { "History", "Stop Game" };
+        var buttons = new[] { new[] { "History", "Stop Game" } };
 
         // Act
 
@@ -34,7 +34,7 @@ public class WinGameTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("You are the winner!"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 

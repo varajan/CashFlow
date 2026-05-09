@@ -30,14 +30,11 @@ public class MarketTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new List<string>
+        var buttons = new List<List<string>>
         {
-            "Sell Real Estate",
-            "Sell Land",
-            "Sell Business",
-            "Sell Coins",
-            "Increase cashflow",
-            "Cancel"
+            new List<string> { "Sell Real Estate", "Sell Land", "Sell Business" },
+            new List<string> { "Sell Coins", "Increase cashflow" },
+            new List<string> { "Cancel" }
         };
 
         // Act
@@ -46,7 +43,7 @@ public class MarketTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 

@@ -22,17 +22,12 @@ public class SmallOpportunityTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new List<string>
+        var buttons = new List<List<string>>
         {
-            "Buy Stocks",
-            "Sell Stocks",
-            "Stocks x2",
-            "Stocks ÷2",
-            "Buy Real Estate",
-            "Buy Land",
-            "Buy Coins",
-            "Start a company",
-            "Cancel"
+            new List<string> { "Buy Stocks", "Sell Stocks", "Stocks x2", "Stocks ÷2" },
+            new List<string> { "Buy Real Estate", "Buy Land" },
+            new List<string> { "Buy Coins", "Start a company" },
+            new List<string> { "Cancel" }
         };
 
         // Act
@@ -41,7 +36,7 @@ public class SmallOpportunityTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 

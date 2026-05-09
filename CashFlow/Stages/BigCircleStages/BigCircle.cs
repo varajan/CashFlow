@@ -22,26 +22,30 @@ public class BigCircle(ITranslationService termsService, IUserService userServic
         }
     }
 
-    public override List<string> Buttons
+    public override List<List<string>> ButtonsAsMatrix
     {
         get
         {
             var person = PersonService.Read(CurrentUser);
+            var paycheck = TranslationService.Get(Terms.Paycheck, CurrentUser);
+            var getMoney = TranslationService.Get(Terms.GetMoney, CurrentUser);
+            var giveMoney = TranslationService.Get(Terms.GiveMoney, CurrentUser);
+            var divorce = TranslationService.Get(Terms.Divorce, CurrentUser);
+            var taxAudit = TranslationService.Get(Terms.TaxAudit, CurrentUser);
+            var lawsuit = TranslationService.Get(Terms.Lawsuit, CurrentUser);
+            var buyBusiness = TranslationService.Get(Terms.BuyBusiness, CurrentUser);
+            var buyDream = TranslationService.Get(Terms.BuyDream, CurrentUser);
+            var friends = TranslationService.Get(Terms.Friends, CurrentUser);
+            var gameMenu = TranslationService.Get(Terms.GameMenu, CurrentUser);
 
             return person.HasMetWinningCriteria()
-            ? [History, StopGame]
+            ? [[History, StopGame]]
             : [
-                TranslationService.Get(Terms.Paycheck, CurrentUser),
-                TranslationService.Get(Terms.GetMoney, CurrentUser),
-                TranslationService.Get(Terms.GiveMoney, CurrentUser),
-                TranslationService.Get(Terms.Divorce, CurrentUser),
-                TranslationService.Get(Terms.TaxAudit, CurrentUser),
-                TranslationService.Get(Terms.Lawsuit, CurrentUser),
-                TranslationService.Get(Terms.BuyBusiness, CurrentUser),
-                TranslationService.Get(Terms.BuyDream, CurrentUser),
-                TranslationService.Get(Terms.Friends, CurrentUser),
-                History,
-                TranslationService.Get(Terms.GameMenu, CurrentUser),
+                [paycheck, getMoney, giveMoney],
+                [divorce, taxAudit, lawsuit],
+                [buyBusiness, buyDream],
+                [friends, History],
+                [gameMenu],
             ];
         }
     }

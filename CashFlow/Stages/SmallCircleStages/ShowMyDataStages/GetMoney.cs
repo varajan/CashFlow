@@ -19,7 +19,7 @@ public class GetMoney(ITranslationService termsService, IUserService userService
         }
     }
 
-    public override IEnumerable<string> Buttons
+    public override IEnumerable<string> ButtonsAsList
     {
         get
         {

@@ -44,6 +44,18 @@ public abstract class StagesBaseTest
         Assert.That(testStage.NextStage, Is.TypeOf<Start>());
     }
 
+    [Test]
+    public virtual void Stage_ShouldHaveEitherButtonsAsListOrButtonsAsMatrix()
+    {
+        // Arrange
+        var testStage = GetTestStage();
+
+        // Act
+
+        // Assert
+        Assert.That(testStage.ButtonsAsList.Any() ^ testStage.ButtonsAsMatrix.Any(), Is.True);
+    }
+
     private void InitMocks()
     {
         UserServiceMock = new Mock<IUserService>();

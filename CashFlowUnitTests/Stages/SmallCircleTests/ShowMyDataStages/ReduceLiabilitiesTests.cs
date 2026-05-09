@@ -37,7 +37,7 @@ public class ReduceLiabilitiesTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
-            Assert.That(testStage.Buttons.ToList(), Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList.ToList(), Is.EqualTo(buttons));
         }
     }
 

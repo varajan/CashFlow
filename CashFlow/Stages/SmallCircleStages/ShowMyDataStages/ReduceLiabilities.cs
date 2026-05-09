@@ -32,7 +32,7 @@ public class ReduceLiabilities(ITranslationService termsService, IUserService us
         }
     }
 
-    public override IEnumerable<string> Buttons => Liabilities
+    public override IEnumerable<string> ButtonsAsList => Liabilities
         .Select(l => TranslationService.Get(l.Type.GetDescription(), CurrentUser))
         .Append(Cancel);
 

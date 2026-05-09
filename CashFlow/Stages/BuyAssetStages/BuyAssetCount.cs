@@ -32,7 +32,7 @@ public abstract class BuyAssetCount<TCreditStage, TCashFlowStage>(
         }
     }
 
-    public override IEnumerable<string> Buttons
+    public override IEnumerable<string> ButtonsAsList
     {
         get
         {

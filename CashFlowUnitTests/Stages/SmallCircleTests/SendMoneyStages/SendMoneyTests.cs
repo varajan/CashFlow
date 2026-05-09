@@ -107,7 +107,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string>
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string>
             {
                 "1st Active on Small Circle",
                 "2nd Active on Small Circle",
@@ -132,7 +132,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
         }
     }
 
@@ -151,7 +151,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
         }
     }
 
@@ -170,7 +170,7 @@ public class SendMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Whom?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string> { "Bank", "Cancel" }));
         }
     }
 

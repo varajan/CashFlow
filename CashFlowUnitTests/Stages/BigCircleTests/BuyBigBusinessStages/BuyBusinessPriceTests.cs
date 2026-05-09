@@ -40,7 +40,7 @@ public class BuyBigBusinessPriceTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the price?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 

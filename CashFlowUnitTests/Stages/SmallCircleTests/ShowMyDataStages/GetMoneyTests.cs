@@ -28,7 +28,7 @@ public class GetMoneyTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo($"Your Cashflow is *{cashFlow.AsCurrency()}*. How many should you get?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 

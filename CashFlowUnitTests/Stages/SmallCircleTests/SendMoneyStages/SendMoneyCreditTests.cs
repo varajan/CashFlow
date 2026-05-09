@@ -58,7 +58,7 @@ public class SendMoneyCreditTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo($"You don't have *{TransferAsset.Qtty.AsCurrency()}*, but only *{TestPerson.Cash.AsCurrency()}*"));
-            Assert.That(testStage.Buttons, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string> { "Get Credit", "Cancel" }));
         }
     }
 

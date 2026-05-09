@@ -34,7 +34,7 @@ public class BuyBusinessCashflowTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("What is the cash flow?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 

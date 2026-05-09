@@ -15,7 +15,13 @@ public class EmulationNotifyService : INotifyService
         Task setButtons()
         {
             var fileName = FileName(userId);
-            var @object = new { stage.Message, stage.Buttons, DateTime = DateTime.UtcNow };
+            var @object = new
+            {
+                stage.Message,
+                Buttons = stage.ButtonsAsList.Any() ? stage.ButtonsAsList : stage.ButtonsAsMatrix.SelectMany(x => x),
+                DateTime = DateTime.UtcNow
+            };
+
             File.AppendAllText(fileName, $"\n{@object.Serialize()}");
             return Task.CompletedTask;
         }

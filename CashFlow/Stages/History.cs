@@ -10,7 +10,7 @@ public class History(ITranslationService termsService, IUserService userService,
         ? string.Join(Environment.NewLine, Records.Select(x => x.Description))
         : TranslationService.Get(Terms.NoRecords, CurrentUser);
 
-    public override IEnumerable<string> Buttons => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
+    public override IEnumerable<string> ButtonsAsList => Records.Any() ? [Rollback, MainMenu] : [MainMenu];
 
     private List<HistoryDto> Records => PersonService.ReadHistory(CurrentUser);
     private string Rollback => TranslationService.Get(Terms.Rollback, CurrentUser);

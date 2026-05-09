@@ -62,7 +62,7 @@ public class BuyStocksCountTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(expectedMessage));
-            Assert.That(testStage.Buttons, Is.EqualTo(expectedButtons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(expectedButtons));
         }
     }
 

@@ -16,7 +16,7 @@ public abstract class BuyAsset<TNextStage>(
     protected AssetType AssetType { get; } = assetType;
 
     public override string Message => TranslationService.Get(Terms.Title, CurrentUser);
-    public override IEnumerable<string> Buttons => assetNames
+    public override IEnumerable<string> ButtonsAsList => assetNames
         .Select(x => TranslationService.Get(x, CurrentUser))
         .OrderBy(x => x.Length)
         .ThenBy(x => x)

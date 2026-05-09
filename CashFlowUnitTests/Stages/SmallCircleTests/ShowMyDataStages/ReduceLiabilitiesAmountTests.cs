@@ -10,6 +10,17 @@ namespace CashFlowUnitTests.Stages.SmallCircleTests.ShowMyDataStages;
 [TestFixture]
 public class ReduceLiabilitiesAmountTests : StagesBaseTest
 {
+    [SetUp]
+    public void Setup()
+    {
+        var liabilities = new List<LiabilityDto>
+        {
+            new() { Type = Liability.OtherPayments, FullAmount = 1_000, Cashflow = -100, MarkedForReduction = true },
+        };
+
+        PersonServiceMock.Setup(x => x.Read(CurrentUser)).Returns(new PersonDto { Liabilities = liabilities });
+    }
+
     [TestCase(1000, 5000, new string[] { "$1,000", "Cancel" })]
     [TestCase(7000, 6500, new string[] { "$1,000", "$5,000", "$6,000", "Cancel" })]
     [TestCase(15000, 20000, new string[] { "$1,000", "$5,000", "$10,000", "$15,000", "Cancel" })]
@@ -34,7 +45,7 @@ public class ReduceLiabilitiesAmountTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 
