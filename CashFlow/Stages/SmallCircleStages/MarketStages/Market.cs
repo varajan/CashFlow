@@ -7,15 +7,24 @@ public class Market(ITranslationService termsService, IUserService userService, 
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
-    public override IEnumerable<string> ButtonsAsList =>
-    [
-        TranslationService.Get(Terms.SellRealEstate, CurrentUser),
-        TranslationService.Get(Terms.SellLand, CurrentUser),
-        TranslationService.Get(Terms.SellBusiness, CurrentUser),
-        TranslationService.Get(Terms.SellCoins, CurrentUser),
-        TranslationService.Get(Terms.IncreaseCashflow, CurrentUser),
-        Cancel
-    ];
+    public override List<List<string>> ButtonsAsMatrix
+    {
+        get
+        {
+            var sellRealEstate = TranslationService.Get(Terms.SellRealEstate, CurrentUser);
+            var sellLand = TranslationService.Get(Terms.SellLand, CurrentUser);
+            var sellBusiness = TranslationService.Get(Terms.SellBusiness, CurrentUser);
+            var sellCoins = TranslationService.Get(Terms.SellCoins, CurrentUser);
+            var increaseCashflow = TranslationService.Get(Terms.IncreaseCashflow, CurrentUser);
+
+            return new List<List<string>>
+            {
+                new List<string> { sellRealEstate, sellLand, sellBusiness },
+                new List<string> { sellCoins, increaseCashflow },
+                new List<string> { Cancel },
+            };
+        }
+    }
 
     public override async Task HandleMessage(string message)
     {
