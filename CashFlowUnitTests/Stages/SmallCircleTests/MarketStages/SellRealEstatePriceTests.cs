@@ -34,7 +34,7 @@ public class SellRealEstatePriceTests : SellAssetBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(message));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 

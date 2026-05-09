@@ -67,7 +67,7 @@ public class BigCircleTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo(isWinner ? winnerMessage : bigCircleDescription));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(isWinner ? winGameButtons : regularButtons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(isWinner ? winGameButtons : regularButtons));
         }
     }
 

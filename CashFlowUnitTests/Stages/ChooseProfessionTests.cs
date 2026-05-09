@@ -96,7 +96,7 @@ public class ChooseProfessionTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Choose your *profession*"));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
         }
     }
 

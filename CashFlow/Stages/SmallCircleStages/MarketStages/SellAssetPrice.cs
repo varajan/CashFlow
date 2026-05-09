@@ -57,7 +57,7 @@ public abstract class SellAssetPrice(
         }
     }
 
-    public override IEnumerable<string> OLD_Buttons => SellPrices.OrderBy(x => x).AsCurrency().Append(Cancel);
+    public override IEnumerable<string> ButtonsAsList => SellPrices.OrderBy(x => x).AsCurrency().Append(Cancel);
 
     public override async Task HandleMessage(string message)
     {

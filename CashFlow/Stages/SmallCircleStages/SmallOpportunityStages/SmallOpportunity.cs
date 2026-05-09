@@ -9,7 +9,7 @@ public class SmallOpportunity(ITranslationService termsService, IUserService use
     : BaseStage(termsService, userService, personManager, userRepository)
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
-    public override IEnumerable<string> OLD_Buttons =>
+    public override IEnumerable<string> ButtonsAsList =>
     [
         TranslationService.Get(Terms.BuyStocks, CurrentUser),
         TranslationService.Get(Terms.SellStocks, CurrentUser),

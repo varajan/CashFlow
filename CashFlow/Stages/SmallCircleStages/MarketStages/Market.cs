@@ -7,7 +7,7 @@ public class Market(ITranslationService termsService, IUserService userService, 
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
-    public override IEnumerable<string> OLD_Buttons =>
+    public override IEnumerable<string> ButtonsAsList =>
     [
         TranslationService.Get(Terms.SellRealEstate, CurrentUser),
         TranslationService.Get(Terms.SellLand, CurrentUser),

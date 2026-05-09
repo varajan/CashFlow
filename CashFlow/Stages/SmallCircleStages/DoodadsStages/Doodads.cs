@@ -10,7 +10,7 @@ public class Doodads(ITranslationService termsService, IUserService userService,
 {
     public override string Message => TranslationService.Get(Terms.WhatDoYouWant, CurrentUser);
 
-    public override List<string> OLD_Buttons =>
+    public override List<string> ButtonsAsList =>
     [
         TranslationService.Get(Terms.PayCash, CurrentUser),
         TranslationService.Get(Terms.PayCard, CurrentUser),

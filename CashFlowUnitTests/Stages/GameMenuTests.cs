@@ -15,7 +15,7 @@ public class GameMenuTests : StagesBaseTest
 
         // Assert
         Assert.That(testStage.Message, Is.EqualTo("What do you want?"));
-        Assert.That(testStage.OLD_Buttons, Is.EqualTo(new List<string> { "Stop Game", "Language/Мова", "Cancel" }));
+        Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string> { "Stop Game", "Language/Мова", "Cancel" }));
     }
 
     [TestCase("Stop Game", typeof(StopGame))]

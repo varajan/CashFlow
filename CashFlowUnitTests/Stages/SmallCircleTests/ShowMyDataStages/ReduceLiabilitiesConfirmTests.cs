@@ -34,7 +34,7 @@ public class ReduceLiabilitiesConfirmTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Reduce Liabilities - Car Loan. Yes?"));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(new[] { "Yes", "Cancel" }));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new[] { "Yes", "Cancel" }));
         }
     }
 

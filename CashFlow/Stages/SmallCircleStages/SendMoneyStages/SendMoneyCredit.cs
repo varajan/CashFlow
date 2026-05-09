@@ -23,7 +23,7 @@ public class SendMoneyCredit(
         }
     }
 
-    public override IEnumerable<string> OLD_Buttons => [GetCredit, Cancel];
+    public override IEnumerable<string> ButtonsAsList => [GetCredit, Cancel];
 
     public override async Task HandleMessage(string message)
     {

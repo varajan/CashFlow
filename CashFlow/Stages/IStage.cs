@@ -7,7 +7,7 @@ public interface IStage
     UserDto CurrentUser { get; }
     string Name { get; }
     string Message { get; }
-    IEnumerable<string> OLD_Buttons { get; }
+    IEnumerable<string> ButtonsAsList { get; }
     List<List<string>> Buttons { get; }
     IStage NextStage { get; }
     IStage SetCurrentUser(UserDto user);

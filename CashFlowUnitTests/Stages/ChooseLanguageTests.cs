@@ -41,7 +41,7 @@ public class ChooseLanguageTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("Language/Мова"));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(languages));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(languages));
         }
     }
 

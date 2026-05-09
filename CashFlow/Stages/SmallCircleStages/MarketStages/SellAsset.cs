@@ -50,7 +50,7 @@ public abstract class SellAsset<TNextStage>(
         }
     }
 
-    public override IEnumerable<string> OLD_Buttons
+    public override IEnumerable<string> ButtonsAsList
     {
         get
         {

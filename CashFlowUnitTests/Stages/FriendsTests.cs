@@ -26,7 +26,7 @@ public class FriendsTests : StagesBaseTest
 
         Assert.That(testStage.Message.Contains("Big"), Is.EqualTo(onBig));
         Assert.That(testStage.Message.Contains("Small"), Is.EqualTo(onSmall));
-        Assert.That(testStage.OLD_Buttons, Is.EqualTo(buttons));
+        Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
     }
 
     [Test]

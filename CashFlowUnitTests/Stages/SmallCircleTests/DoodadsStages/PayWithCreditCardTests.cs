@@ -23,7 +23,7 @@ public class PayWithCreditCardTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(Amounts.Append("Cancel")));
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(Amounts.Append("Cancel")));
         }
     }
 

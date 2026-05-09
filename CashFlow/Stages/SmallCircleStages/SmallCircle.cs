@@ -16,7 +16,7 @@ public class SmallCircle(ITranslationService termsService, IUserService userServ
 {
     public override string Message => PersonService.GetDescription(CurrentUser);
 
-    public override List<string> OLD_Buttons
+    public override List<string> ButtonsAsList
     {
         get
         {

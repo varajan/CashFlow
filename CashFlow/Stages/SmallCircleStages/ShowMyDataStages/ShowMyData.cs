@@ -8,7 +8,7 @@ public class ShowMyData(ITranslationService termsService, IUserService userServi
 {
     public override string Message => PersonService.GetDescription(CurrentUser, false);
 
-    public override List<string> OLD_Buttons =>
+    public override List<string> ButtonsAsList =>
     [
         TranslationService.Get(Terms.GetMoney, CurrentUser),
         TranslationService.Get(Terms.GetCredit, CurrentUser),

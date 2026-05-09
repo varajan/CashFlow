@@ -58,7 +58,7 @@ public class SendMoneyAmountTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("How many?"));
-            Assert.That(testStage.OLD_Buttons, Is.EqualTo(new List<string>
+            Assert.That(testStage.ButtonsAsList, Is.EqualTo(new List<string>
             {
                 "$500",
                 "$1,000",

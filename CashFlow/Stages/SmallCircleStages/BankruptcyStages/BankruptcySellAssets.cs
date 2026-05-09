@@ -45,7 +45,7 @@ public class BankruptcySellAssets(ITranslationService termsService, IUserService
         }
     }
 
-    public override IEnumerable<string> OLD_Buttons
+    public override IEnumerable<string> ButtonsAsList
     {
         get
         {
