@@ -26,7 +26,7 @@ public class WinGameTests : StagesBaseTest
     {
         // Arrange
         var testStage = GetTestStage();
-        var buttons = new[] { "History", "Stop Game" };
+        var buttons = new[] { new[] { "History", "Stop Game" } };
 
         // Act
 
@@ -34,7 +34,7 @@ public class WinGameTests : StagesBaseTest
         using (Assert.EnterMultipleScope())
         {
             Assert.That(testStage.Message, Is.EqualTo("You are the winner!"));
-            Assert.That(testStage.ButtonsAsList, Is.EqualTo(buttons));
+            Assert.That(testStage.ButtonsAsMatrix, Is.EqualTo(buttons));
         }
     }
 
@@ -99,6 +99,9 @@ public class WinGameTests : StagesBaseTest
 
     [Test, Ignore("Not applicable")]
     public override Task Stage_CanBeCanceled() => Task.CompletedTask;
+
+    [Test, Ignore("Not applicable")]
+    public override void Stage_HaveEmptyButtonsAsMatrix() { }
 
     [Test]
     public async Task WinGame_CanNotBeCanceled()
