@@ -1,53 +1,28 @@
 ﻿using CashFlow.Extensions;
 using CashFlow.Interfaces;
 using CashFlow.Stages;
-using Polly;
-using Polly.Retry;
 
 namespace CashFlowBotEmulator;
 
 public class EmulationNotifyService : INotifyService
 {
-    private static string FileName(long userId) => $"{userId}.msg";
-
     public Task SetButtons(long userId, IStage stage)
     {
-        Task setButtons()
+        var @object = new
         {
-            var fileName = FileName(userId);
-            var @object = new
-            {
-                stage.Message,
-                Buttons = stage.ButtonsAsList.Any() ? stage.ButtonsAsList : stage.ButtonsAsMatrix.SelectMany(x => x),
-                DateTime = DateTime.UtcNow
-            };
+            stage.Message,
+            Buttons = stage.ButtonsAsList.Any() ? stage.ButtonsAsList : stage.ButtonsAsMatrix.SelectMany(x => x),
+            DateTime = DateTime.UtcNow
+        };
 
-            File.AppendAllText(fileName, $"\n{@object.Serialize()}");
-            return Task.CompletedTask;
-        }
-
-        return _retryPolicy.ExecuteAsync(setButtons);
+        Console.WriteLine($"<- {userId} {@object.Serialize()}");
+        return Task.CompletedTask;
     }
 
     public Task Notify(long userId, string message)
     {
-        Task notify()
-        {
-            var fileName = FileName(userId);
-            var @object = new { Message = message, DateTime = DateTime.UtcNow };
-            File.AppendAllText(fileName, $"\n{@object.Serialize()}");
-            return Task.CompletedTask;
-        }
-
-        return _retryPolicy.ExecuteAsync(notify);
+        var @object = new { Message = message, DateTime = DateTime.UtcNow };
+        Console.WriteLine($"<- {userId} {@object.Serialize()}");
+        return Task.CompletedTask;
     }
-
-    private static readonly AsyncRetryPolicy _retryPolicy =
-        Policy
-            .Handle<IOException>()
-            .WaitAndRetryAsync(
-                retryCount: 5,
-                sleepDurationProvider: retryAttempt =>
-                    TimeSpan.FromMilliseconds(200 * retryAttempt)
-            );
 }

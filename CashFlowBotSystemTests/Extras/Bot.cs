@@ -1,7 +1,5 @@
 ﻿using CashFlow.Extensions;
 using MoreLinq;
-using Polly;
-using Polly.Retry;
 using System.Diagnostics;
 
 namespace CashFlowBotSystemTests.Extras;
@@ -14,16 +12,16 @@ public class Bot(string folder)
 
     private static readonly Mutex _lock = new(false, "LOCK");
 
+    private Process BotEmulatorProcess;
+    private readonly List<string> _consoleOutput = [];
+    private readonly object _outputLock = new();
+
     public void Launch()
     {
-        CleanEmulatorDirectory();
-        SendMessage("CHECK");
-        var reply = GetReply(0);
-        if (reply is not null) return;
-
         _lock.WaitOne();
         try
         {
+            CleanEmulatorDirectory();
             BuildEmulator();
             StartEmulator();
         }
@@ -36,19 +34,15 @@ public class Bot(string folder)
     public void Close()
     {
         SendMessage("EXIT");
-        CleanEmulatorDirectory(".dll", ".pdb", ".json");
+        CleanEmulatorDirectory();
     }
 
-    private void CleanEmulatorDirectory(params string[] extensions)
+    private void CleanEmulatorDirectory()
     {
         string[] subFolders = ["Data", "runtimes"];
-        extensions = extensions.Length > 0 ? extensions : [".msg", ".cmd"];
 
         Directory.CreateDirectory(EmulatorDirectory);
-        Directory
-            .EnumerateFiles(EmulatorDirectory, "*.*", SearchOption.TopDirectoryOnly)
-            .Where(f => extensions.Contains(Path.GetExtension(f), StringComparer.OrdinalIgnoreCase))
-            .ForEach(File.Delete);
+        Directory.EnumerateFiles(EmulatorDirectory).ForEach(File.Delete);
         subFolders.Select(sub => Path.Combine(EmulatorDirectory, sub))
             .Where(Directory.Exists)
             .ForEach(DeleteDirectory);
@@ -84,28 +78,53 @@ public class Bot(string folder)
 
     private void StartEmulator()
     {
-        var process = new Process();
-        process.StartInfo.FileName = "dotnet";
-        process.StartInfo.Arguments = Path.Combine(EmulatorDirectory, "CashFlowBotEmulator.dll");
-        process.StartInfo.WorkingDirectory = EmulatorDirectory;
-        process.StartInfo.UseShellExecute = false;
-        process.Start();
+        BotEmulatorProcess = new Process();
+        BotEmulatorProcess.StartInfo.FileName = "dotnet";
+        BotEmulatorProcess.StartInfo.Arguments = Path.Combine(EmulatorDirectory, "CashFlowBotEmulator.dll");
+        BotEmulatorProcess.StartInfo.WorkingDirectory = EmulatorDirectory;
+        BotEmulatorProcess.StartInfo.RedirectStandardInput = true;
+        BotEmulatorProcess.StartInfo.RedirectStandardOutput = true;
+        BotEmulatorProcess.StartInfo.RedirectStandardError = true;
+        BotEmulatorProcess.StartInfo.UseShellExecute = false;
+        BotEmulatorProcess.StartInfo.CreateNoWindow = true;
+        BotEmulatorProcess.StartInfo.StandardInputEncoding = System.Text.Encoding.UTF8;
+        BotEmulatorProcess.StartInfo.StandardOutputEncoding = System.Text.Encoding.UTF8;
+
+        BotEmulatorProcess.OutputDataReceived += (sender, args) =>
+        {
+            if (!string.IsNullOrEmpty(args.Data))
+            {
+                lock (_outputLock)
+                {
+                    _consoleOutput.Add(args.Data);
+                }
+            }
+        };
+
+        BotEmulatorProcess.Start();
+        BotEmulatorProcess.BeginOutputReadLine();
     }
 
     public void SendMessage(string message, long? chatId = null)
     {
-        var lastReply = chatId.HasValue ? GetReply(chatId.Value) : null;
-        var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{chatId}";
-        var tmpFile = Path.Combine(EmulatorDirectory, $"{fileName}.txt");
-        var finalFile = Path.Combine(EmulatorDirectory, $"{fileName}.cmd");
+        var payload = chatId.HasValue ? $"{chatId} {message}" : message;
+        var lastReplyCount = GetTotalRepliesCount(chatId);
 
-        File.WriteAllText(tmpFile, message);
-        File.Move(tmpFile, finalFile);
-        WaitForReply(chatId, lastReply);
+        BotEmulatorProcess.StandardInput.WriteLine(payload);
+        WaitForReply(chatId, lastReplyCount);
         Thread.Sleep(100);
     }
 
-    private void WaitForReply(long? chatId, MessageDto lastReply)
+    private int GetTotalRepliesCount(long? chatId)
+    {
+        if (!chatId.HasValue) return 0;
+        lock (_outputLock)
+        {
+            return _consoleOutput.Count(line => line.StartsWith($"<- {chatId}"));
+        }
+    }
+
+    private void WaitForReply(long? chatId, int previousCount)
     {
         if (!chatId.HasValue) return;
 
@@ -113,11 +132,11 @@ public class Bot(string folder)
 
         while (stopwatch.Elapsed < TimeSpan.FromSeconds(5))
         {
-            Thread.Sleep(100);
-
-            var reply = GetReply(chatId.Value);
-            if (lastReply == null && reply != null) return;
-            if (lastReply != null && reply.DateTime > lastReply.DateTime) return;
+            Thread.Sleep(50);
+            if (GetTotalRepliesCount(chatId) > previousCount)
+            {
+                return;
+            }
         }
 
         throw new TimeoutException($"{DateTime.UtcNow} [{chatId}] No reply from bot within the expected time.");
@@ -125,27 +144,34 @@ public class Bot(string folder)
 
     public MessageDto GetReply(long chatId, int indexFromEnd = 0)
     {
-        var fileName = Path.Combine(EmulatorDirectory, $"{chatId}.msg");
-        var getReply = () =>
+        lock (_outputLock)
         {
-            var lines = File.ReadAllLines(fileName);
-            var lastMessage = lines[^(indexFromEnd + 1)];
-            var message = lastMessage.Deserialize<MessageDto>();
-            message.Message = message?.Message?.Trim();
+            var reptyToUser = $"<- {chatId} ";
+            var userLines = _consoleOutput
+                .Where(line => line.StartsWith(reptyToUser))
+                .ToList();
 
-            return message;
-        };
+            if (userLines.Count == 0 || userLines.Count <= indexFromEnd)
+            {
+                return null;
+            }
 
-        return File.Exists(fileName)
-            ? _retryPolicy.Execute(getReply)
-            : null;
+            var targetLine = userLines[^(indexFromEnd + 1)];
+            var reply = targetLine.SubString(reptyToUser).Deserialize<MessageDto>();
+            reply.Message = reply.Message?.Trim();
+
+            return reply;
+        }
     }
 
-    private readonly RetryPolicy _retryPolicy =
-        Policy
-            .Handle<IOException>()
-            .WaitAndRetry(
-                retryCount: 5,
-                sleepDurationProvider: retryAttempt =>
-                    TimeSpan.FromMilliseconds(200 * retryAttempt));
+    public IReadOnlyList<string> ConsoleOutput
+    {
+        get
+        {
+            lock (_outputLock)
+            {
+                return _consoleOutput.ToList();
+            }
+        }
+    }
 }
