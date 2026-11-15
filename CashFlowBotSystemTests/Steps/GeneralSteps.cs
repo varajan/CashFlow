@@ -1,5 +1,6 @@
 ﻿using CashFlow.Extensions;
 using CashFlowBotSystemTests.Extras;
+using System.Text.RegularExpressions;
 using TechTalk.SpecFlow;
 
 namespace CashFlowBotSystemTests.Steps;
@@ -14,7 +15,19 @@ public class BaseSteps(StepsContext context)
         : Context.Users.First(u => u.Name.Equals(name));
 
     protected Bot Bot => Context.Bot;
-    protected static Bot GetBot(FeatureContext featureContext) => new(featureContext.FeatureInfo.Title);
+
+    protected static Bot GetBot(FeatureContext featureContext)
+    {
+        const string botKey = "FeatureBot";
+
+        if (!featureContext.TryGetValue(botKey, out Bot bot))
+        {
+            bot = new Bot(featureContext.FeatureInfo.Title);
+            featureContext[botKey] = bot;
+        }
+
+        return bot;
+    }
 }
 
 [Binding]
@@ -29,6 +42,18 @@ public class GeneralSteps(StepsContext context) : BaseSteps(context)
     [AfterFeature]
     public static void CloseBotEmulator(FeatureContext featureContext) => GetBot(featureContext).Close();
 
+    [AfterScenario]
+    public void AfterScenario(ScenarioContext scenarioContext, FeatureContext featureContext)
+    {
+        if (scenarioContext.TestError is null) return;
+
+        var сonsoleOutput = GetBot(featureContext).ConsoleOutput.Select(Regex.Unescape);
+        var safeScenarioName = string.Join("_", scenarioContext.ScenarioInfo.Title.Split(Path.GetInvalidFileNameChars()));
+        var tempFilePath = Path.Combine(Path.GetTempPath(), $"{safeScenarioName}.txt");
+
+        File.WriteAllLines(tempFilePath, сonsoleOutput);
+        TestContext.AddTestAttachment(tempFilePath, "Bot Console Output");
+    }
 
     [Given(@"I am '(.*)' user")]
     public void SetName(string userName)

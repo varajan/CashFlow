@@ -1,0 +1,49 @@
+name: Monthly Scheduled Run
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Check Random Day
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.check.outputs.run }}
+    steps:
+      - name: Check date
+        id: check
+        run: |
+          DAY=$(date -u +%-d)
+          MONTH=$(date -u +%m)
+          YEAR=$(date -u +%Y)
+
+          HASH=$(echo -n "$YEAR-$MONTH" | sha256sum | cut -c1-8)
+          RANDOM_DAY=$((16#$HASH % 28 + 1))
+
+          echo "Today: $DAY, scheduled day: $RANDOM_DAY"
+
+          if [ "$DAY" -eq "$RANDOM_DAY" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  build:
+    name: Build
+    needs: check
+    if: github.event_name == 'workflow_dispatch' || needs.check.outputs.run == 'true'
+    uses: ./.github/workflows/build.yml
+
+  test:
+    name: Test
+    needs: build
+    uses: ./.github/workflows/tests.yml
+
+  smoke:
+    name: Smoke
+    needs: test
+    uses: ./.github/workflows/smoke.yml
+    secrets: inherit
